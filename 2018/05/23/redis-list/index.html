@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta name="google-site-verification" content="9vIieCe-Qpd78QOmBl63rGtIVbhY6sYyuxX3j8XWBA4" />
+    <meta name="baidu-site-verification" content="LRrmH41lz7" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Darjun Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://darjun.github.io/img/home-bg-jeep.jpg">
+    <meta property="twitter:image" content="https://darjun.github.io/img/home-bg-jeep.jpg" />
+    
+
+    
+    <meta name="title" content="Redis源码阅读-list" />
+    <meta property="og:title" content="Redis源码阅读-list" />
+    <meta property="twitter:title" content="Redis源码阅读-list" />
+    
+
+    
+    <meta name="description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。">
+    <meta property="og:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
+    <meta property="twitter:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Redis源码阅读-list-大俊的博客 | Darjun Blog</title>
+
+    <link rel="canonical" href="/2018/05/23/redis-list/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+	
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Darjun Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">Tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/post-bg-2015.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/redis-source" title="redis-source">
+                            redis-source
+                        </a>
+                        
+                    </div>
+                    <h1>Redis源码阅读-list</h1>
+                    <h2 class="subheading">&#34;Learn from redis&#34;</h2>
+                    <span class="meta">
+			Posted by 
+			
+			    darjun
+			 
+			on 
+			Tuesday, May 22, 2018
+                        
+                            <span id="/2018/05/23/redis-list/" class="leancloud_visitors meta_data_item" data-flag-title="">
+    <span class="post-meta-item-icon">
+      <span class="octicon octicon-eye"></span> 
+    </span>
+    <i class="fa fa-eye"></i>
+    <span class="old-visitors-count" style="display: none;"></span>
+    <span class="leancloud-visitors-count"></span>
+</span>
+
+
+
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+
+<script>
+	AV.initialize("TXNGsfsFQyzdASwAnCBlyIkr-gzGzoHsz", "5N0H4PYj0GcbhLqSMLfPMf8t");
+</script>
+
+<script type="text/javascript">
+function showTime(Counter) {
+    var query = new AV.Query(Counter);
+    var entries = [];
+    var $visitors = $(".leancloud_visitors");
+
+    $visitors.each(function() {
+        entries.push($(this).attr("id").trim());
+    });
+
+    query.containedIn('url', entries);
+    query.find()
+        .done(function(results) {
+            var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+            var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
+
+            
+            
+            
+            
+
+            for (var i = 0; i < results.length; i++) {
+                var item = results[i];
+                var url = item.get('url');
+                var time = item.get('time');
+                var element = document.getElementById(url);
+
+                $(element).find(COUNT_CONTAINER_REF).text(time);
+            }
+            for (var i = 0; i < entries.length; i++) {
+                var url = entries[i];
+                var element = document.getElementById(url);
+                var countSpan = $(element).find(COUNT_CONTAINER_REF);
+                if (countSpan.text() == '') {
+                    var oldCountSpan = $(element).find(OLD_COUNT_CONTAINER_REF).text();
+                    if(oldCountSpan!=''){
+                        countSpan.text(0+parseInt(oldCountSpan));
+                    }else{
+                        countSpan.text(0);          
+                    }
+                }
+            }
+        })
+        .fail(function(object, error) {
+            console.log("Error: " + error.code + " " + error.message);
+        });
+}
+
+function addCount(Counter) {
+    var $visitors = $(".leancloud_visitors");
+    var url = $visitors.attr('id').trim();
+    var title = $visitors.attr('data-flag-title').trim();
+    var query = new AV.Query(Counter);
+
+    query.equalTo("url", url);
+    query.find({
+        success: function(results) {
+            if (results.length > 0) {
+                var counter = results[0];
+                counter.fetchWhenSave(true);
+                counter.increment("time");
+                counter.save(null, {
+                    success: function(counter) {
+                        var $element = $(document.getElementById(url));
+                        $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                    },
+                    error: function(counter, error) {
+                        console.log('Failed to save Visitor num, with error message: ' + error.message);
+                    }
+                });
+            } else {
+                var newcounter = new Counter();
+                 
+                var acl = new AV.ACL();
+                acl.setPublicReadAccess(true);
+                acl.setPublicWriteAccess(true);
+                newcounter.setACL(acl);
+                 
+                newcounter.set("title", title);
+                newcounter.set("url", url);
+                var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
+                var $element = $(document.getElementById(url));
+                var oldCountSpan = $element.find(OLD_COUNT_CONTAINER_REF).text();
+                if(oldCountSpan!=''){
+                    newcounter.set("time", parseInt(oldCountSpan)+1);
+                }else{
+ 	                    newcounter.set("time",  1);
+                }
+                newcounter.save(null, {
+                    success: function(newcounter) {
+                        var $element = $(document.getElementById(url));
+                        $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+                    },
+                    error: function(newcounter, error) {
+                        console.log('Failed to create');
+                    }
+                });
+            }
+        },
+        error: function(error) {
+            console.log('Error:' + error.code + " " + error.message);
+        }
+    });
+}
+$(function() {
+    var Counter = AV.Object.extend("Counter");
+    
+    
+    if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+    } else {
+        showTime(Counter);
+    }
+});
+</script>
+
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#span-id-概述-1-概述-span"><span id="概述">1.概述</span></a></li>
+<li><a href="#span-id-实现-2-实现-span"><span id="实现">2.实现</span></a></li>
+<li><a href="#span-id-操作-3-操作-span"><span id="操作">3.操作</span></a>
+<ul>
+<li><a href="#span-id-创建-3-1-创建-span"><span id="创建">3.1.创建</span></a></li>
+<li><a href="#span-id-销毁-3-2-销毁-span"><span id="销毁">3.2.销毁</span></a></li>
+<li><a href="#span-id-插入节点-3-3-插入节点-span"><span id="插入节点">3.3.插入节点</span></a>
+<ul>
+<li><a href="#在头部插入">在头部插入</a></li>
+<li><a href="#在尾部插入">在尾部插入</a></li>
+<li><a href="#在指定节点前后插入">在指定节点前后插入</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#span-id-删除节点-3-4-删除节点-span"><span id="删除节点">3.4.删除节点</span></a></li>
+<li><a href="#span-id-遍历-3-5-遍历-span"><span id="遍历">3.5.遍历</span></a>
+<ul>
+<li><a href="#获取迭代器">获取迭代器</a></li>
+<li><a href="#遍历">遍历</a></li>
+<li><a href="#重置迭代器">重置迭代器</a></li>
+</ul></li>
+<li><a href="#span-id-其他操作-3-6-其他操作-span"><span id="其他操作">3.6.其他操作</span></a>
+<ul>
+<li><a href="#复制-list">复制<code>list</code></a></li>
+<li><a href="#查找指定-key">查找指定<code>key</code></a></li>
+<li><a href="#返回指定索引处节点">返回指定索引处节点</a></li>
+<li><a href="#将最后一个节点移到头部">将最后一个节点移到头部</a></li>
+</ul></li>
+<li><a href="#span-id-总结-4-总结-span"><span id="总结">4.总结</span></a></li>
+</ul></li>
+</ul>
+</nav>
+                
+                
+
+<h2 id="span-id-概述-1-概述-span"><span id="概述">1.概述</span></h2>
+
+<p><code>list</code>是一个很常用的数据结构。Redis中实现的<code>list</code>基于双向链表。该实现简单，高效。<code>list</code>是实现其他数据结构的基础结构。</p>
+
+<h2 id="span-id-实现-2-实现-span"><span id="实现">2.实现</span></h2>
+
+<p>所在文件：<code>adlist.h</code>和<code>adlist.c</code>。</p>
+
+<p>list数据结构如下。</p>
+
+<pre><code>// list节点结构
+typedef struct listNode {
+    // 指向前一个节点，head的prev字段为NULL
+    struct listNode *prev;
+    // 指向后一个节点，tail的next字段为NULL
+    struct listNode *next;
+    // 值
+    void *value;
+} listNode;
+
+// list结构
+typedef struct list {
+    // 头指针
+    listNode *head;
+    // 尾指针
+    listNode *tail;
+    // 用于复制值的函数指针
+    void *(*dup)(void *ptr);
+    // 用于释放值得函数指针
+    void (*free)(void *ptr);
+    // 用于比较匹配值的函数指针
+    void (*match)(void *ptr, void *key);
+    // list长度
+    unsigned long len;
+} list;
+</code></pre>
+
+<p><img src="/img/in-post/redis-list/list-structure.png" alt="list结构" /></p>
+
+<p>节点值存放在一个<code>void *</code>中，可以通过设置<code>dup</code>（复制）、<code>free</code>（释放）、<code>match</code>（匹配，比较）自定义对值的操作。</p>
+
+<p>同时定义了一个迭代器结构用于遍历整个list，可以顺序或逆序遍历（以宏<code>AL_START_HEAD</code>和<code>AL_START_TAIL</code>表示）。</p>
+
+<pre><code>typedef struct listIter {
+    // 下个节点
+    listNode *next;
+    // 迭代方向
+    int direction;
+} listIter;
+</code></pre>
+
+<h2 id="span-id-操作-3-操作-span"><span id="操作">3.操作</span></h2>
+
+<h3 id="span-id-创建-3-1-创建-span"><span id="创建">3.1.创建</span></h3>
+
+<p><code>listCreate</code>创建一个新的list。出现错误时，返回NULL。</p>
+
+<pre><code>list *listCreate(void)
+{
+    struct list *list;
+
+    // 分配空间
+    if ((list = zmalloc(sizeof(*list))) == NULL)
+        return NULL;
+    // 所有字段设置为空
+    list-&gt;head = list-&gt;tail = NULL;
+    list-&gt;len = 0;
+    list-&gt;dup = NULL;
+    list-&gt;free = NULL;
+    list-&gt;match = NULL;
+    return list;
+}
+</code></pre>
+
+<h3 id="span-id-销毁-3-2-销毁-span"><span id="销毁">3.2.销毁</span></h3>
+
+<p><code>listRelease</code>销毁这个list。</p>
+
+<pre><code>void listRelease(list *list)
+{
+    unsigned long len;
+    listNode *current, *next;
+
+    current = list-&gt;head;
+    while(len--) {
+        next = current-&gt;next;
+        // 如果自定义了free，使用该函数释放值
+        if (list-&gt;free) list-&gt;free(current-&gt;value);
+        zfree(current);
+        current = next;
+    }
+    zfree(list);
+}
+</code></pre>
+
+<h3 id="span-id-插入节点-3-3-插入节点-span"><span id="插入节点">3.3.插入节点</span></h3>
+
+<p>通过下面几个函数实现在不同的位置插入新节点：</p>
+
+<h4 id="在头部插入">在头部插入</h4>
+
+<p><code>listAddNodeHead</code>在头部插入一个节点。</p>
+
+<pre><code>list *listAddNodeHead(list *list, void *value)
+{
+    listNode *node;
+
+    if ((node = zmalloc(sizeof(*node))) == NULL)
+        return NULL;
+    node-&gt;value = value;
+    if (list-&gt;len == 0) {
+        // list为空
+        list-&gt;head = list-&gt;tail = node;
+        node-&gt;prev = node-&gt;next = NULL;
+    } else {
+        // 修改对应指针指向，让node成为head
+        node-&gt;prev = NULL;
+        node-&gt;next = list-&gt;head;
+        list-&gt;head-&gt;prev = node;
+        list-&gt;head = node;
+    }
+    list-&gt;len++;
+    return list;
+}
+</code></pre>
+
+<h4 id="在尾部插入">在尾部插入</h4>
+
+<p><code>listAddNodeTail</code>在尾部插入一个节点。</p>
+
+<pre><code>list *listAddNodeTail(list *list, void *value)
+{
+    listNode *node;
+
+    if ((node = zmalloc(sizeof(*node))) == NULL)
+        return NULL;
+    node-&gt;value = value;
+    if (list-&gt;len == 0) {
+        // list为空
+        list-&gt;head = list-&gt;tail = node;
+        node-&gt;prev = node-&gt;next = NULL;
+    } else {
+        // 修改对应指针指向，让node成为tail
+        node-&gt;prev = list-&gt;tail;
+        list-&gt;tail-&gt;next = node;
+        list-&gt;tail = node;
+    }
+    list-&gt;len++;
+    return list;
+}
+</code></pre>
+
+<h4 id="在指定节点前后插入">在指定节点前后插入</h4>
+
+<p><code>listInsertNode</code>在指定节点处插入节点。<code>after</code>标志指示在节点前还是节点后插入。</p>
+
+<pre><code>list *listInsertNode(list *list, listNode *old_node, void *value, int after) {
+    listNode *node;
+
+    if ((node = zmalloc(sizeof(*node))) == NULL)
+        return NULL;
+    node-&gt;value = value;
+    if (after) {
+        // 在old_node之后插入
+        node-&gt;prev = old_node;
+        node-&gt;next = old_node-&gt;next;
+        // 在尾部后插入，需要更新尾部
+        if (list-&gt;tail == old_node) {
+            list-&gt;tail = node;
+        }
+    } else {
+        // 在old_node之前插入
+        node-&gt;next = old_node;
+        node-&gt;prev = old_node-&gt;prev;
+        // 在头部前插入，需要更新头部
+        if (list-&gt;head == old_node) {
+            list-&gt;head = node;
+        }
+    }
+    // 修正node的前后节点的指向
+    if (node-&gt;prev != NULL) {
+        node-&gt;prev-&gt;next = node;
+    }
+    if (node-&gt;next != NULL) {
+        node-&gt;next-&gt;prev = node;
+    }
+    list-&gt;len++;
+    return list;
+}
+</code></pre>
+
+<h2 id="span-id-删除节点-3-4-删除节点-span"><span id="删除节点">3.4.删除节点</span></h2>
+
+<p><code>listDelNode</code>删除指定节点。</p>
+
+<pre><code>void listDelNode(list *list, listNode *node)
+{
+    // 不是头部
+    if (node-&gt;prev)
+        node-&gt;prev-&gt;next = node-&gt;next;
+    // 是头部，删除该节点需要修正head
+    else
+        list-&gt;head = node-&gt;next;
+
+    // 不是尾部
+    if (node-&gt;next)
+        node-&gt;next-&gt;prev = node-&gt;prev;
+    // 是尾部，删除该节点需要修正tail
+    else
+        list-&gt;tail = node-&gt;prev;
+
+    // 如果自定义free，使用该函数释放value
+    if (list-&gt;free) list-&gt;free(node-&gt;value);
+    zfree(node);
+    list-&gt;len--;
+}
+</code></pre>
+
+<h2 id="span-id-遍历-3-5-遍历-span"><span id="遍历">3.5.遍历</span></h2>
+
+<p><code>list</code>提供遍历器，可以实现顺序或逆序遍历</p>
+
+<h3 id="获取迭代器">获取迭代器</h3>
+
+<p><code>listGetIterator</code>获取一个list的迭代器，方向由<code>direction</code>指定。</p>
+
+<pre><code>listIter *listGetIterator(list *list, int direction)
+{
+    listIter *iter;
+
+    if ((iter = zmalloc(sizeof(*iter))) == NULL) return NULL;
+    // 顺序
+    if (direction == AL_START_HEAD)
+        iter-&gt;next = list-&gt;head;
+    // 逆序
+    else
+        iter-&gt;next = list-&gt;tail;
+    iter-&gt;direction = direction;
+    return iter;
+}
+</code></pre>
+
+<p><code>listGetIterator</code>获取的迭代器需要调用<code>listReleaseIterator</code>释放。</p>
+
+<pre><code>void listReleaseIterator(listIter *iter) {
+    zfree(iter);
+}
+</code></pre>
+
+<h3 id="遍历">遍历</h3>
+
+<p><code>listNext</code>返回迭代器的当前值，并将其后移一位指向下一个值。</p>
+
+<pre><code>listNode *listNext(listIter *iter)
+{
+    listNode *current = iter-&gt;next;
+
+    if (current != NULL) {
+        // 顺序
+        if (iter-&gt;direction == AL_START_HEAD)
+            iter-&gt;next = current-&gt;next;
+        // 逆序
+        else
+            iter-&gt;next = current-&gt;prev;
+    }
+    return current;
+}
+</code></pre>
+
+<h3 id="重置迭代器">重置迭代器</h3>
+
+<p>遍历结束之后，如果需要重新遍历。可以重置迭代器，不用创新创建。重置时可以选择从头部还是尾部开始遍历。</p>
+
+<p><code>listRewind</code>重置迭代器，可以重新顺序遍历。</p>
+
+<pre><code>void listRewind(list *list, listIter *li) {
+    li-&gt;next = list-&gt;head;
+    li-&gt;direction = AL_START_HEAD;
+}
+</code></pre>
+
+<p><code>listRewindTail</code>重置迭代器，可以重新逆序遍历。</p>
+
+<pre><code>void listRewindTail(list *list, listIter *li) {
+    li-&gt;next = list-&gt;tail;
+    li-&gt;direction = AL_START_TAIL;
+}
+</code></pre>
+
+<h2 id="span-id-其他操作-3-6-其他操作-span"><span id="其他操作">3.6.其他操作</span></h2>
+
+<h3 id="复制-list">复制<code>list</code></h3>
+
+<p><code>listDup</code>复制当前<code>list</code>，返回一个新的<code>list</code>。</p>
+
+<pre><code>list *listDup(list *orig)
+{
+    list *copy;
+    listIter *iter;
+    listNode *node;
+
+    if ((copy = listCreate()) == NULL)
+        return NULL;
+    copy-&gt;dup = orig-&gt;dup;
+    copy-&gt;free = orig-&gt;free;
+    copy-&gt;match = orig-&gt;match;
+    iter = listGetIterator(orig, AL_START_HEAD);
+    while((node = listNext(iter)) != NULL) {
+        void *value;
+
+        if (copy-&gt;dup) {
+            // 如果自定义了dup，使用该函数复制值
+            value = copy-&gt;dup(node-&gt;value);
+            if (value == NULL) {
+                // 空间分配失败，清理，返回NULL
+                listRelease(copy);
+                listReleaseIterator(iter);
+                return NULL;
+            }
+        } else {
+            value = node-&gt;value;
+        }
+        if (listAddNodeTail(copy, value) == NULL) {
+            // 空间分配失败，清理，退出
+            listRelease(copy);
+            listReleaseIterator(iter);
+            return NULL;
+        }
+    }
+    listReleaseIterator(iter);
+    return copy;
+}
+</code></pre>
+
+<h3 id="查找指定-key">查找指定<code>key</code></h3>
+
+<p><code>listSearchKey</code>遍历<code>list</code>查找指定的<code>key</code>。</p>
+
+<pre><code>listNode *listSearchKey(list *list, void *key)
+{
+    listIter *iter;
+    listNode *node;
+
+    iter = listGetIterator(list, AL_START_HEAD);
+    while((node = listNext(iter)) != NULL) {
+        if (list-&gt;match) {
+            // 如果自定义了match，使用该函数匹配比较
+            if (list-&gt;match(node-&gt;value, key)) {
+                listReleaseIterator(iter);
+                return node;
+            }
+        } else {
+            // 否则直接比较地址
+            if (key == node-&gt;value) {
+                listReleaseIterator(iter);
+                return node;
+            }
+        }
+    }
+    listReleaseIterator(iter);
+    return NULL;
+}
+</code></pre>
+
+<h3 id="返回指定索引处节点">返回指定索引处节点</h3>
+
+<p><code>listIndex</code>返回指定索引处的节点，索引为负时从尾部计算。索引0表示第一个节点，1表示第二个节点，索引-1表示倒数第一个节点等等。</p>
+
+<pre><code>listNode *listIndex(list *list, long index) {
+    listNode *n;
+
+    if (index &lt; 0) {
+        // index &lt; 0时从尾部计算
+        index = (-index)-1;
+        n = list-&gt;tail;
+        while(index-- &amp;&amp; n) n = n-&gt;prev;
+    } else {
+        // index &gt;= 0时从头部计算
+        n = list-&gt;head;
+        while(index-- &amp;&amp; n) n = n-&gt;next;
+    }
+}
+</code></pre>
+
+<h3 id="将最后一个节点移到头部">将最后一个节点移到头部</h3>
+
+<p><code>listRotate</code>将最后一个节点移到头部。</p>
+
+<pre><code>void listRotate(list *list) {
+    listNode *tail = list-&gt;tail;
+
+    if (listLength(list) &lt;= 1) return;
+
+    // 分离尾节点
+    list-&gt;tail = tail-&gt;prev;
+    list-&gt;tail-&gt;next = NULL;
+    // 移到头部
+    list-&gt;head-&gt;prev = tail;
+    tail-&gt;next = list-&gt;head;
+    list-&gt;head = tail;
+}
+</code></pre>
+
+<h2 id="span-id-总结-4-总结-span"><span id="总结">4.总结</span></h2>
+
+<p>C语言缺乏基本的数据结构，在用到指定数据结构时，要么使用第三方实现，要么自己实现。</p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://darjun.github.io"><img src="/img/favicon.png" />Darjun Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/05/22/redis-sds/" data-toggle="tooltip" data-placement="top" title="Redis源码阅读-字符串">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/05/23/redis-dict/" data-toggle="tooltip" data-placement="top" title="Redis源码阅读-dict">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<script src="/js/iDisqus.js"></script>
+<script>
+var disq = new iDisqus('disqus-comment', {
+    forum: 'darjun-blog',
+    api: 'https:\/\/disqusapi.leedarjun.com',
+	site: 'https:\/\/darjun.github.io',
+    mode: 1,
+    timeout: 5000,
+    init: true
+});
+</script>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/javascript" title="javascript">
+                            javascript
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis-source" title="redis-source">
+                            redis-source
+                        </a>
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href="" rel="alternate" type="application/rss+xml" title="Darjun Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:leedarjun@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/darjun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://medium.com/@leedarjun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Darjun Blog 2019
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https'){
+       bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+
+
+
+<script>
+    
+    var _baId = '22b47f8b144298dc77b2beb696c6353d';
+
+    
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-136116022-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

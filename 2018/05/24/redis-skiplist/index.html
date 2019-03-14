@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta name="google-site-verification" content="9vIieCe-Qpd78QOmBl63rGtIVbhY6sYyuxX3j8XWBA4" />
+    <meta name="baidu-site-verification" content="LRrmH41lz7" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Darjun Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://darjun.github.io/img/home-bg-jeep.jpg">
+    <meta property="twitter:image" content="https://darjun.github.io/img/home-bg-jeep.jpg" />
+    
+
+    
+    <meta name="title" content="Redis源码阅读-skiplist" />
+    <meta property="og:title" content="Redis源码阅读-skiplist" />
+    <meta property="twitter:title" content="Redis源码阅读-skiplist" />
+    
+
+    
+    <meta name="description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。">
+    <meta property="og:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
+    <meta property="twitter:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Redis源码阅读-skiplist-大俊的博客 | Darjun Blog</title>
+
+    <link rel="canonical" href="/2018/05/24/redis-skiplist/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+	
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Darjun Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">Tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/background1.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/redis-source" title="redis-source">
+                            redis-source
+                        </a>
+                        
+                    </div>
+                    <h1>Redis源码阅读-skiplist</h1>
+                    <h2 class="subheading">&#34;Learn from redis&#34;</h2>
+                    <span class="meta">
+			Posted by 
+			
+			    darjun
+			 
+			on 
+			Thursday, May 24, 2018
+                        
+                            <span id="/2018/05/24/redis-skiplist/" class="leancloud_visitors meta_data_item" data-flag-title="">
+    <span class="post-meta-item-icon">
+      <span class="octicon octicon-eye"></span> 
+    </span>
+    <i class="fa fa-eye"></i>
+    <span class="old-visitors-count" style="display: none;"></span>
+    <span class="leancloud-visitors-count"></span>
+</span>
+
+
+
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+
+<script>
+	AV.initialize("TXNGsfsFQyzdASwAnCBlyIkr-gzGzoHsz", "5N0H4PYj0GcbhLqSMLfPMf8t");
+</script>
+
+<script type="text/javascript">
+function showTime(Counter) {
+    var query = new AV.Query(Counter);
+    var entries = [];
+    var $visitors = $(".leancloud_visitors");
+
+    $visitors.each(function() {
+        entries.push($(this).attr("id").trim());
+    });
+
+    query.containedIn('url', entries);
+    query.find()
+        .done(function(results) {
+            var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+            var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
+
+            
+            
+            
+            
+
+            for (var i = 0; i < results.length; i++) {
+                var item = results[i];
+                var url = item.get('url');
+                var time = item.get('time');
+                var element = document.getElementById(url);
+
+                $(element).find(COUNT_CONTAINER_REF).text(time);
+            }
+            for (var i = 0; i < entries.length; i++) {
+                var url = entries[i];
+                var element = document.getElementById(url);
+                var countSpan = $(element).find(COUNT_CONTAINER_REF);
+                if (countSpan.text() == '') {
+                    var oldCountSpan = $(element).find(OLD_COUNT_CONTAINER_REF).text();
+                    if(oldCountSpan!=''){
+                        countSpan.text(0+parseInt(oldCountSpan));
+                    }else{
+                        countSpan.text(0);          
+                    }
+                }
+            }
+        })
+        .fail(function(object, error) {
+            console.log("Error: " + error.code + " " + error.message);
+        });
+}
+
+function addCount(Counter) {
+    var $visitors = $(".leancloud_visitors");
+    var url = $visitors.attr('id').trim();
+    var title = $visitors.attr('data-flag-title').trim();
+    var query = new AV.Query(Counter);
+
+    query.equalTo("url", url);
+    query.find({
+        success: function(results) {
+            if (results.length > 0) {
+                var counter = results[0];
+                counter.fetchWhenSave(true);
+                counter.increment("time");
+                counter.save(null, {
+                    success: function(counter) {
+                        var $element = $(document.getElementById(url));
+                        $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                    },
+                    error: function(counter, error) {
+                        console.log('Failed to save Visitor num, with error message: ' + error.message);
+                    }
+                });
+            } else {
+                var newcounter = new Counter();
+                 
+                var acl = new AV.ACL();
+                acl.setPublicReadAccess(true);
+                acl.setPublicWriteAccess(true);
+                newcounter.setACL(acl);
+                 
+                newcounter.set("title", title);
+                newcounter.set("url", url);
+                var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
+                var $element = $(document.getElementById(url));
+                var oldCountSpan = $element.find(OLD_COUNT_CONTAINER_REF).text();
+                if(oldCountSpan!=''){
+                    newcounter.set("time", parseInt(oldCountSpan)+1);
+                }else{
+ 	                    newcounter.set("time",  1);
+                }
+                newcounter.save(null, {
+                    success: function(newcounter) {
+                        var $element = $(document.getElementById(url));
+                        $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+                    },
+                    error: function(newcounter, error) {
+                        console.log('Failed to create');
+                    }
+                });
+            }
+        },
+        error: function(error) {
+            console.log('Error:' + error.code + " " + error.message);
+        }
+    });
+}
+$(function() {
+    var Counter = AV.Object.extend("Counter");
+    
+    
+    if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+    } else {
+        showTime(Counter);
+    }
+});
+</script>
+
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#span-id-概述-概述-span"><span id="概述">概述</span></a></li>
+<li><a href="#span-id-实现结构-实现结构-span"><span id="实现结构">实现结构</span></a></li>
+<li><a href="#span-id-跳跃表操作-3-跳跃表操作-span"><span id="跳跃表操作">3.跳跃表操作</span></a>
+<ul>
+<li><a href="#span-id-创建跳跃表-3-1-创建跳跃表-span"><span id="创建跳跃表">3.1.创建跳跃表</span></a></li>
+<li><a href="#span-id-销毁跳跃表-3-2-销毁跳跃表-span"><span id="销毁跳跃表">3.2.销毁跳跃表</span></a></li>
+<li><a href="#span-id-插入节点-3-3-插入节点-span"><span id="插入节点">3.3.插入节点</span></a></li>
+<li><a href="#span-id-范围-3-4-范围-span"><span id="范围">3.4.范围</span></a>
+<ul>
+<li><a href="#span-id-数值范围-3-4-1-数值范围-span"><span id="数值范围">3.4.1.数值范围</span></a></li>
+<li><a href="#span-id-字典序范围-3-4-2-字典序范围-span"><span id="字典序范围">3.4.2.字典序范围</span></a></li>
+</ul></li>
+<li><a href="#span-id-删除节点-3-5-删除节点-span"><span id="删除节点">3.5.删除节点</span></a>
+<ul>
+<li><a href="#span-id-删除指定score和obj的节点-3-5-1-删除指定score和obj的节点-span"><span id="删除指定score和obj的节点">3.5.1.删除指定score和obj的节点</span></a></li>
+<li><a href="#span-id-删除一个score范围内的节点-3-5-2-删除一个score范围内的节点-span"><span id="删除一个score范围内的节点">3.5.2.删除一个score范围内的节点</span></a></li>
+<li><a href="#span-id-删除一个字典序范围内的节点-3-5-2-删除一个字典序范围内的节点-span"><span id="删除一个字典序范围内的节点">3.5.2.删除一个字典序范围内的节点</span></a></li>
+<li><a href="#span-id-删除一个rank范围内的节点-3-5-4-删除一个rank范围内的节点-span"><span id="删除一个rank范围内的节点">3.5.4.删除一个rank范围内的节点</span></a></li>
+</ul></li>
+<li><a href="#span-id-查询-3-6-查询-span"><span id="查询">3.6.查询</span></a>
+<ul>
+<li><a href="#span-id-查找score和obj的rank-3-6-1-查找score和obj的rank-span"><span id="查找score和obj的rank">3.6.1.查找score和obj的rank</span></a></li>
+<li><a href="#span-id-查找某个rank的节点-3-6-2-查找某个rank的节点-span"><span id="查找某个rank的节点">3.6.2.查找某个rank的节点</span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#span-id-总结-4-总结-span"><span id="总结">4.总结</span></a></li>
+</ul></li>
+</ul>
+</nav>
+                
+                
+
+<h2 id="span-id-概述-概述-span"><span id="概述">概述</span></h2>
+
+<p>跳跃表是<code>zset</code>（有序集合）的基础数据结构。跳跃表可以高效地保持元素有序，并且实现相比平衡树简单、直观。Redis的跳跃表是基于William Pugh在<a href="https://www.epaperpress.com/sortsearch/download/skiplist.pdf">《Skip lists: a probabilistic alternative to balanced trees》</a>中描述的算法实现的。做了以下几点改动：
+1. 允许重复分数。
+2. 比较不仅会涉及键，还可能涉及节点数据（键相等时）。
+3. 有一个后退指针，所以是一个双向链表。便于实现<code>ZREVRANGE</code>等命令。</p>
+
+<h2 id="span-id-实现结构-实现结构-span"><span id="实现结构">实现结构</span></h2>
+
+<p>实现在<code>redis.h</code>和<code>t_zset.c</code>两个文件中。</p>
+
+<p>跳跃表的基本结构如下（来自William Pugh的论文）：
+<img src="/img/in-post/redis-skiplist/skiplist-structure.png" alt="skiplist结构" /></p>
+
+<ul>
+<li>表头：维护跳跃表各层的指针。</li>
+<li>中间节点：维护节点数据和各层的前进后退指针。</li>
+<li>层：保存指向该层下一个节点的指针和与下个节点的间隔（span）。为了提高查找效率，程序总是先从高层开始访问，然后随着范围的缩小慢慢降低层次。</li>
+<li>表尾：全部为NULL，表示跳跃表各层的末尾。</li>
+</ul>
+
+<p>跳跃表的一个节点用结构<code>zskiplistNode</code>表示：</p>
+
+<pre><code>typedef struct zskiplistNode {
+    // redis中通用对象，用来保存节点数据
+    robj *obj;
+    // 分数
+    double score;
+    // 后退指针，只有第0层有效
+    struct zskiplistNode *backward;
+    // 各层的前进指针及与下一个节点的间隔
+    struct zskiplistLevel {
+        struct zskiplistNode *forward;
+        unsigned int span;
+    } level[];
+} zskiplist;
+</code></pre>
+
+<p>跳跃表用结构<code>zskiplist</code>表示：</p>
+
+<pre><code>typedef struct zskiplist {
+    // 跳跃表的头部和尾部
+    struct zskiplistNode *header, *tail;
+    // 跳跃表的长度
+    unsigned long length;
+    // 层高
+    int level;
+} zskiplist;
+</code></pre>
+
+<h2 id="span-id-跳跃表操作-3-跳跃表操作-span"><span id="跳跃表操作">3.跳跃表操作</span></h2>
+
+<h3 id="span-id-创建跳跃表-3-1-创建跳跃表-span"><span id="创建跳跃表">3.1.创建跳跃表</span></h3>
+
+<p>调用<code>zslCreate</code>创建一个空的跳跃表。</p>
+
+<pre><code>// 创建一个层高为level的跳跃表节点，以score为分数，obj为数据
+zskiplistNode *zslCreateNode(int level, double score, robj *obj) {
+    zskiplistNode *zn = zmalloc(sizeof(*zn)+level*sizeof(struct zskiplistLevel));
+    zn-&gt;score = score;
+    zn-&gt;obj = obj;
+    return zn;
+}
+
+zskiplist *zslCreate(void) {
+    int j;
+    zskiplist *zsl;
+
+    // 分配空间
+    zsl = zmalloc(sizeof(*zsl));
+    // 层高初始化为1，插入数据时可能会增加
+    zsl-&gt;level = 1;
+    // 长度为0
+    zsl-&gt;length = 0;
+    // 分配头部节点，层高ZSKIPLIST_MAXLEVEL（当前值为32，对于2^32个元素足够了）
+    zsl-&gt;header = zslCreateNode(ZSKIPLIST_MAXLEVEL,0,NULL);
+    // 初始化头部各层的指针和间隔
+    for (j = 0; j &lt; ZSKIPLIST_MAXLEVEL; j++) {
+        zsl-&gt;header-&gt;level[j].forward = NULL;
+        zsl-&gt;header-&gt;level[j].span = 0;
+    }
+    zsl-&gt;header-&gt;backward = NULL;
+    zsl-&gt;tail = NULL;
+    return zsl;
+}
+</code></pre>
+
+<h3 id="span-id-销毁跳跃表-3-2-销毁跳跃表-span"><span id="销毁跳跃表">3.2.销毁跳跃表</span></h3>
+
+<p>跳跃表结构使用完后，需要调用<code>zslFree</code>来释放。</p>
+
+<pre><code>void zslFreeNode(zskiplistNode *node) {
+    // obj是redis对象，使用引用计数管理的
+    decrRefCount(node-&gt;obj);
+    zfree(node);
+}
+
+void zslFree(zskiplist *zsl) {
+    // 跟踪第0层（最下面一层）的forward指针可以遍历所有元素
+    zskiplistNode *node = zsl-&gt;header-&gt;level[0].forward, *next;
+
+    // 释放头部节点
+    zfree(zsl-&gt;header);
+    while(node) {
+        next = node-&gt;level[0].forward;
+        // 释放当前节点
+        zslFreeNode(node);
+        node = next;
+    }
+    // 释放zskiplist结构
+    zfree(zsl);
+}
+</code></pre>
+
+<h3 id="span-id-插入节点-3-3-插入节点-span"><span id="插入节点">3.3.插入节点</span></h3>
+
+<p>向跳跃表中插入节点时，以Redis对象<code>obj</code>和与之关联的分数<code>score</code>调用<code>zslInsert</code>。</p>
+
+<pre><code>zskiplistNode *zslInsert(zskiplist *zsl, double score, robj *obj) {
+    // update记录的是各层新节点插入位置的前一个节点
+    zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
+    unsigned int rank[ZSKIPLIST_MAXLEVEL];
+    int i, level;
+
+    // 分数不能是NaN
+    redisAssert(!isnan(score));
+    x = zsl-&gt;header;
+    // 从最高层向下处理，每次遇到使score和obj介于其中的x和x-&gt;forward，则新节点必定在x和x-&gt;forward之间
+    // 到下一层更精准的定位插入位置。下一层继续从位置x前进查找，因为由上一层得知新节点必然在x之后。
+    // 记录节点x在跳跃表中的rank。
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        // x节点的rank由上一层计算得到
+        rank[i] = i == (zsl-&gt;level-1) ? 0 : rank[i+1];
+        // score相同时，比较两个obj
+        while (x-&gt;level[i].forward &amp;&amp;
+            (x-&gt;level[i].forward-&gt;score &lt; score ||
+                (x-&gt;level[i].forward-&gt;score == score &amp;&amp;
+                compareStringObjects(x-&gt;level[i].forward-&gt;obj,obj) &lt; 0))) {
+            // 计算rank
+            rank[i] += x-&gt;level[i].span;
+            // 移向下一个继续判断
+            x = x-&gt;level[i].forward;
+        }
+        // 新节点要插入x与x-&gt;level[i]-&gt;forward之间，x-&gt;level[i]需要做相应调整（span，forward等字段）
+        update[i] = x;
+    }
+
+    // 因为允许重复score，所以这里并没有做重复判断。应该由调用者测试新插入的对象是否已经存在。
+
+    // 随机新节点层高
+    level = zslRandomLevel();
+    if (level &gt; zsl-&gt;level) {
+        // 新节点比当前层高大
+        for (i = zsl-&gt;level; i &lt; level; i++) {
+            rank[i] = 0;
+            update[i] = zsl-&gt;header;
+            // 没有节点，span是整个跳跃表的长度
+            update[i]-&gt;level[i].span = zsl-&gt;length;
+        }
+    }
+    // 创建跳跃表节点
+    x = zslCreateNode(level,score,obj);
+    for (i = 0; i &lt; level; i++) {
+        x-&gt;level[i].forward = update[i]-&gt;level[i].forward;
+        update[i]-&gt;level[i].forward = x;
+        // 更新span
+        // (rank[0] - rank[i])是第i层中新节点与前一个节点的距离（严格说应该是第0层新节点的前一个节点与第i层新节点的前一个节点间距离）
+        // 新节点将update[i]后面的间隔分成两部分。
+        x-&gt;level[i].span = update[i]-&gt;level[i].span - （rank[0] - rank[i]);
+        // +1算上新节点
+        update[i]-&gt;level[i].span = (rank[0] - rank[i]) + 1;
+    }
+
+    // 未更新的层需要增加新节点之前的节点span，因为后面多了一个新节点
+    for (i = level; i &lt; zsl-&gt;level; i++) {
+        update[i]-&gt;level[i].span++;
+    }
+
+    // 更新后退节点
+    x-&gt;backward = (update[0] == zsl-&gt;header) ? NULL : update[0];
+    if (x-&gt;level[0].forward)
+        x-&gt;level[0].forward-&gt;backward = x;
+    else
+        zsl-&gt;tail = x;
+    zsl-&gt;length++;
+    return x;
+}
+</code></pre>
+
+<p>随机层高算法：</p>
+
+<pre><code>int zslRandomLevel(void) {
+    int level = 1;
+    // level每次循环有1/4概率增加层高
+    while ((random()&amp;0xFFFF) &lt; (ZSKIPLIST_P * 0xFFFF))
+        level += 1;
+    return (level&lt;ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;
+}
+</code></pre>
+
+<h3 id="span-id-范围-3-4-范围-span"><span id="范围">3.4.范围</span></h3>
+
+<h4 id="span-id-数值范围-3-4-1-数值范围-span"><span id="数值范围">3.4.1.数值范围</span></h4>
+
+<p><code>zslValueGteMin</code>判断<code>value</code>是否大于等于（由<code>minex</code>决定是否取等于）范围<code>spec</code>中的最小值：</p>
+
+<pre><code>static int zslValueGteMin(double value, zrangespec *spec) {
+    return spec-&gt;minex ? (value &gt; spec-&gt;min) : (value &gt;= spec-&gt;min);
+}
+</code></pre>
+
+<p><code>zslValueGteMax</code>判断<code>value</code>是否小于等于（由<code>maxex</code>决定是否取等于）范围<code>spec</code>中的最大值：</p>
+
+<pre><code>static int zslValueLteMax(double value, zrangespec *spec) {
+    return spec-&gt;maxex ? (value &lt; spec-&gt;max) : (value &lt;= spec-&gt;max);
+}
+</code></pre>
+
+<p><code>zslIsInRange</code>判断跳跃表中是否有节点处于范围<code>range</code>中。这里有个前提，所有节点的<code>score</code>都相等。</p>
+
+<pre><code>int zslIsInRange(zskiplist *zsl, zrangespec *range) {
+    zskiplistNode *x;
+
+    // 范围大小为0
+    if (range-&gt;min &gt; range-&gt;max || 
+            (range-&gt;min == range-&gt;max &amp;&amp; (range-&gt;minex || range-&gt;maxex)))
+        return 0;
+    x = zsl-&gt;tail;
+    // 跳跃表中最大值不大于范围range的最小值
+    if (x == NULL || !zslValueGteMin(x-&gt;score,range))
+        return 0;
+    // 跳跃表中最小值不小于范围range的最大值
+    x = zsl-&gt;header-&gt;level[0].forward;
+    if (x == NULL || !zslValueLteMax(x-&gt;score,range))
+        return 0;
+    return 1;
+}
+</code></pre>
+
+<p><code>zslFirstInRange</code>返回跳跃表中处于范围<code>range</code>中的第一个节点：</p>
+
+<pre><code>zskiplistNode *zslFirstInRange(zskiplist *zsl, zrangespec *range) {
+    zskiplistNode *x;
+    int i;
+
+    // 跳跃表中没有节点处于范围range内
+    if (!zslIsInRange(zsl,range)) return NULL;
+
+    x = zsl-&gt;header;
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        // 找到最后一个小于range最小值的节点
+        while (x-&gt;level[0].forward &amp;&amp;
+            !zslValueGteMin(x-&gt;level[i].forward-&gt;score,range))
+                x = x-&gt;level[i].forward;
+    }
+
+    // x为小于range最小值的最大节点，x-&gt;level[0].forward为大于range最小值的最小节点
+    x = x-&gt;level[0].forward;
+    redisAssert(x != NULL);
+
+    if (!zslValueLteMax(x-&gt;score,range)) return NULL;
+    return x;
+}
+</code></pre>
+
+<p><code>zslLastInRange</code>返回跳跃表中处于范围<code>range</code>中的最后一个节点：</p>
+
+<pre><code>zskiplistNode *zslLastInRange(zskiplist *zsl, zrangespec *range) {
+    zskiplistNode *x;
+    int i;
+
+    // 跳跃表中没有节点处于范围range内
+    if (!zslIsInRange(zsl,range)) return NULL;
+
+    x = zsl-&gt;header;
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        // 找到小于等于range最大值的最后一个节点
+        while (x-&gt;level[0].forward &amp;&amp;
+            !zslValueLteMax(x-&gt;level[i].forward-&gt;score,range))
+                x = x-&gt;level[i].forward;
+    }
+
+    redisAssert(x != NULL);
+
+    if (!zslValueGteMin(x-&gt;score,range)) return NULL;
+    return x;
+}
+</code></pre>
+
+<h4 id="span-id-字典序范围-3-4-2-字典序范围-span"><span id="字典序范围">3.4.2.字典序范围</span></h4>
+
+<p><code>zslLexValueGteMin</code>判断<code>value</code>是否大于等于（由<code>minex</code>决定是否取等于）范围<code>spec</code>的最小值。通过字典序来比较。</p>
+
+<pre><code>static int zslLexValueGteMin(robj *value, zlexrangespec *spec) {
+    return spec-&gt;minex ?
+        (compareStringObjectsForLexRange(value,spec-&gt;min) &gt; 0) :
+        (compareStringObjectsForLexRange(value,spec-&gt;min) &gt;= 0);
+}
+</code></pre>
+
+<p>这里使用<code>compareStringObjectsForLexRange</code>来比较字典序：</p>
+
+<pre><code>int compareStringObjectsForLexRange(robj *a, robj *b) {
+    if (a == b) return 0;
+
+    // minstring和maxstring是Redis预定义的用于表示最小和最大字符串的
+    if (a == shared.minstring || b == shared.maxstring) return -1;
+    if (a == shared.maxstring || b == shared.minstring) return 1;
+    return compareStringObjects(a,b);
+}
+</code></pre>
+
+<p><code>zslLexValueLteMax</code>判断<code>value</code>是否小于等于（由<code>maxex</code>决定是否取等于）范围<code>spec</code>的最大值。通过字典序来比较。</p>
+
+<pre><code>static int zslLexValueLteMax(robj *value, zlexrangespec *spec) {
+    return spec-&gt;maxex ?
+        (compareStringObjectsForLexRange(value,spec-&gt;max) &lt; 0) :
+        (compareStringObjectsForLexRange(value,spec-&gt;max) &lt;= 0);
+}
+</code></pre>
+
+<p><code>zslIsInLexRange</code>判断跳跃表中是否有节点的数据<code>obj</code>处于范围<code>range</code>中。这里有个前提，所有节点的<code>score</code>都相等。</p>
+
+<pre><code>int zslIsInLexRange(zskiplist *zsl, zlexrangespec *range) {
+    zskiplistNode *x;
+
+    // 范围为空
+    if (compareStirngObjectsForLexRange(range-&gt;min,range-&gt;max) &gt; 1 ||
+            (compareStringObjects(range-&gt;min,range-&gt;max) == 0 &amp;&amp;
+            (range-&gt;minex || range-&gt;maxex)))
+        return 0;
+    x = zsl-&gt;tail;
+    // 跳跃表最大值小于范围range的最小值
+    if (x == NULL || !zslLexValueGteMin(x-&gt;obj,range))
+        return 0;
+    x = zsl-&gt;header-&gt;level[0].forward;
+    // 跳跃表最小值大于范围range的最大值
+    if (x == NULL || !zslLexValueLteMax(x-&gt;obj,range))
+        return 0;
+    return 1;
+}
+</code></pre>
+
+<p><code>zslFirstInLexRange</code>返回跳跃表处于范围<code>range</code>中的第一个节点：</p>
+
+<pre><code>zskiplistNode *zslFirstInLexRange(zskiplist *zsl, zlexrangespec *spec) {
+    zskiplistNode *x;
+    int i;
+
+    // 跳跃表没有处于范围range中的节点
+    if (!zslIsInLexRange(zsl,range)) return NULL;
+
+    x = zsl-&gt;header;
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        // 找到最后一个小于range最小值的节点
+        while (x-&gt;level[i].forward &amp;&amp;
+            !zslLexValueGteMin(x-&gt;level[i].forward-&gt;obj,range))
+                x = x-&gt;level[i].forward;
+    }
+
+    // x为最后一个小于range最小值的节点，x-&gt;level[0].forward为第一个大于range最小值的节点
+    x = x-&gt;level[0].forward;
+    redisAssert(x != NULL);
+
+    // x是第一个大于range最小值的节点，必须满足小于range的最大值
+    if (!zslLexValueLteMax(x-&gt;obj,range)) return NULL;
+    return x;
+}
+</code></pre>
+
+<p><code>zslLastInLexRange</code>返回跳跃表处于范围<code>range</code>中的最后一个节点：</p>
+
+<pre><code>zskiplistNode *zslLastInLexRange(zskiplist *zsl, zlexrangespec *range) {
+    zskiplistNode *x;
+    int i;
+
+    // 跳跃表没有处于范围range中的节点
+    if (!zslIsInLexRange(zsl,range)) return NULL;
+
+    x = zsl-&gt;header;
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        // 找到小于等于range最大值的最后一个节点
+        while (x-&gt;level[i].forward &amp;&amp;
+            zslLexValueLteMax(x-&gt;level[i].forward-&gt;obj,range))
+                x = x-&gt;level[i].forward;
+    }
+
+    redisAssert(x != NULL);
+
+    // x是小于range最大值的最后一个节点，必须满足大于range最小值这个限制
+    if (!zslLexValueGteMin(x-&gt;obj,range)) return NULL;
+    return x;
+}
+</code></pre>
+
+<h3 id="span-id-删除节点-3-5-删除节点-span"><span id="删除节点">3.5.删除节点</span></h3>
+
+<p>Redis中实现了跳跃表的多种删除方式。下面依次介绍：</p>
+
+<h4 id="span-id-删除指定score和obj的节点-3-5-1-删除指定score和obj的节点-span"><span id="删除指定score和obj的节点">3.5.1.删除指定score和obj的节点</span></h4>
+
+<p>这是一种最基本的删除方式，由分数<code>score</code>和对象<code>obj</code>指定需要删除的节点。调用<code>zslDelete</code>完成这个任务。</p>
+
+<pre><code>int zslDelete(zskiplist *zsl, double score, robj *obj) {
+    // 各层需要修改的节点
+    zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
+    int i;
+
+    x = zsl-&gt;header;
+    // 与zslInsert操作一致
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        while (x-&gt;level[i].forward &amp;&amp;
+            (x-&gt;level[i].forward-&gt;score &lt; score ||
+                (x-&gt;level[i].forward-&gt;score == score &amp;&amp;
+                compareStringObjects(x-&gt;level[i].forward-&gt;obj,obj) &lt; 0)))
+            x = x-&gt;level[i].forward;
+        update[i] = x;
+    }
+
+    // 可能有多个节点拥有相同score，所以这里需要比较对象
+    x = x-&gt;level[0].forward;
+    if (x &amp;&amp; x-&gt;score == score &amp;&amp; equalStringObjects(x-&gt;obj,obj)) {
+        // 从跳跃表中删除该节点
+        zslDeleteNode(zsl, x, update);
+        // 释放节点
+        zslFreeNode(x);
+        return 1;
+    }
+    // 没找到
+    return 0;
+}
+</code></pre>
+
+<p><code>zslDelete</code>调用通用的节点删除函数<code>zslDeleteNode</code>，<code>zslDeleteNode</code>被其他几个删除函数使用。</p>
+
+<pre><code>void zslDeleteNode(zskiplist *zsl, zskiplistNode *x, zskiplistNode **update) {
+    int i;
+    for (i = 0; i &lt; zsl-&gt;level; i++) {
+        if (update[i]-&gt;level[i].forward == x) {
+            // 待删除的节点在该层存在，调整forward指针和span
+            // 两个间隔合并为一个，同时减少了一个节点
+            update[i]-&gt;level[i].span += x-&gt;level[i].span - 1;
+            update[i]-&gt;level[i].forward = x-&gt;level[i].forward;
+        } else {
+            // 该层没有这个节点，只需要减少span
+            update[i]-&gt;level[i].span -= 1;
+        }
+    }
+    if (x-&gt;level[0].forward) {
+        // 更新前进节点的后退指针
+        x-&gt;level[0].forward-&gt;backward = x-&gt;backward;
+    } else {
+        // x是跳跃表尾部
+        zsl-&gt;tail = x-&gt;backward;
+    }
+    // 如果某一层只有该节点，该节点删除后已经没有节点了，直接移除这一层。但是跳跃表至少有一层。
+    while (zsl-&gt;level &gt; 1 &amp;&amp; zsl-&gt;header-&gt;level[zsl-&gt;level-1].forward == NULL) {
+        zsl-&gt;level--;
+    }
+    zsl-&gt;length--;
+}
+</code></pre>
+
+<h4 id="span-id-删除一个score范围内的节点-3-5-2-删除一个score范围内的节点-span"><span id="删除一个score范围内的节点">3.5.2.删除一个score范围内的节点</span></h4>
+
+<p>删除分数介于<code>min</code>和<code>max</code>之间的所有节点。函数<code>zslDeleteRangeByScore</code>完成这个功能。范围由<code>zrangespec</code>指定：</p>
+
+<pre><code>typedef struct {
+    // 最小最大值
+    double min, max;
+    // 是否包括最小值/最大值
+    int minex, maxex;
+} zrangespec;
+</code></pre>
+
+<pre><code>// 删除的节点也需要从dict中删除
+unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dict) {
+    zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
+    unsigned long removed = 0;
+    int i;
+
+    x = zsl-&gt;header;
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        while (x-&gt;level[i].forward &amp;&amp; (range-&gt;minex ?
+            x-&gt;level[i].forward-&gt;score &lt;= range-&gt;min :
+            x-&gt;level[i].forward-&gt;score &lt; range-&gt;min))
+                x = x-&gt;level[i].forward;
+        update[i] = x;
+    }
+
+    // x是最后一个 &lt; 或 &lt;= min的节点了。
+    x = x-&gt;level[0].forward;
+
+    // 依次删除每个处于范围内的节点。因为是依次向后删除，所以update都是适用的。
+    while (x &amp;&amp;
+           (range-&gt;maxex ? x-&gt;score &lt; range-&gt;max : x-&gt;score &lt;= range-&gt;max))
+    {
+        zskiplistNode *next = x-&gt;level[0].forward;
+        // 使用通用节点删除函数zslDeleteNode
+        zslDeleteNode(zsl,x,update);
+        // 从dict中删除这个对象
+        dictDelete(dict,x-&gt;obj);
+        zslFreeNode(x);
+        removed++;
+        x = next;
+    }
+    return removed;
+}
+</code></pre>
+
+<h4 id="span-id-删除一个字典序范围内的节点-3-5-2-删除一个字典序范围内的节点-span"><span id="删除一个字典序范围内的节点">3.5.2.删除一个字典序范围内的节点</span></h4>
+
+<p>函数<code>zslDeleteRangeByLex</code>删除以字典序表示的范围内所有节点。这个方法有个前提条件，<strong>跳跃表中的所有score都是相同的</strong>。在概述中提到过，如果<code>score</code>相同，会比较<code>obj</code>。</p>
+
+<p>字典序范围用结构<code>zlexrangespec</code>表示：</p>
+
+<pre><code>typedef struct {
+    // 最小最大值
+    robj *min, *max;
+    // 是否包括最小/大值
+    int minex, maxex;
+} zlexrangespec;
+</code></pre>
+
+<pre><code>unsigned long zslDeleteRangeByLex(zskiplist *zsl, zlexrangespec *range, dict *dict) {
+    zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
+    unsigned long removed = 0;
+    int i;
+
+    x = zsl-&gt;header;
+    // 除了使用zslLexValueGteMin比较，其他与函数zslDeleteRangeByScore基本相同
+    // zslLexValueGteMin判断obj是否大于等于zlexrangespec的最小值
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        while (x-&gt;level[i].forward &amp;&amp;
+            !zslLexValueGteMin(x-&gt;level[i].forward-&gt;obj,range))
+                x = x-&gt;level[i].forward;
+        update[i] = x;
+    }
+
+    // x是最后一个 &lt; 或 &lt;= min的节点了
+    x = x-&gt;level[0].forward;
+
+    while (x &amp;&amp; zslLexValueLteMax(x-&gt;obj,range)) {
+        zskiplistNode *next = x-&gt;level[0].forward;
+        // 使用通用节点删除函数zslDeleteNode
+        zslDeleteNode(zsl,x,update);
+        // 从dict中删除这个对象
+        dictDelete(dict,x-&gt;obj);
+        zslFreeNode(x);
+        removed++;
+        x = next;
+    }
+    return removed;
+}
+</code></pre>
+
+<h4 id="span-id-删除一个rank范围内的节点-3-5-4-删除一个rank范围内的节点-span"><span id="删除一个rank范围内的节点">3.5.4.删除一个rank范围内的节点</span></h4>
+
+<p><code>zslDeleteRangeByRank</code>可以删除一个rank范围内的所有节点。</p>
+
+<pre><code>unsigned long zslDeleteRangeByRank(zskiplist *zsl, unsigned int start, unsigned int end, dict *dict) {
+    zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
+    unsigned long traversed = 0, removed = 0;
+    int i = 0;
+
+    x = zsl-&gt;header;
+    // 排行直接通过span判断即可
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        while (x-&gt;level[i].forward &amp;&amp; (traversed + x-&gt;level[i].span) &lt; start) {
+            traversed += x-&gt;level[i].span;
+            x = x-&gt;level[i].forward;
+        }
+        update[i] = x;
+    }
+
+    traversed++;
+    // x-&gt;level[0].forward是rank为start的节点（因为上面比较是 &lt;start）
+    x = x-&gt;level[0].forward;
+    // 删除节点之后span会改变，使用累计的traversed与end判断
+    while (x &amp;&amp; traversed &lt;= end) {
+        zskiplistNode *next = x-&gt;level[0].forward;
+        // 使用通用节点删除函数zslDeleteNode
+        zslDeleteNode(zsl,x,update);
+        // 从dict中删除这个对象
+        dictDelete(dict,x-&gt;obj);
+        zslFreeNode(x);
+        removed++;
+        traversed++;
+        x = next;
+    }
+    return removed;
+}
+</code></pre>
+
+<h3 id="span-id-查询-3-6-查询-span"><span id="查询">3.6.查询</span></h3>
+
+<h4 id="span-id-查找score和obj的rank-3-6-1-查找score和obj的rank-span"><span id="查找score和obj的rank">3.6.1.查找score和obj的rank</span></h4>
+
+<p>查找跳跃表中由<code>score</code>和<code>obj</code>指定的节点的rank。rank从1开始，没有该节点时返回0。</p>
+
+<pre><code>unsigned long zslGetRank(zskiplist *zsl, double score, robj *o) {
+    zskiplistNode *x;
+    unsigned long rank = 0;
+    int i;
+
+    x = zsl-&gt;header;
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        while (x-&gt;level[i].forward &amp;&amp;
+            (x-&gt;level[i].forward-&gt;score &lt; score ||
+                (x-&gt;level[i].forward-&gt;score == score &amp;&amp;
+                 compareStringObjects(x-&gt;level[i].forward-&gt;obj,o) &lt; 0))) {
+            rank += x-&gt;level[i].span;
+            x = x-&gt;level[i].forward;
+        }
+
+        // x可能等于表头
+        if (x-&gt;obj &amp;&amp; equalStringObjects(x-&gt;obj,o)) {
+            return rank;
+        }
+    }
+    return 0;
+}
+</code></pre>
+
+<h4 id="span-id-查找某个rank的节点-3-6-2-查找某个rank的节点-span"><span id="查找某个rank的节点">3.6.2.查找某个rank的节点</span></h4>
+
+<p>函数<code>zslGetElementByRank</code>查找某个rank的节点。</p>
+
+<pre><code>zskiplistNode *zslGetElementByRank(zskiplist *zsl, unsigned long rank) {
+    zskiplistNode *x;
+    unsigned long traversed = 0;
+    int i = 0;
+
+    x = zsl-&gt;header;
+    // rank可以使用span计算
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        while (x-&gt;level[i].forward &amp;&amp; (traversed + x-&gt;level[i].span) &lt;= rank) {
+            traversed += x-&gt;level[i].span;
+            x = x-&gt;level[i].forward;
+        }
+        if (traversed == rank) {
+            return x;
+        }
+    }
+    return NULL;
+}
+</code></pre>
+
+<h2 id="span-id-总结-4-总结-span"><span id="总结">4.总结</span></h2>
+
+<p>跳跃表实现简单，插入、查找、删除等操作性能都不错。Redis基于William Pugh的算法按照自己的需求做了一些扩展，如允许相同分数、增加后退指针等。</p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://darjun.github.io"><img src="/img/favicon.png" />Darjun Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/05/23/redis-dict/" data-toggle="tooltip" data-placement="top" title="Redis源码阅读-dict">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/11/07/javascript-promise-intro/" data-toggle="tooltip" data-placement="top" title="深入理解Javascript之Promise">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<script src="/js/iDisqus.js"></script>
+<script>
+var disq = new iDisqus('disqus-comment', {
+    forum: 'darjun-blog',
+    api: 'https:\/\/disqusapi.leedarjun.com',
+	site: 'https:\/\/darjun.github.io',
+    mode: 1,
+    timeout: 5000,
+    init: true
+});
+</script>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/javascript" title="javascript">
+                            javascript
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis-source" title="redis-source">
+                            redis-source
+                        </a>
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href="" rel="alternate" type="application/rss+xml" title="Darjun Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:leedarjun@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/darjun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://medium.com/@leedarjun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Darjun Blog 2019
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https'){
+       bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+
+
+
+<script>
+    
+    var _baId = '22b47f8b144298dc77b2beb696c6353d';
+
+    
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-136116022-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

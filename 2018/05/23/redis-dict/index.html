@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta name="google-site-verification" content="9vIieCe-Qpd78QOmBl63rGtIVbhY6sYyuxX3j8XWBA4" />
+    <meta name="baidu-site-verification" content="LRrmH41lz7" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Darjun Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://darjun.github.io/img/home-bg-jeep.jpg">
+    <meta property="twitter:image" content="https://darjun.github.io/img/home-bg-jeep.jpg" />
+    
+
+    
+    <meta name="title" content="Redis源码阅读-dict" />
+    <meta property="og:title" content="Redis源码阅读-dict" />
+    <meta property="twitter:title" content="Redis源码阅读-dict" />
+    
+
+    
+    <meta name="description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。">
+    <meta property="og:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
+    <meta property="twitter:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Redis源码阅读-dict-大俊的博客 | Darjun Blog</title>
+
+    <link rel="canonical" href="/2018/05/23/redis-dict/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+	
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Darjun Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">Tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/post-bg-2015.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/redis-source" title="redis-source">
+                            redis-source
+                        </a>
+                        
+                    </div>
+                    <h1>Redis源码阅读-dict</h1>
+                    <h2 class="subheading">&#34;Learn from redis&#34;</h2>
+                    <span class="meta">
+			Posted by 
+			
+			    Darjun
+			 
+			on 
+			Wednesday, May 23, 2018
+                        
+                            <span id="/2018/05/23/redis-dict/" class="leancloud_visitors meta_data_item" data-flag-title="">
+    <span class="post-meta-item-icon">
+      <span class="octicon octicon-eye"></span> 
+    </span>
+    <i class="fa fa-eye"></i>
+    <span class="old-visitors-count" style="display: none;"></span>
+    <span class="leancloud-visitors-count"></span>
+</span>
+
+
+
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+
+<script>
+	AV.initialize("TXNGsfsFQyzdASwAnCBlyIkr-gzGzoHsz", "5N0H4PYj0GcbhLqSMLfPMf8t");
+</script>
+
+<script type="text/javascript">
+function showTime(Counter) {
+    var query = new AV.Query(Counter);
+    var entries = [];
+    var $visitors = $(".leancloud_visitors");
+
+    $visitors.each(function() {
+        entries.push($(this).attr("id").trim());
+    });
+
+    query.containedIn('url', entries);
+    query.find()
+        .done(function(results) {
+            var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+            var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
+
+            
+            
+            
+            
+
+            for (var i = 0; i < results.length; i++) {
+                var item = results[i];
+                var url = item.get('url');
+                var time = item.get('time');
+                var element = document.getElementById(url);
+
+                $(element).find(COUNT_CONTAINER_REF).text(time);
+            }
+            for (var i = 0; i < entries.length; i++) {
+                var url = entries[i];
+                var element = document.getElementById(url);
+                var countSpan = $(element).find(COUNT_CONTAINER_REF);
+                if (countSpan.text() == '') {
+                    var oldCountSpan = $(element).find(OLD_COUNT_CONTAINER_REF).text();
+                    if(oldCountSpan!=''){
+                        countSpan.text(0+parseInt(oldCountSpan));
+                    }else{
+                        countSpan.text(0);          
+                    }
+                }
+            }
+        })
+        .fail(function(object, error) {
+            console.log("Error: " + error.code + " " + error.message);
+        });
+}
+
+function addCount(Counter) {
+    var $visitors = $(".leancloud_visitors");
+    var url = $visitors.attr('id').trim();
+    var title = $visitors.attr('data-flag-title').trim();
+    var query = new AV.Query(Counter);
+
+    query.equalTo("url", url);
+    query.find({
+        success: function(results) {
+            if (results.length > 0) {
+                var counter = results[0];
+                counter.fetchWhenSave(true);
+                counter.increment("time");
+                counter.save(null, {
+                    success: function(counter) {
+                        var $element = $(document.getElementById(url));
+                        $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                    },
+                    error: function(counter, error) {
+                        console.log('Failed to save Visitor num, with error message: ' + error.message);
+                    }
+                });
+            } else {
+                var newcounter = new Counter();
+                 
+                var acl = new AV.ACL();
+                acl.setPublicReadAccess(true);
+                acl.setPublicWriteAccess(true);
+                newcounter.setACL(acl);
+                 
+                newcounter.set("title", title);
+                newcounter.set("url", url);
+                var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
+                var $element = $(document.getElementById(url));
+                var oldCountSpan = $element.find(OLD_COUNT_CONTAINER_REF).text();
+                if(oldCountSpan!=''){
+                    newcounter.set("time", parseInt(oldCountSpan)+1);
+                }else{
+ 	                    newcounter.set("time",  1);
+                }
+                newcounter.save(null, {
+                    success: function(newcounter) {
+                        var $element = $(document.getElementById(url));
+                        $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+                    },
+                    error: function(newcounter, error) {
+                        console.log('Failed to create');
+                    }
+                });
+            }
+        },
+        error: function(error) {
+            console.log('Error:' + error.code + " " + error.message);
+        }
+    });
+}
+$(function() {
+    var Counter = AV.Object.extend("Counter");
+    
+    
+    if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+    } else {
+        showTime(Counter);
+    }
+});
+</script>
+
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#span-id-概述-1-概述-span"><span id="概述">1.概述</span></a></li>
+<li><a href="#span-id-实现结构-2-实现结构-span"><span id="实现结构">2.实现结构</span></a></li>
+<li><a href="#span-id-dict操作-3-dict操作-span"><span id="dict操作">3.dict操作</span></a>
+<ul>
+<li><a href="#span-id-创建dict-3-1-创建-dict-span"><span id="创建dict">3.1.创建<code>dict</code></span></a></li>
+<li><a href="#span-id-添加节点-3-2-添加节点-span"><span id="添加节点">3.2.添加节点</span></a></li>
+<li><a href="#span-id-查找节点-3-3-查找节点-span"><span id="查找节点">3.3.查找节点</span></a></li>
+<li><a href="#span-id-随机一个节点-3-4-随机一个节点-span"><span id="随机一个节点">3.4.随机一个节点</span></a></li>
+<li><a href="#span-id-设置节点-3-5-设置节点-span"><span id="设置节点">3.5.设置节点</span></a></li>
+<li><a href="#span-id-删除节点-3-6-删除节点-span"><span id="删除节点">3.6.删除节点</span></a></li>
+<li><a href="#span-id-销毁dict-3-7-销毁-dict-span"><span id="销毁dict">3.7.销毁<code>dict</code></span></a></li>
+<li><a href="#span-id-清空dict-3-8-清空-dict-span"><span id="清空dict">3.8.清空<code>dict</code></span></a></li>
+<li><a href="#span-id-遍历dict-3-9-遍历-dict-span"><span id="遍历dict">3.9.遍历<code>dict</code></span></a></li>
+<li><a href="#span-id-rehash-3-10-rehash-span"><span id="rehash">3.10.rehash</span></a></li>
+</ul></li>
+<li><a href="#span-id-hash算法-4-hash算法-span"><span id="hash算法">4.hash算法</span></a></li>
+<li><a href="#span-id-dicttype示例-5-dicttype示例-span"><span id="dictType示例">5.dictType示例</span></a></li>
+</ul></li>
+</ul>
+</nav>
+                
+                
+
+<h2 id="span-id-概述-1-概述-span"><span id="概述">1.概述</span></h2>
+
+<p><code>dict</code>是Redis中最重要的数据结构之一。很多结构都使用<code>dict</code>作为基础数据结构，例如<code>hash</code>类型，命令表，SHA1到Lua脚本的映射等。</p>
+
+<h2 id="span-id-实现结构-2-实现结构-span"><span id="实现结构">2.实现结构</span></h2>
+
+<p><code>dictEntry</code>表示为一个哈希表节点。<code>key</code>使用一个<code>void *</code>类型来表示，<code>value</code>由几个常见类型的<code>union</code>来表示。由于使用链地址法，所以<code>dictEntry</code>中存放了下一个节点的地址<code>next</code>。</p>
+
+<pre><code>typedef struct dictEntry {
+    void *key;
+    union {
+        void *val;
+        uint64_t u64;
+        int64_t s64;
+        double d;
+    } v;
+    struct dictEntry *next;
+} dictEntry;
+</code></pre>
+
+<p><code>dictType</code>表示一个<code>dict</code>的相关方法，类似于C++中的类方法。</p>
+
+<pre><code>typedef struct dictType {
+    // hash函数，为key生成hash
+    unsigned int (*hasFunction)(const void *key);
+    // key复制函数
+    void *(*keyDup)(void *privdata, const void *key);
+    // value复制函数
+    void *(*valDup)(void *privdata, const void *obj);
+    // key比较函数
+    int (*keyCompare)(void *privdata, const void *key1, const void *key2);
+    // key销毁函数
+    void (*keyDestructor)(void *privdata, void *key);
+    // value销毁函数
+    void (*valDestructor)(void *privdata, void *obj);
+} dictType;
+</code></pre>
+
+<p><code>dictht</code>是一个链地址法哈希表。</p>
+
+<pre><code>typedef struct dictht {
+    // 哈希表的槽
+    dictEntry **table;
+    // 哈希表槽个数，是2的整数次幂
+    unsigned long size;
+    // size-1，计算出一个key的hash后，直接 hash &amp; sizemask即可算出所属的槽
+    unsigned long sizemask;
+    // 已使用大小
+    unsigned long used;
+} dictht;
+</code></pre>
+
+<p><img src="/img/in-post/redis-dict/dict-structure.png" alt="dictht结构" /></p>
+
+<p><code>dict</code>是字典类型，包含两个<code>dictht</code>以实现增量rehash。增量rehash可以避免一次rehash耗费时间过长，导致其他操作阻塞的情形。</p>
+
+<pre><code>typedef struct dict {
+    dictType *type;
+    // 每个dict可以额外关联一些数据
+    void *privdata;
+    // 两个dictht，方便实现增量rehash
+    dictht ht[2];
+    // rehashidx表示rehash索引，不在rehash时，该字段为-1
+    long rehashidx;
+    // 该dict生成的安全迭代器的数量，有安全迭代器时不能rehash
+    int iterators;
+} dict;
+</code></pre>
+
+<p>另外定义了遍历一个<code>dict</code>的迭代器。</p>
+
+<pre><code>typedef struct dictIterator {
+    dict *d;
+    // 槽索引
+    long index;
+    // table为dictht索引只能为0或1，safe表示是否需要安全的遍历（遍历过程中不能rehash）
+    int table, safe;
+    // 当前entry和下一个entry
+    dictEntry *entry, *nextEntry;
+    // 表示当前状态的一个64位整数，非安全迭代器初始化时计算这个值
+    // 释放迭代器时再次计算并比较两个值，如果不同说明用户在迭代过程中执行了非法操作
+    long long fingerprint;
+} dictIterator;
+</code></pre>
+
+<p>定义文件：<code>dict.h</code>和<code>dict.c</code>。</p>
+
+<h2 id="span-id-dict操作-3-dict操作-span"><span id="dict操作">3.dict操作</span></h2>
+
+<h3 id="span-id-创建dict-3-1-创建-dict-span"><span id="创建dict">3.1.创建<code>dict</code></span></h3>
+
+<p>调用<code>dictCreate</code>先分配空间。</p>
+
+<pre><code>// 参数type自定义对哈希表节点的key和value进行的操作
+// 参数privDataPtr可以存放用户自定义信息，在type的操作函数中可以取得这个值
+dict *dictCreate(dictType *type, void *privDataPtr)
+{
+    // 分配空间
+    dict *d = malloc(sizeof(*d));
+
+    // 初始化
+    _dictInit(d,type,privDataPtr);
+    return d;
+}
+</code></pre>
+
+<p>然后调用<code>_dictInit</code>初始化各字段。</p>
+
+<pre><code>int _dictInit(dict *d, dictType *type, void *privDataPtr)
+{
+    // 重置dictht内容
+    _dictReset(&amp;d-&gt;ht[0]);
+    _dictReset(&amp;d-&gt;ht[1]);
+    d-&gt;type = type; // 设置操作
+    d-&gt;privdata = privDataPtr; // 自定义信息
+    d-&gt;rehashidx = -1; // 不在rehash中
+    d-&gt;iterators = 0; // 生成的安全迭代器数量为0
+    return DICK_OK;
+}
+</code></pre>
+
+<p><code>_dictInit</code>会调用<code>_dictReset</code>重置两个<code>dictht</code>内容。</p>
+
+<pre><code>static void _dictReset(dictht *ht)
+{
+    ht-&gt;table = NULL; // 初始化槽为空
+    ht-&gt;size = 0; // 初始化槽大小为0
+    ht-&gt;sizemask = 0;
+    ht-&gt;used = 0; // 没有元素
+}
+</code></pre>
+
+<h3 id="span-id-添加节点-3-2-添加节点-span"><span id="添加节点">3.2.添加节点</span></h3>
+
+<p>调用<code>dictAdd</code>添加节点。</p>
+
+<pre><code>int dictAdd(dict *d, void *key, void *val)
+{
+    // dictAddRaw会新建一个entry，插入对应的位置。同时还会处理rehash的情况。
+    dictEntry *entry = dictAddRaw(d,key);
+
+    // key已存在
+    if (!entry) return DICT_ERR;
+    // 定义在dict.h中的宏，设置value值
+    dictSetVal(d, entry, val); 
+    return DICT_OK;
+}
+</code></pre>
+
+<p><code>dictAddRaw</code>创建新的节点，插入相应位置。</p>
+
+<pre><code>// 该函数插入entry，但是并不设置值。它返回entry，让调用者可以使用dictSet*Val系列函数设置值。
+// 例如：
+// entry = dictAddRaw(dict, mykey);
+// if (entry != NULL) dictSetSignedIntegerVal(entry, 1000);
+dictEntry *dictAddRaw(dict *d, void *key)
+{
+    int index;
+    dictEntry *entry;
+    dictht *ht;
+
+    // 如果正在rehash，让其向前推进一步
+    if (dictIsRehashing(d)) _dictRehashStep(d);
+
+    // 返回一个槽，可以在其中插入一个entry
+    if ((index = _dictKeyIndex(d, key)) == -1)
+        return NULL;
+
+    // 如果在rehash，新key应该插入到新dictht中（即索引为1的dictht）
+    ht = dictIsRehashing(d) ? &amp;d-&gt;ht[1] : &amp;d-&gt;ht[0];
+    entry = zmalloc(sizeof(*entry));
+    entry-&gt;next = ht-&gt;table[index];
+    ht-&gt;used++;
+
+    dictSetKey(d, entry, key);
+    return entry;
+}
+</code></pre>
+
+<h3 id="span-id-查找节点-3-3-查找节点-span"><span id="查找节点">3.3.查找节点</span></h3>
+
+<p>查找由函数<code>dictFind</code>负责，该函数实现也很简单。先计算<code>key</code>的hash值，找到对应的槽，依次比较。但是由于存在rehash状态，所以需要查找两个<code>dictht</code>。</p>
+
+<pre><code>dictEntry *dictFind(dict *d, const void *key)
+{
+    dictEntry *he;
+    unsigned int h, idx, table;
+
+    // 没有元素
+    if (d-&gt;ht[0].size == 0) return NULL;
+    // 如果正在rehash，将其向前推进一步
+    if (dictIsRehashing(d)) _dictRehashStep(d);
+    // 计算hash值
+    h = dictHashKey(d, key);
+    for (table = 0; table &lt;= 1; table++) {
+        // 计算槽索引
+        idx = h &amp; d-&gt;ht[table].sizemask;
+        he = d-&gt;ht[table].table[idx];
+        while (he) {
+            // 比较key，如果自定义了keyCompare，调用此函数比较，否则比较地址。
+            if (dictCompareKeys(d, key, he-&gt;key))
+                return he;
+            he = he-&gt;next;
+        }
+        // 非rehash中，不用处理新dictht
+        if (!dictIsRehashing(d)) return NULL;
+    }
+}
+</code></pre>
+
+<p>另外有个函数<code>dictFetchValue</code>可以取出<code>entry</code>的值。它直接使用<code>dictFind</code>完成其功能。</p>
+
+<pre><code>void *dictFetchValue(dict *d, const void *key) {
+    dictEntry *he;
+
+    he = dictFind(d, key);
+    return he ? dictGetVal(he) : NULL;
+}
+</code></pre>
+
+<h3 id="span-id-随机一个节点-3-4-随机一个节点-span"><span id="随机一个节点">3.4.随机一个节点</span></h3>
+
+<p><code>dictGetRandomKey</code>随机返回一个<code>dict</code>中的<code>entry</code>。</p>
+
+<pre><code>dictEntry *dictGetRandomKey(dict *d) {
+    dictEntry *he, *orighe;
+    unsigned int h;
+    int listlen, listele;
+
+    if (dictSize(d) == 0) return NULL;
+    if (dictIsRehashing(d)) _dictRehashStep(d);
+    if (dictIsRehashing(d)) {
+        // 在rehash中，需要在两个dictht中随机槽索引
+        do {
+            h = random() % (d-&gt;ht[0].size+d-&gt;ht[1].size);
+            he = (h &gt;= d-&gt;ht[0].size) ? d-&gt;ht[1].table[h - d-&gt;ht[0].size] :
+                                      d-&gt;ht[0].table[h];
+        } while(he == NULL);
+    } else {
+        do {
+            h = random() &amp; d-&gt;ht[0].sizemask;
+            he = d-&gt;ht[0].table[h];
+        } while (he == NULL);
+    }
+
+    // 链表长度
+    listlen = 0;
+    orighe = he;
+    while(he) {
+        he = he-&gt;next;
+        listlen++;
+    }
+    // 在链表中随机entry
+    listele = random() % listlen;
+    he = orighe;
+    while(listele--) he = he-&gt;next;
+    return he;
+}
+</code></pre>
+
+<p><strong>注意</strong>：
+这个函数先随机槽，再随机链表元素，并不是等概率的。</p>
+
+<h3 id="span-id-设置节点-3-5-设置节点-span"><span id="设置节点">3.5.设置节点</span></h3>
+
+<p>可以通过调用<code>dictReplace</code>设置一个key对应的value值。如果key不存在，则新增这个键值对。返回1表示新增，返回0表示更新值。</p>
+
+<pre><code>int dictReplace(dict *d, void *key, void *val) {
+    dictEntry *entry, auxentry;
+
+    // 先尝试新增。成功说明key不存在，已新增成功，直接返回。
+    if (dictAdd(d, key, val) == DICT_OK)
+        return 1;
+    // 查找key对应entry
+    entry = dictFind(d, key);
+    // 记录旧的entry，设置之后老的value需要释放！
+    auxentry = *entry;
+    dictSetVal(d, entry, val);
+    dictFreeVal(d, &amp;auxentry);
+    return 0;
+}
+</code></pre>
+
+<p>函数<code>dictReplaceRaw</code>进行以下处理：
+* 如果key存在，返回key对应的entry
+* 反之，插入这个key，然后返回新插入的entry</p>
+
+<h3 id="span-id-删除节点-3-6-删除节点-span"><span id="删除节点">3.6.删除节点</span></h3>
+
+<p>节点删除通过<code>dictGenericDelete</code>完成，可以通过<code>nofree</code>指定是否销毁键和值。</p>
+
+<pre><code>static int dictGenericDelete(dict *d, const void *key, int nofree)
+{
+    unsigned int h, idx;
+    dictEntry *he, *prevHe;
+    int table;
+
+    // 大小为0，删除失败
+    if (d-&gt;ht[0].size == 0) return DICT_ERR;
+
+    // 如果正在rehash，将其向前推进一步
+    if (dictIsRehashing(d)) _dictRehashStep(d);
+    // 生成key的hash值
+    h = dictHashKey(d, key);
+
+    // 因为存在rehash状态，所以必须查找两个dictht
+    for (table = 0; table &lt;= 1; table++) {
+        idx = h &amp; d-&gt;ht[table].sizemask;
+        he = d-&gt;ht[table].table[idx];
+        prevHe = NULL;
+        while(he) {
+            // 比较key
+            if (dictCompareKeys(d, key, he-&gt;key)) {
+                // 调整删除节点的前一个节点的next指向，如果为第一个节点调整table[idx]
+                if (prevHe)
+                    prevHe-&gt;next = he-&gt;next;
+                else
+                    d-&gt;ht[table].table[idx] = he-&gt;next;
+                if (!nofree) {
+                    // 销毁键和值
+                    dictFreeKey(d, he);
+                    dictFreeVal(d, he);
+                }
+                zfree(he);
+                d-&gt;ht[table].used--;
+                return DICT_OK;
+            }
+            prevHe = he;
+            he = he-&gt;next;
+        }
+        // 如果没有在rehash，就不用遍历索引为1的dictht了
+        if (!dictIsRehashing(d)) break;
+    }
+    return DICT_ERR;
+}
+</code></pre>
+
+<h3 id="span-id-销毁dict-3-7-销毁-dict-span"><span id="销毁dict">3.7.销毁<code>dict</code></span></h3>
+
+<p>可以通过调用<code>dictRelease</code>删除一个<code>dict</code>。</p>
+
+<pre><code>void dictRelease(dict *d)
+{
+    // 清空两个dictht
+    _dictClear(d,&amp;d-&gt;ht[0],NULL);
+    _dictClear(d,&amp;d-&gt;ht[1],NULL);
+    zfree(d);
+}
+</code></pre>
+
+<p><code>_dictClear</code>负责清空<code>dictht</code>，释放所占空间。</p>
+
+<pre><code>int _dictClear(dict *d, dictht *ht, void (callback)(void *)) {
+    unsigned long i;
+
+    for (i = 0; i &lt; ht-&gt;size &amp;&amp; ht-&gt;used &gt; 0; i++) {
+        dictEntry *he, *nextHe;
+
+        if (callback &amp;&amp; (i &amp; 65535) == 0) callback(d-&gt;privdata);
+
+        if ((he = ht-&gt;table[i]) == NULL) continue;
+        while (he) {
+            nextHe = he-&gt;next;
+            // 释放键值
+            dictFreeKey(d, he);
+            dictFreeVal(d, he);
+            zfree(he);
+            ht-&gt;used--;
+            he = nextHe;
+        }
+    }
+    zfree(ht-&gt;table);
+    // 重置，后续可以再次使用
+    _dictReset(ht);
+    return DICT_OK;
+}
+</code></pre>
+
+<h3 id="span-id-清空dict-3-8-清空-dict-span"><span id="清空dict">3.8.清空<code>dict</code></span></h3>
+
+<p>可以调用<code>dictEmpty</code>清空一个<code>dict</code>，但不销毁。</p>
+
+<pre><code>void dictEmpty(dict *d, void(callback)(void*)) {
+    // 清空两个dictht
+    _dictClear(d,&amp;d-&gt;ht[0],callback);
+    _dictClear(d,&amp;d-&gt;ht[1],callback);
+    d-&gt;rehashidx = -1;
+    d-&gt;iterators = 0;
+}
+</code></pre>
+
+<h3 id="span-id-遍历dict-3-9-遍历-dict-span"><span id="遍历dict">3.9.遍历<code>dict</code></span></h3>
+
+<p>为了便于<code>dict</code>的遍历，Redis提供了<code>dict</code>的迭代器<code>dictIterator</code>。</p>
+
+<p>迭代器分为安全的和非安全的两种，分别通过<code>dictGetIterator</code>和<code>dictGetSafeIterator</code>获取。</p>
+
+<pre><code>dictIterator *dictGetIterator(dict *d)
+{
+    dictIterator *d = zmalloc(sizeof(*iter));
+
+    iter-&gt;d = d;
+    iter-&gt;table = 0;
+    iter-&gt;index = -1;
+    iter-&gt;safe = 0;
+    iter-&gt;entry = NULL;
+    iter-&gt;nextEntry = NULL;
+    return iter;
+}
+
+dictIterator *dictGetSafeIterator(dict *d) {
+    dictIterator *i = dictGetIterator(d);
+
+    // 创建时不需要增加dict.iterators的值，在遍历正在开始后增加
+    i-&gt;safe = 1;
+    return i;
+}
+</code></pre>
+
+<p>两种迭代器的区别：</p>
+
+<ul>
+<li><p>安全的迭代器在开始遍历时会增加<code>dict.iterators</code>的值，从而阻止一些使现有迭代器失效的操作，例如rehash。</p></li>
+
+<li><p>非安全的迭代器在开始遍历时会根据<code>dict</code>的当前状态计算一个值<code>fingerprint</code>，当调用<code>dictReleaseIterator</code>时会再次计算这个值。如果两个值不相等，说明遍历过程中<code>dict</code>有修改！</p></li>
+</ul>
+
+<p>通过<code>dictNext</code>获取迭代器的下一个值。</p>
+
+<pre><code>dictEntry *dictNext(dictIterator *iter)
+{
+    while(1) {
+        if (iter-&gt;entry == NULL) {
+            dictht *ht = &amp;iter-&gt;d-&gt;ht[iter-&gt;table];
+            // 遍历第一个元素时，安全迭代器需要增加dict.iterators值
+            // 非安全迭代器计算fingerprint
+            if (iter-&gt;index == -1 &amp;&amp; iter-&gt;table == 0) {
+                if (iter-&gt;safe)
+                    iter-&gt;d-&gt;iterators++;
+                else
+                    iter-&gt;fingerprint = dictFingerprint(iter-&gt;d);
+            }
+            iter-&gt;index++;
+            // 一个dictht遍历完成，如果是索引为0，并且正在rehash，索引为1也可能有值，继续遍历。
+            // 否则直接break
+            if (iter-&gt;index &gt;= (long)ht-&gt;size) {
+                if (dictIsRehashing(iter-&gt;d) &amp;&amp; iter-&gt;table == 0) {
+                    iter-&gt;table++;
+                    iter-&gt;index = 0;
+                    ht = &amp;iter-&gt;d-&gt;ht[1];
+                } else {
+                    break;
+                }
+            }
+            iter-&gt;entry = ht-&gt;table[iter-&gt;index];
+        } else {
+            iter-&gt;entry = iter-&gt;nextEntry;
+        }
+        if (iter-&gt;entry) {
+            iter-&gt;nextEntry = iter-&gt;entry-&gt;next;
+            return iter-&gt;entry;
+        }
+    }
+    return NULL;
+}
+</code></pre>
+
+<p>遍历完成之后，调用<code>dictReleaseIterator</code>销毁迭代器。</p>
+
+<pre><code>void dictReleaseIterator(dictIterator *iter) {
+    if (!(iter-&gt;index == -1 &amp;&amp; iter-&gt;table == 0)) {
+        // 进行过遍历，释放时
+        // 安全迭代器需要减少dict.iterators值
+        // 非安全迭代器比较遍历前后fingerprint值
+        if (iter-&gt;safe)
+            iter-&gt;d-&gt;iterators--;
+        else
+            assert(iter-&gt;fingerprint == dictFingerprint(iter-&gt;d));
+    }
+    zfree(iter);
+}
+</code></pre>
+
+<h3 id="span-id-rehash-3-10-rehash-span"><span id="rehash">3.10.rehash</span></h3>
+
+<p>在上面添加key时，会调用<code>_dictKeyIndex</code>为key分配一个槽。<code>_dictKeyIndex</code>会调用<code>_dictExpandIfNeeded</code>，按需扩容。</p>
+
+<pre><code>static int _dictExpandIfNeeded(dict *d) {
+    // 正在rehash，不用处理
+    if (dictIsRehashing(d)) return DICT_OK;
+
+    // 如果ht[0]大小为0，容量扩大为DICT_HT_INITIAL_SIZE。
+    if (d-&gt;ht[0].size == 0) return dictExpand(d, DICT_HT_INITIAL_SIZE);
+
+    // 如果节点数量超过槽数量并且当前数量与总容量比大于dict_force_resize_ratio，扩容为当前数量的两倍。
+    // 如果设置了dict_can_resize，不需要判断比值
+    if (d-&gt;ht[0].used &gt;= d-&gt;ht[0].size &amp;&amp;
+        (dict_can_resize ||
+         d-&gt;ht[0].used/d-&gt;ht[0].size &gt; dict_force_resize_ratio))
+    {
+        return dictExpand(d, h-&gt;ht[0].used * 2);
+    }
+}
+</code></pre>
+
+<p><code>dictExpand</code>进行真正的扩容操作。</p>
+
+<pre><code>int dictExpand(dict *d, unsigned long size) {
+    dictht n;
+    // 保证容量一定是2的整数次幂
+    unsigned long realsize = _dictNextPower(size);
+
+    // 正在rehash，不能扩容。
+    // 当前元素数量已经超过size了，肯定哪里出了问题
+    if (dictIsRehashing(d) || d-&gt;ht[0].used &gt; size)
+        return DICT_ERR;
+
+    n.size = realsize;
+    n.sizemask = realsize-1;
+    n.table = zcalloc(realsize*sizeof(dictEntry*));
+    n.used = 0;
+
+    // 还没有元素，d-&gt;ht[0]设置为n即可
+    if (d-&gt;ht[0].table == NULL) {
+        d-&gt;ht[0] = n;
+        return DICT_OK;
+    }
+
+    // d-&gt;ht[1]设置为n，开始rehash
+    d-&gt;ht[1] = n;
+    // rehashidx=0表示正在rehash中，以后的新增都在新的dictht中操作
+    d-&gt;rehashidx = 0;
+    return DICT_OK;
+}
+</code></pre>
+
+<p>这条执行路径<code>dictAddRaw</code> -&gt; <code>_dictKeyIndex</code> -&gt; <code>_dictExpandIfNeeded</code> -&gt; <code>_dictExpand</code>，没有显式进行rehash。后续进行其他操作时，会适当的时候调用<code>_dictRehashStep</code>。</p>
+
+<pre><code>static void _dictRehashStep(dict *d) {
+    // 没有生产迭代器时才能rehash
+    if (d-&gt;iterators == 0) dictRehash(d,1);
+}
+</code></pre>
+
+<p><code>_dictRehashStep</code>调用<code>dictRehash</code>处理：</p>
+
+<pre><code>int dictRehash(dict *d, int n) {
+    if (!dictIsRehashing(d)) return 0;
+
+    // 执行n趟，每趟处理一个槽
+    while(n--) {
+        dictEntry *de, *nextde;
+
+        // 第一个dictht已经没有元素了，rehash完成！
+        // 将第二个dictht复制给第一个，重置第二个dictht，保证非rehash时，元素只在第一个dictht中
+        if (d-&gt;ht[0].used == 0) {
+            zfree(d-&gt;ht[0].table);
+            d-&gt;ht[0] = d-&gt;ht[1];
+            _dictReset(&amp;d-&gt;ht[1]);
+            d-&gt;rehashidx = -1;
+            return 0;
+        }
+
+        assert(d-&gt;ht[0].size &gt; (unsigned long)d-&gt;rehashidx);
+        while(d-&gt;ht[0].table[d-&gt;rehashidx] == NULL) d-&gt;rehashidx++;
+        de = d-&gt;ht[0].table[d-&gt;rehashidx];
+        while(de) {
+            unsigned int h;
+
+            nextde = de-&gt;next;
+            h = dictHashKey(d, de-&gt;key) &amp; d-&gt;ht[1].sizemask;
+            de-&gt;next = d-&gt;ht[1].table[h];
+            d-&gt;ht[1].table[h] = de;
+            d-&gt;ht[0].used--;
+            d-&gt;ht[1].used++;
+            de = nextde;
+        }
+        d-&gt;ht[0].table[d-&gt;rehashidx] = NULL;
+        d-&gt;rehashidx++;
+    }
+    return 1;
+}
+</code></pre>
+
+<p><code>dictRehashMilliseconds</code>可以指定超时时间，rehash处理用时超过这个时间，就返回。</p>
+
+<pre><code>int dictRehashMilliseconds(dict *d, int ms) {
+    long long start = timeInMilliseconds();
+    int rehashes = 0;
+
+    while (dictRehash(d, 100)) {
+        rehashes += 100;
+        // 超时了，break
+        if (timeInMilliseconds()-start &gt; ms) break;
+    }
+    return rehashes;
+}
+</code></pre>
+
+<p>函数<code>dictResize</code>将<code>dict</code>的大小指定为能容纳所有元素的最小值。</p>
+
+<pre><code>int dictResize(dict *d) {
+    int minimal;
+
+    if (!dict_can_resize || dictIsRehashing(d)) return DICT_ERR;
+    minimal = d-&gt;ht[0].used;
+    if (minimal &lt; DICT_HT_INITIAL_SIZE)
+        minimal = DICT_HT_INITIAL_SIZE;
+    return dictExpand(d, minimal);
+}
+</code></pre>
+
+<h2 id="span-id-hash算法-4-hash算法-span"><span id="hash算法">4.hash算法</span></h2>
+
+<ul>
+<li><p><code>dictIntHashFunction</code>计算<code>unsigned int</code>的hash值（<a href="http://c42f.github.io/2015/09/21/inverting-32-bit-wang-hash.html">Thomas Wang的32位混合算法</a>）。</p></li>
+
+<li><p><code>dictGenHashFunction</code>计算<code>key</code>和<code>len</code>表示的一块内存的hash值（<a href="https://blog.csdn.net/xyblog/article/details/50593648">Austin Appleby的MurmurHash2算法</a>）。</p></li>
+
+<li><p><code>dictGenCaseHashFunction</code>计算<code>buf</code>和<code>len</code>表示的缓冲区的hash值（基于<a href="http://www.cse.yorku.ca/~oz/hash.html">djb算法</a>）。</p></li>
+</ul>
+
+<h2 id="span-id-dicttype示例-5-dicttype示例-span"><span id="dictType示例">5.dictType示例</span></h2>
+
+<p><code>dict.c</code>最后列举了一个<code>string copy</code>的<code>dictType</code>示例。</p>
+
+<pre><code>// 计算hash值
+static unsigned int _dictStringCopyHTHashFunction(const void *key) {
+    return dictGenHashFunction(key, strlen(key));
+}
+
+static void *_dictStringDup(void *privdata, const void *key) {
+    int len = strlen(key);
+    // 重新copy一份string
+    char *copy = zmalloc(len+1);
+    // 防止编译器“未使用变量”警告
+    DICT_NOTUSED(privdata);
+
+    memcpy(copy, key, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static int _dictStringCopyHTKeyCompare(void *privdata, const void *key1, const void *key2) {
+    DICT_NOTUSED(privdata);
+
+    // 使用c str的比较方式
+    return strcmp(key1, key2) == 0;
+}
+
+// 销毁key
+static void _dictStringDestructor(void *privdata, void *key) {
+    DICT_NOTUSED(privdata);
+
+    zfree(key);
+}
+
+// 只为key重新分配空间，value共享指针
+dictType dictTypeHeapStringCopyKey = {
+    _dictStringCopyHTHashFunction, // hash计算函数
+    _dictStringDup, // key复制函数，重新分配空间，复制
+    NULL, // value复制函数，为NULL，直接指针赋值
+    _dictStringCopyHTKeyCompare, // key比较函数，使用c str比较方式
+    _dictStringDestructor, // key销毁函数，因为是重新分配空间，所以需要显示free
+    NULL, // value销毁函数，value是共享指针，不定义销毁函数
+};
+
+// key和value都不重新分配空间，只共享指针
+dictType dictTypeHeapStrings {
+    _dictStringCopyHTHashFunction, // hash计算函数
+    NULL, // key复制函数，为NULL，直接指针赋值
+    NULL, // value复制函数，为NULL，直接指针赋值
+    _dictStringCopyKeyHTKeyCompare, // key比较函数，使用c str比较方式
+    _dictStringDestructor, // key销毁函数
+    NULL, // value销毁函数
+};
+
+// key和value都重新分配空间
+dictType dictTypeHeadStringCopyKeyValue = {
+    _dictStringCopyHTHashFunction, // hash计算函数
+    _dictStringDup, // key复制函数，重新分配空间，复制
+    _dictStringDup, // value复制函数，重新分配空间，复制
+    _dictStringCopyHTKeyCompare, // key比较函数，使用c str比较方式
+    _dictStringDestructor, // key销毁函数，因为是重新分配空间，所以需要显示free
+    _dictStringDestructor, // value销毁函数，因为是重新分配空间，所以需要显示free
+};
+</code></pre>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://darjun.github.io"><img src="/img/favicon.png" />Darjun Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/05/23/redis-list/" data-toggle="tooltip" data-placement="top" title="Redis源码阅读-list">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/05/24/redis-skiplist/" data-toggle="tooltip" data-placement="top" title="Redis源码阅读-skiplist">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<script src="/js/iDisqus.js"></script>
+<script>
+var disq = new iDisqus('disqus-comment', {
+    forum: 'darjun-blog',
+    api: 'https:\/\/disqusapi.leedarjun.com',
+	site: 'https:\/\/darjun.github.io',
+    mode: 1,
+    timeout: 5000,
+    init: true
+});
+</script>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/javascript" title="javascript">
+                            javascript
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis-source" title="redis-source">
+                            redis-source
+                        </a>
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href="" rel="alternate" type="application/rss+xml" title="Darjun Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:leedarjun@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/darjun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://medium.com/@leedarjun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Darjun Blog 2019
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https'){
+       bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+
+
+
+<script>
+    
+    var _baId = '22b47f8b144298dc77b2beb696c6353d';
+
+    
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-136116022-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

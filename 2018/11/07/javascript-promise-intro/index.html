@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta name="google-site-verification" content="9vIieCe-Qpd78QOmBl63rGtIVbhY6sYyuxX3j8XWBA4" />
+    <meta name="baidu-site-verification" content="LRrmH41lz7" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Darjun Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://darjun.github.io/img/home-bg-jeep.jpg">
+    <meta property="twitter:image" content="https://darjun.github.io/img/home-bg-jeep.jpg" />
+    
+
+    
+    <meta name="title" content="深入理解Javascript之Promise" />
+    <meta property="og:title" content="深入理解Javascript之Promise" />
+    <meta property="twitter:title" content="深入理解Javascript之Promise" />
+    
+
+    
+    <meta name="description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。">
+    <meta property="og:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
+    <meta property="twitter:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>深入理解Javascript之Promise-大俊的博客 | Darjun Blog</title>
+
+    <link rel="canonical" href="/2018/11/07/javascript-promise-intro/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+	
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Darjun Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">Tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/post-bg-2015.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/javascript" title="javascript">
+                            javascript
+                        </a>
+                        
+                    </div>
+                    <h1>深入理解Javascript之Promise</h1>
+                    <h2 class="subheading">&#34;Javascript in depth&#34;</h2>
+                    <span class="meta">
+			Posted by 
+			
+			    darjun
+			 
+			on 
+			Thursday, November 8, 2018
+                        
+                            <span id="/2018/11/07/javascript-promise-intro/" class="leancloud_visitors meta_data_item" data-flag-title="">
+    <span class="post-meta-item-icon">
+      <span class="octicon octicon-eye"></span> 
+    </span>
+    <i class="fa fa-eye"></i>
+    <span class="old-visitors-count" style="display: none;"></span>
+    <span class="leancloud-visitors-count"></span>
+</span>
+
+
+
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+
+<script>
+	AV.initialize("TXNGsfsFQyzdASwAnCBlyIkr-gzGzoHsz", "5N0H4PYj0GcbhLqSMLfPMf8t");
+</script>
+
+<script type="text/javascript">
+function showTime(Counter) {
+    var query = new AV.Query(Counter);
+    var entries = [];
+    var $visitors = $(".leancloud_visitors");
+
+    $visitors.each(function() {
+        entries.push($(this).attr("id").trim());
+    });
+
+    query.containedIn('url', entries);
+    query.find()
+        .done(function(results) {
+            var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+            var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
+
+            
+            
+            
+            
+
+            for (var i = 0; i < results.length; i++) {
+                var item = results[i];
+                var url = item.get('url');
+                var time = item.get('time');
+                var element = document.getElementById(url);
+
+                $(element).find(COUNT_CONTAINER_REF).text(time);
+            }
+            for (var i = 0; i < entries.length; i++) {
+                var url = entries[i];
+                var element = document.getElementById(url);
+                var countSpan = $(element).find(COUNT_CONTAINER_REF);
+                if (countSpan.text() == '') {
+                    var oldCountSpan = $(element).find(OLD_COUNT_CONTAINER_REF).text();
+                    if(oldCountSpan!=''){
+                        countSpan.text(0+parseInt(oldCountSpan));
+                    }else{
+                        countSpan.text(0);          
+                    }
+                }
+            }
+        })
+        .fail(function(object, error) {
+            console.log("Error: " + error.code + " " + error.message);
+        });
+}
+
+function addCount(Counter) {
+    var $visitors = $(".leancloud_visitors");
+    var url = $visitors.attr('id').trim();
+    var title = $visitors.attr('data-flag-title').trim();
+    var query = new AV.Query(Counter);
+
+    query.equalTo("url", url);
+    query.find({
+        success: function(results) {
+            if (results.length > 0) {
+                var counter = results[0];
+                counter.fetchWhenSave(true);
+                counter.increment("time");
+                counter.save(null, {
+                    success: function(counter) {
+                        var $element = $(document.getElementById(url));
+                        $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                    },
+                    error: function(counter, error) {
+                        console.log('Failed to save Visitor num, with error message: ' + error.message);
+                    }
+                });
+            } else {
+                var newcounter = new Counter();
+                 
+                var acl = new AV.ACL();
+                acl.setPublicReadAccess(true);
+                acl.setPublicWriteAccess(true);
+                newcounter.setACL(acl);
+                 
+                newcounter.set("title", title);
+                newcounter.set("url", url);
+                var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
+                var $element = $(document.getElementById(url));
+                var oldCountSpan = $element.find(OLD_COUNT_CONTAINER_REF).text();
+                if(oldCountSpan!=''){
+                    newcounter.set("time", parseInt(oldCountSpan)+1);
+                }else{
+ 	                    newcounter.set("time",  1);
+                }
+                newcounter.save(null, {
+                    success: function(newcounter) {
+                        var $element = $(document.getElementById(url));
+                        $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+                    },
+                    error: function(newcounter, error) {
+                        console.log('Failed to create');
+                    }
+                });
+            }
+        },
+        error: function(error) {
+            console.log('Error:' + error.code + " " + error.message);
+        }
+    });
+}
+$(function() {
+    var Counter = AV.Object.extend("Counter");
+    
+    
+    if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+    } else {
+        showTime(Counter);
+    }
+});
+</script>
+
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#span-id-概述-1-概述-span"><span id="概述">1.概述</span></a></li>
+<li><a href="#span-id-基本用法-2-基本用法-span"><span id="基本用法">2.基本用法</span></a>
+<ul>
+<li><a href="#span-id-创建promise-2-1-创建-promise-span"><span id="创建Promise">2.1 创建<code>Promise</code> </span></a></li>
+<li><a href="#span-id-then方法-2-2-then-方法-span"><span id="then方法">2.2 <code>then</code>方法</span></a></li>
+<li><a href="#span-id-catch方法-2-3-catch-方法-span"><span id="catch方法">2.3 <code>catch</code>方法</span></a></li>
+<li><a href="#span-id-其他创建promise的方式-2-4-其他创建-promise-对象的方式-span"><span id="其他创建Promise的方式">2.4 其他创建<code>Promise</code>对象的方式</span></a>
+<ul>
+<li><a href="#promise-resolve"><code>Promise.resolve</code></a></li>
+<li><a href="#promise-reject"><code>Promise.reject</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#span-id-高级用法-3-高级用法-span"><span id="高级用法">3.高级用法</span></a>
+<ul>
+<li><a href="#span-id-flatten-promise-3-1-flatten-promise-span"><span id="Flatten_Promise">3.1 Flatten Promise</span></a></li>
+<li><a href="#span-id-promise-all-3-2-promise-all-方法-span"><span id="Promise_all">3.2 Promise.all 方法</span></a></li>
+<li><a href="#span-id-promise-race-3-3-promise-race-方法-span"><span id="Promise.race">3.3 Promise.race 方法</span></a></li>
+</ul></li>
+<li><a href="#span-id-使用案例-4-使用案例-span"><span id="使用案例">4.使用案例</span></a></li>
+<li><a href="#span-id-总结-5-总结-span"><span id="总结">5.总结</span></a></li>
+<li><a href="#span-id-参考链接-6-参考链接-span"><span id="参考链接">6.参考链接</span></a></li>
+</ul></li>
+</ul>
+</nav>
+                
+                
+
+<h2 id="span-id-概述-1-概述-span"><span id="概述">1.概述</span></h2>
+
+<p>相信大家都听过Node中著名的回调地狱（callback hell)。因为Node中的操作默认都是异步执行的，所以需要调用者传入一个回调函数以便在操作结束时进行相应的处理。当回调的层次变多，代码就变得越来越难以编写、理解和阅读。</p>
+
+<p><code>Promise</code>是ES6中新增的一种异步编程的方式，用于解决回调的方式的各种问题，提供了更多的可能性。其实早在ES6之前，社区就已经有多种<code>Promise</code>的实现方式了：</p>
+
+<ul>
+<li><a href="https://github.com/kriskowal/q">Q</a></li>
+<li><a href="https://github.com/petkaantonov/bluebird">bludbird</a></li>
+<li><a href="https://github.com/tildeio/rsvp.js/">RSVP</a></li>
+</ul>
+
+<p>以上几种<code>Promise</code>库都遵循<a href="https://promisesaplus.com/">Promise/A+</a>规范。ES6也采用了该规范，所以这些实现的API都是类似的，可以相互对照学习。</p>
+
+<p><code>Promise</code>表示的是一个计算结果或网络请求的占位符。由于当前计算或网络请求尚未完成，所以结果暂时无法取得。</p>
+
+<p><code>Promise</code>对象一共有3中状态，<code>pending</code>，<code>fullfilled</code>（又称为<code>resolved</code>）和<code>rejected</code>：</p>
+
+<ul>
+<li><code>pending</code>——任务仍在进行中。</li>
+<li><code>resolved</code>——任务已完成。</li>
+<li><code>reject</code>——任务出错。</li>
+</ul>
+
+<p><code>Promise</code>对象初始时处于<code>pending</code>状态，其生命周期内只可能发生以下一种状态转换：</p>
+
+<ul>
+<li>任务完成，状态由<code>pending</code>转换为<code>resolved</code>。</li>
+<li>任务出错返回，状态由<code>pending</code>转换为<code>rejected</code>。</li>
+</ul>
+
+<p><code>Promise</code>对象的状态转换一旦发生，就不可再次更改。这或许就是<code>Promise</code>之“承诺”的含义吧。</p>
+
+<h2 id="span-id-基本用法-2-基本用法-span"><span id="基本用法">2.基本用法</span></h2>
+
+<h3 id="span-id-创建promise-2-1-创建-promise-span"><span id="创建Promise">2.1 创建<code>Promise</code> </span></h3>
+
+<p><code>Javascript</code>提供了<code>Promise</code>构造函数用于创建<code>Promise</code>对象。格式如下：</p>
+
+<pre><code>let p = new Promise(executor(resolve, reject));
+</code></pre>
+
+<p>代码中<code>executor</code>是用户自定义的函数，用于实现具体异步操作流程。该函数有两个参数<code>resolve</code>和<code>reject</code>，它们是Javascript引擎提供的函数，不需要用户实现。在<code>executor</code>函数中，如果异步操作成功，则调用<code>resolve</code>将<code>Promise</code>的状态转换为<code>resolved</code>，<code>resolve</code>函数以结果数据作为参数。如果异步操作失败，则调用<code>reject</code>将<code>Promise</code>的状态转换为<code>rejected</code>，<code>reject</code>函数以具体错误对象作为参数。</p>
+
+<h3 id="span-id-then方法-2-2-then-方法-span"><span id="then方法">2.2 <code>then</code>方法</span></h3>
+
+<p><code>Promise</code>对象创建完成之后，我们需要调用<code>then(succ_handler, fail_handler)</code>方法指定成功和/或失败的回调处理。例如：</p>
+
+<pre><code>let p = new Promise(function(resolve, reject) {
+    resolve(&quot;finished&quot;);
+});
+
+p.then(function (data) {
+    console.log(data); // 输出finished
+}, function (err) {
+    console.log(&quot;oh no, &quot;, err.message);
+});
+</code></pre>
+
+<p>在上面的代码中，我们创建了一个<code>Promise</code>对象，在<code>executor</code>函数中调用<code>resolve</code>将该对象状态转换为<code>resolved</code>。</p>
+
+<p>进而<code>then</code>指定的成功回调函数被调用，输出<code>finished</code>。</p>
+
+<pre><code>let p = new Promise(function(resolve, reject) {
+    reject(new Error(&quot;something be wrong&quot;));
+});
+
+p.then(function (data) {
+    console.log(data);
+}, function (err) {
+    console.log(&quot;oh no, &quot;, err); // 输出oh no,  something be wrong
+});
+</code></pre>
+
+<p>以上代码中，在<code>executor</code>函数中调用<code>reject</code>将<code>Promise</code>对象状态转换为<code>rejected</code>。</p>
+
+<p>进而<code>then</code>指定的失败回调函数被调用，输出<code>oh no, something be wrong</code>。</p>
+
+<p>这就是最基本的使用<code>Promise</code>编写异步处理的方式了。但是，有几点需要注意：</p>
+
+<p>（1） <code>then</code>方法可以只传入成功或失败回调。</p>
+
+<p>（2）<code>executor</code>函数是立即执行的，而成功或失败的回调函数会到当前<code>EventLoop</code>的最后再执行。下面的代码可以验证这一点：</p>
+
+<pre><code>let p = new Promise(function(resolve, reject) {
+    console.log(&quot;promise constructor&quot;);
+    resolve(&quot;finished&quot;);
+});
+
+p.then(function (data) {
+    console.log(data);
+});
+
+console.log(&quot;end&quot;);
+</code></pre>
+
+<p>输出结果为：</p>
+
+<pre><code>promise constructor
+end
+finished
+</code></pre>
+
+<p>（3） <code>then</code>方法返回的是一个新的<code>Promise</code>对象，所以可以链式调用：</p>
+
+<pre><code>let p = new Promise(function(resolve) {
+    resolve(5);
+});
+
+p.then(function (data) {
+    return data * 2;
+})
+ .then(function (data) {
+    console.log(data); // 输出10
+});
+</code></pre>
+
+<p>（4）<code>Promise</code>对象的<code>then</code>方法可以被调用多次，而且可以被重复调用（不同于事件，同一个事件的回调只会被调用一次。）。</p>
+
+<pre><code>let p = new Promise(function(resolve) {
+    resolve(&quot;repeat&quot;);
+});
+
+p.then(function (data) {
+    console.log(data);
+});
+
+p.then(function (data) {
+    console.log(data);
+});
+
+p.then(function (data) {
+    console.log(data);
+});
+</code></pre>
+
+<p>输出：</p>
+
+<pre><code>repeat
+repeat
+repeat
+</code></pre>
+
+<h3 id="span-id-catch方法-2-3-catch-方法-span"><span id="catch方法">2.3 <code>catch</code>方法</span></h3>
+
+<p>由前面的介绍，我们知道，可以由<code>then</code>方法指定错误处理。但是ES6提供了一个更好用的方法<code>catch</code>。直观上理解可以认为<code>catch(handler)</code>等同于<code>then(null, handler)</code>。</p>
+
+<pre><code>let p = new Promise(function(resolve, reject) {
+    reject(new Error(&quot;something be wrong&quot;));
+});
+
+p.catch(function (err) {
+    console.log(&quot;oh no, &quot;, err.message); // 输出oh no, something be wrong
+});
+</code></pre>
+
+<p>通常不建议在<code>then</code>方法中指定错误处理，而是在调用链的最后增加一个<code>catch</code>方法用于处理前面的步骤中出现的错误。</p>
+
+<p>使用时注意一下几点：</p>
+
+<ul>
+<li><p><code>then</code>方法指定两个处理函数，<strong>调用成功处理函数抛出异常时，失败处理函数不会被调用</strong>。</p></li>
+
+<li><p><code>Promise</code>中未被处理的异常不会终止当前的执行流程，也就是说<code>Promise</code>会<strong>“吞掉异常”</strong>。</p></li>
+</ul>
+
+<pre><code>let p = new Promise(function (resolve, reject) {
+    throw new Error(&quot;something be wrong&quot;);
+});
+
+p.then(function (data) {
+    console.log(data);
+});
+
+console.log(&quot;end&quot;);
+// 程序正常结束，输出end
+</code></pre>
+
+<h3 id="span-id-其他创建promise的方式-2-4-其他创建-promise-对象的方式-span"><span id="其他创建Promise的方式">2.4 其他创建<code>Promise</code>对象的方式</span></h3>
+
+<p>除了<code>Promise</code>构造函数，ES6还提供了两个简单易用的创建<code>Promise</code>对象的方式，即<code>Promise.resolve</code>和<code>Promise.reject</code>。</p>
+
+<h4 id="promise-resolve"><code>Promise.resolve</code></h4>
+
+<p>顾名思义，<code>Promise.resolve</code>创建一个<code>resolved</code>状态的<code>Promise</code>对象：</p>
+
+<pre><code>let p = Promise.resolve(&quot;hello&quot;);
+
+p.then(function (data) {
+    console.log(data); // 输出hello
+});
+</code></pre>
+
+<p><code>Promise.resolve</code>的参数分为以下几种类型：</p>
+
+<p>（1）参数是一个<code>Promise</code>对象，那么直接返回该对象。</p>
+
+<p>（2） 参数是一个<code>thenable</code>对象，即拥有<code>then</code>函数的对象。这时<code>Promise.resolve</code>会将该对象转换为一个<code>Promise</code>对象，并且立即执行其<code>then</code>函数。</p>
+
+<pre><code>let thenable = {
+    then: function (resolve, reject) {
+        resolve(25);
+    };
+};
+
+let p = Promise.resolve(thenable);
+
+p.then(function (data) {
+    console.log(data); // 输出25
+});
+</code></pre>
+
+<p>（3）其他参数（无参数相当于有一个undefined参数），创建一个状态为<code>resolved</code>的<code>Promise</code>对象，参数作为操作结果会传递给后续回调处理。</p>
+
+<h4 id="promise-reject"><code>Promise.reject</code></h4>
+
+<p><code>Promise.reject</code>不管参数为何种类型，都是创建一个状态为<code>rejected</code>的<code>Promise</code>对象。</p>
+
+<h2 id="span-id-高级用法-3-高级用法-span"><span id="高级用法">3.高级用法</span></h2>
+
+<h3 id="span-id-flatten-promise-3-1-flatten-promise-span"><span id="Flatten_Promise">3.1 Flatten Promise</span></h3>
+
+<p><code>then</code>方法的成功回调函数可以返回一个新的<code>Promise</code>对象，这时旧的<code>Promise</code>对象将会被冻结，其状态取决于新<code>Promise</code>对象的状态。</p>
+
+<pre><code>let p1 = new Promise(function (resolve) {
+    setTimeout(function () {
+        resolve(&quot;promise1&quot;);
+    }, 3000);
+});
+
+let p2 = new Promise(function (resolve) {
+    resolve(&quot;promise2&quot;);
+});
+
+p2.then(function (data) {
+    return p1;  // (A)
+})
+  .then(function (data) { // (B)
+    console.log(data); // 输出promise2
+});
+</code></pre>
+
+<p>我们在(A)行直接返回了另一个<code>Promise</code>对象。后面的<code>then</code>方法执行取决于该对象的状态，所以在3s后输出<code>promise1</code>，不会输出<code>promise2</code>。</p>
+
+<h3 id="span-id-promise-all-3-2-promise-all-方法-span"><span id="Promise_all">3.2 Promise.all 方法</span></h3>
+
+<p>很多时候，我们想要等待多个异步操作完成后再进行一些处理。如果使用回调的方式，会出现前面提到过的回调地狱。例如：</p>
+
+<pre><code>let fs = require(&quot;fs&quot;);
+
+fs.readFile(&quot;file1&quot;, &quot;utf8&quot;, function (data1, err1) {
+    if (err1 != nil) {
+        console.log(err1);
+        return;
+    }
+
+    fs.readFile(&quot;file2&quot;, &quot;utf8&quot;, function (data2, err2) {
+        if (err2 != nil) {
+            console.log(err2);
+            return;
+        }
+
+        fs.readFile(&quot;file3&quot;, &quot;utf8&quot;, function (data3, err3) {
+            if (err3 != nil) {
+                console.log(err3);
+                return;
+            }
+
+            console.log(data1);
+            console.log(data2);
+            console.log(data3);
+        });
+    });
+});
+</code></pre>
+
+<p>假设文件<code>file1</code>，<code>file2</code>，<code>file3</code>中的内容分别是&rdquo;in file1&rdquo;，&rdquo;in file2&rdquo;，&rdquo;in file3&rdquo;。那么输出如下：</p>
+
+<pre><code>in file1
+in file2
+in file3
+</code></pre>
+
+<p>这种情况下，<code>Promise.all</code>就派上大用场了。<code>Promise.all</code>接受一个可迭代对象（即ES6中的Iterable对象），每个元素通过调用<code>Promise.resolve</code>转换为<code>Promise</code>对象。<code>Promise.all</code>方法返回一个新的<code>Promise</code>对象。该对象在所有<code>Promise</code>对象状态变为<code>resolved</code>时，其状态才会转换为<code>resolved</code>，参数为各个<code>Promise</code>的结果组成的数组。只要有一个对象的状态变为<code>rejected</code>，新对象的状态就会转换为<code>rejected</code>。使用<code>Promise.all</code>我们可以很优雅的实现上面的功能：</p>
+
+<pre><code>let fs = require(&quot;fs&quot;);
+
+let promise1 = new Promise(function (resolve, reject) {
+    fs.readFile(&quot;file1&quot;, &quot;utf8&quot;, function (err, data) {
+        if (err != null) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    });
+});
+
+let promise2 = new Promise(function (resolve, reject) {
+    fs.readFile(&quot;file2&quot;, &quot;utf8&quot;, function (err, data) {
+        if (err != null) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    });
+});
+
+let promise3 = new Promise(function (resolve, reject) {
+    fs.readFile(&quot;file3&quot;, &quot;utf8&quot;, function (err, data) {
+        if (err != null) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    });
+});
+
+let p = Promise.all([promise1, promise2, promise3]);
+p.then(function (datas) {
+    console.log(datas);
+})
+ .catch(function (err) {
+    console.log(err);
+});
+</code></pre>
+
+<p>输出如下：</p>
+
+<pre><code>['in file1', 'in file2', 'in file3']
+</code></pre>
+
+<p>第二段代码我们可以进一步简化为：</p>
+
+<pre><code>let fs = require(&quot;fs&quot;);
+
+let myReadFile = function (filename) {
+    return new Promise(function (resolve, reject) {
+        fs.readFile(filename, &quot;utf8&quot;, function (err, data) {
+            if (err != null) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
+
+let promise1 = myReadFile(&quot;file1&quot;);
+let promise2 = myReadFile(&quot;file2&quot;);
+let promise3 = myReadFile(&quot;file3&quot;);
+
+let p = Promise.all([promise1, promise2, promise3]);
+p.then(function (datas) {
+    console.log(datas);
+})
+ .catch(function (err) {
+    console.log(err);
+});
+</code></pre>
+
+<h3 id="span-id-promise-race-3-3-promise-race-方法-span"><span id="Promise.race">3.3 Promise.race 方法</span></h3>
+
+<p><code>Promise.race</code>与<code>Promise.all</code>一样，接受一个可迭代对象作为参数，返回一个新的<code>Promise</code>对象。不同的是，只要参数中有一个<code>Promise</code>对象状态发生变化，新对象的状态就会变化。也就是说哪个操作快，就用哪个结果（或出错）。利用这种特性，我们可以实现超时处理：</p>
+
+<pre><code>let p1 = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        reject(new Error(&quot;time out&quot;));
+    }, 1000);
+});
+
+let p2 = new Promise(function (resolve, reject) {
+    // 模拟耗时操作
+    setTimeout(function () {
+        resolve(&quot;get result&quot;);
+    }, 2000);
+});
+
+let p = Promise.race([p1, p2]);
+
+p.then(function (data) {
+    console.log(data);
+})
+ .catch(function (err) {
+    console.log(err);
+});
+</code></pre>
+
+<p>对象<code>p1</code>在1s之后状态转换为<code>rejected</code>，<code>p2</code>在2s后转换为<code>resolved</code>。所以1s后，<code>p1</code>状态转换时，<code>p</code>的状态紧接着就转为<code>rejected</code>了。从而，输出为：</p>
+
+<pre><code>time out
+</code></pre>
+
+<p>如果将对象<code>p2</code>的延迟改为0.5s，那么在0.5s后<code>p2</code>状态改变时，<code>p</code>紧随其后状态转换为<code>resolved</code>。从而输出为：</p>
+
+<pre><code>get result
+</code></pre>
+
+<h2 id="span-id-使用案例-4-使用案例-span"><span id="使用案例">4.使用案例</span></h2>
+
+<p>前面我们提到过，<code>then</code>方法会返回一个新的<code>Promise</code>对象。所以<code>then</code>方法可以链式调用，前一个成功回调的返回值会作为下一个成功回调的参数。例如：</p>
+
+<pre><code>let p = new Promise(function (resolve, reject) {
+    resolve(25);
+});
+
+p.then(function (num) { // (A)
+    return num + 1;
+})
+ .then(function (num) { // (B)
+    return num * 2;
+})
+ .then(function (num) { // (C)
+    console.log(num);
+});
+</code></pre>
+
+<p>对象<code>p</code>状态变为<code>resolved</code>时，结果为<code>25</code>。行(A)处函数最先被调用，参数<code>num</code>的值为<code>25</code>，返回值为<code>26</code>。<code>26</code>又作为行(B)处函数的参数，函数返回<code>62</code>。<code>62</code>作为行&copy;处函数的参数，被输出。</p>
+
+<p>下面给出结合AJAX的一个案例。</p>
+
+<pre><code>let getJSON = function (url) {
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState !== 4) {
+                return;
+            }
+
+            if (xhr.status === 200) {
+                resolve(xhr.response);
+            } else {
+                reject(new Error(xhr.statusText));
+            }
+        }
+        xhr.send();
+    });
+}
+
+getJSON(&quot;http://api.icndb.com/jokes/random&quot;)
+ .then(function (responseText) {
+    return JSON.parse(responseText);
+})
+ .then(function (obj) {
+    console.log(obj.value.joke);
+})
+ .catch(function (err) {
+    console.log(err.message);
+});
+</code></pre>
+
+<p><code>getJSON</code>函数接受一个<code>url</code>地址，请求json数据。但是请求到的数据是文本格式，所以在第一个<code>then</code>方法的回调中使用<code>JSON.parse</code>将其转为对象，第二个<code>then</code>方法回调再进行具体处理。</p>
+
+<p><code>http://api.icndb.com/jokes/random</code>是一个随机笑话的api，大家可以试试 :smile:。</p>
+
+<h2 id="span-id-总结-5-总结-span"><span id="总结">5.总结</span></h2>
+
+<p><code>Promise</code>是ES6新增的一种异步编程的解决方案，使用它可以编写更优雅，更易读，更易维护的程序。<code>Promise</code>已经应用在各个角落了，个人认为掌握它是一个合格的Javascript开发者的基本功。</p>
+
+<h2 id="span-id-参考链接-6-参考链接-span"><span id="参考链接">6.参考链接</span></h2>
+
+<p><a href="https://developers.google.com/web/fundamentals/primers/promises">JavaScript Promise：简介</a></p>
+
+<p><a href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/">Tasks, microtasks, queues and schedules</a></p>
+
+<p><a href="https://medium.com/@pyrolistical/how-to-get-out-of-promise-hell-8c20e0ab0513#.2an1he6vf">How to escape Promise Hell</a></p>
+
+<p><a href="https://www.sitepoint.com/overview-javascript-promises/">An Overview of JavaScript Promise</a></p>
+
+<p><a href="https://www.datchley.name/es6-promises/">ES6 Promise</a>：Promise语法介绍</p>
+
+<p><a href="http://es6.ruanyifeng.com/#docs/promise">Promise 对象</a>：阮一峰老师Promise对象详解</p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://darjun.github.io"><img src="/img/favicon.png" />Darjun Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/05/24/redis-skiplist/" data-toggle="tooltip" data-placement="top" title="Redis源码阅读-skiplist">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/11/23/javascript-callstack-eventloop/" data-toggle="tooltip" data-placement="top" title="深入理解Javascript之CallStack&amp;EventLoop">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<script src="/js/iDisqus.js"></script>
+<script>
+var disq = new iDisqus('disqus-comment', {
+    forum: 'darjun-blog',
+    api: 'https:\/\/disqusapi.leedarjun.com',
+	site: 'https:\/\/darjun.github.io',
+    mode: 1,
+    timeout: 5000,
+    init: true
+});
+</script>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/javascript" title="javascript">
+                            javascript
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis-source" title="redis-source">
+                            redis-source
+                        </a>
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href="" rel="alternate" type="application/rss+xml" title="Darjun Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:leedarjun@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/darjun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://medium.com/@leedarjun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Darjun Blog 2019
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https'){
+       bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+
+
+
+<script>
+    
+    var _baId = '22b47f8b144298dc77b2beb696c6353d';
+
+    
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-136116022-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
