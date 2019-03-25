@@ -18,9 +18,9 @@
     
 
     
-    <meta name="title" content="ARTS第一周" />
-    <meta property="og:title" content="ARTS第一周" />
-    <meta property="twitter:title" content="ARTS第一周" />
+    <meta name="title" content="ARTS第二周" />
+    <meta property="og:title" content="ARTS第二周" />
+    <meta property="twitter:title" content="ARTS第二周" />
     
 
     
@@ -37,9 +37,9 @@
     <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>ARTS第一周-大俊的博客 | Darjun Blog</title>
+    <title>ARTS第二周-大俊的博客 | Darjun Blog</title>
 
-    <link rel="canonical" href="/2019/03/17/art/week1">
+    <link rel="canonical" href="/2019/03/19/art/week2">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -168,17 +168,17 @@
                         </a>
                         
                     </div>
-                    <h1>ARTS第一周</h1>
-                    <h2 class="subheading">&#34;start fighting!!!&#34;</h2>
+                    <h1>ARTS第二周</h1>
+                    <h2 class="subheading">&#34;go on!!!&#34;</h2>
                     <span class="meta">
 			Posted by 
 			
 			    Darjun
 			 
 			on 
-			Sunday, March 17, 2019
+			Tuesday, March 19, 2019
                         
-                            <span id="/2019/03/17/art/week1" class="leancloud_visitors meta_data_item" data-flag-title="">
+                            <span id="/2019/03/19/art/week2" class="leancloud_visitors meta_data_item" data-flag-title="">
     <span class="post-meta-item-icon">
       <span class="octicon octicon-eye"></span> 
     </span>
@@ -341,7 +341,12 @@ $(function() {
 <li>
 <ul>
 <li><a href="#概述">概述</a></li>
-<li><a href="#algorithm">Algorithm</a></li>
+<li><a href="#algorithm">Algorithm</a>
+<ul>
+<li><a href="#3sum">3Sum</a></li>
+<li><a href="#majority-element">Majority Element</a></li>
+<li><a href="#first-missing-positive">First Missing Positive</a></li>
+</ul></li>
 <li><a href="#review">Review</a></li>
 <li><a href="#tip">Tip</a></li>
 <li><a href="#share">Share</a></li>
@@ -359,144 +364,215 @@ $(function() {
 <p>每周完成一个ARTS： 每周至少做一个 leetcode 的算法题、阅读并点评至少一篇英文技术文章、学习至少一个技术技巧、分享一篇有观点和思考的技术文章。（也就是 Algorithm、Review、Tip、Share 简称ARTS）</p>
 </blockquote>
 
-<p>第一次尝试ARTS，选了比较简单的 leetcode 题目。</p>
-
 <h2 id="algorithm">Algorithm</h2>
+
+<p>本周 leetcode 挑选了3个与数组相关的题。</p>
+
+<h3 id="3sum">3Sum</h3>
 
 <p>问题描述：</p>
 
-<pre><code>Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+<blockquote>
+<p>Given an array nums of n integers, are there elements a, b, c in nums such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.</p>
+</blockquote>
 
-An input string is valid if:
+<p>见<a href="https://leetcode.com/problems/3sum/">15-3 Sum</a>。</p>
 
-    1.Open brackets must be closed by the same type of brackets.
-    2.Open brackets must be closed in the correct order.
+<p><strong>难度：中等。</strong></p>
 
-Note that an empty string is also considered valid.
-</code></pre>
+<p><strong>问题解析：</strong></p>
+
+<ul>
+<li>题目要求的是所有三元组(a, b, c)使得<code>a + b + c = 0</code>。</li>
+<li>这道题的难点在于如何去重。为了避免重复添加，我将原数组进行排序，这样保证挑出的三元组满足<code>a &lt;= b &lt;= c</code>。</li>
+<li>为了提升效率，先将每个元素的索引记在一个HashMap中。两重循环尝试 a 和 b，在HashMap中查找-(a+b)，即为 c。</li>
+<li>a 和 b 可以唯一确定 c，使用<code>HashMap&lt;Integer, HashSet&lt;Integer&gt;&gt;</code>去重，如果 b 在由 a 定位到的<code>HashSet</code>中，则三元组已存在。</li>
+</ul>
+
+<p><strong>实现：</strong>
+<code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/15-3Sum">github</a>，耗时：308ms。</p>
+
+<p><strong>解法二：</strong></p>
+
+<p>后来我了解到另一种优雅的解决方案——双指针。基本思路如下：</p>
+
+<ul>
+<li>将原数组排序。</li>
+<li>遍历数组元素作为 a。</li>
+<li>然后将当前元素后一个元素作为 b 的起始位置，最后一个元素作为 c 的起始位置。</li>
+<li>如果 a + b + c &gt; 0，则将 c 向左移动。</li>
+<li>如果 a + b + c &lt; 0，则将 b 向右移动。</li>
+</ul>
+
+<p>该方案还能很好的去重，而且节省了<code>HashMap</code>的开销。<code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/15-3Sum">github</a>，耗时：104ms。</p>
+
+<h3 id="majority-element">Majority Element</h3>
+
+<blockquote>
+<p>Given an array of size n, find the majority element. The majority element is the element that appears more than ⌊ n/2 ⌋ times.</p>
+</blockquote>
+
+<p>You may assume that the array is non-empty and the majority element always exist in the array.</p>
+
+<p>见<a href="https://leetcode.com/problems/majority-element/">169-Majority Element</a>。</p>
 
 <p><strong>难度：简单。</strong></p>
 
-<p>大意是给定一个只包含括号字符（小括号：&rsquo;(&lsquo;和&rsquo;)&lsquo;，中括号：&rsquo;[&lsquo;和&rsquo;]&lsquo;，以及大括号：&rsquo;{&lsquo;和&rsquo;}&lsquo;）的字符串，要求程序给出字符串中的括号是否正确嵌套以及是否正确关闭。空串认为是符合要求的。</p>
-
-<p><strong>问题求解：</strong></p>
-
-<p>每次遇到一个闭括号，需要查看前一个是否是其开括号。若否，则不合法。若是，那么这对括号是合法的，移除它们，继续往后遍历。很显然，遍历过程中遇到的开括号需要由一个栈来保存。遍历结束后，栈中未匹配的开括号数必须为0才算合法。</p>
-
-<p><strong>Java 实现：</strong></p>
+<p><strong>问题解析：</strong></p>
 
 <ul>
-<li><p>首先尝试用<code>java.util.Stack</code>求解，通过，耗时 4ms。</p></li>
-
-<li><p>后又使用<code>java.util.ArrayList</code>实现，耗时降至 3ms。</p></li>
+<li>题中给定了两个限制条件让题目变得非常简单：1.数组非空 2.主元素一定存在。</li>
+<li>主元素是出现次数超过一半的元素，那么将主元素与其他元素一一配对之后肯定剩余一些主元素。我们可以想象这是一种抵消，最坏情况下，所有其他元素都抵消一个主元素，主元素有剩余。</li>
 </ul>
 
-<p>完整代码见我的<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/20-validParentheses">github</a></p>
+<p><strong>实现：</strong>
+<code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/169-majorityElement">github</a>。代码比较简单也贴在这里吧：</p>
+
+<pre><code class="language-java">class Solution {
+    public int majorityElement(int[] nums) {
+        int me = nums[0];
+        int count = 1;
+        
+        for (int i = 1; i &lt; nums.length; i++) {
+            if (me == nums[i]) {
+                count++;
+            } else {
+                count--;
+                if (count == 0) {
+                    me = nums[i];
+                    count = 1;
+                }
+            }
+        }
+
+        return me;
+    }
+}
+</code></pre>
+
+<h3 id="first-missing-positive">First Missing Positive</h3>
+
+<blockquote>
+<p>Given an unsorted integer array, find the smallest missing positive integer.</p>
+</blockquote>
+
+<p>见<a href="https://leetcode.com/problems/first-missing-positive/">41-First Missing Positive</a>。</p>
+
+<p><strong>难度：困难。</strong></p>
+
+<p><strong>问题解析：</strong></p>
+
+<ul>
+<li>题目要求第一个缺失的正整数，要求O(n)的时间复杂度，说明只能遍历有限次。</li>
+<li>思路：遍历两次，第一次将所有正整数放到其正确的位置上，第二次返回值与其位置不一致的结果。</li>
+<li>细节：遍历过程忽略非正和超过数组长度的值。</li>
+</ul>
+
+<p><strong>实现：</strong>
+<code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/41-firstMissingPositive">github</a>。</p>
 
 <h2 id="review">Review</h2>
 
-<p>这周 review 的文章是 medium 上的<a href="https://medium.com/@PurpleGreenLemon/develop-this-one-fundamental-skill-if-you-want-to-become-a-successful-developer-95977489652e">Develop this one fundamental skill if you want to become a successful developer</a>。要想成为一个成功的程序员，需要具备一个基础技能，即“在计算机前久坐”。</p>
+<p>本周 review 的文章是 medium 上的<a href="https://medium.com/s/story/the-simple-truth-behind-reading-200-books-a-year-1767cb03af20">The Simple Truth Behind Reading 200 Books a Year</a>。</p>
 
 <ul>
-<li><p>开发工作的文化体现在与计算机交互的过程中。知识不会凭空出现在我们的大脑。不管是通过 YouTube 视频，与他人一起，或是自己独自研究代码来学习编程，这些都有一个共同点——在计算机前“坐”很长时间。</p></li>
+<li><p>有人问巴菲特成功的秘诀，他说：每天阅读 500 页书籍。所有人都能做到，但是大部分人不会去做。</p></li>
 
-<li><p><strong>学习编程需要时间，当今每个人都缺少时间。这意味着，我们需要舍弃一些东西。</strong>例如一些社交活动或 Netflix 连续剧。</p></li>
+<li><p>不要还未开始就放弃了。大部分听到“每天阅读500页”，第一反应就是：这不可能。然后开始为自己的反应编造理由：“我太忙了”，“我不够聪明”。请理智一点，放弃之前思考一下！</p></li>
 
-<li><p>程序员大都是自学的、自主的和自我驱动的（<strong>A lot of developers nowadays are self-taught, self-directed and self-driven——the key word in this entire sentence is self</strong>）。编程的大部分知识来自自我学习。编程是一条“孤独”的道路，我们大部分时间是靠自己。没有人能告诉我们选择什么样的路，每一步做什么。Google 是我们最好的伙伴。</p></li>
+<li><p>简单计算一下每年阅读一本书需要多少时间。根据统计数据美国人平均每分钟阅读200-400单词，一本非小说书籍平均50,000个词。结果是417小时（中文可能有差异，不过差别不会很大）。</p>
+
+<pre><code>200 books * 50,000 words / book = 10 million words
+10 million words / 400 wpm = 25,000 minutes
+25,000 minutes / 60 = 417 hours
+</code></pre></li>
+
+<li><p>寻找时间。我们可能会觉得417小时很多。但是据统计美国人每年平均在社交媒体上花费705小时，在电视上花费2737.5小时。如果把这些时间都拿来读书，那么每年可以读1600本书！我们需要做的就是分配一些时间在阅读上。</p></li>
+
+<li><p>执行。知易行难。可以从以下几点执行：</p>
+
+<ol>
+<li>改变环境，（1）移除环境中所有分散注意力的东西。（2）将书籍放在随手可得的地方。</li>
+<li>养成习惯。意志力并不是改变生活方式的好手段，习惯才是。</li>
+<li>使用多种媒介。开始时不要挑书，所有方面都阅读。不要局限于形式，你可以阅读纸质书，可以在手机上阅读，可以听有声书，可以在任何地方阅读。</li>
+</ol></li>
 </ul>
+
+<p><strong>心得：</strong>
+放弃不切实际的幻想，行动起来，坚持下去，改变于微末之间。</p>
 
 <h2 id="tip">Tip</h2>
 
-<p>这里分享一个 Go 接口的使用。</p>
+<p>go 中没有<code>set</code>数据结构。虽然可以用<code>map</code>来模拟，但是写法却不太直观。借助于 go 的类型定义，我们可以实现一个自己的<code>set</code>类型。</p>
 
-<p>我们知道面向对象的编程语言都有类，类有构造函数可以进行必要的初始化操作。例如下面 Java 代码中，组件类<code>Widget</code>在构造函数中生产一个唯一的 UUID：</p>
+<pre><code class="language-golang">type Set32 map[uint32]struct{}
 
-<pre><code class="language-java">public class Widget {
-    private String uuid;
+func NewSet32() Set32 {
+    return make(map[uint32]struct{})
+}
 
-    public Widget() {
-        uuid = UUID.randomUUID().toString();
+func (s Set32) Add(val uint32) {
+    s[val] = struct{}{}
+}
+
+func (s Set32) Exist(val uint32) {
+    _, exist := s[val]
+    return exist
+}
+
+func (s Set32) Union(o Set32) Set32 {
+    r := NewSet32()
+    for val := range s {
+        r.Add(val)
+    }
+
+    for val := range o {
+        r.Add(val)
     }
 }
-</code></pre>
 
-<p>但是 Go 没有构造函数，我们编写<code>Widget</code>结构：</p>
-
-<pre><code class="language-go">type Widget struct {
-    Uuid string
-}
-</code></pre>
-
-<p>用户完全可以使用<code>w := &amp;Widget{}</code>来创建对象，这里的初始化不受我们控制。当然，我们可以通过添加形如<code>NewXXX</code>的“类”构造函数（contructor-like）增加初始化逻辑：</p>
-
-<pre><code class="language-go">func NewWidget() *Widget {
-    return &amp;Widget{
-        Uuid: uuid.Must(uuid.NewV4).String(),
+func (s Set32) Diff(o Set32) Set32 {
+    r := NewSet32()
+    for val := range s {
+        if !o.Exist(val) {
+            r.Add(val)
+        }
     }
-}
-</code></pre>
 
-<p>然而，<code>NewWidget</code>的调用并不是强制的。当然可以通过封装大法，将<code>Widget</code>移到一个包中，并将其设置为未导出。</p>
-
-<pre><code class="language-go">package widgets
-
-type widget struct {
-    Uuid string
+    return r
 }
 
-func NewWidget() *widget {
-    return &amp;widget{
-        Uuid: uuid.Must(uuid.NewV4).String(),
+func (s Set32) Inter(o Set32) Set32 {
+    r := NewSet32()
+    for val := range s {
+        if o.Exist(val) {
+            r.Add(val)
+        }
     }
+
+    return r
 }
 </code></pre>
 
-<p>这种写法可以骗过 Go 编译器，但是我们不能骗自己。该写法有以下三个问题：</p>
-
-<ul>
-<li><p>方法<code>NewWidget</code>返回一个未导出的类型很怪异。</p></li>
-
-<li><p><code>go doc</code>生成的文档会忽略未导出的类型。包的使用者会和困惑，<code>NewWidget</code>函数返回一个类型，而文档中根本找不到该类型。</p></li>
-
-<li><p>扩展是噩梦。</p></li>
-</ul>
-
-<p>Go 接口可以很优雅的解决这个问题。返回一个导出的接口类型即可。看下面代码：</p>
-
-<pre><code class="language-go">
-package widgets
-
-// 文档
-type Uuider interface {
-    Uuid() string
-}
-
-type widget struct {
-    Uuid string
-}
-
-func (w widget) Uuid() {
-    return w.Uuid
-}
-
-func NewWidget() Uuider {
-    return &amp;widget{
-        Uuid: uuid.Must(uuid.NewV4).String(),
-    }
-}
-</code></pre>
-
-<p>灵活，优雅！</p>
+<p>使用<code>Set32</code>非常简单，得益于 go 语言强大的类型设计。</p>
 
 <h2 id="share">Share</h2>
 
-<p>引用前面 review 的文章中的一句话：</p>
-
 <blockquote>
-<p>能否在计算机前坐很长时间，以及如何利用这段时间，可以判断一个人能否成为一个优秀的程序员。</p>
+<p>有时“少一点”工作可以产生更好的结果。这是一个关于效率的故事。</p>
 </blockquote>
 
-<p>优秀的程序员的成长需要花费大量“计算机”时间，如何高效利用时间成为关键。</p>
+<p>这次分享的内容来自 medium 的<a href="https://medium.com/s/story/7-things-you-need-to-stop-doing-to-be-more-productive-backed-by-science-a988c17383a6">7 Things You Need To Stop Doing To Be More Productive, Backed By Science</a>，讲述如何更有效率，我深有感触。</p>
+
+<ul>
+<li>不要工作过长时间，提高你的效率。</li>
+<li>不要经常说&rdquo;yes&rdquo;。把时间花在最值得的地方。</li>
+<li>不要所有事情都自己做，让别人帮助你。不同的人有不同的视角，人多力量大。</li>
+<li>放弃“完美主义”，过于执着完美会让你忽略全局，过于关注细节。</li>
+<li>不要一直做重复的事情，让它自动化。</li>
+<li>停止猜测，让数据来验证。</li>
+<li>停下来，做一做其他的事情。这可能会让我们得到对长时间思考问题的“灵光一闪”。</li>
+</ul>
 
 
                 
@@ -545,15 +621,10 @@ func NewWidget() Uuider {
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2019/01/24/golang-dev-env/" data-toggle="tooltip" data-placement="top" title="搭建go开发环境">&larr;
+                        <a href="/2019/03/17/art/week1" data-toggle="tooltip" data-placement="top" title="ARTS第一周">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/2019/03/19/art/week2" data-toggle="tooltip" data-placement="top" title="ARTS第二周">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
