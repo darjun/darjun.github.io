@@ -18,9 +18,9 @@
     
 
     
-    <meta name="title" content="深入理解Javascript之Module" />
-    <meta property="og:title" content="深入理解Javascript之Module" />
-    <meta property="twitter:title" content="深入理解Javascript之Module" />
+    <meta name="title" content="ARTS第三周" />
+    <meta property="og:title" content="ARTS第三周" />
+    <meta property="twitter:title" content="ARTS第三周" />
     
 
     
@@ -37,9 +37,9 @@
     <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>深入理解Javascript之Module-大俊的博客 | Darjun Blog</title>
+    <title>ARTS第三周-大俊的博客 | Darjun Blog</title>
 
-    <link rel="canonical" href="/2018/12/20/javascript-module/">
+    <link rel="canonical" href="/2019/03/26/arts/week3">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -153,7 +153,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('/img/post-bg-2015.jpg')
+        background-image: url('/img/background3.jpg')
     }
 </style>
 <header class="intro-header">
@@ -163,22 +163,22 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/javascript" title="javascript">
-                            javascript
+                        <a class="tag" href="/tags/arts" title="arts">
+                            arts
                         </a>
                         
                     </div>
-                    <h1>深入理解Javascript之Module</h1>
-                    <h2 class="subheading">&#34;Javascript in depth&#34;</h2>
+                    <h1>ARTS第三周</h1>
+                    <h2 class="subheading">&#34;go on!!!&#34;</h2>
                     <span class="meta">
 			Posted by 
 			
-			    darjun
+			    Darjun
 			 
 			on 
-			Thursday, December 20, 2018
+			Monday, March 25, 2019
                         
-                            <span id="/2018/12/20/javascript-module/" class="leancloud_visitors meta_data_item" data-flag-title="">
+                            <span id="/2019/03/26/arts/week3" class="leancloud_visitors meta_data_item" data-flag-title="">
     <span class="post-meta-item-icon">
       <span class="octicon octicon-eye"></span> 
     </span>
@@ -340,418 +340,263 @@ $(function() {
 <ul>
 <li>
 <ul>
-<li><a href="#span-id-模块-什么是模块-span"><span id="模块">什么是模块</span></a></li>
-<li><a href="#span-id-commonjs-2-commonjs模块-span"><span id="CommonJS">2.CommonJS模块</span></a>
+<li><a href="#1-概述">1 概述</a></li>
+<li><a href="#2-algorithm">2 Algorithm</a>
 <ul>
-<li><a href="#基本用法">基本用法</a></li>
-<li><a href="#模块类别">模块类别</a></li>
-<li><a href="#定义模块">定义模块</a></li>
-<li><a href="#模块导出详解">模块导出详解</a></li>
+<li><a href="#2-1-linked-list-cycle">2.1 Linked List Cycle</a></li>
+<li><a href="#2-2-merge-k-sorted-lists">2.2 Merge k Sorted Lists</a></li>
 </ul></li>
-<li><a href="#span-id-es6-3-es模块-span"><span id="ES6">3.ES模块</span></a>
-<ul>
-<li><a href="#基本使用">基本使用</a></li>
-<li><a href="#es6-模块特性">ES6 模块特性</a>
-<ul>
-<li><a href="#静态加载">静态加载</a></li>
-<li><a href="#别名">别名</a></li>
-<li><a href="#default导出">default导出</a></li>
-<li><a href="#整体加载">整体加载</a></li>
-<li><a href="#node-中使用-es6-模块">Node 中使用 ES6 模块</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#span-id-总结-4-总结-span"><span id="总结">4.总结</span></a></li>
-<li><a href="#span-id-参考链接-5-参考链接-span"><span id="参考链接">5.参考链接</span></a></li>
+<li><a href="#3-review">3 Review</a></li>
+<li><a href="#4-tip">4 Tip</a></li>
+<li><a href="#5-share">5 Share</a></li>
 </ul></li>
 </ul>
 </nav>
                 
                 
 
-<h2 id="span-id-模块-什么是模块-span"><span id="模块">什么是模块</span></h2>
+<h2 id="1-概述">1 概述</h2>
 
-<p>模块（module）是什么呢？
-模块是为了软件封装，复用。当今开源运动盛行，我们可以很方便地使用别人编写好的模块，而不用自己从头开始编写。在程序设计中，我们一直强调避免重复造轮子（Don&rsquo;t Repeat Yourself，DRY）。</p>
+<p>ARTS 是耗子叔发起的编程挑战：</p>
 
-<p>想象一下，没有模块的日子，第三库基本都是导出一个全局变量供开发者使用。例如<code>jQuery</code>的<code>$</code>，<code>lodash</code>的<code>_</code>。这些库已经尽量避免了全局变量冲突，只使用几个全局变量。但是还是不能避免有冲突，<code>jQuery</code>还提供了<code>noConflict</code>。更遑论我们自己编写的代码。</p>
+<blockquote>
+<p>每周完成一个ARTS： 每周至少做一个 leetcode 的算法题、阅读并点评至少一篇英文技术文章、学习至少一个技术技巧、分享一篇有观点和思考的技术文章。（也就是 Algorithm、Review、Tip、Share 简称ARTS）</p>
+</blockquote>
 
-<p>最初，Javascript 中是没有模块的概念的。这可能与一开始 Javascript 的定位有关。Javascript 最初只是希望给网页增加动态元素，定位是简单易用的脚本。
-但是，随着网页端功能越来越丰富，程序越来越庞大，软件变得越来越难以维护。特别是随着 NodeJs 的兴起，Javascript 语言进入服务端编程领域。在编写大型复杂的程序，模块更是必须品。</p>
+<h2 id="2-algorithm">2 Algorithm</h2>
 
-<p>模块只是一个抽象概念，要想在实际编程中使用还需要规范。如果没有规范，我用这种写法，你用那种写法，岂不是乱了套。</p>
+<h3 id="2-1-linked-list-cycle">2.1 Linked List Cycle</h3>
 
-<p>目前，模块的规范主要有3中，<a href="https://requirejs.org/docs/commonjs.html">CommonJS模块</a>、<a href="https://github.com/amdjs/amdjs-api/wiki/AMD">AMD模块</a>和ES6模块。本文着重讲解 CommonJS 模块（以 Node 实现为代表）和ES6模块。</p>
+<p><strong>问题描述：</strong></p>
 
-<h2 id="span-id-commonjs-2-commonjs模块-span"><span id="CommonJS">2.CommonJS模块</span></h2>
+<blockquote>
+<p>Given a linked list, determine if it has a cycle in it.</p>
 
-<p>CommonJS 其实是一个通用的 Javascript 语言规范，并不仅仅是模块的规范。Node 中的模块遵循 CommonJS 规范。</p>
+<p>To represent a cycle in the given linked list, we use an integer pos which represents the position (0-indexed) in the linked list where tail connects to. If pos is -1, then there is no cycle in the linked list.</p>
+</blockquote>
 
-<h3 id="基本用法">基本用法</h3>
+<p>见<a href="https://leetcode.com/problems/linked-list-cycle/">141-Linked List Cycle</a>。</p>
 
-<p>Node 中提供了一个<code>require</code>方法用来加载模块。例如：</p>
+<p><strong>难度：简单。</strong></p>
 
-<pre><code class="language-js">var fs = require('fs');
+<p><strong>问题求解：</strong></p>
 
-fs.readFile('file1.txt', 'utf8', function (err, data) {
-    if (err) {
-        console.error(err);
-    } else {
-        console.log(data);
+<p>思路很简单：利用快慢两个指针，慢指针每次走一步，快指针每次走两步，如果快指针能追上慢指针，则证明有环，反之无环。由于快指针每次比慢指针多走一步，如果有环一定可以追上。</p>
+
+<p><strong>实现：</strong></p>
+
+<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/141-linkedListCycle">github</a>，耗时 0ms。</p>
+
+<h3 id="2-2-merge-k-sorted-lists">2.2 Merge k Sorted Lists</h3>
+
+<p><strong>问题描述：</strong></p>
+
+<blockquote>
+<p>Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.</p>
+</blockquote>
+
+<p>见<a href="https://leetcode.com/problems/merge-k-sorted-lists/">23-Merge k Sorted Lists</a>。</p>
+
+<p><strong>难度：困难。</strong></p>
+
+<p><strong>问题求解：</strong></p>
+
+<ul>
+<li>需要每次从 n 个 list 中取出最小值插入新的 list。</li>
+<li>由此，可以使用一个最小堆，每次取堆顶的值即可。构造新元素插入新的 list。</li>
+<li>如果被取出的元素有下一个元素，则将其放入最小堆。直到所有列表元素都遍历完成且最小堆中无元素。</li>
+</ul>
+
+<p><strong>实现：</strong></p>
+
+<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/23-mergeKSortedLists">github</a>，耗时 7ms。</p>
+
+<h2 id="3-review">3 Review</h2>
+
+<p>本周 review 是 medium 上一篇关于 go 语言中 defer 用法的<a href="https://medium.com/">文章</a>。文章中介绍了 go 语言中 defer 的常见和不常见的用法。举了大量的示例。看完之后，我认为：</p>
+
+<ul>
+<li><p>很多例子牵扯到 go 语法很细节的层面，实用性不大，例如在<code>defer</code>中修改函数返回值。</p></li>
+
+<li><p>掌握常见的用法就已经足够，非编译器实现者深入下去性价比不高。当然你有兴趣，有时间另说😉。</p></li>
+</ul>
+
+<p>我认为 defer 的最重要用法就是保证资源的释放（如文件，网络连接等），避免在每个返回路径上都写上释放资源的代码（繁琐且容易遗漏）。例如：</p>
+
+<pre><code class="language-golang">func f1() {
+    f, err := os.Open();
+    if err != nil {
+        // error handle
+        return
     }
-});
+
+    defer f.Close()
+
+    if condition1 {
+        // ...
+        return
+    }
+
+    if condition2 {
+        // ...
+        return
+    }
+
+    // ...
+}
 </code></pre>
 
-<p>导入模块之后就可以使用模块中定义的接口了，如上例中的<code>readFile</code>。</p>
+<p>这里只需要写一次<code>f.Close()</code>，<code>defer</code>保证在函数返回前这行代码一定会被调用。</p>
 
-<h3 id="模块类别">模块类别</h3>
+<p><strong>另外，需要关注<code>defer</code>的一个使用问题：</strong></p>
 
-<p>在 Node 中大体上有3种模块，普通模块、核心模块和第三方模块。
-普通模块是我们自己编写的模块，核心模块是 Node 提供的模块。上面我们使用的<code>fs</code>就是核心模块。普通模块与核心模块的导入方式稍微有些区别。导入普通模块时，需要在<code>require</code>的参数中指定相对路径。例如：</p>
+<pre><code class="language-golang">func f2() {
+    for i := 1; i &lt; 10; i++ {
+        f, err := os.Open(fmt.Sprintf(&quot;test%d&quot;, i))
+        if err != nil {
+            return
+        }
 
-<pre><code class="language-js">var myModule = require('./myModule');
-myModule.func1();
+        defer f.Close()
+
+        // ...
+    }
+}
 </code></pre>
 
-<p>模块<code>myModule</code>的后缀<code>.js</code>后缀可以省略。</p>
+<p>需要注意的是，<code>defer</code>代码是在<strong>函数返回前</strong>执行的，而不是在<strong>代码块结束时</strong>。在上面代码中，如果<code>for</code>循环之后还有其他比较耗时的代码，那么变量<code>f</code>占用的文件句柄就不能很快释放。可以使用闭包来改进：</p>
 
-<p>Node 将核心模块编译进了引擎。导入核心模块只需要指定模块名，Node 引擎直接查找核心模块字典。</p>
+<pre><code class="language-golang">func f2() {
+    for i := 1; i &lt; 10; i++ {
+        func() {
+            f, err := os.Open(fmt.Sprintf(&quot;test%d&quot;, i))
+            if err != nil {
+                return
+            }
 
-<p>第三方模块的导入也是指定模块名，但是模块的查找方式有所不同。</p>
+            defer f.Close()
+
+            // ...
+        }()
+    }
+}
+</code></pre>
+
+<p>这时，<code>for</code>循环中的代码在一个匿名函数中执行，该函数执行完成后<code>f.Close</code>就会被调用从而释放资源。</p>
+
+<h2 id="4-tip">4 Tip</h2>
+
+<p>分享一个<code>go generate</code>的使用技巧。</p>
+
+<p>我是一个游戏后端程序员，最近和平台对接行为日志规范。其中有一个资源获取和消耗日志，需要记录资源来源或去向的描述（比如通过日常任务获得，或者在用在武将升星上）。
+我们在编写功能的过程中就已经记录了日志，不过我们是通过一个自定义的常量数字来表示来源或去向的。定义获取或消耗途径的代码如下（为了描述方便，做了简化）：</p>
+
+<pre><code class="language-golang">const (
+    LogTypeDailyMission = 1 // 日常任务
+    LogTypeKnightStarup = 2 // 武将升星
+    LogTypeKnightLayerup = 3 // 武将突破
+)
+</code></pre>
+
+<p>这时，可以通过维护途径常量数字和描述的一个映射。在需要获取描述时，传入常量即可。如下所示：</p>
+
+<pre><code class="language-golang">// todo: 新增途径修改这里！！！
+var mapLogType = map[uint32]string {
+    LogTypeDailyMission: &quot;日常任务&quot;,
+    LogTypeKnightStarup: &quot;武将升星&quot;,
+    LogTypeKnightLayerup: &quot;武将突破&quot;,
+}
+
+func GetLogMessage(logType uint32) string {
+    if logMessage, exist := mapLogType[logType]; exist {
+        return logMessage
+    }
+
+    return fmt.Sprintf(&quot;logtype(%d)&quot;, logType)
+}
+</code></pre>
+
+<p>采用这种做法，以后每次添加一种新的途径，都需要修改<code>mapLogType</code>，很繁琐。后来，我想到了使用<code>go generate</code>来自动生成。</p>
 
 <ul>
-<li><p>首先，在项目目录下的<code>node_modules</code>目录中查找。</p></li>
-
-<li><p>如果没有找到，接着去项目目录的父目录中查找。</p></li>
-
-<li><p>直到找到加载该模块，或者到根目录还未找到返回失败。</p></li>
+<li>首先，定义一个新类型。将途径常量全改为新类型。在<code>const</code>头部加入<code>go generate</code>命令：</li>
 </ul>
 
-<h3 id="定义模块">定义模块</h3>
+<pre><code class="language-golang">type LogType uint32
 
-<p>在我们日常的编程中，经常需要将一些功能封装在一个模块中，方便自己或他人使用。在 Node 中定义模块的语法很简单。模块单独在一个文件中，文件中可以使用<code>exports</code>导出接口或变量。例如：</p>
-
-<pre><code class="language-js">function addTwoNumber(a, b) {
-    return a + b;
-}
-
-exports.addTwoNumber = addTwoNumber;
+//go:generate stringer -type=LogType -linecomment
+const (
+    LogTypeDailyMission  LogType = 1 // 日常任务
+    LogTypeKnightStarup  LogType = 2 // 武将升星
+    LogTypeKnightLayerup LogType = 3 // 武将突破
+)
 </code></pre>
-
-<p>假设该模块在文件<code>myMath.js</code>中。在同一目录下，我们可以这样来使用：</p>
-
-<pre><code class="language-js">var myMath = require('./myMath');
-
-console.log(myMath.addTwoNumber(10, 20)); // 30
-</code></pre>
-
-<h3 id="模块导出详解">模块导出详解</h3>
-
-<p>函数具体是怎么导出的呢？除了<code>exports</code>，我们经常看到的<code>module.exports</code>，<code>__dirname</code>，<code>__filename</code>是从哪里来的？
-在执行<code>require</code>函数的时候，其实 Node 额外做了一些处理。</p>
 
 <ul>
-<li><p>首先，将模块所在文件内容读出来。然后将这些内容包裹在一个函数中：</p>
-
-<pre><code class="language-js">function _doRequire(module, exports, __filename, __dirname) {
-// 模块文件内容
-}
-</code></pre></li>
-
-<li><p>接下来，Node 引擎构造一个空的模块对象，给这个对象一个空的<code>exports</code>属性，然后推算出<code>__filename</code>（当前导入的这个模块的全路径文件名）和<code>__dirname</code>（模块文件所在路径）：</p>
-
-<pre><code class="language-js">var module = {};
-module.exports = {}
-// __filename = ...
-// __dirname = ...
-</code></pre></li>
-
-<li><p>然后，调用第一步构造的那个函数，传入参数：</p>
-
-<pre><code class="language-js">_doRequire(module, module.exports, __filename, __dirname);
-</code></pre></li>
-
-<li><p>最后<code>require</code>返回的是<code>module.exports</code>的值。</p></li>
+<li>执行这个转换需要<code>stringer</code>工具，该工具可以通过<code>go get</code>安装（自备梯子或者通过笔者<a href="https://darjun.github.io/2019/01/24/golang-dev-env/">搭建go开发环境</a>这篇文章中介绍的方法安装）。</li>
 </ul>
 
-<p>按照上面的过程，我们可以很清楚地理解模块的导出过程。并且也能很快地判断一些写法是否有问题：</p>
-
-<p><strong>错误写法：</strong></p>
-
-<pre><code class="language-js">function addTwoNumber(a, b) {
-    return a + b;
-}
-
-exports = {
-    addTwoNumber: addTwoNumber;
-}
+<pre><code>$ go get golang.org/x/tools/cmd/stringer
 </code></pre>
 
-<p>这种写法为什么不对？<code>exports</code>实际上初始时是<code>module.exports</code>的一个引用。给<code>exports</code>赋一个新值后，<code>module.exports</code>并没有改变，还是指向空对象。最后返回的对象是<code>module.exports</code>，没有<code>addTwoNumber</code>接口。</p>
+<ul>
+<li><p><code>go get</code>会将<code>stringer</code>安装到<code>$GOPATH/bin</code>目录中，将<code>$GOPATH/bin</code>放到系统<code>path</code>目录中，使<code>stringer</code>可以在任何目录执行。</p></li>
 
-<p><strong>正确写法：</strong></p>
+<li><p>然后在文件同目录下执行<code>go generate</code>命令，即可生成<code>logsub_string.go</code>文件：</p></li>
+</ul>
 
-<pre><code class="language-js">function addTwoNumber(a, b) {
-    return a + b;
-}
+<pre><code>// Code generated by &quot;stringer -type=LogType -linecomment&quot;; DO NOT EDIT.
 
-// 正确写法一
-exports.addTwoNumber = addTwoNumber;
+package main
 
-// 正确写法二
-module.exports.addTwoNumber = addTwoNumber;
+import &quot;strconv&quot;
 
-// 正确写法三
-module.exports = {
-    addTwoNumber: addTwoNumber
-};
-</code></pre>
+const _LogType_name = &quot;日常任务武将升星武将突破&quot;
 
-<p><code>exports</code>和<code>module.exports</code>开始指向的是同一个对象。写法一通过<code>exports</code>设置属性，同样对<code>module.exports</code>也可见。写法二通过<code>module.exports</code>设置属性也可以导出。
-写法三直接设置<code>module.exports</code>就更不用说了。</p>
+var _LogType_index = [...]uint8{0, 12, 24, 36}
 
-<p>建议在程序开发中，坚持一种写法。<strong>个人觉得写法三显示设置相对较容易理解。</strong></p>
-
-<p><strong>有一点需要注意：不是只有对象可以导出，函数、类等值也可以。</strong>例如下面就导出了一个函数：</p>
-
-<pre><code class="language-js">function addTwoNumber(a, b) {
-    return a + b;
-}
-
-module.exports = addTwoNumber;
-</code></pre>
-
-<h2 id="span-id-es6-3-es模块-span"><span id="ES6">3.ES模块</span></h2>
-
-<p>ES6 在标准层面为 Javascript 引入了一套简单的模块系统。ES6 模块完全可以取代 CommonJS 和 AMD 规范。当前热门的开源框架 React 和 Vue 都已经使用了 ES6 模块来开发。</p>
-
-<h3 id="基本使用">基本使用</h3>
-
-<p>ES6 模块使用<code>export</code>导出接口，<code>import from</code>导入需要使用的接口：</p>
-
-<pre><code class="language-js">// myMath.js
-export var pi = 3.14;
-
-export function addTwoNumber(a, b) {
-    return a + b;
-}
-
-// 或
-var pi = 3.14;
-
-function addTwoNumber(a, b) {
-    return a + b;
-}
-
-export { pi, addTwoNumber };
-</code></pre>
-
-<pre><code class="language-js">// main.js
-import { addTwoNumber } from './myMath';
-
-console.log(addTwoNumber(10, 20));
-</code></pre>
-
-<p>在<code>myMath.js</code>中通过<code>export</code>导出一个变量<code>pi</code>和一个函数<code>addTwoNumber</code>。上例中演示了两种导出方式。一种是一个个导出，对每一个需要导出的接口都应用一次<code>export</code>。第二种是在文件中某处集中导出。当然，也可以混合使用这两种方式。<strong>推荐使用第二种导出方式，因为能在一处比较清楚的看出模块导出了哪些接口。</strong></p>
-
-<h3 id="es6-模块特性">ES6 模块特性</h3>
-
-<p>ES6 模块有一些需要了解和注意的特性。</p>
-
-<h4 id="静态加载">静态加载</h4>
-
-<p>ES6 模块一个非常重要的特性是“静态加载”，导入的接口是只读的，不能修改。NodeJS 中的模块，是动态加载的。</p>
-
-<p><strong>静态加载就是“编译”时就已经确定了模块导出，可以做到高效率，并且便于做静态代码分析。同时，静态加载也限制了模块的加载只能在文件中所有语句之前，并且导入语法中不能含有动态的语法结构（例如变量、if语句等）。</strong></p>
-
-<p>例如：</p>
-
-<pre><code class="language-js">// 可以调用，因为模块加载是“编译”时进行的。
-funcA();
-import { funcA, funcB } from './myModule';
-
-// 错误，导入语法中含有变量
-var foo = './myModule';
-import { funcA, funcB } from './myModule';
-
-// 错误，在if语句中
-if (foo == &quot;myModule&quot;) {
-    import { funcA, funcB } from './myModule';
-} else {
-    import { funcA, funcB } from './hisModule';
-}
-
-
-// 错误，导出的接口是只读的，不能修改
-import { funcA, funcB } from './myModule';
-funcA = function () {};
-</code></pre>
-
-<p><strong>导出的接口与模块中定义的变量或函数必须是一一对应的</strong>。而且模块内相应的值修改了，外部也能感知到。看下面代码：</p>
-
-<pre><code class="language-js">// 错误，导出值1，模块中没有对应
-export 1;
-
-// 错误，实际上也是导出1，模块中没有对应
-var m = 1;
-export m;
-
-// 可以这样来导出，导出的m与模块中的变量m对应
-export var m = 1;
-
-// 可以这样导出
-var m = 1;
-export {m};
-</code></pre>
-
-<pre><code class="language-js">var foo = &quot;bar&quot;;
-setTimeout(2000, () =&gt; { foo = &quot;baz&quot;});
-
-// 2s后foo变为&quot;baz&quot;，外部能感知到
-</code></pre>
-
-<h4 id="别名">别名</h4>
-
-<p>在导出模块时，可以为接口指定一个别名。这样，后续可以修改内部接口而保持导出接口不变。例如：</p>
-
-<pre><code class="language-js">// myModule.js
-var funcA = function () {
-}
-
-var funcB = function () {
-}
-
-export {
-    funcA as func1,
-    funcB as func2,
-    funcB as myFunc,
+func (i LogType) String() string {
+    i -= 1
+    if i &gt;= LogType(len(_LogType_index)-1) {
+        return &quot;LogType(&quot; + strconv.FormatInt(int64(i+1), 10) + &quot;)&quot;
+    }
+    return _LogType_name[_LogType_index[i]:_LogType_index[i+1]]
 }
 </code></pre>
 
-<p>上面我们导出以别名<code>func1</code>导出函数<code>funcA</code>，以别名<code>func2</code>和<code>myFunc</code>导出函数<code>funcB</code>。<code>func2</code>和<code>myFunc</code>都是指向同一个函数<code>funcB</code>的。下面看看使用这个模块：</p>
+<ul>
+<li><p>现在，我们就可以定义一个<code>LogType</code>类型的变量，直接调用其<code>String</code>方法获取描述了。简便！优雅！</p></li>
 
-<pre><code class="language-js">// main.js
-import { func1, func2, myFunc } from './myModule';
-</code></pre>
+<li><p>如果嫌每次执行<code>go generate</code>命令太烦的话，可以在 Makefile 中编写规则使其在编译代码时自动执行。</p></li>
+</ul>
 
-<p><strong>同样的，导入模块时也可以指定别名：</strong></p>
+<p><strong>注意：</strong></p>
 
-<pre><code class="language-js">// main.js
-import { func1 as func } from './myModule';
-</code></pre>
+<ul>
+<li><p><code>stringer</code>默认使用常量名称作为描述，使用<code>-linecomment</code>标志可以指定其使用行后的注释。</p></li>
 
-<h4 id="default导出">default导出</h4>
+<li><p><code>stringer</code>生成的文件名默认为<strong>类型名小写</strong>_string.go，可以通过<code>-output=filename.go</code>标志指定。</p></li>
+</ul>
 
-<p>上面介绍的模块导入必须知道接口名字。有时候，用户学习一个模块时希望能够快速上手，不想去看文档（怎么会有这个懒的人🤣）。ES6 提供了default导出。例如：</p>
+<h2 id="5-share">5 Share</h2>
 
-<pre><code class="language-js">// myModule.js
-export default function () {
-    console.log('hi');
-}
+<p>本周分享一篇孟岩老师的文章<a href="https://mp.weixin.qq.com/s/pKth8VtR0WHygcwVHO0j_A">《刺激与回应之间存在一段距离，成长和幸福的关键就在那里》</a>。我开始学习编程时，孟岩老师的文章教了我很多技术与方法。</p>
 
-// default导出方式可以看做是导出了一个别名为default的接口
-var f = function () {
-    console.log('hi');
-}
-export { f as default };
-</code></pre>
+<blockquote>
+<p>在人类漫长的进化过程中，我们会对外界的刺激做很多应激反应（Reactive）—— 战或逃（Fight or Flight），这些应激反应可以帮助人类躲避外在危险，更好的保护自己。从进化的角度看，这些应激反应是为了完成生存和繁衍的任务，但并不能让我们更幸福、更自由。</p>
 
-<p>在外部导入的时候，不能有花括号：</p>
+<p>如果我们能够感知外界的刺激，能够在本能的应激反应（Reactive）之前，给自己一段距离，选择合适的回应方式，我们就能找到更多的幸福和自由。</p>
+</blockquote>
 
-<pre><code class="language-js">// main.js
-import func from './myModule';
-func();
-</code></pre>
+<p>我相信很多人都有这样的体会：</p>
 
-<p>也可以两种方式，同时使用：</p>
+<blockquote>
+<p>当你在看书时，突然想拿起手机刷一下朋友圈，这是来自大脑的刺激。这时，你可以应激反应（Reactive），马上拿起手机刷一会儿。你也可以在觉知后给自己一段距离（Space），你知道短暂的愉悦后会很空虚，知道继续看书会有更大的愉悦感，于是你选择用继续看书来回应（Responsive）。</p>
+</blockquote>
 
-<pre><code class="language-js">// myModule.js
-function foo() {
-    console.log('foo');
-}
+<p>我非常喜欢这段话。相信很多人在回想自己的学习，生活和工作时，会有更深刻的体会。</p>
 
-export default foo;
-
-function bar() {
-    console.log('bar');
-}
-
-export { bar };
-</code></pre>
-
-<pre><code class="language-js">// main.js
-import foo, { bar } from './myModule';
-</code></pre>
-
-<h4 id="整体加载">整体加载</h4>
-
-<p>ES6 还允许一种整体加载的方式导入模块。通过使用<code>import *</code>可以导入模块中导出的所有接口：</p>
-
-<pre><code class="language-js">// myModule.js
-export function funcA() {
-    console.log('funcA');
-}
-
-export function funcB() {
-    console.log('funcB');
-}
-</code></pre>
-
-<pre><code class="language-js">// main.js
-import * as m from './myModule';
-
-m.funcA();
-m.funcB();
-</code></pre>
-
-<p>整体加载所在的那个对象（<code>m</code>），应该是可以静态分析的，所以不允许运行时改变。所以，下面的写法都是不允许的：</p>
-
-<pre><code class="language-js">// main.js
-import * as m from './myModule';
-
-// 错误
-m.name = 'darjun';
-m.func = function () {};
-</code></pre>
-
-<h4 id="node-中使用-es6-模块">Node 中使用 ES6 模块</h4>
-
-<p>Node 由于已经有 CommonJS 的模块规范了，与 ES6 模块不兼容。为了使用 ES6 模块，Node 要求 ES6 模块采用<code>.mjs</code>后缀名，而且文件中只能使用<code>import</code>和<code>export</code>，不能使用<code>require</code>。而且该功能还在试验阶段，Node v8.5.0以上版本，指定<code>--experimental-modules</code>参数才能使用：</p>
-
-<pre><code class="language-js">// myModule.mjs
-var counter = 1;
-
-export function incCounter() {
-    console.log('counter:', counter);
-    counter++;
-}
-</code></pre>
-
-<pre><code class="language-js">// main.mjs
-import { incCounter } from './myModule';
-
-incCounter();
-</code></pre>
-
-<p>使用下面命令行运行程序：</p>
-
-<pre><code class="language-js">$ node --experimental-modules main.mjs
-</code></pre>
-
-<h2 id="span-id-总结-4-总结-span"><span id="总结">4.总结</span></h2>
-
-<p>随着 Javascript 在大型项目中占用举足轻重的位置，模块的使用称为必然。Node 中使用 CommonJS 规范。ES6 中定义了简单易用高效的模块规范。ES6 规范化是个必然的趋势，所以在掌握当前 CommonJS 规范的前提下，学习 ES6 模块势在必行。</p>
-
-<h2 id="span-id-参考链接-5-参考链接-span"><span id="参考链接">5.参考链接</span></h2>
-
-<ol>
-<li><a href="http://www.ruanyifeng.com/blog/2012/10/javascript_module.html">Javascript模块化编程（一）</a></li>
-<li><a href="http://www.ruanyifeng.com/blog/2012/10/asynchronous_module_definition.html">Javascript模块化编程（二）</a></li>
-<li><a href="http://www.ruanyifeng.com/blog/2012/11/require_js.html">Javascript模块化编程（三）</a></li>
-<li><a href="http://es6.ruanyifeng.com/#docs/module">ES6 Module</a></li>
-</ol>
-
-<p>关于我：
-<a href="https://darjun.github.io">个人主页</a> <a href="https://www.jianshu.com/u/0aca4aa367c8">简书</a> <a href="https://juejin.im/user/5be15200e51d4505466ce2f4">掘金</a></p>
+<p>这种状态不仅是关于学习，更是对生活的态度。这值得我们一生去寻找和学习！！！</p>
 
 
                 
@@ -800,15 +645,10 @@ incCounter();
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2018/12/03/javascript-execution-context/" data-toggle="tooltip" data-placement="top" title="深入理解Javascript之Execution Context">&larr;
+                        <a href="/2019/03/19/arts/week2" data-toggle="tooltip" data-placement="top" title="ARTS第二周">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/2019/01/24/golang-dev-env/" data-toggle="tooltip" data-placement="top" title="搭建go开发环境">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
