@@ -413,7 +413,7 @@ $(function() {
 
 <h2 id="3-review">3 Review</h2>
 
-<p>本周 review 是 medium 上一篇关于 go 语言中 defer 用法的<a href="https://medium.com/">文章</a>。文章中介绍了 go 语言中 defer 的常见和不常见的用法。举了大量的示例。看完之后，我认为：</p>
+<p>本周 review 是 medium 上一篇关于 go 语言中 defer 用法的<a href="https://blog.learngoprogramming.com/gotchas-of-defer-in-go-1-8d070894cb01">文章</a>。文章中介绍了 go 语言中 defer 的常见和不常见的用法。举了大量的示例。看完之后，我认为：</p>
 
 <ul>
 <li><p>很多例子牵扯到 go 语法很细节的层面，实用性不大，例如在<code>defer</code>中修改函数返回值。</p></li>
@@ -448,9 +448,31 @@ $(function() {
 
 <p>这里只需要写一次<code>f.Close()</code>，<code>defer</code>保证在函数返回前这行代码一定会被调用。</p>
 
-<p><strong>另外，需要关注<code>defer</code>的一个使用问题：</strong></p>
+<p>其次，<code>defer</code>可以用来处理<code>panic</code>异常：</p>
 
 <pre><code class="language-golang">func f2() {
+    defer func () {
+        if errRecover := recover(); errRecover != nil {
+            // panic handle
+            fmt.Println(errRecover)
+            debug.PrintStack()
+            return
+        }
+
+        // no error
+    }()
+
+
+    // ...
+    panic(&quot;test&quot;)
+}
+</code></pre>
+
+<p><code>recover</code>的返回值是<code>panic</code>的参数，如果没有<code>panic</code>则返回<code>nil</code>。</p>
+
+<p><strong>另外，需要关注<code>defer</code>的一个使用问题：</strong></p>
+
+<pre><code class="language-golang">func f3() {
     for i := 1; i &lt; 10; i++ {
         f, err := os.Open(fmt.Sprintf(&quot;test%d&quot;, i))
         if err != nil {
@@ -466,7 +488,7 @@ $(function() {
 
 <p>需要注意的是，<code>defer</code>代码是在<strong>函数返回前</strong>执行的，而不是在<strong>代码块结束时</strong>。在上面代码中，如果<code>for</code>循环之后还有其他比较耗时的代码，那么变量<code>f</code>占用的文件句柄就不能很快释放。可以使用闭包来改进：</p>
 
-<pre><code class="language-golang">func f2() {
+<pre><code class="language-golang">func f3() {
     for i := 1; i &lt; 10; i++ {
         func() {
             f, err := os.Open(fmt.Sprintf(&quot;test%d&quot;, i))
