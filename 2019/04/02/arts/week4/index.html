@@ -18,9 +18,9 @@
     
 
     
-    <meta name="title" content="ARTS第三周" />
-    <meta property="og:title" content="ARTS第三周" />
-    <meta property="twitter:title" content="ARTS第三周" />
+    <meta name="title" content="ARTS第四周" />
+    <meta property="og:title" content="ARTS第四周" />
+    <meta property="twitter:title" content="ARTS第四周" />
     
 
     
@@ -37,9 +37,9 @@
     <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>ARTS第三周-大俊的博客 | Darjun Blog</title>
+    <title>ARTS第四周-大俊的博客 | Darjun Blog</title>
 
-    <link rel="canonical" href="/2019/03/26/arts/week3">
+    <link rel="canonical" href="/2019/04/02/arts/week4">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -168,7 +168,7 @@
                         </a>
                         
                     </div>
-                    <h1>ARTS第三周</h1>
+                    <h1>ARTS第四周</h1>
                     <h2 class="subheading">&#34;go on!!!&#34;</h2>
                     <span class="meta">
 			Posted by 
@@ -176,9 +176,9 @@
 			    Darjun
 			 
 			on 
-			Monday, March 25, 2019
+			Tuesday, April 2, 2019
                         
-                            <span id="/2019/03/26/arts/week3" class="leancloud_visitors meta_data_item" data-flag-title="">
+                            <span id="/2019/04/02/arts/week4" class="leancloud_visitors meta_data_item" data-flag-title="">
     <span class="post-meta-item-icon">
       <span class="octicon octicon-eye"></span> 
     </span>
@@ -343,8 +343,8 @@ $(function() {
 <li><a href="#1-概述">1 概述</a></li>
 <li><a href="#2-algorithm">2 Algorithm</a>
 <ul>
-<li><a href="#2-1-linked-list-cycle">2.1 Linked List Cycle</a></li>
-<li><a href="#2-2-merge-k-sorted-lists">2.2 Merge k Sorted Lists</a></li>
+<li><a href="#2-1-evaluate-reverse-polish-notation">2.1 Evaluate Reverse Polish Notation</a></li>
+<li><a href="#2-2-longest-valid-parentheses">2.2 Longest Valid Parentheses</a></li>
 </ul></li>
 <li><a href="#3-review">3 Review</a></li>
 <li><a href="#4-tip">4 Tip</a></li>
@@ -365,260 +365,221 @@ $(function() {
 
 <h2 id="2-algorithm">2 Algorithm</h2>
 
-<h3 id="2-1-linked-list-cycle">2.1 Linked List Cycle</h3>
+<p>本周完成了2个与栈相关的题目。</p>
+
+<h3 id="2-1-evaluate-reverse-polish-notation">2.1 Evaluate Reverse Polish Notation</h3>
 
 <p><strong>问题描述：</strong></p>
 
 <blockquote>
-<p>Given a linked list, determine if it has a cycle in it.</p>
+<p>Evaluate the value of an arithmetic expression in Reverse Polish Notation.</p>
 
-<p>To represent a cycle in the given linked list, we use an integer pos which represents the position (0-indexed) in the linked list where tail connects to. If pos is -1, then there is no cycle in the linked list.</p>
+<p>Valid operators are +, -, *, /. Each operand may be an integer or another expression.</p>
+
+<p>Note:</p>
+
+<p>Division between two integers should truncate toward zero.
+The given RPN expression is always valid. That means the expression would always evaluate to a result and there won&rsquo;t be any divide by zero operation.</p>
 </blockquote>
 
-<p>见<a href="https://leetcode.com/problems/linked-list-cycle/">141-Linked List Cycle</a>。</p>
-
-<p><strong>难度：简单。</strong></p>
+<p><strong>难度：中等。</strong></p>
 
 <p><strong>问题求解：</strong></p>
 
-<p>思路很简单：利用快慢两个指针，慢指针每次走一步，快指针每次走两步，如果快指针能追上慢指针，则证明有环，反之无环。由于快指针每次比慢指针多走一步，如果有环一定可以追上。</p>
+<ul>
+<li>只要了解<a href="https://zh.wikipedia.org/wiki/%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E7%A4%BA%E6%B3%95">逆波兰式表示法</a>，这个问题就很简单。</li>
+<li>首先使用一个<strong>栈</strong>存放遍历过程中遇到的数字以及一些中间结果。</li>
+<li>依次遍历，如果遇到的是运算符（假设为<code>op</code>）则从栈上弹出两个数字，第一个弹出的数字记为<code>num1</code>，第二个弹出的数字记为<code>num2</code>，然后执行<code>num2 op num1</code>并将结果重新压栈。</li>
+<li>最后栈中剩余一个元素，即为结果。</li>
+</ul>
+
+<p><strong>注意：</strong></p>
+
+<ul>
+<li>Java 中<code>java.util.Stack</code>是线程安全的，操作方法都用<code>synchronized</code>包了一层，效率较差，推荐使用<code>java.util.ArrayDeque</code>类。</li>
+</ul>
 
 <p><strong>实现：</strong></p>
 
-<p>Java 实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/141-linkedListCycle">github</a>，耗时 0ms。</p>
+<p>Java 实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/150-evaluateReversePolishNotation">github</a>，耗时 3ms。</p>
 
-<h3 id="2-2-merge-k-sorted-lists">2.2 Merge k Sorted Lists</h3>
+<p><strong>诡异问题：</strong></p>
+
+<p>我一开始尝试用下面的代码，其实逻辑一样，但是就是无法通过。会有&rdquo;divided by zero&rdquo;错误。本地同样的测试集是正常的。本地使用的是 Java8。</p>
+
+<pre><code class="language-java">class Solution {
+    public int evalRPN(String[] tokens) {
+        // store operand
+        ArrayDeque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+        Integer num1 = 0;
+        Integer num2 =0;
+        for (int i = 0; i &lt; tokens.length; i++) {
+            switch (tokens[i]) {
+            case &quot;+&quot;:
+            case &quot;-&quot;:
+            case &quot;*&quot;:
+            case &quot;/&quot;:
+                num1 = stack.pop();
+                num2 = stack.pop();
+                int result = 0;
+                if (tokens[i] == &quot;+&quot;) {
+                    result = num2 + num1;
+                } else if (tokens[i] == &quot;-&quot;) {
+                    result = num2 - num1;
+                } else if (tokens[i] == &quot;*&quot;) {
+                    result = num2 * num1;
+                } else {
+                    result = num2 / num1;
+                }
+                stack.push(result);
+                break;
+            default:
+                // number
+                stack.push(Integer.valueOf(tokens[i]));
+                break;
+            }
+        }
+        return stack.pop();
+    }
+}
+</code></pre>
+
+<h3 id="2-2-longest-valid-parentheses">2.2 Longest Valid Parentheses</h3>
 
 <p><strong>问题描述：</strong></p>
 
 <blockquote>
-<p>Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.</p>
+<p>Given a string containing just the characters &lsquo;(&rsquo; and &lsquo;)&rsquo;, find the length of the longest valid (well-formed) parentheses substring.</p>
 </blockquote>
-
-<p>见<a href="https://leetcode.com/problems/merge-k-sorted-lists/">23-Merge k Sorted Lists</a>。</p>
 
 <p><strong>难度：困难。</strong></p>
 
 <p><strong>问题求解：</strong></p>
 
 <ul>
-<li>需要每次从 n 个 list 中取出最小值插入新的 list。</li>
-<li>由此，可以使用一个最小堆，每次取堆顶的值即可。构造新元素插入新的 list。</li>
-<li>如果被取出的元素有下一个元素，则将其放入最小堆。直到所有列表元素都遍历完成且最小堆中无元素。</li>
+<li>将合法的括号串表示为<code>expr</code>，则<code>expr</code>可以为基本情况<code>()</code>，并联情况<code>expr</code> <code>expr</code>，以及嵌套情况<code>(expr)</code>。定义是可以无穷递归的。</li>
+<li>基本解题方法还是利用栈，但是这里做了一点简化，将当前可找到的最长合法<code>expr</code>压缩为其括号串的长度。显然不可能存在连续两个合法的<code>expr</code>，因为它们可以再被压缩。步骤如下：
+
+<ul>
+<li>如果遇到<code>(</code>，则无条件压栈。这里我使用-1表示<code>(</code>，-2表示<code>)</code>，原因后面说。</li>
+<li>遇到<code>)</code>，则需要处理两种情况：
+
+<ul>
+<li>栈顶为<code>(</code>，则可以组成一个合法的<code>expr</code>，即一个正数2，因为<code>()</code>长度为2。这时需要判断栈顶之下的那个元素是否是一个正数，即判断是否存在并联情况。如果是则可以合并，将该正数<code>+2</code>压入栈中。</li>
+<li>栈顶为一个正数，这时需要判断栈顶之下那个元素是否是<code>(</code>，即判断是否存在嵌套情况。如果是，将该正数<code>+2</code>压栈。这个时候还需要判断栈顶是否有两个连续正数，即并联情况。如果是将两个正数相加重新压栈，否则不变。</li>
+</ul></li>
+<li>最后遍历整个栈，找出最大值即结果。这也是需要用负数表示<code>(</code>和<code>)</code>的原因。</li>
+</ul></li>
 </ul>
 
 <p><strong>实现：</strong></p>
 
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/23-mergeKSortedLists">github</a>，耗时 7ms。</p>
+<p>Java 实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/32-longestValidParentheses">github</a>，耗时 4ms。</p>
 
 <h2 id="3-review">3 Review</h2>
 
-<p>本周 review 是 medium 上一篇关于 go 语言中 defer 用法的<a href="https://blog.learngoprogramming.com/gotchas-of-defer-in-go-1-8d070894cb01">文章</a>。文章中介绍了 go 语言中 defer 的常见和不常见的用法。举了大量的示例。看完之后，我认为：</p>
+<p>本周分享的是 medium 文章《<a href="https://medium.com/swlh/deliberate-practice-makes-perfect-how-to-become-an-expert-in-anything-ec30e0c1314e">(Deliberate) practice makes perfect: how to become an expert in anything</a>》。</p>
+
+<p>天赋是我们天生就有的？还是通过后天习得的？</p>
+
+<p>大师与我们普通人做的事有何区别？</p>
+
+<p>马尔科姆·格拉德威尔在其著作《<a href="https://book.douban.com/subject/25863621/">异类：不一样的成功启示录</a>》中提到“1000”这个魔法数字。他在书中写到，练习超过1000小时，你也可以成功一个行业的大师。</p>
+
+<p>马尔科姆的观点是基于安德斯·艾利克森（Anders Ericsson）的研究。艾利克森并不完全同意马尔科姆的观点，他认为问题的关键在于如何练习——刻意练习。推荐阅读艾利克森的著作《<a href="https://book.douban.com/subject/26895993/">刻意练习</a>》。</p>
+
+<blockquote>
+<p>刻意练习是一种专注的，持续的，以目标为导向的训练。它强调质量，而非数量。它认为不是所有的练习都是等效的。</p>
+</blockquote>
 
 <ul>
-<li><p>很多例子牵扯到 go 语法很细节的层面，实用性不大，例如在<code>defer</code>中修改函数返回值。</p></li>
-
-<li><p>掌握常见的用法就已经足够，非编译器实现者深入下去性价比不高。当然你有兴趣，有时间另说😉。</p></li>
+<li>天赋被明显的高估了。不管一个人的天赋如何，不持续努力很长时间也不能称为专家。</li>
+<li>常规练习是不够的。通常情况，重复练习可能将技能提高至中等水平，然后就停止了。因为重复练习只是让我们维持技能，而非突破。</li>
+<li>“五小时”规则，工作日每天一小时，一周五小时，高度专注地学习。</li>
 </ul>
 
-<p>我认为 defer 的最重要用法就是保证资源的释放（如文件，网络连接等），避免在每个返回路径上都写上释放资源的代码（繁琐且容易遗漏）。例如：</p>
+<p>刻意练习创造卓越！</p>
 
-<pre><code class="language-golang">func f1() {
-    f, err := os.Open();
-    if err != nil {
-        // error handle
-        return
-    }
+<p>使用你已经知道的技能会令人感到满足，但并不能提高你的技能水平。</p>
 
-    defer f.Close()
+<p>刻意练习并不仅仅是持续地重复，它是结构化的，有思想的且有策略的。你不能无意识地练习，你必须激情地投入，你需要不断逼近自己的极限，就像橡皮筋一样。这个过程你不会感到舒适。你需要有持续的压力和改变的原动力。这就是成长的奥秘。</p>
 
-    if condition1 {
-        // ...
-        return
-    }
-
-    if condition2 {
-        // ...
-        return
-    }
-
-    // ...
-}
-</code></pre>
-
-<p>这里只需要写一次<code>f.Close()</code>，<code>defer</code>保证在函数返回前这行代码一定会被调用。</p>
-
-<p>其次，<code>defer</code>可以用来处理<code>panic</code>异常：</p>
-
-<pre><code class="language-golang">func f2() {
-    defer func () {
-        if errRecover := recover(); errRecover != nil {
-            // panic handle
-            fmt.Println(errRecover)
-            debug.PrintStack()
-            return
-        }
-
-        // no error
-    }()
-
-
-    // ...
-    panic(&quot;test&quot;)
-}
-</code></pre>
-
-<p><code>recover</code>的返回值是<code>panic</code>的参数，如果没有<code>panic</code>则返回<code>nil</code>。</p>
-
-<p><strong>另外，需要关注<code>defer</code>的一个使用问题：</strong></p>
-
-<pre><code class="language-golang">func f3() {
-    for i := 1; i &lt; 10; i++ {
-        f, err := os.Open(fmt.Sprintf(&quot;test%d&quot;, i))
-        if err != nil {
-            return
-        }
-
-        defer f.Close()
-
-        // ...
-    }
-}
-</code></pre>
-
-<p>需要注意的是，<code>defer</code>代码是在<strong>函数返回前</strong>执行的，而不是在<strong>代码块结束时</strong>。在上面代码中，如果<code>for</code>循环之后还有其他比较耗时的代码，那么变量<code>f</code>占用的文件句柄就不能很快释放。可以使用闭包来改进：</p>
-
-<pre><code class="language-golang">func f3() {
-    for i := 1; i &lt; 10; i++ {
-        func() {
-            f, err := os.Open(fmt.Sprintf(&quot;test%d&quot;, i))
-            if err != nil {
-                return
-            }
-
-            defer f.Close()
-
-            // ...
-        }()
-    }
-}
-</code></pre>
-
-<p>这时，<code>for</code>循环中的代码在一个匿名函数中执行，该函数执行完成后<code>f.Close</code>就会被调用从而释放资源。</p>
+<p>刻意练习的4个步骤：
+* 设置小目标。我们需要正回馈来保持良好的势头。“崇高”的目标会让人退怯。小目标是刻意练习的关键，设定大小合适的，目标清晰的，可执行的步骤。
+* 坚持。持久的努力经常让人感到不舒适，令人沮丧。刻意练习并不会让人觉得享受。为了长期的成功，你需要牺牲短期的愉悦。每天留出一个小时，让它称为习惯。
+* 记录与反馈。为了在一个领域取得成绩，我们需要认清自己的强项和弱点。记录我们每一天的进步。
+* 再充电。刻意练习需要我们全身心地，1000%的专注。这也是为什么它只能持续一小段时间，所以给自己恢复的时间。</p>
 
 <h2 id="4-tip">4 Tip</h2>
 
-<p>分享一个<code>go generate</code>的使用技巧。</p>
+<p>本周分享一个<code>go</code>语言的黑科技。我们知道在 C++ 中调用一个空指针的方法或属性程序就直接 coredump 了，在 Java 中也是会抛出一个<code>NullPointerException</code>异常。但是，在 go 中，只要你不使用空指针的属性，一切就都ok。</p>
 
-<p>我是一个游戏后端程序员，最近和平台对接行为日志规范。其中有一个资源获取和消耗日志，需要记录资源来源或去向的描述（比如通过日常任务获得，或者在用在武将升星上）。
-我们在编写功能的过程中就已经记录了日志，不过我们是通过一个自定义的常量数字来表示来源或去向的。定义获取或消耗途径的代码如下（为了描述方便，做了简化）：</p>
+<pre><code class="language-golang">package main
 
-<pre><code class="language-golang">const (
-    LogTypeDailyMission = 1 // 日常任务
-    LogTypeKnightStarup = 2 // 武将升星
-    LogTypeKnightLayerup = 3 // 武将突破
-)
-</code></pre>
-
-<p>这时，可以通过维护途径常量数字和描述的一个映射。在需要获取描述时，传入常量即可。如下所示：</p>
-
-<pre><code class="language-golang">// todo: 新增途径修改这里！！！
-var mapLogType = map[uint32]string {
-    LogTypeDailyMission: &quot;日常任务&quot;,
-    LogTypeKnightStarup: &quot;武将升星&quot;,
-    LogTypeKnightLayerup: &quot;武将突破&quot;,
+type Student struct {
+    Id uint32
+    Name string
 }
 
-func GetLogMessage(logType uint32) string {
-    if logMessage, exist := mapLogType[logType]; exist {
-        return logMessage
+func (s *Student) Hello() {
+    fmt.Println(&quot;Hello&quot;, s)
+}
+
+func (s *Student) HelloName() {
+    fmt.Println(&quot;Hello&quot;, s.Name)
+}
+
+func main() {
+    var s *Student
+    s.Hello() // ok, 输出：Hello, &lt;nil&gt;
+    s.HelloName() // panic, 因为使用了Name属性
+}
+</code></pre>
+
+<p>这个用法，我碰巧在 protobuf 生成的 go 语言代码中遇到过。</p>
+
+<p>例如：</p>
+
+<pre><code class="language-proto">message Student {
+    optional uint32 id = 1;
+    optional string name = 2;
+}
+</code></pre>
+
+<p>会生成一个<code>Student</code>结构：</p>
+
+<pre><code class="language-golang">type Student struct {
+    Id                   *uint32  `protobuf:&quot;varint,1,opt,name=id&quot; json:&quot;id,omitempty&quot;`
+    Name                 *string  `protobuf:&quot;bytes,2,opt,name=name&quot; json:&quot;name,omitempty&quot;`
+    XXX_NoUnkeyedLiteral struct{} `json:&quot;-&quot;`
+    XXX_unrecognized     []byte   `json:&quot;-&quot;`
+    XXX_sizecache        int32    `json:&quot;-&quot;`
+}
+
+// 省略一大吨代码......
+
+func (m *Student) GetId() uint32 {
+    if m != nil &amp;&amp; m.Id != nil {
+        return *m.Id
     }
-
-    return fmt.Sprintf(&quot;logtype(%d)&quot;, logType)
+    return 0
 }
-</code></pre>
 
-<p>采用这种做法，以后每次添加一种新的途径，都需要修改<code>mapLogType</code>，很繁琐。后来，我想到了使用<code>go generate</code>来自动生成。</p>
-
-<ul>
-<li>首先，定义一个新类型。将途径常量全改为新类型。在<code>const</code>头部加入<code>go generate</code>命令：</li>
-</ul>
-
-<pre><code class="language-golang">type LogType uint32
-
-//go:generate stringer -type=LogType -linecomment
-const (
-    LogTypeDailyMission  LogType = 1 // 日常任务
-    LogTypeKnightStarup  LogType = 2 // 武将升星
-    LogTypeKnightLayerup LogType = 3 // 武将突破
-)
-</code></pre>
-
-<ul>
-<li>执行这个转换需要<code>stringer</code>工具，该工具可以通过<code>go get</code>安装（自备梯子或者通过笔者<a href="https://darjun.github.io/2019/01/24/golang-dev-env/">搭建go开发环境</a>这篇文章中介绍的方法安装）。</li>
-</ul>
-
-<pre><code>$ go get golang.org/x/tools/cmd/stringer
-</code></pre>
-
-<ul>
-<li><p><code>go get</code>会将<code>stringer</code>安装到<code>$GOPATH/bin</code>目录中，将<code>$GOPATH/bin</code>放到系统<code>path</code>目录中，使<code>stringer</code>可以在任何目录执行。</p></li>
-
-<li><p>然后在文件同目录下执行<code>go generate</code>命令，即可生成<code>logsub_string.go</code>文件：</p></li>
-</ul>
-
-<pre><code>// Code generated by &quot;stringer -type=LogType -linecomment&quot;; DO NOT EDIT.
-
-package main
-
-import &quot;strconv&quot;
-
-const _LogType_name = &quot;日常任务武将升星武将突破&quot;
-
-var _LogType_index = [...]uint8{0, 12, 24, 36}
-
-func (i LogType) String() string {
-    i -= 1
-    if i &gt;= LogType(len(_LogType_index)-1) {
-        return &quot;LogType(&quot; + strconv.FormatInt(int64(i+1), 10) + &quot;)&quot;
+func (m *Student) GetName() string {
+    if m != nil &amp;&amp; m.Name != nil {
+        return *m.Name
     }
-    return _LogType_name[_LogType_index[i]:_LogType_index[i+1]]
+    return &quot;&quot;
 }
 </code></pre>
 
-<ul>
-<li><p>现在，我们就可以定义一个<code>LogType</code>类型的变量，直接调用其<code>String</code>方法获取描述了。简便！优雅！</p></li>
-
-<li><p>如果嫌每次执行<code>go generate</code>命令太烦的话，可以在 Makefile 中编写规则使其在编译代码时自动执行。</p></li>
-</ul>
-
-<p><strong>注意：</strong></p>
-
-<ul>
-<li><p><code>stringer</code>默认使用常量名称作为描述，使用<code>-linecomment</code>标志可以指定其使用行后的注释。</p></li>
-
-<li><p><code>stringer</code>生成的文件名默认为<strong>类型名小写</strong>_string.go，可以通过<code>-output=filename.go</code>标志指定。</p></li>
-</ul>
+<p>如果<code>m == nil</code>，那么<code>GetId()</code>会返回一个默认值！！！这个特性在工作中要谨慎使用。</p>
 
 <h2 id="5-share">5 Share</h2>
 
-<p>本周分享一篇孟岩老师的文章<a href="https://mp.weixin.qq.com/s/pKth8VtR0WHygcwVHO0j_A">《刺激与回应之间存在一段距离，成长和幸福的关键就在那里》</a>。我开始学习编程时，孟岩老师的文章教了我很多技术与方法。</p>
-
 <blockquote>
-<p>在人类漫长的进化过程中，我们会对外界的刺激做很多应激反应（Reactive）—— 战或逃（Fight or Flight），这些应激反应可以帮助人类躲避外在危险，更好的保护自己。从进化的角度看，这些应激反应是为了完成生存和繁衍的任务，但并不能让我们更幸福、更自由。</p>
-
-<p>如果我们能够感知外界的刺激，能够在本能的应激反应（Reactive）之前，给自己一段距离，选择合适的回应方式，我们就能找到更多的幸福和自由。</p>
+<p>计算机科学归根到底属于工程技术类，应该实践第一！！！</p>
 </blockquote>
-
-<p>我相信很多人都有这样的体会：</p>
-
-<blockquote>
-<p>当你在看书时，突然想拿起手机刷一下朋友圈，这是来自大脑的刺激。这时，你可以应激反应（Reactive），马上拿起手机刷一会儿。你也可以在觉知后给自己一段距离（Space），你知道短暂的愉悦后会很空虚，知道继续看书会有更大的愉悦感，于是你选择用继续看书来回应（Responsive）。</p>
-</blockquote>
-
-<p>我非常喜欢这段话。相信很多人在回想自己的学习，生活和工作时，会有更深刻的体会。</p>
-
-<p>这种状态不仅是关于学习，更是对生活的态度。这值得我们一生去寻找和学习！！！</p>
 
 
                 
@@ -667,15 +628,10 @@ func (i LogType) String() string {
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2019/03/19/arts/week2" data-toggle="tooltip" data-placement="top" title="ARTS第二周">&larr;
+                        <a href="/2019/03/26/arts/week3" data-toggle="tooltip" data-placement="top" title="ARTS第三周">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/2019/04/02/arts/week4" data-toggle="tooltip" data-placement="top" title="ARTS第四周">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
