@@ -18,9 +18,9 @@
     
 
     
-    <meta name="title" content="ARTS第六周" />
-    <meta property="og:title" content="ARTS第六周" />
-    <meta property="twitter:title" content="ARTS第六周" />
+    <meta name="title" content="深入理解Go之==" />
+    <meta property="og:title" content="深入理解Go之==" />
+    <meta property="twitter:title" content="深入理解Go之==" />
     
 
     
@@ -37,9 +37,9 @@
     <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>ARTS第六周-大俊的博客 | Darjun Blog</title>
+    <title>深入理解Go之==-大俊的博客 | Darjun Blog</title>
 
-    <link rel="canonical" href="/2019/04/22/arts/week6">
+    <link rel="canonical" href="/2019/08/20/golang-equal/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -153,7 +153,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('/img/background3.jpg')
+        background-image: url('/img/post-bg-2015.jpg')
     }
 </style>
 <header class="intro-header">
@@ -163,22 +163,22 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/arts" title="arts">
-                            arts
+                        <a class="tag" href="/tags/tools" title="tools">
+                            tools
                         </a>
                         
                     </div>
-                    <h1>ARTS第六周</h1>
-                    <h2 class="subheading">&#34;go on!!!&#34;</h2>
+                    <h1>深入理解Go之==</h1>
+                    <h2 class="subheading">深入细节，系统介绍==</h2>
                     <span class="meta">
 			Posted by 
 			
-			    Darjun
+			    darjun
 			 
 			on 
-			Monday, April 22, 2019
+			Tuesday, August 20, 2019
                         
-                            <span id="/2019/04/22/arts/week6" class="leancloud_visitors meta_data_item" data-flag-title="">
+                            <span id="2019/08/20/golang-equal/" class="leancloud_visitors meta_data_item" data-flag-title="">
     <span class="post-meta-item-icon">
       <span class="octicon octicon-eye"></span> 
     </span>
@@ -340,282 +340,351 @@ $(function() {
 <ul>
 <li>
 <ul>
-<li><a href="#0-概述">0 概述</a></li>
-<li><a href="#1-algorithm">1 Algorithm</a>
+<li><a href="#概述">概述</a></li>
+<li><a href="#类型">类型</a>
 <ul>
-<li><a href="#1-1-reverse-string">1.1 Reverse String</a></li>
-<li><a href="#1-2-reverse-words-in-a-string">1.2 Reverse Words in a String</a></li>
-<li><a href="#1-3-string-to-integer-atoi">1.3 String to Integer (atoi)</a></li>
-<li><a href="#1-4-sqrt-x">1.4 Sqrt(x)</a></li>
+<li><a href="#基本类型">基本类型</a></li>
+<li><a href="#复合类型">复合类型</a></li>
+<li><a href="#引用类型">引用类型</a></li>
+<li><a href="#接口类型">接口类型</a></li>
+<li><a href="#使用-type-定义的类型">使用<code>type</code>定义的类型</a></li>
 </ul></li>
-<li><a href="#2-review">2 Review</a></li>
-<li><a href="#3-tip">3 Tip</a></li>
-<li><a href="#4-share">4 Share</a></li>
+<li><a href="#不可比较性">不可比较性</a></li>
+<li><a href="#谈谈-map">谈谈<code>map</code></a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
 </ul></li>
 </ul>
 </nav>
                 
                 
 
-<h2 id="0-概述">0 概述</h2>
+<h2 id="概述">概述</h2>
 
-<p>ARTS 是耗子叔发起的编程挑战：</p>
+<p>相信<code>==</code>判等操作，大家每天都在用。之前在论坛上看到不少人在问 golang <code>==</code>比较的结果。看到很多人对 golang 中<code>==</code>的结果不太了解。确实，golang 中对<code>==</code>的处理有一些细节的地方需要特别注意。虽然平时可能不太会遇到，但是碰到了就是大坑。本文将对 golang 中<code>==</code>操作做一个系统的介绍。希望能对大家有所帮助。</p>
 
-<blockquote>
-<p>每周完成一个ARTS： 每周至少做一个 leetcode 的算法题、阅读并点评至少一篇英文技术文章、学习至少一个技术技巧、分享一篇有观点和思考的技术文章。（也就是 Algorithm、Review、Tip、Share 简称ARTS）</p>
-</blockquote>
+<h2 id="类型">类型</h2>
 
-<h2 id="1-algorithm">1 Algorithm</h2>
+<p>golang 中的数据类型可以分为以下 4 大类：
+1. 基本类型：整型（<code>int/uint/int8/uint8/int16/uint16/int32/uint32/int64/uint64/byte/rune</code>等）、浮点数（<code>float32/float64</code>）、复数类型（<code>complex64/complex128</code>）、字符串（<code>string</code>）。
+2. 复合类型（又叫聚合类型）：数组和结构体类型。
+3. 引用类型：切片（slice）、map、channel、指针。
+4. 接口类型：如<code>error</code>。</p>
 
-<h3 id="1-1-reverse-string">1.1 Reverse String</h3>
+<p><strong><code>==</code>操作最重要的一个前提是：两个操作数类型必须相同！类型必须相同！类型必须相同！</strong></p>
 
-<p><strong>问题描述：</strong></p>
+<p>如果类型不同，那么<strong>编译时</strong>就会报错。</p>
 
-<pre><code>Write a function that reverses a string. The input string is given as an array of characters char[].
+<p>注意：
+1. golang 的类型系统非常严格，没有<code>C/C++</code>中的隐式类型转换。虽然写起来稍微有些麻烦，但是能避免今后非常多的麻烦！！！
+2. golang 中可以通过<code>type</code>定义新类型。新定义的类型与底层类型不同，不能直接比较。</p>
 
-Do not allocate extra space for another array, you must do this by modifying the input array in-place with O(1) extra memory.
+<p><strong>为了更容易看出类型，示例代码中的变量定义都显式指定了类型。</strong></p>
 
-You may assume all the characters consist of printable ascii characters.
-</code></pre>
+<p>看下面的代码：</p>
 
-<p>见<a href="https://leetcode.com/problems/reverse-string/">344.Reverse String</a>。</p>
-
-<p><strong>难度：简单。</strong></p>
-
-<p><strong>问题求解：</strong></p>
-
-<ul>
-<li>一个指针从头向尾移动，一个指针从尾向头移动，直到相遇为止，交换移动中遇到的字符。</li>
-</ul>
-
-<p><strong>实现：</strong></p>
-
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/344-reverseString">github</a>，耗时 1ms。</p>
-
-<h3 id="1-2-reverse-words-in-a-string">1.2 Reverse Words in a String</h3>
-
-<pre><code>Given an input string, reverse the string word by word.
-
-Note:
-· A word is defined as a sequence of non-space characters.
-· Input string may contain leading or trailing spaces. However, your reversed string should not contain leading or trailing spaces.
-· You need to reduce multiple spaces between two words to a single space in the reversed string.
-</code></pre>
-
-<p>见<a href="https://leetcode.com/problems/reverse-words-in-a-string/">151.Reverse Words in as String</a>。</p>
-
-<p><strong>难度：中等。</strong></p>
-
-<p><strong>问题求解：</strong></p>
-
-<ul>
-<li>首先跳过开头的空白字符，得到位置<code>startPos</code>，跳过尾部的空白字符得到位置<code>endPos</code>。</li>
-<li>从尾部开始，调用<code>String</code>的<code>lastIndexOf</code>找到从<code>endPos</code>开始的最后一个空白字符，将空白字符后到<code>endPos</code>的字串添加到<code>StringBuilder</code>中。更新<code>endPos</code>为空白字符前第一个非空白的字符。</li>
-<li>直到<code>startPos &gt; endPos</code>。</li>
-</ul>
-
-<p><strong>实现：</strong></p>
-
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/151-reverseWordsInAString">github</a>，耗时 1ms。</p>
-
-<h3 id="1-3-string-to-integer-atoi">1.3 String to Integer (atoi)</h3>
-
-<pre><code>Implement atoi which converts a string to an integer.
-
-The function first discards as many whitespace characters as necessary until the first non-whitespace character is found. Then, starting from this character, takes an optional initial plus or minus sign followed by as many numerical digits as possible, and interprets them as a numerical value.
-
-The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.
-
-If the first sequence of non-whitespace characters in str is not a valid integral number, or if no such sequence exists because either str is empty or it contains only whitespace characters, no conversion is performed.
-
-If no valid conversion could be performed, a zero value is returned.
-
-Note:
-
-· Only the space character ' ' is considered as whitespace character.
-· Assume we are dealing with an environment which could only store integers within the 32-bit signed integer range: [−231,  231 − 1]. If the numerical value is out of the range of representable values, INT_MAX (231 − 1) or INT_MIN (−231) is returned.
-</code></pre>
-
-<p>见<a href="https://leetcode.com/problems/string-to-integer-atoi/">8.String to Integer(atoi)</a>。</p>
-
-<p><strong>难度：中等。</strong></p>
-
-<p><strong>问题求解：</strong></p>
-
-<ul>
-<li>题目难度一般，主要难点在于考虑边界条件。</li>
-<li>首先跳过开头的空格，读取可选的正号/负号。</li>
-<li>设置结果<code>result = 0</code>，依次读入每个字符，如果不是数字，直接返回当前结果值。将字符转为数字，即为<code>digit</code>。</li>
-<li>如果为正数，则判断当前<code>result</code>与 214748364（即<code>Integer.MAX_VALUE / 10</code>） 的关系，如果<code>result</code>较大，那么乘以 10 之后肯定溢出了，直接设置<code>result</code>为最大值，返回。如果相等，那么判断当前处理的数字<code>digit</code>，如果数字大于 7 （即<code>Integer.MAX_VALUE % 10</code>），那么<code>result * 10 + digit</code>也会溢出，直接设置<code>result</code>为最大值，返回。否则设置<code>result = result * 10 + digit</code>，进入下一次循环。</li>
-<li>如果为负数，则判断当前<code>result</code>与 -214748364（即<code>Integer.MIN_VALUE / 10</code>）的关系，如果<code>result</code>较小，那么乘以 10 之后肯定溢出了，直接设置<code>result</code>为最小值，返回。如果相等，那么判断当前处理的数字<code>digit</code>，如果数字大于 8 （即<code>Integer.MIN_VALUE % 10</code>），那么<code>result * 10 - digit</code>也会溢出，直接设置<code>result</code>为最小值，返回。否则设置<code>result = result * 10 - digit</code>，进入下一次循环。</li>
-</ul>
-
-<p><strong>实现：</strong></p>
-
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/8-stringToInteger">github</a>，耗时 1ms。</p>
-
-<h3 id="1-4-sqrt-x">1.4 Sqrt(x)</h3>
-
-<pre><code>Implement int sqrt(int x).
-
-Compute and return the square root of x, where x is guaranteed to be a non-negative integer.
-
-Since the return type is an integer, the decimal digits are truncated and only the integer part of the result is returned.
-</code></pre>
-
-<p>见<a href="https://leetcode.com/problems/sqrtx/">69.Sqrt(x)</a>。</p>
-
-<p><strong>难度：简单。</strong></p>
-
-<p><strong>问题求解：</strong></p>
-
-<ul>
-<li>首先考虑边界条件，<code>x == 0</code>时结果为<code>0</code>，<code>x &lt;= 3</code>时结果为<code>1</code>。</li>
-<li>使用二分查找法，设置<code>low = 1, high = x / 2</code>。</li>
-<li><code>mid = (low + high) &gt;&gt;&gt; 2</code>，如果：
-
-<ul>
-<li><code>mid == x / mid</code>，返回<code>mid</code>。 <strong>①</strong></li>
-<li><code>mid &gt; x / mid</code>，设置<code>high = mid - 1</code>继续循环。 <strong>②</strong></li>
-<li><code>mid &lt; x / mid</code>，设置<code>low = mid + 1</code>继续循环。 <strong>③</strong></li>
-</ul></li>
-<li>因为平方根一定存在，所以肯定会从路径<strong>①</strong>返回。</li>
-</ul>
-
-<p><strong>实现：</strong></p>
-
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/69-sqrt">github</a>，耗时 1ms。</p>
-
-<h2 id="2-review">2 Review</h2>
-
-<p>本周分享的文章是来自新加坡的GopherCon，<a href="https://dave.cheney.net/paste/clear-is-better-than-clever.pdf">清晰比聪明更重要（clear is better than clever）</a>。作者倡导写出清晰的代码，而非仅仅可读的代码。</p>
-
-<blockquote>
-<p>清晰的代码是代码意图很明显，很容易被读者了解，和代码是如何编写的无关。而可读与变量、函数命名，括号位置等有关。</p>
-</blockquote>
-
-<p>a. 清晰变量的意图。因为 GO 语言的限制，定义的变量必须在该作用域中被使用，所以每个变量都有其作用。通过以下方式让读者很容易明确变量的作用：</p>
-
-<p>&emsp;i. 定义一个变量，但<strong>不</strong>初始化时，使用<code>var</code>关键字。<code>var</code>告诉读者变量初始化为零值，对该变量的赋值在其他地方进行。</p>
-
-<p>&emsp;ii. 定义且初始化，使用<code>:=</code>。这告诉读者我们将显示初始化该变量。</p>
-
-<p>&emsp;iii. 两个变量定义相邻，一个需要初始化一个不需要，为了一致，都是用<code>:=</code>。</p>
-
-<p>b. 接口隔离原则，使用接口作为参数。好处：</p>
-
-<p>&emsp;i. 易于扩展。扩展的方式就是定义一个新的结构实现该接口。</p>
-
-<p>&emsp;ii. 易于测试。真实的对象可能不易构造，可以定义一个测试对象实现该接口。</p>
-
-<p>c. 尽早退出，即“经典错误检查惯用法”。好处：</p>
-
-<p>&emsp;i. 避免出现箭头代码。</p>
-
-<p>&emsp;ii. 避免内层代码定义同名的变量隐藏外层的值。</p>
-
-<p>d. 结构化编程：弱化结构，强调行为。</p>
-
-<h2 id="3-tip">3 Tip</h2>
-
-<p>本周分享 go 语言的<strong>插件机制</strong>。需要提前说明的是 go 的插件功能只能运行在 Linux 系统中。</p>
-
-<p>在插件中，我们可以将变量、函数作为符号导出：</p>
-
-<pre><code class="language-golang">// file first.go
-package main
+<pre><code>package main
 
 import &quot;fmt&quot;
 
-func Greeting() {
-    fmt.Println(&quot;Hello FROM PLUGIN!!!&quot;)
-}
-</code></pre>
-
-<p>接下来通过编译选项<code>-buildmode=plugin</code>指定编译为插件：</p>
-
-<pre><code>$ go build -buildmode=plugin -o first.so first.go
-</code></pre>
-
-<p>如果没有错误，上面的命令在当前目录下上次一个<code>first.so</code>文件。
-然后，我们就可以使用<code>plugin</code>包在 go 程序中加载该文件（省略错误处理）：</p>
-
-<pre><code class="language-golang">// file main.go
-package main
-
-import (
-    &quot;fmt&quot;
-    &quot;plugin&quot;
-)
-
 func main() {
-    plug, _ := plugin.Open(&quot;first.so&quot;)
-
-    symbol, _ := plug.Lookup(&quot;Greeting&quot;)
-    if symbol == nil {
-        return
-    }
-
-    f := symbol.(func ())
-    f()
+    var a int8
+    var b int16
+    // 编译错误：invalid operation a == b (mismatched types int8 and int16)
+    fmt.Println(a == b)
 }
 </code></pre>
 
-<p>当然也可以导出类型：</p>
+<p><strong>没有隐式类型转换。</strong></p>
 
-<pre><code class="language-golang">// second.go
-package main
+<pre><code>package main
 
 import &quot;fmt&quot;
 
-type myPlugin string
-
-func (p myPlugin) Greeting() {
-    fmt.Println(&quot;Hello FROM PLUGIN!!!&quot;)
-}
-
-var MyPlugin myPlugin
-</code></pre>
-
-<p>使用下面的命令编译生成<code>second.so</code>：</p>
-
-<pre><code>$ go build -buildmode=plugin -o second.so second.go
-</code></pre>
-
-<p>然后在程序中加载使用：</p>
-
-<pre><code class="language-golang">package main
-
-import (
-    &quot;fmt&quot;
-    &quot;plugin&quot;
-)
-
-type MyPlug interface {
-    Greeting()
-}
-
 func main() {
-    plug, _ := plugin.Open(&quot;second.so&quot;)
-
-    symbol, _ := plug.Lookup(&quot;MyPlugin&quot;)
-
-    var myPlugin MyPlug
-    myPlugin, ok := symbol.(MyPlug)
-    if !ok {
-        // error handler
-        return
-    }
-
-    myPlugin.Greeting()
+    type int8 myint8
+    var a int8
+    var b myint8
+    // 编译错误：invalid operation a == b (mismatched types int8 and myint8)
+    fmt.Println(a == b)
 }
 </code></pre>
 
-<p>插件很显然是一种黑科技，go 语言的支持不算很完善，需要谨慎使用。</p>
+<p><strong>虽然myint8的底层类型是int8，但是他们是不同的类型。</strong></p>
 
-<h2 id="4-share">4 Share</h2>
+<p>下面依次通过这 4 种类型来说明<code>==</code>是如何做比较的。</p>
 
-<p>坚持很容易，只要你能养成习惯。坚持很难，如果你在养成习惯之前稍稍有些不坚定。</p>
+<h3 id="基本类型">基本类型</h3>
+
+<p>这是最简单的一种类型。比较操作也很简单，直接比较值是否相等。没啥好说的，直接看例子。</p>
+
+<pre><code>var a uint32 = 10
+var b uint32 = 20
+var c uint32 = 10
+fmt.Println(a == b) // false
+fmt.Println(a == c) // true
+</code></pre>
+
+<p>有一点需要注意，浮点数的比较问题：</p>
+
+<pre><code>var a float64 = 0.1
+var b float64 = 0.2
+var c float64 = 0.3
+fmt.Println(a + b == c) // false
+</code></pre>
+
+<p>因为计算机中，有些浮点数不能精确表示，浮点运算结果会有误差。如果我们分别输出<code>a+b</code>和<code>c</code>的值，会发现它们确实是不同的：</p>
+
+<pre><code>fmt.Println(a + b)
+fmt.Println(c)
+
+// 0.30000000000000004
+// 0.3
+</code></pre>
+
+<p>这个问题不是 golang 独有的，只要浮点数遵循 IEEE 754 标准的编程语言都有这个问题。需要特别注意，<strong>尽量不要做浮点数比较，确实需要比较时，计算两个浮点数的差的绝对值，如果小于一定的值就认为它们相等，比如<code>1e-9</code></strong>。</p>
+
+<h3 id="复合类型">复合类型</h3>
+
+<p>复合类型也叫做聚合类型。golang 中的复合类型只有两种：数组和结构体。它们是逐元素/字段比较的。</p>
+
+<p>注意：<strong>数组的长度视为类型的一部分，长度不同的两个数组是不同的类型，不能直接比较</strong>。</p>
+
+<ul>
+<li>对于数组来说，依次比较各个<strong>元素</strong>的值。根据元素类型的不同，再依据是基本类型、复合类型、引用类型或接口类型，按照特定类型的规则进行比较。所有元素全都相等，数组才是相等的。</li>
+<li>对于结构体来说，依次比较各个<strong>字段</strong>的值。根据字段类型的不同，再依据是 4 中类型中的哪一种，按照特定类型的规则进行比较。所有字段全都相等，结构体才是相等的。</li>
+</ul>
+
+<p>例如：</p>
+
+<pre><code>a := [4]int{1, 2, 3, 4}
+b := [4]int{1, 2, 3, 4}
+c := [4]int{1, 3, 4, 5}
+fmt.Println(a == b) // true
+fmt.Println(a == c) // false
+
+type A struct {
+    a int
+    b string
+}
+aa := A { a : 1, b : &quot;test1&quot; }
+bb := A { a : 1, b : &quot;test1&quot; }
+cc := A { a : 1, b : &quot;test2&quot; }
+fmt.Println(aa == bb)
+fmt.Println(aa == cc)
+</code></pre>
+
+<h3 id="引用类型">引用类型</h3>
+
+<p>引用类型是间接指向它所引用的数据的，保存的是数据的地址。<strong>引用类型的比较实际判断的是两个变量是不是指向同一份数据，它不会去比较实际指向的数据。</strong></p>
+
+<p>例如：</p>
+
+<pre><code>type A struct {
+    a int
+    b string
+}
+
+aa := &amp;A { a : 1, b : &quot;test1&quot; }
+bb := &amp;A { a : 1, b : &quot;test1&quot; }
+cc := aa
+fmt.Println(aa == bb)
+fmt.Println(aa == cc)
+</code></pre>
+
+<p>因为<code>aa</code>和<code>bb</code>指向的两个不同的结构体，虽然它们指向的值是相等的（见上面复合类型的比较），但是它们不等。
+<code>aa</code>和<code>cc</code>指向相同的结构体，所以它们相等。</p>
+
+<p>再看看<code>channel</code>的比较：</p>
+
+<pre><code>ch1 := make(chan int, 1)
+ch2 := make(chan int, 1)
+ch3 := ch1
+
+fmt.Println(ch1 == ch2)
+fmt.Println(ch1 == ch3)
+</code></pre>
+
+<p><code>ch1</code>和<code>ch2</code>虽然类型相同，但是指向不同的<code>channel</code>，所以它们不等。
+<code>ch1</code>和<code>ch3</code>指向相同的<code>channel</code>，所以它们相等。</p>
+
+<p>关于引用类型，有两个比较特殊的规定：
+* 切片之间不允许比较。切片只能与<code>nil</code>值比较。
+* <code>map</code>之间不允许比较。<code>map</code>只能与<code>nil</code>值比较。</p>
+
+<p>为什么要做这样的规定？我们先来说切片。因为切片是引用类型，它可以间接的指向自己。例如：</p>
+
+<pre><code>a := []interface{}{ 1, 2.0 }
+a[1] = a
+fmt.Println(a)
+
+// !!!
+// runtime: goroutine stack exceeds 1000000000-byte limit
+// fatal error: stack overflow
+</code></pre>
+
+<p>上面代码将<code>a</code>赋值给<code>a[1]</code>导致递归引用，<code>fmt.Println(a)</code>语句直接爆栈。</p>
+
+<ul>
+<li>切片如果直接比较引用地址，是不合适的。首先，切片与数组是比较相近的类型，比较方式的差异会造成使用者的混淆。另外，长度和容量是切片类型的一部分，不同长度和容量的切片如何比较？</li>
+<li>切片如果像数组那样比较里面的元素，又会出现上来提到的循环引用的问题。虽然可以在语言层面解决这个问题，但是 golang 团队认为不值得为此耗费精力。</li>
+</ul>
+
+<p>基于上面两点原因，golang 直接规定<strong>切片类型不可比较</strong>。使用<code>==</code>比较切片直接编译报错。</p>
+
+<p>例如：</p>
+
+<pre><code>var a []int
+var b []int
+
+// invalid operation: a == b (slice can only be compared to nil)
+fmt.Println(a == b)
+</code></pre>
+
+<p>错误信息很明确。</p>
+
+<p><strong>因为<code>map</code>的值类型可能为不可比较类型（见下面，切片是不可比较类型），所以<code>map</code>类型也不可比较🤣。</strong></p>
+
+<h3 id="接口类型">接口类型</h3>
+
+<p>接口类型是 golang 中比较重要的一种类型。接口类型的值，我们称为接口值。一个接口值是由两个部分组成的，具体类型（即该接口存储的值的类型）和该类型的一个值。引用《go 程序设计语言》的名称，分别称为<strong>动态类型</strong>和<strong>动态值</strong>。接口值的比较涉及这两部分的比较，只有当<strong>动态类型完全相同</strong>且动态值相等（动态值使用<code>==</code>比较），两个接口值才是相等的。</p>
+
+<p>例如：</p>
+
+<pre><code>var a interface{} = 1
+var b interface{} = 2
+var c interface{} = 1
+var d interface{} = 1.0
+fmt.Println(a == b) // false
+fmt.Println(a == c) // true
+fmt.Println(a == d) // false
+</code></pre>
+
+<p><code>a</code>和<code>b</code>动态类型相同（都是<code>int</code>），动态值也相同（都是<code>1</code>，基本类型比较），故两者相等。
+<code>a</code>和<code>c</code>动态类型相同，动态值不等（分别为<code>1</code>和<code>2</code>，基本类型比较），故两者不等。
+<code>a</code>和<code>d</code>动态类型不同，<code>a</code>为<code>int</code>，<code>d</code>为<code>float64</code>，故两者不等。</p>
+
+<pre><code>type A struct {
+    a int
+    b string
+}
+
+var aa interface{} = A { a: 1, b: &quot;test&quot; }
+var bb interface{} = A { a: 1, b: &quot;test&quot; }
+var cc interface{} = A { a: 2, b: &quot;test&quot; }
+
+fmt.Println(aa == bb) // true
+fmt.Println(aa == cc) // false
+
+var dd interface{} = &amp;A { a: 1, b: &quot;test&quot; }
+var ee interface{} = &amp;A { a: 1, b: &quot;test&quot; }
+fmt.Println(dd == ee) // false
+</code></pre>
+
+<p><code>aa</code>和<code>bb</code>动态类型相同（都是<code>A</code>），动态值也相同（结构体<code>A</code>，见上面复合类型的比较规则），故两者相等。
+<code>aa</code>和<code>cc</code>动态类型相同，动态值不同，故两者不等。
+<code>dd</code>和<code>ee</code>动态类型相同（都是<code>*A</code>），动态值使用指针（引用）类型的比较，由于不是指向同一个地址，故不等。</p>
+
+<p>注意：</p>
+
+<p><strong>如果接口的动态值不可比较，强行比较会<code>panic</code>！！！</strong></p>
+
+<pre><code>var a interface{} = []int{1, 2, 3, 4}
+var b interface{} = []int{1, 2, 3, 4}
+// panic: runtime error: comparing uncomparable type []int
+fmt.Println(a == b)
+</code></pre>
+
+<p><code>a</code>和<code>b</code>的动态值是切片类型，而切片类型不可比较，所以<code>a == b</code>会<code>panic</code>。</p>
+
+<p><strong>接口值的比较不要求接口类型（注意不是动态类型）完全相同，只要一个接口可以转化为另一个就可以比较</strong>。例如：</p>
+
+<pre><code>var f *os.File
+
+var r io.Reader = f
+var rc io.ReadCloser = f
+fmt.Println(r == rc) // true
+
+var w io.Writer = f
+// invalid operation: r == w (mismatched types io.Reader and io.Writer)
+fmt.Println(r == w)
+</code></pre>
+
+<p><code>r</code>的类型为<code>io.Reader</code>接口，<code>rc</code>的类型为<code>io.ReadCloser</code>接口。查看源码，<code>io.ReadCloser</code>的定义如下：</p>
+
+<pre><code>type ReadCloser interface {
+    Reader
+    Closer
+}
+</code></pre>
+
+<p><code>io.ReadCloser</code>可转化为<code>io.Reader</code>，故两者可比较。</p>
+
+<p>而<code>io.Writer</code>不可转化为<code>io.Reader</code>，编译报错。</p>
+
+<h3 id="使用-type-定义的类型">使用<code>type</code>定义的类型</h3>
+
+<p>使用<code>type</code>可以基于现有类型定义新的类型。新类型会根据它们的底层类型来比较。例如：</p>
+
+<pre><code>type myint int
+var a myint = 10
+var b myint = 20
+var c myint = 10
+fmt.Println(a == b) // false
+fmt.Println(a == c) // true
+
+type arr4 [4]int
+var aa arr4 = [4]int{1, 2, 3, 4}
+var bb arr4 = [4]int{1, 2, 3, 4}
+var cc arr4 = [4]int{1, 2, 3, 5}
+fmt.Println(aa == bb)
+fmt.Println(aa == cc)
+</code></pre>
+
+<p><code>myint</code>根据底层类型<code>int</code>来比较。
+<code>arr4</code>根据底层类型<code>[4]int</code>来比较。</p>
+
+<h2 id="不可比较性">不可比较性</h2>
+
+<p>前面说过，golang 中的切片类型是不可比较的。所有含有切片的类型都是不可比较的。例如：</p>
+
+<ul>
+<li>数组元素是切片类型。</li>
+<li>结构体有切片类型的字段。</li>
+<li>指针指向的是切片类型。</li>
+</ul>
+
+<p><strong>不可比较性会传递，如果一个结构体由于含有切片字段不可比较，那么将它作为元素的数组不可比较，将它作为字段类型的结构体不可比较</strong>。</p>
+
+<h2 id="谈谈-map">谈谈<code>map</code></h2>
+
+<p>由于<code>map</code>的<code>key</code>是使用<code>==</code>来判等的，所以所有不可比较的类型都不能作为<code>map</code>的<code>key</code>。例如：</p>
+
+<pre><code>// invalid map key type []int
+m1 := make(map[[]int]int)
+
+type A struct {
+    a []int
+    b string
+}
+// invalid map key type A
+m2 := make(map[A]int)
+</code></pre>
+
+<p>由于切片类型不可比较，不能作为<code>map</code>的<code>key</code>，编译时<code>m1 := make(map[[]int]int)</code>报错。
+由于结构体<code>A</code>含有切片字段，不可比较，不能作为<code>map</code>的<code>key</code>，编译报错。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>本文详尽介绍了 golang 中<code>==</code>操作的细节，希望能对大家有所帮助。</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li><a href="https://book.douban.com/subject/27044219/">Go程序设计语言</a></li>
+</ol>
+
+<p><a href="https://darjun.github.io">我的个人主页</a></p>
 
 
                 
@@ -664,15 +733,10 @@ func main() {
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2019/04/12/arts/week5" data-toggle="tooltip" data-placement="top" title="ARTS第五周">&larr;
+                        <a href="/2019/05/07/arts/week7" data-toggle="tooltip" data-placement="top" title="ARTS第7周">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/2019/05/07/arts/week7" data-toggle="tooltip" data-placement="top" title="ARTS第7周">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
