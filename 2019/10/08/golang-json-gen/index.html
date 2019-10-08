@@ -18,9 +18,9 @@
     
 
     
-    <meta name="title" content="ARTS第一周" />
-    <meta property="og:title" content="ARTS第一周" />
-    <meta property="twitter:title" content="ARTS第一周" />
+    <meta name="title" content="高效生成JSON串——json-gen" />
+    <meta property="og:title" content="高效生成JSON串——json-gen" />
+    <meta property="twitter:title" content="高效生成JSON串——json-gen" />
     
 
     
@@ -37,9 +37,9 @@
     <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>ARTS第一周-大俊的博客 | Darjun Blog</title>
+    <title>高效生成JSON串——json-gen-大俊的博客 | Darjun Blog</title>
 
-    <link rel="canonical" href="/2019/03/17/arts/week1">
+    <link rel="canonical" href="/2019/10/08/golang-json-gen/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -153,7 +153,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('/img/background3.jpg')
+        background-image: url('/img/post-bg-2015.jpg')
     }
 </style>
 <header class="intro-header">
@@ -163,22 +163,22 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/arts" title="arts">
-                            arts
+                        <a class="tag" href="/tags/source" title="source">
+                            source
                         </a>
                         
                     </div>
-                    <h1>ARTS第一周</h1>
-                    <h2 class="subheading">&#34;start fighting!!!&#34;</h2>
+                    <h1>高效生成JSON串——json-gen</h1>
+                    <h2 class="subheading">精准控制内存分配</h2>
                     <span class="meta">
 			Posted by 
 			
-			    Darjun
+			    darjun
 			 
 			on 
-			Sunday, March 17, 2019
+			Tuesday, October 8, 2019
                         
-                            <span id="/2019/03/17/arts/week1" class="leancloud_visitors meta_data_item" data-flag-title="">
+                            <span id="2019/10/08/golang-json-gen/" class="leancloud_visitors meta_data_item" data-flag-title="">
     <span class="post-meta-item-icon">
       <span class="octicon octicon-eye"></span> 
     </span>
@@ -340,163 +340,313 @@ $(function() {
 <ul>
 <li>
 <ul>
-<li><a href="#1-概述">1 概述</a></li>
-<li><a href="#2-algorithm">2 Algorithm</a></li>
-<li><a href="#3-review">3 Review</a></li>
-<li><a href="#4-tip">4 Tip</a></li>
-<li><a href="#5-share">5 Share</a></li>
+<li><a href="#概述">概述</a></li>
+<li><a href="#使用">使用</a></li>
+<li><a href="#实现">实现</a>
+<ul>
+<li><a href="#分类">分类</a></li>
+<li><a href="#quotedvalue"><code>QuotedValue</code></a></li>
+<li><a href="#unquotedvalue"><code>UnquotedValue</code></a></li>
+<li><a href="#array"><code>Array</code></a></li>
+<li><a href="#map"><code>Map</code></a></li>
+</ul></li>
+<li><a href="#结语">结语</a></li>
 </ul></li>
 </ul>
 </nav>
                 
                 
 
-<h2 id="1-概述">1 概述</h2>
+<h2 id="概述">概述</h2>
 
-<p>ARTS 是耗子叔发起的编程挑战：</p>
+<p>游戏服务端的很多操作（包括玩家的和非玩家的）需要传给公司中台收集汇总，根据运营的需求分析数据。中台那边要求传过去的数据为 JSON 格式。一开始我们使用 golang 标准库中的<code>encoding/json</code>，发现性能不够理想（因为序列化使用了反射，涉及多次内存分配）。由于数据原始格式都是<code>map[string]interface{}</code>，且需要自己一个字段一个字段构造，于是我想可以在构造过程中就计算出最终 JSON 串的长度，那么就只需要一次内存分配了。</p>
 
-<blockquote>
-<p>每周完成一个ARTS： 每周至少做一个 leetcode 的算法题、阅读并点评至少一篇英文技术文章、学习至少一个技术技巧、分享一篇有观点和思考的技术文章。（也就是 Algorithm、Review、Tip、Share 简称ARTS）</p>
-</blockquote>
+<h2 id="使用">使用</h2>
 
-<p>第一次尝试ARTS，选了比较简单的 leetcode 题目。</p>
+<p>下载：</p>
 
-<h2 id="2-algorithm">2 Algorithm</h2>
-
-<p>问题描述：</p>
-
-<pre><code>Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
-
-An input string is valid if:
-
-    1.Open brackets must be closed by the same type of brackets.
-    2.Open brackets must be closed in the correct order.
-
-Note that an empty string is also considered valid.
+<pre><code class="language-golang">$ go get github.com/darjun/json-gen
 </code></pre>
 
-<p><strong>难度：简单。</strong></p>
+<p>导入：</p>
 
-<p>大意是给定一个只包含括号字符（小括号：&rsquo;(&lsquo;和&rsquo;)&lsquo;，中括号：&rsquo;[&lsquo;和&rsquo;]&lsquo;，以及大括号：&rsquo;{&lsquo;和&rsquo;}&lsquo;）的字符串，要求程序给出字符串中的括号是否正确嵌套以及是否正确关闭。空串认为是符合要求的。</p>
+<pre><code class="language-golang">import (
+  jsongen &quot;github.com/darjun/json-gen&quot;
+)
+</code></pre>
 
-<p><strong>问题求解：</strong></p>
+<p>使用起来还是比较方便的：</p>
 
-<p>每次遇到一个闭括号，需要查看前一个是否是其开括号。若否，则不合法。若是，那么这对括号是合法的，移除它们，继续往后遍历。很显然，遍历过程中遇到的开括号需要由一个栈来保存。遍历结束后，栈中未匹配的开括号数必须为0才算合法。</p>
+<pre><code class="language-golang">m := jsongen.NewMap()
+m.PutUint(&quot;key1&quot;, 123)
+m.PutInt(&quot;key2&quot;, -456)
+m.PutUintArray(&quot;key3&quot;, []uint64{78, 90})
+data := m.Serialize(nil)
+</code></pre>
 
-<p><strong>Java 实现：</strong></p>
+<p><code>data</code>即为最终序列化完成的 JSON 串。当然，类型可以任意嵌套。代码参见<a href="https://github.com/darjun/json-gen">github</a>。</p>
+
+<p><code>github</code>上有 Benchmark，是标准 JSON 库的性能的 10 倍！</p>
+
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Time/op(ns)</th>
+<th>B/op</th>
+<th>allocs/op</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>encoding/json</td>
+<td>22209</td>
+<td>6673</td>
+<td>127</td>
+</tr>
+
+<tr>
+<td>darjun/json-gen</td>
+<td>3300</td>
+<td>1152</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="实现">实现</h2>
+
+<p>首先定义一个接口<code>Value</code>，所有可以序列化为 JSON 的值都实现这个接口：</p>
+
+<pre><code class="language-golang">type Value interface {
+  Serialize(buf []byte) []byte
+  Size() int
+}
+</code></pre>
 
 <ul>
-<li><p>首先尝试用<code>java.util.Stack</code>求解，通过，耗时 4ms。</p></li>
-
-<li><p>后又使用<code>java.util.ArrayList</code>实现，耗时降至 3ms。</p></li>
+<li><code>Serialize</code>可以传入一个分配好的内存，该方法会将值序列化后的 JSON 串追加到<code>buf</code>后面。</li>
+<li><code>Size</code>返回该值最终在 JSON 串中占用的字节数。</li>
 </ul>
 
-<p>完整代码见我的<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/20-validParentheses">github</a></p>
+<h3 id="分类">分类</h3>
 
-<h2 id="3-review">3 Review</h2>
-
-<p>这周 review 的文章是 medium 上的<a href="https://medium.com/@PurpleGreenLemon/develop-this-one-fundamental-skill-if-you-want-to-become-a-successful-developer-95977489652e">Develop this one fundamental skill if you want to become a successful developer</a>。要想成为一个成功的程序员，需要具备一个基础技能，即“在计算机前久坐”。</p>
+<p>我将可序列化为 JSON 串的值分为了 4 类：</p>
 
 <ul>
-<li><p>开发工作的文化体现在与计算机交互的过程中。知识不会凭空出现在我们的大脑。不管是通过 YouTube 视频，与他人一起，或是自己独自研究代码来学习编程，这些都有一个共同点——在计算机前“坐”很长时间。</p></li>
-
-<li><p><strong>学习编程需要时间，当今每个人都缺少时间。这意味着，我们需要舍弃一些东西。</strong>例如一些社交活动或 Netflix 连续剧。</p></li>
-
-<li><p>程序员大都是自学的、自主的和自我驱动的（<strong>A lot of developers nowadays are self-taught, self-directed and self-driven——the key word in this entire sentence is self</strong>）。编程的大部分知识来自自我学习。编程是一条“孤独”的道路，我们大部分时间是靠自己。没有人能告诉我们选择什么样的路，每一步做什么。Google 是我们最好的伙伴。</p></li>
+<li><code>QuotedValue</code>：在最终的串中需要用<code>&quot;</code>包裹起来的值，例如 golang 中的字符串。</li>
+<li><code>UnquotedValue</code>：在最终的串中不需要用<code>&quot;</code>包裹起来的值，例如<code>uint/int/bool/float32</code>等。</li>
+<li><code>Array</code>：对应 JSON 中的数组。</li>
+<li><code>Map</code>：对应 JSON 中的映射。</li>
 </ul>
 
-<h2 id="4-tip">4 Tip</h2>
+<p>目前这 4 种类型已经可以满足我的需求了，后续扩展也很方便，只需要实现<code>Value</code>接口即可。下面根据<code>Value</code>的两个接口讨论这 4 种类型的实现。</p>
 
-<p>这里分享一个 Go 接口的使用。</p>
+<h3 id="quotedvalue"><code>QuotedValue</code></h3>
 
-<p>我们知道面向对象的编程语言都有类，类有构造函数可以进行必要的初始化操作。例如下面 Java 代码中，组件类<code>Widget</code>在构造函数中生产一个唯一的 UUID：</p>
+<p>底层基于<code>string</code>类型定义<code>QuotedValue</code>：</p>
 
-<pre><code class="language-java">public class Widget {
-    private String uuid;
+<pre><code class="language-golang">type QuotedValue string
+</code></pre>
 
-    public Widget() {
-        uuid = UUID.randomUUID().toString();
+<p>由于<code>QuotedValue</code>最终在 JSON 串中会有 2 个<code>&quot;</code>，故其大小为：长度 + 2。我们来看<code>Serialize</code>和<code>Size</code>方法的实现：</p>
+
+<pre><code class="language-golang">func (q QuotedValue) Serialize(buf []byte) []byte {
+  buf = append(buf, '&quot;')
+  buf = append(buf, []byte(q)...)
+  return append(buf, '&quot;')
+}
+
+func (q QuotedValue) Size() int {
+  return len(q) + 2
+}
+</code></pre>
+
+<h3 id="unquotedvalue"><code>UnquotedValue</code></h3>
+
+<p>同样基于<code>string</code>类型定义<code>UnquotedValue</code>：</p>
+
+<pre><code class="language-golang">type UnquotedValue string
+</code></pre>
+
+<p>与<code>QuotedValue</code>不同的是，<code>UnquotedValue</code>不需要<code>&quot;</code>包裹，<code>Serialize</code>和<code>Size</code>方法的实现可以参见上面，比较简单！</p>
+
+<h3 id="array"><code>Array</code></h3>
+
+<p><code>Array</code>表示一个 JSON 的数组。因为 JSON 数组可以包含任意类型的数据，我们可以基于<code>[]Value</code>为底层类型定义<code>Array</code>：</p>
+
+<pre><code class="language-golang">type Array []Value
+</code></pre>
+
+<p>这样<code>Array</code>在最终 JSON 串中占用的字节包括所有元素大小、元素之间的<code>,</code>和数组前后的<code>[]</code>，<code>Size</code>方法实现如下：</p>
+
+<pre><code class="language-golang">func (a Array) Size() int {
+  size := 0
+  for _, e := range a {
+    // 递归求元素的大小
+    size += e.Size()
+  }
+
+  // for []
+  size += 2
+  if len(a) &gt; 1 {
+    // for ,
+    size += len(a) - 1
+  }
+
+  return size
+}
+</code></pre>
+
+<p><code>Serialize</code>方法递归调用元素的<code>Serialize</code>方法，在元素之间添加<code>,</code>，整个数组用<code>[]</code>包裹。</p>
+
+<pre><code class="language-golang">func (a Array) Serialize(buf []byte) []byte {
+  if len(buf) == 0 {
+    // 如果未传入分配好的空间，根据 Size 分配空间
+    buf = make([]byte, 0, a.Size())
+  }
+
+  buf = append(buf, '[')
+  count := len(a)
+  for i, e := range a {
+    buf = e.Serialize(buf)
+    if i != count-1 {
+      // 除了最后一个元素，每个元素后添加,
+      buf = append(buf, ',')
     }
+  }
+
+  return append(buf, ']')
 }
 </code></pre>
 
-<p>但是 Go 没有构造函数，我们编写<code>Widget</code>结构：</p>
+<p>为了方便操作数组，我给数组添加很多方法，常用的基本类型和<code>Array/Map</code>都有对应的操作方法。操作方法命名为<code>AppendType</code>和<code>AppendTypeArray</code>（其中<code>Type</code>为<code>uint/int/bool/float/Array/Map</code>等类型名）。</p>
 
-<pre><code class="language-go">type Widget struct {
-    Uuid string
+<p>除了<code>string/Array/Map</code>，其它的基本类型都使用<code>strconv</code>转为字符串，且强制转换为<code>UnquotedValue</code>，因为它不需要<code>&quot;</code>包裹。</p>
+
+<pre><code class="language-golang">func (a *Array) AppendUint(u uint64) {
+  value := strconv.FormatUint(u, 10)
+
+    *a = append(*a, UnquotedValue(value))
 }
-</code></pre>
 
-<p>用户完全可以使用<code>w := &amp;Widget{}</code>来创建对象，这里的初始化不受我们控制。当然，我们可以通过添加形如<code>NewXXX</code>的“类”构造函数（contructor-like）增加初始化逻辑：</p>
+func (a *Array) AppendString(value string) {
+    *a = append(*a, QuotedValue(escapeString(value)))
+}
 
-<pre><code class="language-go">func NewWidget() *Widget {
-    return &amp;Widget{
-        Uuid: uuid.Must(uuid.NewV4).String(),
+func (a *Array) AppendUintArray(u []uint64) {
+    value := make([]Value, 0, len(u))
+    for _, v := range u {
+        value = append(value, UnquotedValue(strconv.FormatUint(v, 10)))
     }
-}
-</code></pre>
 
-<p>然而，<code>NewWidget</code>的调用并不是强制的。当然可以通过封装大法，将<code>Widget</code>移到一个包中，并将其设置为未导出。</p>
-
-<pre><code class="language-go">package widgets
-
-type widget struct {
-    Uuid string
+    *a = append(*a, Array(value))
 }
 
-func NewWidget() *widget {
-    return &amp;widget{
-        Uuid: uuid.Must(uuid.NewV4).String(),
+func (a *Array) AppendStringArray(s []string) {
+    value := make([]Value, 0, len(s))
+    for _, v := range s {
+        value = append(value, QuotedValue(escapeString(v)))
     }
+
+    *a = append(*a, Array(value))
 }
 </code></pre>
 
-<p>这种写法可以骗过 Go 编译器，但是我们不能骗自己。该写法有以下三个问题：</p>
+<p>这里有点需要注意，由于<code>Append*</code>方法会修改<code>Array</code>（即切片），所以接收者需要使用指针！</p>
+
+<h3 id="map"><code>Map</code></h3>
+
+<p>实现<code>Map</code>时，有两种选择。第一种定义为<code>map[string]Value</code>，这样结构简单，但是由于<code>map</code>遍历的随机性会导致同一个<code>Map</code>生成的 JSON 串不一样。最终我选择了第二种方案，即键和值分开存放，这样可以保证在最终的 JSON 串中，键的顺序与插入的顺序相同：</p>
+
+<pre><code class="language-golang">type Map struct {
+  keys []string
+  values []Value
+}
+</code></pre>
+
+<p><code>Map</code>的大小包含多个部分：</p>
 
 <ul>
-<li><p>方法<code>NewWidget</code>返回一个未导出的类型很怪异。</p></li>
-
-<li><p><code>go doc</code>生成的文档会忽略未导出的类型。包的使用者会和困惑，<code>NewWidget</code>函数返回一个类型，而文档中根本找不到该类型。</p></li>
-
-<li><p>扩展是噩梦。</p></li>
+<li>键和值的大小。</li>
+<li>前后需要<code>{}</code>包裹。</li>
+<li>每个键需要用<code>&quot;</code>包裹。</li>
+<li>键和值之间需要有一个<code>:</code>。</li>
+<li>每个键值对之间需要用<code>,</code>分隔。</li>
 </ul>
 
-<p>Go 接口可以很优雅的解决这个问题。返回一个导出的接口类型即可。看下面代码：</p>
+<p>搞清楚了这些组成部分，<code>Size</code>方法的实现就简单了：</p>
 
-<pre><code class="language-go">
-package widgets
-
-// 文档
-type Uuider interface {
-    Uuid() string
-}
-
-type widget struct {
-    Uuid string
-}
-
-func (w widget) Uuid() {
-    return w.Uuid
-}
-
-func NewWidget() Uuider {
-    return &amp;widget{
-        Uuid: uuid.Must(uuid.NewV4).String(),
+<pre><code class="language-golang">func (m Map) Size() int {
+  size := 0
+    for i, key := range m.keys {
+        // +2 for &quot;, +1 for :
+        size += len(key) + 2 + 1
+        size += m.values[i].Size()
     }
+
+    // +2 for {}
+    size += 2
+
+    if len(m.keys) &gt; 1 {
+        // for ,
+        size += len(m.keys) - 1
+    }
+
+    return size
 }
 </code></pre>
 
-<p>灵活，优雅！</p>
+<p><code>Serialize</code>将多个键值对组装：</p>
 
-<h2 id="5-share">5 Share</h2>
+<pre><code class="language-golang">func (m Map) Serialize(buf []byte) []byte {
+    if len(buf) == 0 {
+        buf = make([]byte, 0, m.Size())
+    }
 
-<p>引用前面 review 的文章中的一句话：</p>
+    buf = append(buf, '{')
+    count := len(m.keys)
+    for i, key := range m.keys {
+        buf = append(buf, '&quot;')
+        buf = append(buf, []byte(key)...)
+        buf = append(buf, '&quot;')
+        buf = append(buf, ':')
+        buf = m.values[i].Serialize(buf)
+        if i != count-1 {
+            buf = append(buf, ',')
+        }
+    }
+    return append(buf, '}')
+}
+</code></pre>
 
-<blockquote>
-<p>能否在计算机前坐很长时间，以及如何利用这段时间，可以判断一个人能否成为一个优秀的程序员。</p>
-</blockquote>
+<p>与<code>Array</code>类似，为了方便操作<code>Map</code>，我给<code>Map</code>添加了很多方法，常见的基本数据类型和<code>Array/Map</code>都有对应的操作方法。操作方法命名为<code>PutType</code>和<code>PutTypeArray</code>（其中<code>Type</code>为<code>uint/int/bool/float/Array/Map</code>等）。</p>
 
-<p>优秀的程序员的成长需要花费大量“计算机”时间，如何高效利用时间成为关键。</p>
+<pre><code class="language-golang">func (m *Map) put(key string, value Value) {
+    m.keys = append(m.keys, key)
+    m.values = append(m.values, value)
+}
+
+func (m *Map) PutUint(key string, u uint64) {
+    value := strconv.FormatUint(u, 10)
+
+    m.put(key, UnquotedValue(value))
+}
+
+func (m *Map) PutUintArray(key string, u []uint64) {
+    value := make([]Value, 0, len(u))
+    for _, v := range u {
+        value = append(value, UnquotedValue(strconv.FormatUint(v, 10)))
+    }
+
+    m.put(key, Array(value))
+}
+</code></pre>
+
+<h2 id="结语">结语</h2>
+
+<p>我根据自身需求实现了一个生成 JSON 串的库，性能大为提升，尽管还不完善，但是后续扩展也非常简单。希望能给有相同需求的朋友带来启发。</p>
 
 
                 
@@ -545,15 +695,10 @@ func NewWidget() Uuider {
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2019/01/24/golang-dev-env/" data-toggle="tooltip" data-placement="top" title="搭建go开发环境">&larr;
+                        <a href="2019/08/21/golang-generate/" data-toggle="tooltip" data-placement="top" title="深入理解Go之generate">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/2019/03/19/arts/week2" data-toggle="tooltip" data-placement="top" title="ARTS第二周">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
