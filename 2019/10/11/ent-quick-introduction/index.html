@@ -18,9 +18,9 @@
     
 
     
-    <meta name="title" content="ARTS第7周" />
-    <meta property="og:title" content="ARTS第7周" />
-    <meta property="twitter:title" content="ARTS第7周" />
+    <meta name="title" content="Facebook ent框架 系列一：快速入门" />
+    <meta property="og:title" content="Facebook ent框架 系列一：快速入门" />
+    <meta property="twitter:title" content="Facebook ent框架 系列一：快速入门" />
     
 
     
@@ -37,9 +37,9 @@
     <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>ARTS第7周-大俊的博客 | Darjun Blog</title>
+    <title>Facebook ent框架 系列一：快速入门-大俊的博客 | Darjun Blog</title>
 
-    <link rel="canonical" href="/2019/05/07/arts/week7">
+    <link rel="canonical" href="/2019/10/11/ent-quick-introduction/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -153,7 +153,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('/img/background3.jpg')
+        background-image: url('/img/post-bg-2015.jpg')
     }
 </style>
 <header class="intro-header">
@@ -163,22 +163,22 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3go" title="深入理解Go">
-                            深入理解Go
+                        <a class="tag" href="/tags/source" title="source">
+                            source
                         </a>
                         
                     </div>
-                    <h1>ARTS第7周</h1>
-                    <h2 class="subheading">&#34;go on!!!&#34;</h2>
+                    <h1>Facebook ent框架 系列一：快速入门</h1>
+                    <h2 class="subheading">快速搭建一个 ent 项目结构</h2>
                     <span class="meta">
 			Posted by 
 			
-			    Darjun
+			    darjun
 			 
 			on 
-			Tuesday, May 7, 2019
+			Friday, October 11, 2019
                         
-                            <span id="/2019/05/07/arts/week7" class="leancloud_visitors meta_data_item" data-flag-title="">
+                            <span id="2019/10/11/ent-quick-introduction/" class="leancloud_visitors meta_data_item" data-flag-title="">
     <span class="post-meta-item-icon">
       <span class="octicon octicon-eye"></span> 
     </span>
@@ -340,146 +340,370 @@ $(function() {
 <ul>
 <li>
 <ul>
-<li><a href="#0-概述">0 概述</a></li>
-<li><a href="#1-algorithm">1 Algorithm</a>
+<li><a href="#概述">概述</a></li>
+<li><a href="#安装">安装</a></li>
+<li><a href="#创建项目">创建项目</a>
 <ul>
-<li><a href="#1-1-invert-binary-tree">1.1 Invert Binary Tree</a></li>
-<li><a href="#1-2-maxmimum-depth-of-binary-tree">1.2 Maxmimum Depth of Binary Tree</a></li>
-<li><a href="#1-3-validate-binary-search-tree">1.3 Validate Binary Search Tree</a></li>
-<li><a href="#1-4-path-sum">1.4 Path Sum</a></li>
+<li><a href="#创建-schema">创建 Schema</a></li>
+<li><a href="#创建">创建</a></li>
+<li><a href="#查询">查询</a></li>
+<li><a href="#更新">更新</a></li>
+<li><a href="#删除">删除</a></li>
 </ul></li>
-<li><a href="#2-review">2 Review</a></li>
-<li><a href="#3-tip">3 Tip</a></li>
-<li><a href="#4-share">4 Share</a></li>
+<li><a href="#约定">约定</a></li>
+<li><a href="#代码">代码</a></li>
 </ul></li>
 </ul>
 </nav>
                 
                 
 
-<h2 id="0-概述">0 概述</h2>
+<h2 id="概述">概述</h2>
 
-<p>ARTS 是耗子叔发起的编程挑战：</p>
+<p>一个稍微有点用的项目，必然会存在多个对象实体（<code>Entity</code>）。如何处理存储、处理这些实体之间的关系是非常需要花费精力的地方。接下来一系列文章将会介绍如何使用<code>ent</code>框架简化这些操作。</p>
 
-<blockquote>
-<p>每周完成一个ARTS： 每周至少做一个 leetcode 的算法题、阅读并点评至少一篇英文技术文章、学习至少一个技术技巧、分享一篇有观点和思考的技术文章。（也就是 Algorithm、Review、Tip、Share 简称ARTS）</p>
-</blockquote>
-
-<h2 id="1-algorithm">1 Algorithm</h2>
-
-<h3 id="1-1-invert-binary-tree">1.1 Invert Binary Tree</h3>
-
-<p><strong>问题描述：</strong></p>
-
-<pre><code>Invert a binary tree.
-</code></pre>
-
-<p>见<a href="https://leetcode.com/problems/invert-binary-tree/">226.Invert Binary Tree</a>。</p>
-
-<p><strong>难度：简单。</strong></p>
-
-<p><strong>问题求解：</strong></p>
+<p><a href="https://entgo.io/">ent</a> 是 Faceboo 开源的一个 Go 语言开发框架。它具有以下特点：</p>
 
 <ul>
-<li>使用一个<code>ArrayDeque</code>保存每一层的节点，初始加入根节点<code>root</code>。依次取出并交换节点的左右子树，如果左右子树不为空，push进<code>ArrayDeque</code>中。</li>
-<li>直到<code>ArrayDeque</code>为空。</li>
+<li>易于对图结构数据建模。</li>
+<li>以代码来描述模式（<code>Schema</code>）。</li>
+<li>通过代码生成，使项目代码基于静态类型，无反射。</li>
+<li>简化图的遍历。</li>
 </ul>
 
-<p><strong>实现：</strong></p>
+<p><code>ent</code>还内置了对 MySQL 和 sqlite3 的支持，非常简单易用。</p>
 
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/226-invertBinaryTree">github</a>，耗时 0ms。</p>
+<h2 id="安装">安装</h2>
 
-<h3 id="1-2-maxmimum-depth-of-binary-tree">1.2 Maxmimum Depth of Binary Tree</h3>
+<p>使用下面的命令安装：</p>
 
-<p><strong>问题描述：</strong></p>
-
-<pre><code>Given a binary tree, find its maximum depth.
-
-The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
-
-Note: A leaf is a node with no children.
+<pre><code class="language-bash">go get github.com/facebookincubator/ent/cmd/entc
 </code></pre>
 
-<p>见<a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/">104.Maximum Depth of Binary Tree</a>。</p>
+<p>安装完成之后，会在<code>$GOPATH/bin</code>中生成一个可执行文件<code>entc</code>，这个就是<code>ent</code>框架的代码生成器。为了便于使用，需要将<code>entc</code>放到<code>PATH</code>目录中。我习惯将<code>$GOPATH/bin</code>加入<code>PATH</code>了，所以不需要进行其它操作就可以使用<code>entc</code>命令。</p>
 
-<p><strong>难度：简单。</strong></p>
+<p>如果执行命令出现<code>strings.ReplaceAll undefined</code>错误，请将 Go 版本更新到<strong>1.13</strong>。</p>
 
-<p><strong>问题求解：</strong></p>
+<h2 id="创建项目">创建项目</h2>
 
-<ul>
-<li>使用两个<code>ArrayDeque</code>保存相邻两层的节点。</li>
-<li>初始加入根节点<code>root</code>到前一层。</li>
-<li>每次循环深度+1，重新构造一个<code>ArrayDeque</code>用于存放新层的节点。</li>
-<li>依次取出前一层的节点，如果左右子树不为空，push进新层的<code>ArrayDeque</code>中。</li>
-<li>将新层的<code>ArrayDeque</code>直接赋值给上一层的<code>ArrayDeque</code>。</li>
-<li>直到新层节点数为0。</li>
-</ul>
+<p>在<code>$GOPATH/src/github.com/&lt;user&gt;/ent-go-example</code>目录下，创建我们的项目目录。将其中的<code>&lt;user&gt;</code>替换为你的用户名，例如我的用户名为<code>darjun</code>，命令如下：</p>
 
-<p><strong>实现：</strong></p>
-
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/104-maximumDepthOfBinaryTree">github</a>，耗时 2ms。</p>
-
-<h3 id="1-3-validate-binary-search-tree">1.3 Validate Binary Search Tree</h3>
-
-<pre><code>Given a binary tree, determine if it is a valid binary search tree (BST).
-
-Assume a BST is defined as follows:
-
-The left subtree of a node contains only nodes with keys less than the node's key.
-The right subtree of a node contains only nodes with keys greater than the node's key.
-Both the left and right subtrees must also be binary search trees.
+<pre><code class="language-bash">$ mkdir -p $GOPATH/src/github.com/darjun/ent-go-example
+$ cd $GOPATH/src/github.com/darjun/ent-go-example
 </code></pre>
 
-<p>见<a href="https://leetcode.com/problems/validate-binary-search-tree/">98.Validate Binary Search Tree</a>。</p>
+<h3 id="创建-schema">创建 Schema</h3>
 
-<p><strong>难度：中等。</strong></p>
+<p>使用<code>entc</code>来创建 Schema 非常方便（<code>Schema</code>我们可以理解为模板，可以用来生成对象，与数据库中的表结构对应）。</p>
 
-<p><strong>问题求解：</strong></p>
-
-<ul>
-<li>思路比较简单，只要树的中序遍历是升序的，则为有效的二叉搜索树。</li>
-<li>不能使用递归，容易爆栈。需要使用迭代来模拟实现，<strong>这个是难点</strong>。步骤如下：</li>
-<li>①.从根节点开始一直找左子节点，将中间遇到的节点压入栈中。</li>
-<li>②.直到一个节点没有左子节点，那么它是第一个节点，即最小的节点，记录它的值。</li>
-<li>③.判断是否其是否有右子节点，如果没有，则从栈中弹出一个节点。转到步骤②。</li>
-<li>④.如果有右子节点，从其右子节点开始执行步骤①。</li>
-</ul>
-
-<p><strong>实现：</strong></p>
-
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/98-validateBinarySearchTree">github</a>，耗时 1ms。</p>
-
-<h3 id="1-4-path-sum">1.4 Path Sum</h3>
-
-<p><strong>问题描述：</strong></p>
-
-<pre><code>Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.
-
-Note: A leaf is a node with no children.
+<pre><code class="language-bash">$ entc int User
 </code></pre>
 
-<p>见<a href="https://leetcode.com/problems/path-sum/">112.Path Sum</a>。</p>
+<p>该命令会在项目根目录下创建如下的目录结构和文件<code>user.go</code>：</p>
 
-<p><strong>难度：简单。</strong></p>
+<pre><code>ent
+└── schema
+    └── user.go
+</code></pre>
 
-<p><strong>问题求解：</strong></p>
+<p>通过<code>entc</code>命令创建的 Schema 都存放在<code>ent/schema</code>中。接下来，我们来看一看<code>user.go</code>文件的内容：</p>
+
+<pre><code class="language-golang">package schema
+
+import &quot;github.com/facebookincubator/ent&quot;
+
+// User holds the schema definition for the User entity.
+type User struct {
+    ent.Schema
+}
+
+// Fields of the User.
+func (User) Fields() []ent.Field {
+    return nil
+}
+
+// Edges of the User.
+func (User) Edges() []ent.Edge {
+    return nil
+}
+</code></pre>
+
+<p>其中<code>Fields()</code>方法中定义<code>User</code>有哪些属性，<code>Edges()</code>方法中定义<code>User</code>与其他对象的关系。我们先为<code>User</code>添加几个属性：</p>
+
+<pre><code class="language-golang">package schema
+
+import (
+    &quot;github.com/facebookincubator/ent&quot;
+    &quot;github.com/facebookincubator/ent/schema/field&quot;
+)
+
+// Fields of the User.
+func (User) Fields() []ent.Field {
+    return []ent.Field{
+        field.String(&quot;name&quot;).Default(&quot;unknown&quot;),
+        field.Int(&quot;age&quot;).Positive(),
+    }
+}
+</code></pre>
+
+<p>我们通过子包<code>field</code>中的方法为<code>User</code>添加了 2 个属性，<code>name</code>和<code>age</code>，很好理解。接下来，使用<code>entc</code>生成具体结构以及操作的方法。在项目根目录执行：</p>
+
+<pre><code class="language-bash">$ entc generate ./ent/schema
+</code></pre>
+
+<p>生成的文件如下：</p>
+
+<pre><code>ent
+├── client.go
+├── config.go
+├── context.go
+├── ent.go
+├── example_test.go
+├── migrate
+│   ├── migrate.go
+│   └── schema.go
+├── predicate
+│   └── predicate.go
+├── schema
+│   └── user.go
+├── tx.go
+├── user
+│   ├── user.go
+│   └── where.go
+├── user.go
+├── user_create.go
+├── user_delete.go
+├── user_query.go
+└── user_update.go
+</code></pre>
+
+<p>通过文件名大概也能猜到作用，先简单了解一下，后续文章还会说明：</p>
 
 <ul>
-<li>使用两个<code>ArrayDeque</code>，一个保存树的某一层的所有节点，一个保存从根到当前节点的路径和。</li>
-<li>每次循环从节点<code>ArrayDeque</code>中取出一个节点记为<code>node</code>，从路径和<code>ArrayDeque</code>中取出一个路径和，即为<code>currentSum</code>，如果节点为叶子节点且路径和等于目标路径和，则返回<code>true</code>。</li>
-<li>否则如果有左节点，将<code>node.left</code>存入节点<code>ArrayDeque</code>，将<code>node.val + currentSum</code>存入路径和<code>ArrayDeque</code>。</li>
-<li>直接节点<code>ArrayDeque</code>为空停止。</li>
+<li><code>client.go</code>：操作接口。</li>
+<li><code>config.go</code>: 配置，如配置数据库驱动，日志输出等。</li>
+<li><code>context.go</code>: 定义上下文<code>key</code>。</li>
+<li><code>ent.go</code>: 定义一些查询和聚合选项，如升序/降序和<code>Count()</code>方法。</li>
+<li><code>migrate/</code>: 包含创建表和迁移表的代码。</li>
+<li><code>schema/</code>: 定义模式，<strong>唯一需要我们编辑的目录</strong>。
+
+<ul>
+<li><code>user.go</code>: 定义<code>User</code>的属性和与其他对象的关系。</li>
+</ul></li>
+<li><code>tx.go</code>: 数据库事务相关操作。</li>
+<li><code>user/</code>:
+
+<ul>
+<li><code>user.go</code>: 定义数据库表相关常量。</li>
+<li><code>where.go</code>: 对每个字段定义丰富的查询条件。</li>
+</ul></li>
+<li><code>user.go</code>: <code>User</code>结构和几个通用方法。</li>
+<li><code>user_create.go/user_delete.go/user_query.go/user_update.go</code>: 定义创建/删除/查询/更新对象，这些对象会辅助生成 sql 语句，类比构造器模式。</li>
 </ul>
 
-<p><strong>实现：</strong></p>
+<h3 id="创建">创建</h3>
 
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/112-pathSum">github</a>，耗时 1ms。</p>
+<p>所有的操作都是通过<code>client</code>完成的，包括保存、查询、更新、删除等。<code>client</code>对象通过调用<code>ent.Open</code>获得，操作方式与打开数据库连接相同：</p>
 
-<h2 id="2-review">2 Review</h2>
+<pre><code class="language-golang">package main
 
-<h2 id="3-tip">3 Tip</h2>
+import (
+    &quot;context&quot;
+    &quot;log&quot;
 
-<h2 id="4-share">4 Share</h2>
+    &quot;github.com/darjun/ent-go-example/ent&quot;
+
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+)
+
+func main() {
+    client, err := ent.Open(&quot;mysql&quot;, &quot;root:12345@tcp(localhost:3306)/test?charset=utf8&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer client.Close()
+
+    if err := client.Schema.Create(context.Background()); err != nil {
+        log.Fatal(err)
+    }
+
+    if _, err := CreateUser(context.Background(), client); err != nil {
+        log.Fatal(err)
+    }
+}
+
+func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
+    u, err := client.User.
+        Create().
+        SetName(&quot;darjun&quot;).
+        SetAge(29).
+        Save(ctx)
+
+    if err != nil {
+        return nil, fmt.Errorf(&quot;failed creating user: %v&quot;, err)
+    }
+
+    log.Println(&quot;user was created: &quot;, u)
+    return u, nil
+}
+</code></pre>
+
+<ul>
+<li>我们使用了 MySQL，所以需要导入驱动包<code>github.com/go-sql-driver/mysql</code>。这里假设 MySQL 已安装并启动。用户名、密码、端口号和数据库名请自行修改。</li>
+<li><code>client.Schema.Create()</code>会<strong>自动创建数据库表</strong>，极大地简化了开发流程！！！</li>
+<li>创建<code>User</code>时，使用了链式调用，<code>Create()</code>返回创建对象，后续两个方法设置字段值，最后<code>Save()</code>方法将之前设置的字段保存到数据库。</li>
+</ul>
+
+<p><code>User</code>默认对应<code>users</code>表，查看表结构：</p>
+
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Defalut Value</th>
+<th>Nullable</th>
+<th>Character Set</th>
+<th>Collation</th>
+<th>Privileges</th>
+<th>Extra</th>
+<th>Comments</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>id</td>
+<td>bigint(20)</td>
+<td></td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td></td>
+<td>select,insert,update,references</td>
+<td>auto_increment</td>
+</tr>
+
+<tr>
+<td>name</td>
+<td>varchar(255)</td>
+<td><strong>unknown</strong></td>
+<td>NO</td>
+<td>utf8mb4</td>
+<td>utf8mb4_bin</td>
+<td>select,insert,update,references</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>age</td>
+<td>bigint(20)</td>
+<td></td>
+<td>NO</td>
+<td></td>
+<td></td>
+<td>select,insert,update,references</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<p>我们看到：</p>
+
+<ul>
+<li><code>ent</code>会默认生成一个自增的<code>id</code>字段。</li>
+<li><code>name</code>和<code>age</code>列是我们通过<code>field.Type</code>指定的，注意<code>Defalut()</code>方法为<code>age</code>设置的默认值。后续会介绍更多的操作方式。</li>
+</ul>
+
+<h3 id="查询">查询</h3>
+
+<p>对象的查询也是通过<code>client</code>来完成的，使用方式基本类似：</p>
+
+<pre><code class="language-golang">func QueryUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
+    u, err := client.User.
+        Query().
+        Where(user.NameEQ(&quot;darjun&quot;)).
+        Only(ctx)
+    if err != nil {
+        return nil, fmt.Errorf(&quot;failed to query user: %v&quot;, err)
+    }
+
+    log.Println(&quot;query user:&quot;, u)
+    return u, nil
+}
+</code></pre>
+
+<ul>
+<li><code>Query()</code>返回查询对象，辅助构造 sql 语句。</li>
+<li><code>Where()</code>指定查询条件，可以有多个<code>Where</code>，<code>user.NameEQ()</code>方法是<code>entc generate</code>生成的，位于<code>ent/user/where.go</code>文件中。类似的还有<code>NameNEQ</code>（不等）、<code>NameIn</code>（在一组值中）等。</li>
+<li><code>Only()</code>执行查询语句，如果有多个结果会返回错误。</li>
+</ul>
+
+<h3 id="更新">更新</h3>
+
+<p>更新操作也大同小异：</p>
+
+<pre><code class="language-golang">func UpdateUser(ctx context.Context, client *ent.Client) error {
+    err := client.User.
+        Update().
+        Where(user.NameEQ(&quot;darjun&quot;)).
+        SetAge(30).
+        Exec(ctx)
+    if err != nil {
+        return fmt.Errorf(&quot;failed to update user: %v&quot;, err)
+    }
+
+    log.Println(&quot;update user&quot;)
+    return nil
+}
+</code></pre>
+
+<ul>
+<li><code>Update()</code>返回更新对象，辅助构造 sql 语句。</li>
+<li><code>Where()</code>指定查询条件。</li>
+<li><code>SetAge()</code>设置更新值。</li>
+<li><code>Exec()</code>执行更新语句。</li>
+</ul>
+
+<h3 id="删除">删除</h3>
+
+<p>删除操作也是类似的：</p>
+
+<pre><code class="language-golang">func DeleteUser(ctx context.Context, client *ent.Client) error {
+    n, err := client.User.
+        Delete().
+        Where(user.NameEQ(&quot;darjun&quot;)).
+        Exec(ctx)
+    if err != nil {
+        return fmt.Errorf(&quot;failed to delete user: %v&quot;, err)
+    }
+
+    log.Println(&quot;delete user cnt:&quot;, n)
+    return nil
+}
+</code></pre>
+
+<ul>
+<li><code>Delete()</code>返回删除对象，辅助构造 sql 语句。</li>
+<li><code>Where()</code>指定查询条件。</li>
+<li><code>Exec()</code>执行删除语句。</li>
+</ul>
+
+<h2 id="约定">约定</h2>
+
+<p>代码生成器按照一定的模式生成代码，稍微熟悉一下就能应用地得心应手，例如：</p>
+
+<ul>
+<li>创建、查询、更新和删除，需要调用对应结构的<code>Create()/Query()/Update()/Delete()</code>生成相应的辅助对象，然后再附加查询条件、设置值等，最后通过<code>Only()/All()</code>方法查询，<code>Exec()</code>方法执行。</li>
+<li>每一个查询/执行的方法都有一个加<code>X</code>后缀的对应方法，例如<code>Only()</code>和<code>OnlyX()</code>。有<code>X</code>后缀的方法出错时，直接<code>panic</code>，而无<code>X</code>后缀的方法将返回错误。</li>
+<li>代码生成器生成了丰富的条件位于<code>ent/&lt;entity&gt;/where.go</code>文件中，建议熟悉。</li>
+</ul>
+
+<h2 id="代码">代码</h2>
+
+<p>本文代码放在 github 的 ent-go-example 仓库中，每篇文章对应的代码会指定不同的<code>tag</code>。例如本篇文章的代码<code>tag</code>为<code>introduction</code>，<a href="https://github.com/darjun/ent-go-example/tree/introduction">去看代码</a>。</p>
 
 
                 
@@ -528,13 +752,13 @@ Note: A leaf is a node with no children.
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2019/04/22/arts/week6" data-toggle="tooltip" data-placement="top" title="ARTS第六周">&larr;
+                        <a href="2019/10/08/golang-json-gen/" data-toggle="tooltip" data-placement="top" title="高效生成JSON串——json-gen">&larr;
                             Previous Post</a>
                     </li>
                     
                     
                     <li class="next">
-                        <a href="2019/08/20/golang-equal/" data-toggle="tooltip" data-placement="top" title="深入理解Go之==">Next
+                        <a href="2019/10/15/algorithm/permutation" data-toggle="tooltip" data-placement="top" title="生成排列的算法汇总">Next
                             Post &rarr;</a>
                     </li>
                     

@@ -18,9 +18,9 @@
     
 
     
-    <meta name="title" content="ARTS第7周" />
-    <meta property="og:title" content="ARTS第7周" />
-    <meta property="twitter:title" content="ARTS第7周" />
+    <meta name="title" content="生成排列的算法汇总" />
+    <meta property="og:title" content="生成排列的算法汇总" />
+    <meta property="twitter:title" content="生成排列的算法汇总" />
     
 
     
@@ -37,9 +37,9 @@
     <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>ARTS第7周-大俊的博客 | Darjun Blog</title>
+    <title>生成排列的算法汇总-大俊的博客 | Darjun Blog</title>
 
-    <link rel="canonical" href="/2019/05/07/arts/week7">
+    <link rel="canonical" href="/2019/10/15/algorithm/permutation">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -153,7 +153,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('/img/background3.jpg')
+        background-image: url('/img/post-bg-2015.jpg')
     }
 </style>
 <header class="intro-header">
@@ -163,22 +163,22 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3go" title="深入理解Go">
-                            深入理解Go
+                        <a class="tag" href="/tags/source" title="source">
+                            source
                         </a>
                         
                     </div>
-                    <h1>ARTS第7周</h1>
-                    <h2 class="subheading">&#34;go on!!!&#34;</h2>
+                    <h1>生成排列的算法汇总</h1>
+                    <h2 class="subheading">彻底掌握如何生成排列</h2>
                     <span class="meta">
 			Posted by 
 			
-			    Darjun
+			    darjun
 			 
 			on 
-			Tuesday, May 7, 2019
+			Tuesday, October 15, 2019
                         
-                            <span id="/2019/05/07/arts/week7" class="leancloud_visitors meta_data_item" data-flag-title="">
+                            <span id="2019/10/15/algorithm/permutation" class="leancloud_visitors meta_data_item" data-flag-title="">
     <span class="post-meta-item-icon">
       <span class="octicon octicon-eye"></span> 
     </span>
@@ -340,146 +340,483 @@ $(function() {
 <ul>
 <li>
 <ul>
-<li><a href="#0-概述">0 概述</a></li>
-<li><a href="#1-algorithm">1 Algorithm</a>
+<li><a href="#概述">概述</a></li>
+<li><a href="#算法">算法</a>
 <ul>
-<li><a href="#1-1-invert-binary-tree">1.1 Invert Binary Tree</a></li>
-<li><a href="#1-2-maxmimum-depth-of-binary-tree">1.2 Maxmimum Depth of Binary Tree</a></li>
-<li><a href="#1-3-validate-binary-search-tree">1.3 Validate Binary Search Tree</a></li>
-<li><a href="#1-4-path-sum">1.4 Path Sum</a></li>
+<li><a href="#暴力法">暴力法</a>
+<ul>
+<li><a href="#描述">描述</a></li>
+<li><a href="#实现">实现</a></li>
+<li><a href="#优缺点">优缺点</a></li>
 </ul></li>
-<li><a href="#2-review">2 Review</a></li>
-<li><a href="#3-tip">3 Tip</a></li>
-<li><a href="#4-share">4 Share</a></li>
+<li><a href="#插入法">插入法</a>
+<ul>
+<li><a href="#描述-1">描述</a></li>
+<li><a href="#实现-1">实现</a></li>
+<li><a href="#优缺点-1">优缺点</a></li>
+</ul></li>
+<li><a href="#字典法">字典法</a>
+<ul>
+<li><a href="#描述-2">描述</a></li>
+<li><a href="#实现-2">实现</a></li>
+<li><a href="#优缺点-2">优缺点</a></li>
+</ul></li>
+<li><a href="#sjt算法">SJT算法</a>
+<ul>
+<li><a href="#描述-3">描述</a></li>
+<li><a href="#实现-3">实现</a></li>
+<li><a href="#优缺点-3">优缺点</a></li>
+</ul></li>
+<li><a href="#heap算法">Heap算法</a>
+<ul>
+<li><a href="#描述-4">描述</a></li>
+<li><a href="#实现-4">实现</a></li>
+<li><a href="#优缺点-4">优缺点</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#结语">结语</a></li>
 </ul></li>
 </ul>
 </nav>
                 
                 
 
-<h2 id="0-概述">0 概述</h2>
+<h2 id="概述">概述</h2>
 
-<p>ARTS 是耗子叔发起的编程挑战：</p>
+<p>我觉得自己的算法思维能力有些薄弱，所以基本上每天晚上都会抽空做1-2到 leetcode 算法题。这两天遇到一个排列的问题——<a href="https://leetcode.com/problems/next-permutation/">Next Permutation</a>。然后我去搜索了一下生成排列的算法。这里做一下总结。</p>
 
-<blockquote>
-<p>每周完成一个ARTS： 每周至少做一个 leetcode 的算法题、阅读并点评至少一篇英文技术文章、学习至少一个技术技巧、分享一篇有观点和思考的技术文章。（也就是 Algorithm、Review、Tip、Share 简称ARTS）</p>
-</blockquote>
+<h2 id="算法">算法</h2>
 
-<h2 id="1-algorithm">1 Algorithm</h2>
-
-<h3 id="1-1-invert-binary-tree">1.1 Invert Binary Tree</h3>
-
-<p><strong>问题描述：</strong></p>
-
-<pre><code>Invert a binary tree.
-</code></pre>
-
-<p>见<a href="https://leetcode.com/problems/invert-binary-tree/">226.Invert Binary Tree</a>。</p>
-
-<p><strong>难度：简单。</strong></p>
-
-<p><strong>问题求解：</strong></p>
+<p>目前，生成一个序列的排列常用的有以下几种算法：</p>
 
 <ul>
-<li>使用一个<code>ArrayDeque</code>保存每一层的节点，初始加入根节点<code>root</code>。依次取出并交换节点的左右子树，如果左右子树不为空，push进<code>ArrayDeque</code>中。</li>
-<li>直到<code>ArrayDeque</code>为空。</li>
+<li>暴力法（Brute Force）</li>
+<li>插入法（Insert）</li>
+<li>字典法（Lexicographic）</li>
+<li>SJT算法（Steinhaus-Johnson-Trotter）</li>
+<li>堆算法（Heap）</li>
 </ul>
 
-<p><strong>实现：</strong></p>
+<p>下面依次介绍算法的内容，实现和优缺点。</p>
 
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/226-invertBinaryTree">github</a>，耗时 0ms。</p>
-
-<h3 id="1-2-maxmimum-depth-of-binary-tree">1.2 Maxmimum Depth of Binary Tree</h3>
-
-<p><strong>问题描述：</strong></p>
-
-<pre><code>Given a binary tree, find its maximum depth.
-
-The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
-
-Note: A leaf is a node with no children.
-</code></pre>
-
-<p>见<a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/">104.Maximum Depth of Binary Tree</a>。</p>
-
-<p><strong>难度：简单。</strong></p>
-
-<p><strong>问题求解：</strong></p>
+<p>在介绍这些算法之前，我们先做一些示例和代码上的约定：</p>
 
 <ul>
-<li>使用两个<code>ArrayDeque</code>保存相邻两层的节点。</li>
-<li>初始加入根节点<code>root</code>到前一层。</li>
-<li>每次循环深度+1，重新构造一个<code>ArrayDeque</code>用于存放新层的节点。</li>
-<li>依次取出前一层的节点，如果左右子树不为空，push进新层的<code>ArrayDeque</code>中。</li>
-<li>将新层的<code>ArrayDeque</code>直接赋值给上一层的<code>ArrayDeque</code>。</li>
-<li>直到新层节点数为0。</li>
+<li>我的代码实现是使用 Go 语言，且仅实现了求<code>int</code>切片的所有排列，其它类型自行扩展也不难。</li>
+<li>除非特殊说明，我假定输入的<code>int</code>中无重复元素，有重复元素可自行去重，其中有个别算法可处理重复元素的问题。</li>
 </ul>
 
-<p><strong>实现：</strong></p>
+<p>完整代码放在<a href="https://github.com/darjun/algorithms/golang/permutation">Github</a>上。</p>
 
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/104-maximumDepthOfBinaryTree">github</a>，耗时 2ms。</p>
+<h3 id="暴力法">暴力法</h3>
 
-<h3 id="1-3-validate-binary-search-tree">1.3 Validate Binary Search Tree</h3>
+<h4 id="描述">描述</h4>
 
-<pre><code>Given a binary tree, determine if it is a valid binary search tree (BST).
-
-Assume a BST is defined as follows:
-
-The left subtree of a node contains only nodes with keys less than the node's key.
-The right subtree of a node contains only nodes with keys greater than the node's key.
-Both the left and right subtrees must also be binary search trees.
-</code></pre>
-
-<p>见<a href="https://leetcode.com/problems/validate-binary-search-tree/">98.Validate Binary Search Tree</a>。</p>
-
-<p><strong>难度：中等。</strong></p>
-
-<p><strong>问题求解：</strong></p>
+<p><strong>暴力法</strong>是很直接的一种分治法：先生成 n-1 个元素的排列，加上第 n 个元素即可得到 n 个元素的排列。算法步骤如下：</p>
 
 <ul>
-<li>思路比较简单，只要树的中序遍历是升序的，则为有效的二叉搜索树。</li>
-<li>不能使用递归，容易爆栈。需要使用迭代来模拟实现，<strong>这个是难点</strong>。步骤如下：</li>
-<li>①.从根节点开始一直找左子节点，将中间遇到的节点压入栈中。</li>
-<li>②.直到一个节点没有左子节点，那么它是第一个节点，即最小的节点，记录它的值。</li>
-<li>③.判断是否其是否有右子节点，如果没有，则从栈中弹出一个节点。转到步骤②。</li>
-<li>④.如果有右子节点，从其右子节点开始执行步骤①。</li>
+<li>将第 n 个元素依次交换到最后一个位置上</li>
+<li>递归生成前 n-1 个元素的排列</li>
+<li>加上最后一个元素即为 n 个元素的排列</li>
 </ul>
 
-<p><strong>实现：</strong></p>
+<h4 id="实现">实现</h4>
 
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/98-validateBinarySearchTree">github</a>，耗时 1ms。</p>
+<p>算法实现也很简单。这里引入两个辅助函数，拷贝和反转切片，后面代码都会用到：</p>
 
-<h3 id="1-4-path-sum">1.4 Path Sum</h3>
+<pre><code class="language-golang">func copySlice(nums []int) []int {
+  n := make([]int, len(nums), len(nums))
+  copy(n, nums)
+  return n
+}
 
-<p><strong>问题描述：</strong></p>
-
-<pre><code>Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.
-
-Note: A leaf is a node with no children.
+// 反转切片nums的[i, j]范围
+func reverseSlice(nums []int, i, j int) {
+  for i &lt; j {
+    nums[i], nums[j] = nums[j], nums[i]
+    i++
+    j--
+  }
+}
 </code></pre>
 
-<p>见<a href="https://leetcode.com/problems/path-sum/">112.Path Sum</a>。</p>
+<p>算法代码如下：</p>
 
-<p><strong>难度：简单。</strong></p>
+<pre><code class="language-golang">func BruteForce(nums []int, n int, ans *[][]int) {
+  if n == 1 {
+    *ans = append(*ans, copySlice(nums))
+    return
+  }
 
-<p><strong>问题求解：</strong></p>
+  n := len(nums)
+  for i := 0; i &lt; n; i++ {
+    nums[i], nums[n-1] = nums[n-1], nums[i]
+    BruteForce(nums, n-1, ans)
+    nums[i], nums[n-1] = nums[n-1], nums[i]
+  }
+}
+</code></pre>
+
+<p>作为一个接口，需要做到尽可能简洁，第二个参数初始值就是前一个参数切片的长度。优化接口：</p>
+
+<pre><code class="language-golang">func bruteForceHelper(nums []int, n int, ans *[][]int) {
+  // 生成排列逻辑
+  ...
+}
+
+func BruteForce(nums []int) [][]int{
+  ans := make([][]int, 0, len(nums))
+  bruteForceHelper(nums, len(nums), &amp;ans)
+  return ans
+}
+</code></pre>
+
+<h4 id="优缺点">优缺点</h4>
+
+<p>优点：逻辑简单直接，易于理解。</p>
+
+<p>缺点：返回的排列数肯定是<code>n!</code>，性能的关键在于系数的大小。由于暴力法的每次循环都需要交换两个位置上的元素，递归结束后又需要<strong>再交换回来</strong>，在<code>n</code>较大的情况下，性能较差。</p>
+
+<h3 id="插入法">插入法</h3>
+
+<h4 id="描述-1">描述</h4>
+
+<p>插入法顾名思义就是将元素插入到一个序列中所有可能的位置生成新的序列。从 1 个元素开始。例如要生成<code>{1,2,3}</code>的排列：</p>
 
 <ul>
-<li>使用两个<code>ArrayDeque</code>，一个保存树的某一层的所有节点，一个保存从根到当前节点的路径和。</li>
-<li>每次循环从节点<code>ArrayDeque</code>中取出一个节点记为<code>node</code>，从路径和<code>ArrayDeque</code>中取出一个路径和，即为<code>currentSum</code>，如果节点为叶子节点且路径和等于目标路径和，则返回<code>true</code>。</li>
-<li>否则如果有左节点，将<code>node.left</code>存入节点<code>ArrayDeque</code>，将<code>node.val + currentSum</code>存入路径和<code>ArrayDeque</code>。</li>
-<li>直接节点<code>ArrayDeque</code>为空停止。</li>
+<li>先从序列 1 开始，插入元素 2，有两个位置可以插入，生成两个序列 12 和 21</li>
+<li>将 3 插入这两个序列的所有可能位置，生成最终的 6 个序列</li>
 </ul>
 
-<p><strong>实现：</strong></p>
+<pre><code>          1
+    12          21
+123 132 312  213 231 321
+</code></pre>
 
-<p><code>Java</code>实现见<a href="https://github.com/darjun/leetcode/tree/master/algorithms/java/112-pathSum">github</a>，耗时 1ms。</p>
+<h4 id="实现-1">实现</h4>
 
-<h2 id="2-review">2 Review</h2>
+<p>实现如下：</p>
 
-<h2 id="3-tip">3 Tip</h2>
+<pre><code class="language-golang">func insertHelper(nums []int, n int) [][]int {
+  if n == 1 {
+    return [][]int{[]int{nums[0]}}
+  }
 
-<h2 id="4-share">4 Share</h2>
+  var ans [][]int
+  for _, subPermutation := range insertHelper(nums, n-1) {
+    // 依次在位置0-n上插入
+    for i := 0; i &lt;= len(subPermutation); i++ {
+      permutation := make([]int, n, n)
+      copy(permutation[:i], subPermutation[:i])
+      permutation[i] = nums[n-1]
+      copy(permutation[i+1:], subPermutation[i:])
+      ans = append(ans, permutation)
+    }
+  }
+
+  return ans
+}
+
+func Insert(nums []int) [][]int {
+  return insertHelper(nums, len(nums))
+}
+</code></pre>
+
+<h4 id="优缺点-1">优缺点</h4>
+
+<p>优点：同样是简单直接，易于理解。</p>
+
+<p>缺点：由于算法中有不少的数据移动，性能与暴力法相比降低了<strong>16%</strong>。</p>
+
+<h3 id="字典法">字典法</h3>
+
+<h4 id="描述-2">描述</h4>
+
+<p><strong>该算法有个前提是序列必须是有升序排列的</strong>，当然也可以微调对其它序列使用。它通过修改当前序列得到下一个序列。我们为每个序列定义一个<strong>权重</strong>，类比序列组成的数字的大小，序列升序排列时<strong>“权重”</strong>最小，降序排列时<strong>“权重”</strong>最大。下面是 1234 的排列按**“权重”由小到大：</p>
+
+<pre><code>1234
+1243
+1324
+1342
+1423
+1432
+2134
+...
+</code></pre>
+
+<p>我们观察到一开始最高位都是 1，稍微调整一下后面三个元素的顺序就可以使得整个<strong>“权重”</strong>增加，类比整数。当后面三个元素已经逆序时，下一个序列最高位就必须是 2 了，因为仅调整后三个元素已经无法使<strong>“权重”</strong>增加了。算法的核心步骤为：</p>
+
+<ul>
+<li>对于当前的序列，找到索引<code>i</code>满足其后的元素完全逆序。</li>
+<li>这时索引<code>i</code>处的元素需要变为后面元素中大于该元素的最小值。</li>
+<li>然后剩余元素升序排列，即为当前序列的下一个序列。</li>
+</ul>
+
+<p>该算法用于 C++ 标准库中<code>next_permutation</code>算法的实现，见<a href="https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.4/a01347.html">GNU C++ std::next_permutation</a>。</p>
+
+<h4 id="实现-2">实现</h4>
+
+<pre><code class="language-golang">func NextPermutation(nums []int) bool {
+    if len(nums) &lt;= 1 {
+        return false
+    }
+
+    i := len(nums) - 1
+    for i &gt; 0 &amp;&amp; nums[i-1] &gt; nums[i] {
+        i--
+    }
+
+    // 全都逆序了，达到最大值
+    if i == 0 {
+        reverse(nums, 0, len(nums)-1)
+        return false
+    }
+
+    // 找到比索引i处元素大的元素
+    j := len(nums) - 1
+    for nums[j] &lt;= nums[i-1] {
+        j--
+    }
+
+    nums[i-1], nums[j] = nums[j], nums[i-1]
+    // 将后面的元素反转
+    reverse(nums, i, len(nums)-1)
+    return true
+}
+
+func lexicographicHelper(nums []int) [][]int {
+    ans := make([][]int, 0, len(nums))
+    ans = append(ans, copySlice(nums))
+    for NextPermutation(nums) {
+        ans = append(ans, copySlice(nums))
+    }
+
+    return ans
+}
+
+func Lexicographic(nums []int) [][]int {
+    return lexicographicHelper(nums)
+}
+</code></pre>
+
+<p><code>NextPermutation</code>函数即可用于解决前文 LeetCode 算法题。其返回<code>false</code>表示已经到达最后一个序列了。</p>
+
+<h4 id="优缺点-2">优缺点</h4>
+
+<p>优点：<code>NextPermutation</code>可以单独使用，性能也不错。</p>
+
+<p>缺点：稍微有点难理解。</p>
+
+<h3 id="sjt算法">SJT算法</h3>
+
+<h4 id="描述-3">描述</h4>
+
+<p>SJT 算法在前一个排列的基础上通过<strong>仅交换相邻的两个元素</strong>来生成下一个排列。例如，按照下面顺序生成 123 的排列:</p>
+
+<pre><code>123(交换23) -&gt;
+132(交换13) -&gt;
+312(交换12) -&gt;
+321(交换32) -&gt;
+231(交换31) -&gt;
+213
+</code></pre>
+
+<p>一个简单的方案是通过 n-1 个元素的排列生成 n 个元素的排列。例如我们现在用 2 个元素的排列生成 3 个元素的排列。</p>
+
+<p>2 个元素的排列只有 2 个： 1 2 和 2 1。</p>
+
+<p>通过在 2 个元素的排列中所有不同的位置插入 3，我们就能得到 3 个元素的排列。</p>
+
+<p>在 1 2 的不同位置插入 3 得到：1 2 <strong>3</strong>，1 <strong>3</strong> 2 和 <strong>3</strong> 1 2。 在 2 1 的不同位置插入 3 得到：2 1 <strong>3</strong>，2 <strong>3</strong> 1 和 <strong>3</strong> 2 1。</p>
+
+<p>上面是插入法的逻辑，但是插入法由于有大量的数据移动导致性能较差。SJT 算法不要求生成所有 n-1 个元素的排列。它记录排列中每个元素的方向。算法步骤如下：</p>
+
+<ul>
+<li>查找序列中可移动的最大元素。一个元素可移动意味着它的值大于它指向的相邻元素。</li>
+<li>交换该元素与它指向的相邻元素。</li>
+<li>修改所有值大于该元素的元素的方向。</li>
+<li>重复以上步骤直到没有可移动的元素。</li>
+</ul>
+
+<p>假设我们需要生成序列 1 2 3 4 的所有排列。首先初始化所有元素的方向为从右到左。第一个排列即为初始序列：</p>
+
+<pre><code>&lt;1 &lt;2 &lt;3 &lt;4
+</code></pre>
+
+<p>所有可移动的元素为 2，3 和 4。最大的为 4。我们交换 3 和 4。由于此时 4 是最大元素，不用改变方向。得到下一个排列：</p>
+
+<pre><code>&lt;1 &lt;2 &lt;4 &lt;3
+</code></pre>
+
+<p>4 还是最大的可移动元素，交换 2 和 4，不用改变方向。得到下一个排列：</p>
+
+<pre><code>&lt;1 &lt;4 &lt;2 &lt;3
+</code></pre>
+
+<p>4 还是最大的可移动元素，交换 1 和 4，不用改变方向。得到下一个排列：</p>
+
+<pre><code>&lt;4 &lt;1 &lt;2 &lt;3
+</code></pre>
+
+<p>当前 4 已经无法移动了，3 成为最大的可移动元素，交换 2 和 3。注意，元素 4 比 3 大，所以要改变元素 4 的方向。得到下一个排列：</p>
+
+<pre><code>&gt;4 &lt;1 &lt;3 &lt;2
+</code></pre>
+
+<p>这时，元素 4 又成为了最大的可移动元素，交换 4 和 1。注意，此时元素 4 方向已经变了。得到下一个排列：</p>
+
+<pre><code>&lt;1 &gt;4 &lt;3 &lt;2
+</code></pre>
+
+<p>交换 4 和 3，得到下一个排列：</p>
+
+<pre><code>&lt;1 &lt;3 &gt;4 &lt;2
+</code></pre>
+
+<p>交换 4 和 2：</p>
+
+<pre><code>&lt;1 &lt;3 &lt;2 &gt;4
+</code></pre>
+
+<p>这时元素 3 为可移动的最大元素，交换 1 和 3，改变元素 4 的方向：</p>
+
+<pre><code>&lt;3 &lt;1 &lt;2 &lt;4
+</code></pre>
+
+<p>继续这个过程，最后得到的排列为（<strong>强烈建议自己试试</strong>）：</p>
+
+<pre><code>&lt;2 &lt;1 &gt;3 &gt;4
+</code></pre>
+
+<p>已经没有可移动的元素了，算法结束。</p>
+
+<h4 id="实现-3">实现</h4>
+
+<pre><code class="language-golang">func getLargestMovableIndex(nums []int, dir []bool) int {
+    maxI := -1
+    l := len(nums)
+    for i, num := range nums {
+        if dir[i] {
+            if i &gt; 0 &amp;&amp; num &gt; nums[i-1] {
+                if maxI == -1 || num &gt; nums[maxI] {
+                    maxI = i
+                }
+            }
+        } else {
+            if i &lt; l-1 &amp;&amp; num &gt; nums[i+1] {
+                if maxI == -1 || num &gt; nums[maxI] {
+                    maxI = i
+                }
+            }
+        }
+    }
+
+    return maxI
+}
+
+func sjtHelper(nums []int, ans *[][]int) {
+    l := len(nums)
+    // true 表示方向为从右向左
+    // false 表示方向为从左向右
+    dir := make([]bool, l, l)
+    for i := range dir {
+        dir[i] = true
+    }
+
+    maxI := getLargestMovableIndex(nums, dir)
+    for maxI &gt;= 0 {
+        maxNum := nums[maxI]
+        // 交换最大可移动元素与它指向的元素
+        if dir[maxI] {
+            nums[maxI], nums[maxI-1] = nums[maxI-1], nums[maxI]
+            dir[maxI], dir[maxI-1] = dir[maxI-1], dir[maxI]
+        } else {
+            nums[maxI], nums[maxI+1] = nums[maxI+1], nums[maxI]
+            dir[maxI], dir[maxI+1] = dir[maxI+1], dir[maxI]
+        }
+
+        *ans = append(*ans, copySlice(nums))
+
+        // 改变所有大于当前移动元素的元素的方向
+        for i, num := range nums {
+            if num &gt; maxNum {
+                dir[i] = !dir[i]
+            }
+        }
+
+        maxI = getLargestMovableIndex(nums, dir)
+    }
+}
+
+func Sjt(nums []int) [][]int {
+    ans := make([][]int, 0, len(nums))
+    ans = append(ans, copySlice(nums))
+    sjtHelper(nums, &amp;ans)
+    return ans
+}
+</code></pre>
+
+<h4 id="优缺点-3">优缺点</h4>
+
+<p>优点：作为一种算法思维可以学习借鉴。</p>
+
+<p>缺点：性能不理想。</p>
+
+<h3 id="heap算法">Heap算法</h3>
+
+<h4 id="描述-4">描述</h4>
+
+<p>Heap算法优雅、高效。它是从暴力法演化而来的，我们前面提到暴力法性能差主要是由于多次交换，堆算法就是通过减少交换提升效率。</p>
+
+<p>算法步骤如下：</p>
+
+<ul>
+<li>如果元素个数为奇数，交换第一个和最后一个元素。</li>
+<li>如果元素个数为偶数，依次交换第 i 个和最后一个元素。</li>
+</ul>
+
+<p><a href="https://en.wikipedia.org/wiki/Heap%27s_algorithm">Wikipedia</a>上有详细的证明，有兴趣可以看看。</p>
+
+<h4 id="实现-4">实现</h4>
+
+<pre><code class="language-golang">func heapHelper(nums []int, n int, ans *[][]int) {
+    if n == 1 {
+        *ans = append(*ans, copySlice(nums))
+        return
+    }
+
+    for i := 0; i &lt; n-1; i++ {
+        heapHelper(nums, n-1, ans)
+        if n&amp;1 == 0 {
+            // 如果是偶数，交换第i个与最后一个元素
+            nums[i], nums[n-1] = nums[n-1], nums[i]
+        } else {
+            // 如果是奇数，交换第一个与最后一个元素
+            nums[0], nums[n-1] = nums[n-1], nums[0]
+        }
+    }
+    heapHelper(nums, n-1, ans)
+}
+
+// Heap 使用堆算法生成排列
+func Heap(nums []int) [][]int {
+    ans := make([][]int, 0, len(nums))
+    heapHelper(nums, len(nums), &amp;ans)
+    return ans
+}
+</code></pre>
+
+<p>Heap 算法非常难理解，而且很容易写错，我现在纯粹是背下来了😂 。</p>
+
+<h4 id="优缺点-4">优缺点</h4>
+
+<p>优点：代码实现简单、高效。</p>
+
+<p>缺点：非常难理解。</p>
+
+<h2 id="结语">结语</h2>
+
+<p>本文介绍了几种生成排列的算法，希望对大家有所帮助。</p>
 
 
                 
@@ -528,15 +865,10 @@ Note: A leaf is a node with no children.
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2019/04/22/arts/week6" data-toggle="tooltip" data-placement="top" title="ARTS第六周">&larr;
+                        <a href="2019/10/11/ent-quick-introduction/" data-toggle="tooltip" data-placement="top" title="Facebook ent框架 系列一：快速入门">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="2019/08/20/golang-equal/" data-toggle="tooltip" data-placement="top" title="深入理解Go之==">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
