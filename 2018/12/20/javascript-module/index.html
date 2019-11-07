@@ -1,342 +1,387 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
 <head>
-    <meta name="google-site-verification" content="9vIieCe-Qpd78QOmBl63rGtIVbhY6sYyuxX3j8XWBA4" />
-    <meta name="baidu-site-verification" content="LRrmH41lz7" />
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>深入理解Javascript之Module - 大俊的博客</title>
+  
 
-    
-    <meta property="og:site_name" content="Darjun Blog">
-    <meta property="og:type" content="article">
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
-    
-    <meta property="og:image" content="https://darjun.github.io/img/home-bg.jpg">
-    <meta property="twitter:image" content="https://darjun.github.io/img/home-bg.jpg" />
-    
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
 
-    
-    <meta name="title" content="深入理解Javascript之Module" />
-    <meta property="og:title" content="深入理解Javascript之Module" />
-    <meta property="twitter:title" content="深入理解Javascript之Module" />
-    
 
-    
-    <meta name="description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。">
-    <meta property="og:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
-    <meta property="twitter:description" content="李大俊，程序员, 游戏开发者，热爱游戏，热爱编程。" />
-    
+<meta name="applicable-device" content="pc,mobile">
 
-    
-    <meta property="twitter:card" content="summary" />
-    
-    
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
-    <meta name="keyword"  content="李大俊, lidajun, leedarjun, , 李大俊的网络日志, 李大俊的博客, Darjun Blog, 博客, 个人网站, 互联网, Golang, JavaScript, Java, C&#43;&#43;">
-    <link rel="shortcut icon" href="/img/favicon.ico">
+<meta name="mobile-web-app-capable" content="yes">
 
-    <title>深入理解Javascript之Module-大俊的博客 | Darjun Blog</title>
+<meta name="author" content="darjun" />
+  <meta name="description" content="什么是模块 模块（module）是什么呢？ 模块是为了软件封装，复用。当今开源运动盛行，我们可以很方便地使用别人编写好的模块，而不用自己从头开始" />
 
-    <link rel="canonical" href="/2018/12/20/javascript-module/">
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2018/12/20/javascript-module/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="深入理解Javascript之Module" />
+<meta property="og:description" content="什么是模块 模块（module）是什么呢？ 模块是为了软件封装，复用。当今开源运动盛行，我们可以很方便地使用别人编写好的模块，而不用自己从头开始" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2018/12/20/javascript-module/" />
+<meta property="article:published_time" content="2018-12-20T12:10:08+00:00" />
+<meta property="article:modified_time" content="2018-12-20T12:10:08+00:00" />
+<meta itemprop="name" content="深入理解Javascript之Module">
+<meta itemprop="description" content="什么是模块 模块（module）是什么呢？ 模块是为了软件封装，复用。当今开源运动盛行，我们可以很方便地使用别人编写好的模块，而不用自己从头开始">
+
+
+<meta itemprop="datePublished" content="2018-12-20T12:10:08&#43;00:00" />
+<meta itemprop="dateModified" content="2018-12-20T12:10:08&#43;00:00" />
+<meta itemprop="wordCount" content="3776">
+
+
+
+<meta itemprop="keywords" content="深入理解JavaScript," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="深入理解Javascript之Module"/>
+<meta name="twitter:description" content="什么是模块 模块（module）是什么呢？ 模块是为了软件封装，复用。当今开源运动盛行，我们可以很方便地使用别人编写好的模块，而不用自己从头开始"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
 	
-    
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
-    
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
 
-    
-    <link rel="stylesheet" href="/css/syntax.css">
 
-    
-    <link rel="stylesheet" href="/css/zanshang.css">
-
-    
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    
-    
-    <script src="/js/jquery.min.js"></script>
-    
-    
-    <script src="/js/bootstrap.min.js"></script>
-    
-    
-    <script src="/js/hux-blog.min.js"></script>
-	
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 </head>
-
-
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-    <div class="container-fluid">
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
         
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">Darjun Blog</a>
-        </div>
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
 
+              </i>
+            </a>
+          
         
-        
-        <div id="huxblog_navbar">
-            <div class="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/">Home</a>
-                    </li>
-                    
-                    <li>
-                        <a href="/categories/tech">Tech</a>
-                    </li>
-                    
-                    
-		    
-                        <li><a href="/top/books/">BOOKS</a></li>
-                    
-                        <li><a href="/top/about/">ABOUT</a></li>
-                    
-
-                    
-		    <li>
-                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
-		    </li>
-                    
-                </ul>
-            </div>
-        </div>
-        
-    </div>
+      </li>
     
+
+    
+  </ul>
 </nav>
-<script>
+
+
+  
     
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
     
-    
-    var $body   = document.body;
-    var $toggle = document.querySelector('.navbar-toggle');
-    var $navbar = document.querySelector('#huxblog_navbar');
-    var $collapse = document.querySelector('.navbar-collapse');
-
-    $toggle.addEventListener('click', handleMagic)
-    function handleMagic(e){
-        if ($navbar.className.indexOf('in') > 0) {
-        
-            $navbar.className = " ";
-            
-            setTimeout(function(){
-                
-                if($navbar.className.indexOf('in') < 0) {
-                    $collapse.style.height = "0px"
-                }
-            },400)
-        }else{
-        
-            $collapse.style.height = "auto"
-            $navbar.className += " in";
-        }
-    }
-</script>
-
-
-
-
-<style type="text/css">
-    header.intro-header {
-        background-image: url('/img/post-bg-2015.jpg')
-    }
-</style>
-<header class="intro-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <div class="post-heading">
-                    <div class="tags">
-                        
-                        <a class="tag" href="/tags/javascript" title="javascript">
-                            javascript
-                        </a>
-                        
-                    </div>
-                    <h1>深入理解Javascript之Module</h1>
-                    <h2 class="subheading">&#34;Javascript in depth&#34;</h2>
-                    <span class="meta">
-			Posted by 
-			
-			    darjun
-			 
-			on 
-			Thursday, December 20, 2018
-                        
-                            <span id="/2018/12/20/javascript-module/" class="leancloud_visitors meta_data_item" data-flag-title="">
-    <span class="post-meta-item-icon">
-      <span class="octicon octicon-eye"></span> 
-    </span>
-    <i class="fa fa-eye"></i>
-    <span class="old-visitors-count" style="display: none;"></span>
-    <span class="leancloud-visitors-count"></span>
-</span>
-
-
-
-<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
-
-<script>
-	AV.initialize("TXNGsfsFQyzdASwAnCBlyIkr-gzGzoHsz", "5N0H4PYj0GcbhLqSMLfPMf8t");
-</script>
-
-<script type="text/javascript">
-function showTime(Counter) {
-    var query = new AV.Query(Counter);
-    var entries = [];
-    var $visitors = $(".leancloud_visitors");
-
-    $visitors.each(function() {
-        entries.push($(this).attr("id").trim());
-    });
-
-    query.containedIn('url', entries);
-    query.find()
-        .done(function(results) {
-            var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
-            var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
-
-            
-            
-            
-            
-
-            for (var i = 0; i < results.length; i++) {
-                var item = results[i];
-                var url = item.get('url');
-                var time = item.get('time');
-                var element = document.getElementById(url);
-
-                $(element).find(COUNT_CONTAINER_REF).text(time);
-            }
-            for (var i = 0; i < entries.length; i++) {
-                var url = entries[i];
-                var element = document.getElementById(url);
-                var countSpan = $(element).find(COUNT_CONTAINER_REF);
-                if (countSpan.text() == '') {
-                    var oldCountSpan = $(element).find(OLD_COUNT_CONTAINER_REF).text();
-                    if(oldCountSpan!=''){
-                        countSpan.text(0+parseInt(oldCountSpan));
-                    }else{
-                        countSpan.text(0);          
-                    }
-                }
-            }
-        })
-        .fail(function(object, error) {
-            console.log("Error: " + error.code + " " + error.message);
-        });
-}
-
-function addCount(Counter) {
-    var $visitors = $(".leancloud_visitors");
-    var url = $visitors.attr('id').trim();
-    var title = $visitors.attr('data-flag-title').trim();
-    var query = new AV.Query(Counter);
-
-    query.equalTo("url", url);
-    query.find({
-        success: function(results) {
-            if (results.length > 0) {
-                var counter = results[0];
-                counter.fetchWhenSave(true);
-                counter.increment("time");
-                counter.save(null, {
-                    success: function(counter) {
-                        var $element = $(document.getElementById(url));
-                        $element.find('.leancloud-visitors-count').text(counter.get('time'));
-                    },
-                    error: function(counter, error) {
-                        console.log('Failed to save Visitor num, with error message: ' + error.message);
-                    }
-                });
-            } else {
-                var newcounter = new Counter();
-                 
-                var acl = new AV.ACL();
-                acl.setPublicReadAccess(true);
-                acl.setPublicWriteAccess(true);
-                newcounter.setACL(acl);
-                 
-                newcounter.set("title", title);
-                newcounter.set("url", url);
-                var OLD_COUNT_CONTAINER_REF = '.old-visitors-count';
-                var $element = $(document.getElementById(url));
-                var oldCountSpan = $element.find(OLD_COUNT_CONTAINER_REF).text();
-                if(oldCountSpan!=''){
-                    newcounter.set("time", parseInt(oldCountSpan)+1);
-                }else{
- 	                    newcounter.set("time",  1);
-                }
-                newcounter.save(null, {
-                    success: function(newcounter) {
-                        var $element = $(document.getElementById(url));
-                        $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
-                    },
-                    error: function(newcounter, error) {
-                        console.log('Failed to create');
-                    }
-                });
-            }
-        },
-        error: function(error) {
-            console.log('Error:' + error.code + " " + error.message);
-        }
-    });
-}
-$(function() {
-    var Counter = AV.Object.extend("Counter");
-    
-    
-    if ($('.leancloud_visitors').length == 1) {
-        addCount(Counter);
-    } else {
-        showTime(Counter);
-    }
-});
-</script>
-
-                        
-                    </span>
-                </div>
-            </div>
-        </div>
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
     </div>
-</header>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
 
+  
 
+  
 
+  
 
-<article>
-    <div class="container">
-        <div class="row">
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
 
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">深入理解Javascript之Module</h1>
+      
+      <div class="post-meta">
+        <time datetime="2018-12-20" class="post-time">
+          2018-12-20
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/javascript/"> JavaScript </a>
             
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                post-container">
+          </div>
+        <span class="more-meta"> 约 3776 字 </span>
+          <span class="more-meta"> 预计阅读 8 分钟 </span>
 
-                
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
 <ul>
 <li>
 <ul>
@@ -365,8 +410,12 @@ $(function() {
 </ul></li>
 </ul>
 </nav>
-                
-                
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
 
 <h2 id="span-id-模块-什么是模块-span"><span id="模块">什么是模块</span></h2>
 
@@ -389,29 +438,48 @@ $(function() {
 <h3 id="基本用法">基本用法</h3>
 
 <p>Node 中提供了一个<code>require</code>方法用来加载模块。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
 
-<pre><code class="language-js">var fs = require('fs');
-
-fs.readFile('file1.txt', 'utf8', function (err, data) {
-    if (err) {
-        console.error(err);
-    } else {
-        console.log(data);
-    }
-});
-</code></pre>
-
+<span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="s1">&#39;file1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>导入模块之后就可以使用模块中定义的接口了，如上例中的<code>readFile</code>。</p>
 
 <h3 id="模块类别">模块类别</h3>
 
 <p>在 Node 中大体上有3种模块，普通模块、核心模块和第三方模块。
 普通模块是我们自己编写的模块，核心模块是 Node 提供的模块。上面我们使用的<code>fs</code>就是核心模块。普通模块与核心模块的导入方式稍微有些区别。导入普通模块时，需要在<code>require</code>的参数中指定相对路径。例如：</p>
-
-<pre><code class="language-js">var myModule = require('./myModule');
-myModule.func1();
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">myModule</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./myModule&#39;</span><span class="p">);</span>
+<span class="nx">myModule</span><span class="p">.</span><span class="nx">func1</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>模块<code>myModule</code>的后缀<code>.js</code>后缀可以省略。</p>
 
 <p>Node 将核心模块编译进了引擎。导入核心模块只需要指定模块名，Node 引擎直接查找核心模块字典。</p>
@@ -429,21 +497,37 @@ myModule.func1();
 <h3 id="定义模块">定义模块</h3>
 
 <p>在我们日常的编程中，经常需要将一些功能封装在一个模块中，方便自己或他人使用。在 Node 中定义模块的语法很简单。模块单独在一个文件中，文件中可以使用<code>exports</code>导出接口或变量。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">addTwoNumber</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
 
-<pre><code class="language-js">function addTwoNumber(a, b) {
-    return a + b;
-}
-
-exports.addTwoNumber = addTwoNumber;
-</code></pre>
-
+<span class="nx">exports</span><span class="p">.</span><span class="nx">addTwoNumber</span> <span class="o">=</span> <span class="nx">addTwoNumber</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>假设该模块在文件<code>myMath.js</code>中。在同一目录下，我们可以这样来使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">myMath</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./myMath&#39;</span><span class="p">);</span>
 
-<pre><code class="language-js">var myMath = require('./myMath');
-
-console.log(myMath.addTwoNumber(10, 20)); // 30
-</code></pre>
-
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">myMath</span><span class="p">.</span><span class="nx">addTwoNumber</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">));</span> <span class="c1">// 30
+</span></code></pre></td></tr></table>
+</div>
+</div>
 <h3 id="模块导出详解">模块导出详解</h3>
 
 <p>函数具体是怎么导出的呢？除了<code>exports</code>，我们经常看到的<code>module.exports</code>，<code>__dirname</code>，<code>__filename</code>是从哪里来的？
@@ -451,24 +535,47 @@ console.log(myMath.addTwoNumber(10, 20)); // 30
 
 <ul>
 <li><p>首先，将模块所在文件内容读出来。然后将这些内容包裹在一个函数中：</p>
-
-<pre><code class="language-js">function _doRequire(module, exports, __filename, __dirname) {
-// 模块文件内容
-}
-</code></pre></li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">_doRequire</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">__filename</span><span class="p">,</span> <span class="nx">__dirname</span><span class="p">)</span> <span class="p">{</span>
+<span class="c1">// 模块文件内容
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
 
 <li><p>接下来，Node 引擎构造一个空的模块对象，给这个对象一个空的<code>exports</code>属性，然后推算出<code>__filename</code>（当前导入的这个模块的全路径文件名）和<code>__dirname</code>（模块文件所在路径）：</p>
-
-<pre><code class="language-js">var module = {};
-module.exports = {}
-// __filename = ...
-// __dirname = ...
-</code></pre></li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">module</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c1">// __filename = ...
+</span><span class="c1">// __dirname = ...
+</span></code></pre></td></tr></table>
+</div>
+</div></li>
 
 <li><p>然后，调用第一步构造的那个函数，传入参数：</p>
-
-<pre><code class="language-js">_doRequire(module, module.exports, __filename, __dirname);
-</code></pre></li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">_doRequire</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">__filename</span><span class="p">,</span> <span class="nx">__dirname</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
 
 <li><p>最后<code>require</code>返回的是<code>module.exports</code>的值。</p></li>
 </ul>
@@ -476,50 +583,88 @@ module.exports = {}
 <p>按照上面的过程，我们可以很清楚地理解模块的导出过程。并且也能很快地判断一些写法是否有问题：</p>
 
 <p><strong>错误写法：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">addTwoNumber</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
 
-<pre><code class="language-js">function addTwoNumber(a, b) {
-    return a + b;
-}
-
-exports = {
-    addTwoNumber: addTwoNumber;
-}
-</code></pre>
-
+<span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">addTwoNumber</span><span class="o">:</span> <span class="nx">addTwoNumber</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>这种写法为什么不对？<code>exports</code>实际上初始时是<code>module.exports</code>的一个引用。给<code>exports</code>赋一个新值后，<code>module.exports</code>并没有改变，还是指向空对象。最后返回的对象是<code>module.exports</code>，没有<code>addTwoNumber</code>接口。</p>
 
 <p><strong>正确写法：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">addTwoNumber</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
 
-<pre><code class="language-js">function addTwoNumber(a, b) {
-    return a + b;
-}
+<span class="c1">// 正确写法一
+</span><span class="c1"></span><span class="nx">exports</span><span class="p">.</span><span class="nx">addTwoNumber</span> <span class="o">=</span> <span class="nx">addTwoNumber</span><span class="p">;</span>
 
-// 正确写法一
-exports.addTwoNumber = addTwoNumber;
+<span class="c1">// 正确写法二
+</span><span class="c1"></span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">addTwoNumber</span> <span class="o">=</span> <span class="nx">addTwoNumber</span><span class="p">;</span>
 
-// 正确写法二
-module.exports.addTwoNumber = addTwoNumber;
-
-// 正确写法三
-module.exports = {
-    addTwoNumber: addTwoNumber
-};
-</code></pre>
-
+<span class="c1">// 正确写法三
+</span><span class="c1"></span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">addTwoNumber</span><span class="o">:</span> <span class="nx">addTwoNumber</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p><code>exports</code>和<code>module.exports</code>开始指向的是同一个对象。写法一通过<code>exports</code>设置属性，同样对<code>module.exports</code>也可见。写法二通过<code>module.exports</code>设置属性也可以导出。
 写法三直接设置<code>module.exports</code>就更不用说了。</p>
 
 <p>建议在程序开发中，坚持一种写法。<strong>个人觉得写法三显示设置相对较容易理解。</strong></p>
 
 <p><strong>有一点需要注意：不是只有对象可以导出，函数、类等值也可以。</strong>例如下面就导出了一个函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">addTwoNumber</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
 
-<pre><code class="language-js">function addTwoNumber(a, b) {
-    return a + b;
-}
-
-module.exports = addTwoNumber;
-</code></pre>
-
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">addTwoNumber</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <h2 id="span-id-es6-3-es模块-span"><span id="ES6">3.ES模块</span></h2>
 
 <p>ES6 在标准层面为 Javascript 引入了一套简单的模块系统。ES6 模块完全可以取代 CommonJS 和 AMD 规范。当前热门的开源框架 React 和 Vue 都已经使用了 ES6 模块来开发。</p>
@@ -527,30 +672,57 @@ module.exports = addTwoNumber;
 <h3 id="基本使用">基本使用</h3>
 
 <p>ES6 模块使用<code>export</code>导出接口，<code>import from</code>导入需要使用的接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// myMath.js
+</span><span class="c1"></span><span class="kr">export</span> <span class="kd">var</span> <span class="nx">pi</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span>
 
-<pre><code class="language-js">// myMath.js
-export var pi = 3.14;
+<span class="kr">export</span> <span class="kd">function</span> <span class="nx">addTwoNumber</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
 
-export function addTwoNumber(a, b) {
-    return a + b;
-}
+<span class="c1">// 或
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">pi</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span>
 
-// 或
-var pi = 3.14;
+<span class="kd">function</span> <span class="nx">addTwoNumber</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
 
-function addTwoNumber(a, b) {
-    return a + b;
-}
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">pi</span><span class="p">,</span> <span class="nx">addTwoNumber</span> <span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// main.js
+</span><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">addTwoNumber</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myMath&#39;</span><span class="p">;</span>
 
-export { pi, addTwoNumber };
-</code></pre>
-
-<pre><code class="language-js">// main.js
-import { addTwoNumber } from './myMath';
-
-console.log(addTwoNumber(10, 20));
-</code></pre>
-
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">addTwoNumber</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">));</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>在<code>myMath.js</code>中通过<code>export</code>导出一个变量<code>pi</code>和一个函数<code>addTwoNumber</code>。上例中演示了两种导出方式。一种是一个个导出，对每一个需要导出的接口都应用一次<code>export</code>。第二种是在文件中某处集中导出。当然，也可以混合使用这两种方式。<strong>推荐使用第二种导出方式，因为能在一处比较清楚的看出模块导出了哪些接口。</strong></p>
 
 <h3 id="es6-模块特性">ES6 模块特性</h3>
@@ -564,179 +736,353 @@ console.log(addTwoNumber(10, 20));
 <p><strong>静态加载就是“编译”时就已经确定了模块导出，可以做到高效率，并且便于做静态代码分析。同时，静态加载也限制了模块的加载只能在文件中所有语句之前，并且导入语法中不能含有动态的语法结构（例如变量、if语句等）。</strong></p>
 
 <p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// 可以调用，因为模块加载是“编译”时进行的。
+</span><span class="c1"></span><span class="nx">funcA</span><span class="p">();</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">funcA</span><span class="p">,</span> <span class="nx">funcB</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
 
-<pre><code class="language-js">// 可以调用，因为模块加载是“编译”时进行的。
-funcA();
-import { funcA, funcB } from './myModule';
+<span class="c1">// 错误，导入语法中含有变量
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">funcA</span><span class="p">,</span> <span class="nx">funcB</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
 
-// 错误，导入语法中含有变量
-var foo = './myModule';
-import { funcA, funcB } from './myModule';
-
-// 错误，在if语句中
-if (foo == &quot;myModule&quot;) {
-    import { funcA, funcB } from './myModule';
-} else {
-    import { funcA, funcB } from './hisModule';
-}
+<span class="c1">// 错误，在if语句中
+</span><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="nx">foo</span> <span class="o">==</span> <span class="s2">&#34;myModule&#34;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">import</span> <span class="p">{</span> <span class="nx">funcA</span><span class="p">,</span> <span class="nx">funcB</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="kr">import</span> <span class="p">{</span> <span class="nx">funcA</span><span class="p">,</span> <span class="nx">funcB</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./hisModule&#39;</span><span class="p">;</span>
+<span class="p">}</span>
 
 
-// 错误，导出的接口是只读的，不能修改
-import { funcA, funcB } from './myModule';
-funcA = function () {};
-</code></pre>
-
+<span class="c1">// 错误，导出的接口是只读的，不能修改
+</span><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">funcA</span><span class="p">,</span> <span class="nx">funcB</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
+<span class="nx">funcA</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p><strong>导出的接口与模块中定义的变量或函数必须是一一对应的</strong>。而且模块内相应的值修改了，外部也能感知到。看下面代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// 错误，导出值1，模块中没有对应
+</span><span class="c1"></span><span class="kr">export</span> <span class="mi">1</span><span class="p">;</span>
 
-<pre><code class="language-js">// 错误，导出值1，模块中没有对应
-export 1;
+<span class="c1">// 错误，实际上也是导出1，模块中没有对应
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kr">export</span> <span class="nx">m</span><span class="p">;</span>
 
-// 错误，实际上也是导出1，模块中没有对应
-var m = 1;
-export m;
+<span class="c1">// 可以这样来导出，导出的m与模块中的变量m对应
+</span><span class="c1"></span><span class="kr">export</span> <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-// 可以这样来导出，导出的m与模块中的变量m对应
-export var m = 1;
+<span class="c1">// 可以这样导出
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kr">export</span> <span class="p">{</span><span class="nx">m</span><span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s2">&#34;bar&#34;</span><span class="p">;</span>
+<span class="nx">setTimeout</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s2">&#34;baz&#34;</span><span class="p">});</span>
 
-// 可以这样导出
-var m = 1;
-export {m};
-</code></pre>
-
-<pre><code class="language-js">var foo = &quot;bar&quot;;
-setTimeout(2000, () =&gt; { foo = &quot;baz&quot;});
-
-// 2s后foo变为&quot;baz&quot;，外部能感知到
-</code></pre>
-
+<span class="c1">// 2s后foo变为&#34;baz&#34;，外部能感知到
+</span></code></pre></td></tr></table>
+</div>
+</div>
 <h4 id="别名">别名</h4>
 
 <p>在导出模块时，可以为接口指定一个别名。这样，后续可以修改内部接口而保持导出接口不变。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// myModule.js
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">funcA</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="p">}</span>
 
-<pre><code class="language-js">// myModule.js
-var funcA = function () {
-}
+<span class="kd">var</span> <span class="nx">funcB</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="p">}</span>
 
-var funcB = function () {
-}
-
-export {
-    funcA as func1,
-    funcB as func2,
-    funcB as myFunc,
-}
-</code></pre>
-
+<span class="kr">export</span> <span class="p">{</span>
+    <span class="nx">funcA</span> <span class="nx">as</span> <span class="nx">func1</span><span class="p">,</span>
+    <span class="nx">funcB</span> <span class="nx">as</span> <span class="nx">func2</span><span class="p">,</span>
+    <span class="nx">funcB</span> <span class="nx">as</span> <span class="nx">myFunc</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>上面我们导出以别名<code>func1</code>导出函数<code>funcA</code>，以别名<code>func2</code>和<code>myFunc</code>导出函数<code>funcB</code>。<code>func2</code>和<code>myFunc</code>都是指向同一个函数<code>funcB</code>的。下面看看使用这个模块：</p>
-
-<pre><code class="language-js">// main.js
-import { func1, func2, myFunc } from './myModule';
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// main.js
+</span><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">func1</span><span class="p">,</span> <span class="nx">func2</span><span class="p">,</span> <span class="nx">myFunc</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p><strong>同样的，导入模块时也可以指定别名：</strong></p>
-
-<pre><code class="language-js">// main.js
-import { func1 as func } from './myModule';
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// main.js
+</span><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">func1</span> <span class="nx">as</span> <span class="nx">func</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <h4 id="default导出">default导出</h4>
 
 <p>上面介绍的模块导入必须知道接口名字。有时候，用户学习一个模块时希望能够快速上手，不想去看文档（怎么会有这个懒的人🤣）。ES6 提供了default导出。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// myModule.js
+</span><span class="c1"></span><span class="kr">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hi&#39;</span><span class="p">);</span>
+<span class="p">}</span>
 
-<pre><code class="language-js">// myModule.js
-export default function () {
-    console.log('hi');
-}
-
-// default导出方式可以看做是导出了一个别名为default的接口
-var f = function () {
-    console.log('hi');
-}
-export { f as default };
-</code></pre>
-
+<span class="c1">// default导出方式可以看做是导出了一个别名为default的接口
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hi&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">f</span> <span class="nx">as</span> <span class="k">default</span> <span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>在外部导入的时候，不能有花括号：</p>
-
-<pre><code class="language-js">// main.js
-import func from './myModule';
-func();
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// main.js
+</span><span class="c1"></span><span class="kr">import</span> <span class="nx">func</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
+<span class="nx">func</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>也可以两种方式，同时使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// myModule.js
+</span><span class="c1"></span><span class="kd">function</span> <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+<span class="p">}</span>
 
-<pre><code class="language-js">// myModule.js
-function foo() {
-    console.log('foo');
-}
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">foo</span><span class="p">;</span>
 
-export default foo;
+<span class="kd">function</span> <span class="nx">bar</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">);</span>
+<span class="p">}</span>
 
-function bar() {
-    console.log('bar');
-}
-
-export { bar };
-</code></pre>
-
-<pre><code class="language-js">// main.js
-import foo, { bar } from './myModule';
-</code></pre>
-
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">bar</span> <span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// main.js
+</span><span class="c1"></span><span class="kr">import</span> <span class="nx">foo</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bar</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <h4 id="整体加载">整体加载</h4>
 
 <p>ES6 还允许一种整体加载的方式导入模块。通过使用<code>import *</code>可以导入模块中导出的所有接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// myModule.js
+</span><span class="c1"></span><span class="kr">export</span> <span class="kd">function</span> <span class="nx">funcA</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;funcA&#39;</span><span class="p">);</span>
+<span class="p">}</span>
 
-<pre><code class="language-js">// myModule.js
-export function funcA() {
-    console.log('funcA');
-}
+<span class="kr">export</span> <span class="kd">function</span> <span class="nx">funcB</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;funcB&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// main.js
+</span><span class="c1"></span><span class="kr">import</span> <span class="o">*</span> <span class="nx">as</span> <span class="nx">m</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
 
-export function funcB() {
-    console.log('funcB');
-}
-</code></pre>
-
-<pre><code class="language-js">// main.js
-import * as m from './myModule';
-
-m.funcA();
-m.funcB();
-</code></pre>
-
+<span class="nx">m</span><span class="p">.</span><span class="nx">funcA</span><span class="p">();</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">funcB</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>整体加载所在的那个对象（<code>m</code>），应该是可以静态分析的，所以不允许运行时改变。所以，下面的写法都是不允许的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// main.js
+</span><span class="c1"></span><span class="kr">import</span> <span class="o">*</span> <span class="nx">as</span> <span class="nx">m</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
 
-<pre><code class="language-js">// main.js
-import * as m from './myModule';
-
-// 错误
-m.name = 'darjun';
-m.func = function () {};
-</code></pre>
-
+<span class="c1">// 错误
+</span><span class="c1"></span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;darjun&#39;</span><span class="p">;</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <h4 id="node-中使用-es6-模块">Node 中使用 ES6 模块</h4>
 
 <p>Node 由于已经有 CommonJS 的模块规范了，与 ES6 模块不兼容。为了使用 ES6 模块，Node 要求 ES6 模块采用<code>.mjs</code>后缀名，而且文件中只能使用<code>import</code>和<code>export</code>，不能使用<code>require</code>。而且该功能还在试验阶段，Node v8.5.0以上版本，指定<code>--experimental-modules</code>参数才能使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// myModule.mjs
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">counter</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-<pre><code class="language-js">// myModule.mjs
-var counter = 1;
+<span class="kr">export</span> <span class="kd">function</span> <span class="nx">incCounter</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;counter:&#39;</span><span class="p">,</span> <span class="nx">counter</span><span class="p">);</span>
+    <span class="nx">counter</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// main.mjs
+</span><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">incCounter</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
 
-export function incCounter() {
-    console.log('counter:', counter);
-    counter++;
-}
-</code></pre>
-
-<pre><code class="language-js">// main.mjs
-import { incCounter } from './myModule';
-
-incCounter();
-</code></pre>
-
+<span class="nx">incCounter</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>使用下面命令行运行程序：</p>
-
-<pre><code class="language-js">$ node --experimental-modules main.mjs
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">$</span> <span class="nx">node</span> <span class="o">--</span><span class="nx">experimental</span><span class="o">-</span><span class="nx">modules</span> <span class="nx">main</span><span class="p">.</span><span class="nx">mjs</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <h2 id="span-id-总结-4-总结-span"><span id="总结">4.总结</span></h2>
 
 <p>随着 Javascript 在大型项目中占用举足轻重的位置，模块的使用称为必然。Node 中使用 CommonJS 规范。ES6 中定义了简单易用高效的模块规范。ES6 规范化是个必然的趋势，所以在掌握当前 CommonJS 规范的前提下，学习 ES6 模块势在必行。</p>
@@ -753,332 +1099,255 @@ incCounter();
 <p>关于我：
 <a href="https://darjun.github.io">个人主页</a> <a href="https://www.jianshu.com/u/0aca4aa367c8">简书</a> <a href="https://juejin.im/user/5be15200e51d4505466ce2f4">掘金</a></p>
 
+    </div>
 
-                
-                
-<div class="entry-shang text-center">
     
-	    <p>「真诚赞赏，手留余香」</p>
-	
-	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2018-12-20
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
 </div>
-<div class="zs-modal-bg"></div>
-<div class="zs-modal-box">
-	<div class="zs-modal-head">
-		<button type="button" class="close">×</button>
-		<span class="author"><a href="https://darjun.github.io"><img src="/img/favicon.png" />Darjun Blog</a></span>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://darjun.github.io/tags/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3javascript/">深入理解JavaScript</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
         
-	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
-		
- 
-	</div>
-	<div class="zs-modal-body">
-		<div class="zs-modal-btns">
-			<button class="btn btn-blink" data-num="2">2元</button>
-			<button class="btn btn-blink" data-num="5">5元</button>
-			<button class="btn btn-blink" data-num="10">10元</button>
-			<button class="btn btn-blink" data-num="50">50元</button>
-			<button class="btn btn-blink" data-num="100">100元</button>
-			<button class="btn btn-blink" data-num="1">任意金额</button>
-		</div>
-		<div class="zs-modal-pay">
-			<button class="btn btn-bred" id="pay-text">2元</button>
-			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
-			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
-		</div>
-	</div>
-	<div class="zs-modal-footer">
-		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
-		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
-	</div>
-</div>
-<script type="text/javascript" src="/js/reward.js"></script>
+          <a class="prev" href="/2019/01/24/golang-dev-env/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
 
-                
+            </i>
+            <span class="prev-text nav-default">搭建go开发环境</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        
+          <a class="next" href="/2018/12/03/javascript-execution-context/">
+            <span class="next-text nav-default">深入理解Javascript之Execution Context</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
 
-                <hr>
-                <ul class="pager">
-                    
-                    <li class="previous">
-                        <a href="/2018/12/03/javascript-execution-context/" data-toggle="tooltip" data-placement="top" title="深入理解Javascript之Execution Context">&larr;
-                            Previous Post</a>
-                    </li>
-                    
-                    
-                    <li class="next">
-                        <a href="/2019/01/24/golang-dev-env/" data-toggle="tooltip" data-placement="top" title="搭建go开发环境">Next
-                            Post &rarr;</a>
-                    </li>
-                    
-                </ul>
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
 
-                
-<div id="disqus-comment"></div>
+  
+  
 
-<div id="disqus_thread"></div>
-<script type="application/javascript">
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
     var disqus_config = function () {
-    
-    
-    
+      this.page.url = "https://darjun.github.io/2018/12/20/javascript-module/";
     };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "darjun-blog" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
 
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
 
-            </div>
-            
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                sidebar-container">
+    
 
-                
-                
-                <section>
-                    <hr class="hidden-sm hidden-xs">
-                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-                    <div class="tags">
-                        
-                        
-                        
-                        <a href="/tags/arts" title="arts">
-                            arts
-                        </a>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <a href="/tags/javascript" title="javascript">
-                            javascript
-                        </a>
-                        
-                        
-                        
-                        <a href="/tags/redis-source" title="redis-source">
-                            redis-source
-                        </a>
-                        
-                        
-                        
-                        <a href="/tags/source" title="source">
-                            source
-                        </a>
-                        
-                        
-                        
-                        
-                        
-                        <a href="/tags/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3go" title="深入理解Go">
-                            深入理解Go
-                        </a>
-                        
-                        
-                    </div>
-                </section>
-                
+  
 
-                
-                
-                <section>
-                    <hr>
-                    <h5>FRIENDS</h5>
-                    <ul class="list-inline">
-                        
-                    </ul>
-                </section>
-                
-            </div>
         </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
     </div>
-</article>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
 
 
 
 
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                   
-                   <li>
-                       <a href="" rel="alternate" type="application/rss+xml" title="Darjun Blog" >
-                           <span class="fa-stack fa-lg">
-                               <i class="fa fa-circle fa-stack-2x"></i>
-                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-                           </span>
-                       </a>
-                   </li>
-                   
-                    
-                    <li>
-                        <a href="mailto:leedarjun@gmail.com">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
-		    
-                    
-                    
-                    
-                    
-
-                    
-
-		    
-                    
-                    <li>
-                        <a target="_blank" href="/img/wechat_qrcode.jpg">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
-		    
-                    
-                    <li>
-                        <a target="_blank" href="https://github.com/darjun">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
-		    
-                    
-                    
-                    <li>
-                        <a target="_blank" href="https://medium.com/@leedarjun">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
-            
-                </ul>
-		<p class="copyright text-muted">
-                    Copyright &copy; Darjun Blog 2019
-                    <br>
-                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
-                    <iframe
-                        style="margin-left: 2px; margin-bottom:-5px;"
-                        frameborder="0" scrolling="0" width="100px" height="20px"
-                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
-                    </iframe>
-                </p>
-            </div>
-        </div>
-    </div>
-</footer>
-
-
-
-
-<script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
 
 
 
-<script>
-    
-    if($('#tag_cloud').length !== 0){
-        async("/js/jquery.tagcloud.js",function(){
-            $.fn.tagcloud.defaults = {
-                
-                color: {start: '#bbbbee', end: '#0085a1'},
-            };
-            $('#tag_cloud a').tagcloud();
-        })
-    }
-</script>
-
-
-<script>
-    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
-        var $nav = document.querySelector("nav");
-        if($nav) FastClick.attach($nav);
-    })
-</script>
-
-
-<script>
-    (function(){
-        var bp = document.createElement('script');
-        var curProtocol = window.location.protocol.split(':')[0];
-        if (curProtocol === 'https'){
-       bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-      }
-      else{
-      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-      }
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(bp, s);
-    })();
-</script>
 
 
 
 
-<script>
-    
-    var _baId = '22b47f8b144298dc77b2beb696c6353d';
 
-    
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "//hm.baidu.com/hm.js?" + _baId;
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-</script>
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
 
 
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-136116022-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
 
 
 
