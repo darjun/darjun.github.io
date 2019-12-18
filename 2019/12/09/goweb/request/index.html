@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go Web 编程之 请求 - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="概述 前面我们学习了处理器和处理器函数，如何编写和注册处理器。本文我们将学习如何从请求中获取信息。 请求的结构 通过前面的学习，我们知道处理器函数" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2019/12/09/goweb/request/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go Web 编程之 请求" />
+<meta property="og:description" content="概述 前面我们学习了处理器和处理器函数，如何编写和注册处理器。本文我们将学习如何从请求中获取信息。 请求的结构 通过前面的学习，我们知道处理器函数" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2019/12/09/goweb/request/" />
+<meta property="article:published_time" content="2019-12-13T22:05:01+00:00" />
+<meta property="article:modified_time" content="2019-12-13T22:05:01+00:00" />
+<meta itemprop="name" content="Go Web 编程之 请求">
+<meta itemprop="description" content="概述 前面我们学习了处理器和处理器函数，如何编写和注册处理器。本文我们将学习如何从请求中获取信息。 请求的结构 通过前面的学习，我们知道处理器函数">
+
+
+<meta itemprop="datePublished" content="2019-12-13T22:05:01&#43;00:00" />
+<meta itemprop="dateModified" content="2019-12-13T22:05:01&#43;00:00" />
+<meta itemprop="wordCount" content="5427">
+
+
+
+<meta itemprop="keywords" content="Go Web 编程," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Web 编程之 请求"/>
+<meta name="twitter:description" content="概述 前面我们学习了处理器和处理器函数，如何编写和注册处理器。本文我们将学习如何从请求中获取信息。 请求的结构 通过前面的学习，我们知道处理器函数"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go Web 编程之 请求</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-12-13" class="post-time">
+          2019-12-13
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 5427 字 </span>
+          <span class="more-meta"> 预计阅读 11 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#概述">概述</a></li>
+<li><a href="#请求的结构">请求的结构</a>
+<ul>
+<li><a href="#method"><code>Method</code></a></li>
+<li><a href="#url"><code>URL</code></a></li>
+<li><a href="#proto-protomajor-protominor"><code>Proto/ProtoMajor/ProtoMinor</code></a></li>
+<li><a href="#header"><code>Header</code></a></li>
+</ul></li>
+<li><a href="#content-length-body"><code>Content-Length/Body</code></a>
+<ul>
+<li><a href="#使用表单">使用表单</a></li>
+<li><a href="#使用-postman">使用 Postman</a></li>
+</ul></li>
+<li><a href="#获取请求参数">获取请求参数</a>
+<ul>
+<li><a href="#url-键值对">URL 键值对</a></li>
+<li><a href="#表单">表单</a>
+<ul>
+<li><a href="#form-字段"><code>Form</code>字段</a></li>
+<li><a href="#postform-字段"><code>PostForm</code>字段</a></li>
+<li><a href="#multipartform-字段"><code>MultipartForm</code>字段</a></li>
+<li><a href="#formvalue-postformvalue"><code>FormValue/PostFormValue</code></a></li>
+<li><a href="#其他格式">其他格式</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="概述">概述</h2>
+
+<p>前面我们学习了处理器和处理器函数，如何编写和注册处理器。本文我们将学习如何从请求中获取信息。</p>
+
+<h2 id="请求的结构">请求的结构</h2>
+
+<p>通过前面的学习，我们知道处理器函数需要符合下面的签名：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>其中，<code>http.Request</code>就是请求的类型。客户端传递的数据都可以通过这个结构来获取。结构<code>Request</code>定义在包 net/http 中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/http/request.go
+</span><span class="c1"></span>
+<span class="kd">type</span> <span class="nx">Request</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">Method</span>          <span class="kt">string</span>    
+    <span class="nx">URL</span>             <span class="o">*</span><span class="nx">url</span><span class="p">.</span><span class="nx">URL</span>
+    <span class="nx">Proto</span>           <span class="kt">string</span>
+    <span class="nx">ProtoMajor</span>      <span class="kt">int</span>
+    <span class="nx">ProtoMinor</span>      <span class="kt">int</span>
+    <span class="nx">Header</span>          <span class="nx">Header</span>
+    <span class="nx">Body</span>            <span class="nx">io</span><span class="p">.</span><span class="nx">ReadCloser</span>
+    <span class="nx">ContentLength</span>   <span class="kt">int</span>
+    <span class="c1">// 省略一些字段...
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们来看一下几个重要的字段。</p>
+
+<h3 id="method"><code>Method</code></h3>
+
+<p>请求中的<code>Method</code>字段表示客户端想要调用服务器的哪个方法。在<a href="https://darjun.github.io">第一篇文章</a>中，我们提到过 HTTP 协议方法。其取值有<code>GET/POST/PUT/DELETE</code>等。服务器根据请求方法的不同会进行不同的处理，例如<code>GET</code>方法只是获取信息（用户基本信息，商品信息等），<code>POST</code>方法创建新的资源（注册新用户，上架新商品等）。</p>
+
+<h3 id="url"><code>URL</code></h3>
+
+<p>Tim Berners-Lee 在创建万维网的同时，也引入了使用字符串来表示互联网资源的概念。他称该字符串为<strong>统一资源标识符</strong>（URI，Uniform Resource Identifier）。URI 由两部分组成。一部分表示资源的名称，即<strong>统一资源名称</strong>（URN，Uniform Resource Name）。另一部分表示资源的位置，即<strong>统一资源定位符</strong>（URL，Uniform Resource Location）。</p>
+
+<p>在 HTTP 请求中，使用 URL 来对要操作的资源位置进行描述。URL 的一般格式为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">[scheme:][//[userinfo@]host][/]path[?query][#fragment]</pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><code>scheme</code>：协议名，常见的有<code>httphttpsftp</code>；</li>
+<li><code>userInfo</code>：若有，则表示用户信息，如用户名和密码可写作<code>dj:password</code>；</li>
+<li><code>host</code>：表示主机域名或地址，和一个可选的端口信息。若端口未指定，则默认为 80。例如<code>www.example.com</code>，<code>www.example.com:8080</code>，<code>127.0.0.1:8080</code>；</li>
+<li><code>path</code>：资源在主机上的路径，以<code>/</code>分隔，如<code>/posts</code>；</li>
+<li><code>query</code>：可选的查询字符串，客户端传输过来的键值对参数，键值直接用<code>=</code>，多个键值对之间用<code>&amp;</code>连接，如<code>page=1&amp;count=10</code>；</li>
+<li><code>fragment</code>：片段，又叫锚点。表示一个页面中的位置信息。由浏览器发起的请求 URL 中，通常没有这部分信息。但是可以通过<code>ajax</code>等代码的方式发送这个数据；</li>
+</ul>
+
+<p>我们来看一个完整的 URL：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">http://dj:password@www.example.com/posts?page=1&amp;count=10#fmt</pre></td></tr></table>
+</div>
+</div>
+<p>Go 中的 URL 结构定义在<code>net/url</code>包中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// net/url/url.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">URL</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">Scheme</span>      <span class="kt">string</span>
+    <span class="nx">Opaque</span>      <span class="kt">string</span>
+    <span class="nx">User</span>        <span class="o">*</span><span class="nx">Userinfo</span>
+    <span class="nx">Host</span>        <span class="kt">string</span>
+    <span class="nx">Path</span>        <span class="kt">string</span>
+    <span class="nx">RawPath</span>     <span class="kt">string</span>
+    <span class="nx">RawQuery</span>    <span class="kt">string</span>
+    <span class="nx">Fragment</span>    <span class="kt">string</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以通过请求对象中的<code>URL</code>字段获取这些信息。接下来，我们编写一个程序来具体看看（使用上一篇文章讲的 Web 程序基本结构，只需要增加处理器函数和注册即可）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">urlHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">URL</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">URL</span>
+    
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Scheme: %s\n&#34;</span><span class="p">,</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">Scheme</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Host: %s\n&#34;</span><span class="p">,</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">Host</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Path: %s\n&#34;</span><span class="p">,</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">Path</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;RawPath: %s\n&#34;</span><span class="p">,</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">RawPath</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;RawQuery: %s\n&#34;</span><span class="p">,</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">RawQuery</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Fragment: %s\n&#34;</span><span class="p">,</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">Fragment</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 注册
+</span><span class="c1"></span><span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/url&#34;</span><span class="p">,</span> <span class="nx">urlHandler</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>运行服务器，通过浏览器访问<code>localhost:8080/url/posts?page=1&amp;count=10#main</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Scheme: 
+Host: 
+Path: /url/posts
+RawPath: 
+RawQuery: page=1&amp;count=10
+Fragment:</pre></td></tr></table>
+</div>
+</div>
+<p>为什么会出现空字段？注意到源码<code>Request</code>结构中<code>URL</code>字段上有一段注释：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">// URL specifies either the URI being requested (for server
+// requests) or the URL to access (for client requests).
+//
+// For server requests, the URL is parsed from the URI
+// supplied on the Request-Line as stored in RequestURI.  For
+// most requests, fields other than Path and RawQuery will be
+// empty. (See RFC 7230, Section 5.3)
+//
+// For client requests, the URL&#39;s Host specifies the server to
+// connect to, while the Request&#39;s Host field optionally
+// specifies the Host header value to send in the HTTP
+// request.</pre></td></tr></table>
+</div>
+</div>
+<p>大意是作为服务器收到的请求时，<code>URL</code>中除了<code>Path</code>和<code>RawQuery</code>，其它字段大多为空。对于这个问题，Go 的 Github 仓库上<a href="https://github.com/golang/go/issues/28940">Issue 28940</a>有过讨论。</p>
+
+<p>我们还可以通过<code>URL</code>结构得到一个 URL 字符串：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">URL</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">net</span><span class="p">.</span><span class="nx">URL</span> <span class="p">{</span>
+    <span class="nx">Scheme</span><span class="p">:</span>     <span class="s">&#34;http&#34;</span><span class="p">,</span>
+    <span class="nx">Host</span><span class="p">:</span>       <span class="s">&#34;example.com&#34;</span><span class="p">,</span>
+    <span class="nx">Path</span><span class="p">:</span>       <span class="s">&#34;/posts&#34;</span><span class="p">,</span>
+    <span class="nx">RawQuery</span><span class="p">:</span>   <span class="s">&#34;page=1&amp;count=10&#34;</span><span class="p">,</span>
+    <span class="nx">Fragment</span><span class="p">:</span>   <span class="s">&#34;main&#34;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">URL</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面程序运行输出字符串：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">http://example.com/posts?page=1&amp;count=10#main</pre></td></tr></table>
+</div>
+</div>
+<h3 id="proto-protomajor-protominor"><code>Proto/ProtoMajor/ProtoMinor</code></h3>
+
+<p><code>Proto</code>表示 HTTP 协议版本，如<code>HTTP/1.1</code>，<code>ProtoMajor</code>表示大版本，<code>ProtoMinor</code>表示小版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">protoFunc</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Proto: %s\n&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Proto</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;ProtoMajor: %d\n&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">ProtoMajor</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;ProtoMinor: %d\n&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">ProtoMinor</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/proto&#34;</span><span class="p">,</span> <span class="nx">protoFunc</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>启动服务器，浏览器请求<code>localhost:8080</code>返回：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Proto: HTTP/1.1
+ProtoMajor: 1
+ProtoMinor: 1</pre></td></tr></table>
+</div>
+</div>
+<p>当前 HTTP/1.1 是主流的版本。</p>
+
+<h3 id="header"><code>Header</code></h3>
+
+<p><code>Header</code>中存放的客户端发送过来的首部信息，键-值对的形式。<code>Header</code>类型底层其实是<code>map[string][]string</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/http/header.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Header</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="kt">string</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>每个首部的键和值都是字符串，可以设置多个相同的键。注意到<code>Header</code>值为<code>[]string</code>类型，存放相同的键的多个值。浏览器发起 HTTP 请求的时候，会自动添加一些首部。我们编写一个程序来看看：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">headerHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Header</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;%s: %v\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/header&#34;</span><span class="p">,</span> <span class="nx">headerHandler</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>启动服务器，浏览器请求<code>localhost:8080/header</code>返回：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Accept-Encoding: [gzip, deflate, br]
+Sec-Fetch-Site: [none]
+Sec-Fetch-Mode: [navigate]
+Connection: [keep-alive]
+Upgrade-Insecure-Requests: [1]
+User-Agent: [Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36]
+Sec-Fetch-User: [?1]
+Accept: [text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3]
+Accept-Language: [zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7]</pre></td></tr></table>
+</div>
+</div>
+<p>我使用的是 Chrome 浏览器，不同的浏览器添加的首部不完全相同。</p>
+
+<p>常见的首部有：</p>
+
+<ul>
+<li><code>Accept</code>：客户端想要服务器发送的内容类型；</li>
+<li><code>Accept-Charset</code>：表示客户端能接受的字符编码；</li>
+<li><code>Content-Length</code>：请求主体的<strong>字节</strong>长度，一般在 POST/PUT 请求中较多；</li>
+<li><code>Content-Type</code>：当包含请求主体的时候，这个首部用于记录主体内容的类型。在发送 POST 或 PUT 请求时，内容的类型默认为<code>x-www-form-urlecoded</code>。但是在上传文件时，应该设置类型为<code>multipart/form-data</code>。</li>
+<li><code>User-Agent</code>：用于描述发起请求的客户端信息，如什么浏览器。</li>
+</ul>
+
+<h2 id="content-length-body"><code>Content-Length/Body</code></h2>
+
+<p><code>Content-Length</code>表示请求体的<strong>字节</strong>长度，请求体的内容可以从<code>Body</code>字段中读取。细心的朋友可能发现了<code>Body</code>字段是一个<code>io.ReadCloser</code>接口。<strong>在读取之后要关闭它，否则会有资源泄露。可以使用<code>defer</code>简化代码编写</strong>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">bodyHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">data</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">ContentLength</span><span class="p">)</span>
+    <span class="nx">r</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="c1">// 忽略错误处理
+</span><span class="c1"></span>    <span class="k">defer</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+    
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/body&#34;</span><span class="p">,</span> <span class="nx">bodyHandler</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面代码将客户端传来的请求体内容回传给客户端。还可以使用<code>io/ioutil</code>包简化读取操作：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadAll</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>直接在浏览器中输入 URL 发起的是<code>GET</code>请求，无法携带请求体。有很多种方式可以发起带请求体的请求，下面介绍两种：</p>
+
+<h3 id="使用表单">使用表单</h3>
+
+<p>通过 HTML 的表单我们可以向服务器发送 POST 请求，将表单中的内容作为请求体发送。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">indexHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">`
+</span><span class="s">&lt;html&gt;
+</span><span class="s">    &lt;head&gt;
+</span><span class="s">        &lt;title&gt;Go Web 编程之 request&lt;/title&gt;
+</span><span class="s">    &lt;/head&gt;
+</span><span class="s">    &lt;body&gt;
+</span><span class="s">        &lt;form method=&#34;post&#34; action=&#34;/body&#34;&gt;
+</span><span class="s">            &lt;label for=&#34;username&#34;&gt;用户名：&lt;/label&gt;
+</span><span class="s">            &lt;input type=&#34;text&#34; id=&#34;username&#34; name=&#34;username&#34;&gt;
+</span><span class="s">            &lt;label for=&#34;email&#34;&gt;邮箱：&lt;/label&gt;
+</span><span class="s">            &lt;input type=&#34;text&#34; id=&#34;email&#34; name=&#34;email&#34;&gt;
+</span><span class="s">            &lt;button type=&#34;submit&#34;&gt;提交&lt;/button&gt;
+</span><span class="s">        &lt;/form&gt;
+</span><span class="s">    &lt;/body&gt;
+</span><span class="s">&lt;/html&gt;
+</span><span class="s">`</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">indexHandler</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在 HTML 中使用<code>form</code>来显示一个表单。点击提交按钮后，浏览器会发送一个 POST 请求到路径<code>/body</code>上，将用户名和邮箱作为请求包体。</p>
+
+<p>启动服务器，进入主页<code>localhost:8080/</code>，显示表单。填写信息，点击提交：</p>
+
+<p><img src="/img/in-post/goweb/request1.png#center" alt="" /></p>
+
+<p>浏览器向服务器发送 POST 请求，URL 为<code>/body</code>，<code>bodyHandler</code>处理完成后将包体回传给客户端。最后客户端显示：</p>
+
+<p><img src="/img/in-post/goweb/request2.png#center" alt="" /></p>
+
+<p>上面的数据使用了<code>x-www-form-urlencoded</code>编码，这是表单的默认编码。后文还有详述。</p>
+
+<h3 id="使用-postman">使用 Postman</h3>
+
+<p><a href="https://www.getpostman.com/">Postman</a> 是一款功能非常强大的 API 测试工具。</p>
+
+<ul>
+<li>支持 HTTP 协议的所有方法请求（<code>GET/POST/PUT/DELETE</code>）。</li>
+<li>可以在请求中携带首部信息，请求体的内容；</li>
+<li>支持<code>json/xml/http</code>等各种格式的内容；</li>
+<li>界面友好。</li>
+</ul>
+
+<p>接下来我们看看如何使用 PostMan 测试我们的<code>bodyHandler</code>。</p>
+
+<p><img src="/img/in-post/goweb/request3.png#center" alt="" /></p>
+
+<ul>
+<li>黑色部分：选择 HTTP 协议方法，这里选择 POST 以便可以携带请求体；</li>
+<li>绿色部分：请求的 URL；</li>
+<li>蓝色部分：可以设置请求的首部，请求体；</li>
+<li>淡红色部分：请求体支持多种格式，这里选择原始格式；</li>
+<li>灰色部分：请求体的具体内容；</li>
+<li>红色部分：发送之后显示的响应信息，可以查看响应首部，Cookie，响应体等。可以看到是原样返回。</li>
+</ul>
+
+<h2 id="获取请求参数">获取请求参数</h2>
+
+<p>上面我们分析了 Go 中 HTTP 请求的常见字段。在实际开发中，客户端通常需要在请求中传递一些参数。参数传递的方式一般有两种方式：</p>
+
+<ul>
+<li>URL 中的键值对，又叫查询字符串，即 query string；</li>
+<li>表单。</li>
+</ul>
+
+<p>下面依次来介绍。</p>
+
+<h3 id="url-键值对">URL 键值对</h3>
+
+<p>前文中介绍 URL 的一般格式时提到过，URL 的后面可以跟一个可选的查询字符串，以<code>?</code>与路径分隔，形如<code>key1=value1&amp;key2=value2</code>。</p>
+
+<p>URL 结构中有一个<code>RawQuery</code>字段。这个字段就是查询字符串。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">func queryHandler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintln(w, r.URL.RawQuery)
+}
+
+mux.HandleFunc(&#34;/query&#34;, queryHandler)</pre></td></tr></table>
+</div>
+</div>
+<p>如何我们以<code>localhost:8080/query?name=dj&amp;age=20</code>请求，查询字符串<code>name=dj&amp;age=20</code>会原样传回客户端。但是<code>RawQuery</code>是字符串类型的，使用字符串方法解析也能用，但是太麻烦了！！！</p>
+
+<h3 id="表单">表单</h3>
+
+<p>表单狭义上说是通过表单发送请求，广义上说可以将数据放在请求体中发送到服务器。接下来我们简单编写一个 HTML 页面，通过页面表单发送 HTTP 请求：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Go Web 编程之 request<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;/form?lang=cpp&amp;name=dj&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span> <span class="na">enctype</span><span class="o">=</span><span class="s">&#34;application/x-www-form-urlencoded&#34;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Form:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;lang&#34;</span> <span class="p">/&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;age&#34;</span> <span class="p">/&gt;</span>
+            <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;submit&#34;</span><span class="p">&gt;</span>提交<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><code>action</code>表示提交表单时请求的 URL，<code>method</code>表示请求的方法。<strong>如果使用<code>GET</code>请求，由于<code>GET</code>方法没有请求体，参数将会拼接到 URL 尾部</strong>；</li>
+<li><code>enctype</code>指定请求体的编码方式，默认为<code>application/x-www-form-urlencoded</code>。如果需要发送文件，必须指定为<code>multipart/form-data</code>；</li>
+</ul>
+
+<p>我们介绍一下什么是<code>urlencoded</code>编码。RFC 3986 中定义了 URL 中的保留字以及非保留字，所有保留字符都需要进行 URL 编码。URL 编码会把字符转换成它在 ASCII 编码中对应的字节值，接着把这个字节值表示为一个两位长的十六进制数字，最后在这个数字前面加上一个百分号（%）。例如空格的 ASCII 编码为 32，十六进制为 20，故 URL 编码为<code>%20</code>。</p>
+
+<h4 id="form-字段"><code>Form</code>字段</h4>
+
+<p>使用<code>x-www-form-urlencoded</code>编码的请求体，在处理时首先调用请求的<code>ParseForm</code>方法解析，然后从<code>Form</code>字段中取数据：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">formHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">r</span><span class="p">.</span><span class="nf">ParseForm</span><span class="p">()</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Form</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/form&#34;</span><span class="p">,</span> <span class="nx">formHandler</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>运行程序，验证结果：</p>
+
+<p><img src="/img/in-post/goweb/request5.png#center" alt="" /></p>
+
+<p><img src="/img/in-post/goweb/request6.png#center" alt="" /></p>
+
+<p><code>Form</code>字段的类型<code>url.Values</code>底层实际上是<code>map[string][]string</code>。调用<code>ParseForm</code>方法之后，可以使用<code>url.Values</code>的方法操作数据。</p>
+
+<p>使用<code>ParseForm</code>还能解析查询字符串，将上面的表单改为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Go Web 编程之 request<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;/form?lang=cpp&amp;name=dj&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span> <span class="na">enctype</span><span class="o">=</span><span class="s">&#34;application/x-www-form-urlencoded&#34;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>Form:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;lang&#34;</span> <span class="p">/&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;age&#34;</span> <span class="p">/&gt;</span>
+            <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;submit&#34;</span><span class="p">&gt;</span>提交<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>请求结果：</p>
+
+<p><img src="/img/in-post/goweb/request7.png#center" alt="" /></p>
+
+<p><img src="/img/in-post/goweb/request8.png#center" alt="" /></p>
+
+<p>可以看出，查询字符串中的键值对和表单中解析处理的合并到一起了。同一个键下，表单值总是排在前面，如<code>[golang cpp]</code>。</p>
+
+<h4 id="postform-字段"><code>PostForm</code>字段</h4>
+
+<p>如果一个请求，同时有 URL 键值对和表单数据，而用户只想获取表单数据，可以使用<code>PostForm</code>字段。</p>
+
+<p>使用<code>PostForm</code>只会返回表单数据，不包括 URL 键值。如果把上面的程序中，<code>r.Form</code>改为<code>r.PostForm</code>，那么程序将显示以下结果：</p>
+
+<p><img src="/img/in-post/goweb/request9.png#center" alt="" /></p>
+
+<p><img src="/img/in-post/goweb/request10.png#center" alt="" /></p>
+
+<h4 id="multipartform-字段"><code>MultipartForm</code>字段</h4>
+
+<p>如果要处理上传的文件，那么就必须使用<code>multipart/form-data</code>编码。与之前的<code>Form/PostForm</code>类似，处理<code>multipart/form-data</code>编码的请求时，也需要先解析后使用。只不过使用的方法不同，解析使用<code>ParseMultipartForm</code>，之后从<code>MultipartForm</code>字段取值。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;/multipartform?lang=cpp&amp;name=dj&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span> <span class="na">enctype</span><span class="o">=</span><span class="s">&#34;multipart/form-data&#34;</span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>MultipartForm:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;lang&#34;</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;age&#34;</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;file&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;uploaded&#34;</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;submit&#34;</span><span class="p">&gt;</span>提交<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">multipartFormHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">r</span><span class="p">.</span><span class="nf">ParseMultipartForm</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">MultipartForm</span><span class="p">)</span>
+    
+    <span class="nx">fileHeader</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">MultipartForm</span><span class="p">.</span><span class="nx">File</span><span class="p">[</span><span class="s">&#34;uploaded&#34;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="nx">file</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fileHeader</span><span class="p">.</span><span class="nf">Open</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Open failed: &#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="nx">data</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadAll</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/multipartform&#34;</span><span class="p">,</span> <span class="nx">multipartFormHandler</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>运行程序：</p>
+
+<p><img src="/img/in-post/goweb/request11.png#center" alt="" /></p>
+
+<p><img src="/img/in-post/goweb/request12.png#center" alt="" /></p>
+
+<p><code>MultipartForm</code>包含两个<code>map</code>类型的字段，一个表示表单键值对，另一个为上传的文件信息。</p>
+
+<p>使用表单中文件控件名获取<code>MultipartForm.File</code>得到通过该控件上传的文件，可以是多个。得到的是<code>multipart.FileHeader</code>类型，通过该类型可以获取文件的各个属性。</p>
+
+<p>需要注意的是，这种方式用来处理文件。为了安全，<code>ParseMultipartForm</code>方法需要传一个参数，表示最大使用内存，避免上传的文件占用空间过大。</p>
+
+<h4 id="formvalue-postformvalue"><code>FormValue/PostFormValue</code></h4>
+
+<p>为了方便地获取值，<code>net/http</code>包提供了<code>FormValue/PostFormValue</code>方法。它们在需要时会自动调用<code>ParseForm/ParseMultipartForm</code>方法。</p>
+
+<p><code>FormValue</code>方法返回请求的<code>Form</code>字段中指定键的值。<strong>如果同一个键对应多个值，那么返回第一个</strong>。如果需要获取全部值，直接使用<code>Form</code>字段。下面代码将返回<code>hello</code>对应的第一个值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>PostFormValue</code>方法返回请求的<code>PostForm</code>字段中指定键的值。<strong>如果同一个键对应多个值，那么返回第一个</strong>。如果需要获取全部值，直接使用<code>PostForm</code>字段</p>
+
+<p>注意：
+当编码被指定为<code>multipart/form-data</code>时，<code>FormValue/PostFormValue</code>将不会返回任何值，它们读取的是<code>Form/PostForm</code>字段，而<code>ParseMultipartForm</code>将数据写入<code>MultipartForm</code>字段。</p>
+
+<h4 id="其他格式">其他格式</h4>
+
+<p>通过 AJAX 之类的技术可以发送其它格式的数据，例如<code>application/json</code>等。这种情况下：</p>
+
+<ul>
+<li>首先通过首部<code>Content-Type</code>来获知具体是什么格式；</li>
+<li>通过<code>r.Body</code>读取字节流；</li>
+<li>解码使用。</li>
+</ul>
+
+<h2 id="总结">总结</h2>
+
+<p>本文介绍了<code>net/http</code>包中请求的各方面内容。从<code>Request</code>结构到如何传递参数，最后介绍各种编码的请求如何处理。</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2019-12-13
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2019/12/05/goweb/structure/">
+            <span class="next-text nav-default">Go Web 编程之 程序结构</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2019/12/09/goweb/request/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
