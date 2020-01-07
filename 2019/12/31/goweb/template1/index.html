@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go Web 编程之 模板（一） - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="概述 模板引擎是 Web 编程中必不可少的一个组件。模板能分离逻辑和数据，使得逻辑简洁清晰，并且模板可复用。引用第二篇文章《程序结构》一文中的图示，我" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2019/12/31/goweb/template1/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go Web 编程之 模板（一）" />
+<meta property="og:description" content="概述 模板引擎是 Web 编程中必不可少的一个组件。模板能分离逻辑和数据，使得逻辑简洁清晰，并且模板可复用。引用第二篇文章《程序结构》一文中的图示，我" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2019/12/31/goweb/template1/" />
+<meta property="article:published_time" content="2019-12-31T22:41:43+00:00" />
+<meta property="article:modified_time" content="2019-12-31T22:41:43+00:00" />
+<meta itemprop="name" content="Go Web 编程之 模板（一）">
+<meta itemprop="description" content="概述 模板引擎是 Web 编程中必不可少的一个组件。模板能分离逻辑和数据，使得逻辑简洁清晰，并且模板可复用。引用第二篇文章《程序结构》一文中的图示，我">
+
+
+<meta itemprop="datePublished" content="2019-12-31T22:41:43&#43;00:00" />
+<meta itemprop="dateModified" content="2019-12-31T22:41:43&#43;00:00" />
+<meta itemprop="wordCount" content="7513">
+
+
+
+<meta itemprop="keywords" content="Go Web 编程," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Web 编程之 模板（一）"/>
+<meta name="twitter:description" content="概述 模板引擎是 Web 编程中必不可少的一个组件。模板能分离逻辑和数据，使得逻辑简洁清晰，并且模板可复用。引用第二篇文章《程序结构》一文中的图示，我"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go Web 编程之 模板（一）</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-12-31" class="post-time">
+          2019-12-31
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 7513 字 </span>
+          <span class="more-meta"> 预计阅读 15 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#概述">概述</a></li>
+<li><a href="#初体验">初体验</a></li>
+<li><a href="#动作">动作</a>
+<ul>
+<li><a href="#点动作">点动作</a></li>
+<li><a href="#条件动作">条件动作</a></li>
+<li><a href="#迭代动作">迭代动作</a></li>
+<li><a href="#设置动作">设置动作</a></li>
+<li><a href="#包含动作">包含动作</a></li>
+</ul></li>
+<li><a href="#其它元素">其它元素</a>
+<ul>
+<li><a href="#注释">注释</a></li>
+<li><a href="#参数">参数</a></li>
+<li><a href="#管道">管道</a></li>
+<li><a href="#变量">变量</a></li>
+<li><a href="#函数">函数</a>
+<ul>
+<li><a href="#预定义函数">预定义函数</a></li>
+<li><a href="#自定义函数">自定义函数</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#模板的几种创建方式">模板的几种创建方式</a></li>
+<li><a href="#嵌套模板">嵌套模板</a>
+<ul>
+<li><a href="#块动作">块动作</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="概述">概述</h2>
+
+<p><strong>模板引擎</strong>是 Web 编程中必不可少的一个组件。<strong>模板</strong>能分离逻辑和数据，使得逻辑简洁清晰，并且模板可复用。引用第二篇文章<a href="https://darjun.github.io/2019/12/05/goweb/structure/">《程序结构》</a>一文中的图示，我们可以看到模板引擎在 Web 程序结构中的位置：</p>
+
+<p><img src="/img/in-post/goweb/structure1.png" alt="" /></p>
+
+<p>模板引擎按照功能可以划分为两种类型：</p>
+
+<ul>
+<li><strong>无逻辑模板引擎</strong>：此类模板引擎只进行字符串的替换，无其它逻辑；</li>
+<li><strong>嵌入逻辑模板引擎</strong>：此类模板引擎可以在模板中嵌入逻辑，实现流程控制/循环等。</li>
+</ul>
+
+<p>这两类模板引擎都比较极端。无逻辑模板引擎需要在处理器中额外添加很多逻辑用于生成替换的文本。而嵌入逻辑模板引擎则在模板中混入了大量逻辑，导致维护性较差。实用的模板引擎一般介于这两者之间。</p>
+
+<p>在Go 语言中，<code>text/template</code>和<code>html/template</code>两个库实现模板功能。</p>
+
+<p>模板内容可以是 UTF-8 编码的任何内容。其中用<code>{{</code>和<code>}}</code>包围的部分称为<strong>动作</strong>，<code>{{}}</code>外的其它文本在输出保持不变。模板需要应用到数据，模板中的动作会根据数据生成响应的内容来替换。</p>
+
+<p>模板解析之后可以多次执行，也可以并行执行，但是注意使用同一个<code>Writer</code>会导致输出交替出现。</p>
+
+<p>模板的内容较多，我将分为两篇文章介绍。本文介绍<code>text/template</code>，包括 Go 模板的基本概念，用法和注意点。下篇文章介绍<code>html/template</code>。</p>
+
+<h2 id="初体验">初体验</h2>
+
+<p>使用模板引擎一般有 3 个步骤：</p>
+
+<ul>
+<li>定义模板（直接使用字符串字面量或文件）；</li>
+<li>解析模板（使用<code>text/template</code>或<code>html/template</code>中的方法解析）；</li>
+
+<li><p>传入数据生成输出。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+	<span class="s">&#34;text/template&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+	<span class="nx">Age</span>  <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">stringLiteralTemplate</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">s</span> <span class="o">:=</span> <span class="s">&#34;My name is {{ .Name }}. I am {{ .Age }} years old.\n&#34;</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">).</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse string literal template error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">u</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;darjun&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">28</span><span class="p">}</span>
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">u</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute string literal template error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">fileTemplate</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse file template error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">u</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">18</span><span class="p">}</span>
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">u</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute file template error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nf">stringLiteralTemplate</span><span class="p">()</span>
+
+	<span class="nf">fileTemplate</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+
+<p>在可执行程序目录中新建模板文件<code>test</code>，并写入下面的内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">My name is {{ .Name }}. I am {{ .Age }} years old.</pre></td></tr></table>
+</div>
+</div>
+<p>首先调用<code>template.New</code>创建一个模板，参数为模板名。</p>
+
+<p>然后调用<code>Template</code>类型的<code>Parse</code>方法，解析模板字符串，生成模板主体。这个方法返回两个值。如果模板语法正确，则返回模板对象本身和一个 nil 值。
+如果有语法错误，则返回一个 error 类型的值作为第二个返回值，这时不应该使用第一个返回值。</p>
+
+<p>最后，调用模板对象的<code>Execute</code>方法，传入参数。<code>Execute</code>执行模板中的动作，将结果输出到<code>os.Stdout</code>，即<strong>标准输出</strong>。最终我们看到模板中<code>{{ .Name }}</code>被<code>u</code>的<code>Name</code>字段替换，<code>{{ .Age }}</code>被<code>u</code>的<code>Age</code>字段替换，标准输出中显示下面一行字符串：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">My name is darjun. I am 28 years old.</pre></td></tr></table>
+</div>
+</div>
+<p>上面代码中，<code>fileTemplate</code>函数还演示了如何从文件中加载模板。其中<code>template.ParseFiles</code>方法会创建一个模板，并将用户指定的模板文件名用作这个新模板的名字：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>相当于：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="动作">动作</h2>
+
+<p>Go 模板中的动作就是一些嵌入在模板里面的命令。动作大体上可以分为以下几种类型：</p>
+
+<ul>
+<li>点动作；</li>
+<li>条件动作；</li>
+<li>迭代动作；</li>
+<li>设置动作；</li>
+<li>包含动作。</li>
+</ul>
+
+<h3 id="点动作">点动作</h3>
+
+<p>在介绍其它的动作之前，我们先看一个很重要的动作，<strong>点动作</strong>（<code>{{ . }}</code>）。它其实代表是传递给模板的数据，其他动作或函数基本上都是对这个数据进行处理，以此来达到格式化和内容展示的目的。</p>
+
+<p>对前面的代码示例稍作修改：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">s</span> <span class="o">:=</span> <span class="s">&#34;The user is {{ . }}.&#34;</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">).</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">u</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;darjun&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">28</span><span class="p">}</span>
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">u</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>运行程序，标准输出显示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">The user is {darjun 28}.</pre></td></tr></table>
+</div>
+</div>
+<p>实际上，<code>{{ . }}</code>会被替换为传给给模板的数据的字符串表示。这个字符串与以数据为参数调用<code>fmt.Sprint</code>函数得到的内容相同。我们可以为<code>User</code>结构编写一个方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="nx">User</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;(name:%s age:%d)&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这样替换的字符串就是格式化之后的内容了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">The user is (name:darjun age:28).</pre></td></tr></table>
+</div>
+</div>
+<p>注意：为了使用的方便和灵活，在模板中不同的上下文内，<code>.</code>的含义可能会改变，下面在介绍不同的动作时会进行说明。</p>
+
+<h3 id="条件动作">条件动作</h3>
+
+<p>在介绍动作的语法时，我采用 Go 标准库中的写法。我觉得这样写更严谨。
+其中<code>pipeline</code>表示管道，后面会有详细的介绍，现在可以将它理解为一个值。
+<code>T1/T2</code>等形式表示<strong>语句块</strong>，里面可以嵌套其它类型的动作。<strong>最简单的语句块就是不包含任何动作的字符串</strong>。</p>
+
+<p>条件动作的语法与编程语言中的<code>if</code>语句语法类似，有几种形式：</p>
+
+<p>形式一：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ if pipeline }} T1 {{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>如果管道计算出来的值不为空，执行<code>T1</code>。否则，不生成输出。下面都表示空值：</p>
+
+<ul>
+<li><code>false</code>、0、空指针或接口；</li>
+<li>长度为 0 的数组、切片、map或字符串。</li>
+</ul>
+
+<p>形式二：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ if pipeline }} T1 {{ else }} T2 {{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>如果管道计算出来的值不为空，执行<code>T1</code>。否则，执行<code>T2</code>。</p>
+
+<p>形式三：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ if pipeline1 }} T1 {{ else if pipeline2 }} T2 {{ else }} T3 {{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>如果管道<code>pipeline1</code>计算出来的值不为空，则执行<code>T1</code>。反之如果管道<code>pipeline2</code>的值不为空，执行<code>T2</code>。如果都为空，执行<code>T3</code>。</p>
+
+<p>举个栗子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">AgeInfo</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Age</span>           <span class="kt">int</span>
+	<span class="nx">GreaterThan60</span> <span class="kt">bool</span>
+	<span class="nx">GreaterThan40</span> <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">rand</span><span class="p">.</span><span class="nf">Seed</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">())</span>
+	<span class="nx">age</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+	<span class="nx">info</span> <span class="o">:=</span> <span class="nx">AgeInfo</span> <span class="p">{</span>
+		<span class="nx">Age</span><span class="p">:</span>           <span class="nx">age</span><span class="p">,</span>
+		<span class="nx">GreaterThan60</span><span class="p">:</span> <span class="nx">age</span> <span class="p">&gt;</span> <span class="mi">60</span><span class="p">,</span>
+		<span class="nx">GreaterThan40</span><span class="p">:</span> <span class="nx">age</span> <span class="p">&gt;</span> <span class="mi">40</span><span class="p">,</span>
+	<span class="p">}</span>
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">info</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在可执行程序的目录下新建模板文件<code>test</code>，键入下面的内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Your age is: {{ .Age }}
+{{ if .GreaterThan60 }}
+Old People!
+{{ else if .GreaterThan40 }}
+Middle Aged!
+{{ else }}
+Young!
+{{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>运行程序，会随机一个年龄，然后根据年龄区间选择性输出<code>Old People!/Middle Age!/Young!</code>其中一个。下面是我运行两次运行的输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Your age is: 7
+
+Young!</pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Your age is: 79
+
+Old People!</pre></td></tr></table>
+</div>
+</div>
+<p>这个程序有一个问题，会有多余的空格！我们之前说过，除了动作之外的任何文本都会原样保持，包括空格和换行！针对这个问题，有两种解决方案。第一种方案是删除多余的空格和换行，<code>test</code>文件修改为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Your age is: {{ .Age }}
+{{ if .GreaterThan60 }}Old People!{{ else if .GreaterThan40 }}Middle Aged!{{ else }}Young!{{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>显然，这个方法会导致模板内容很难阅读，不够理想。为此，Go 提供了针对空白符的处理。如果一个动作以<code>{{-</code>（注意有一个空格），那么该动作与它前面相邻的非空文本或动作间的空白符将会被全部删除。类似地，如果一个动作以<code>-}}</code>结尾，那么该动作与它后面相邻的非空文本或动作间的空白符将会被全部删除。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{23 -}} &lt; {{- 45}}</pre></td></tr></table>
+</div>
+</div>
+<p>将会生成输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">23&lt;45</pre></td></tr></table>
+</div>
+</div>
+<p>回到我们的例子中，我们可以将<code>test</code>文件稍作修改：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Your age is: {{ .Age }}
+{{ if .GreaterThan60 -}}
+&#34;Old People!&#34;
+{{- else if .GreaterThan40 -}}
+&#34;Middle Aged!&#34;
+{{- else -}}
+&#34;Young!&#34;
+{{- end }}</pre></td></tr></table>
+</div>
+</div>
+<p>这样，输出的文本就不会包含多余的空格了。</p>
+
+<h3 id="迭代动作">迭代动作</h3>
+
+<p>迭代其实与编程语言中的循环遍历类似。有两种形式：</p>
+
+<p>形式一：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ range pipeline }} T1 {{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>管道的值类型必须是数组、切片、map、channel。如果值的长度为 0，那么无输出。否则，<strong><code>.</code>被设置为当前遍历到的元素，然后执行<code>T1</code>，即在<code>T1</code>中<code>.</code>表示遍历的当前元素，而非传给模板的参数</strong>。如果值是 map 类型，且键是可比较的基本类型，<strong>元素将会以键的顺序访问</strong>。</p>
+
+<p>形式二：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ range pipeline }} T1 {{ else }} T2 {{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>与前一种形式基本一样，如果值的长度为 0，那么执行<code>T2</code>。</p>
+
+<p>举个栗子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Item</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span>	<span class="kt">string</span>
+	<span class="nx">Price</span>	<span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">items</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">Item</span> <span class="p">{</span>
+		<span class="p">{</span> <span class="s">&#34;iPhone&#34;</span><span class="p">,</span> <span class="mi">5499</span> <span class="p">},</span>
+		<span class="p">{</span> <span class="s">&#34;iPad&#34;</span><span class="p">,</span> <span class="mi">6331</span> <span class="p">},</span>
+		<span class="p">{</span> <span class="s">&#34;iWatch&#34;</span><span class="p">,</span> <span class="mi">1499</span> <span class="p">},</span>
+		<span class="p">{</span> <span class="s">&#34;MacBook&#34;</span><span class="p">,</span> <span class="mi">8250</span> <span class="p">},</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">items</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在可执行程序目录下新建模板文件<code>test</code>，键入内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Apple Products:
+{{ range . }}
+{{ .Name }}: ￥{{ .Price }}
+{{ else }}
+No Products!!!
+{{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>运行程序，得到下面的输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Apple Products:
+
+iPhone: ￥5499
+
+iPad: ￥6331
+
+iWatch: ￥1499
+
+MacBook: ￥8250</pre></td></tr></table>
+</div>
+</div>
+<p>在<code>range</code>语句循环体内，<code>.</code>被设置为当前遍历的元素，可以直接使用<code>{{ .Name }}</code>或<code>{{ .Price }}</code>访问产品名称和价格。在程序中，将<code>nil</code>传给<code>Execute</code>方法会得到下面的输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Apple Products:
+
+No Products!!!</pre></td></tr></table>
+</div>
+</div>
+<h3 id="设置动作">设置动作</h3>
+
+<p>设置动作使用<code>with</code>关键字重定义<code>.</code>。在<code>with</code>语句内，<code>.</code>会被定义为指定的值。一般用在结构嵌套很深时，能起到简化代码的作用。</p>
+
+<p>形式一：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ with pipeline }} T1 {{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>如果管道值不为空，则将<code>.</code>设置为<code>pipeline</code>的值，然后执行<code>T1</code>。否则，不生成输出。</p>
+
+<p>形式二：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ with pipeline }} T1 {{ else }} T2 {{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>与前一种形式的不同之处在于当管道值为空时，不改变<code>.</code>执行<code>T2</code>。举个栗子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+	<span class="nx">Age</span>  <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Pet</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span>  <span class="kt">string</span>
+	<span class="nx">Age</span>   <span class="kt">int</span>
+	<span class="nx">Owner</span> <span class="nx">User</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">p</span> <span class="o">:=</span> <span class="nx">Pet</span> <span class="p">{</span>
+		<span class="nx">Name</span><span class="p">:</span>  <span class="s">&#34;Orange&#34;</span><span class="p">,</span>
+		<span class="nx">Age</span><span class="p">:</span>   <span class="mi">2</span><span class="p">,</span>
+		<span class="nx">Owner</span><span class="p">:</span> <span class="nx">User</span> <span class="p">{</span>
+			<span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
+			<span class="nx">Age</span><span class="p">:</span>  <span class="mi">28</span><span class="p">,</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>模板文件内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Pet Info:
+Name: {{ .Name }}
+Age: {{ .Age }}
+Owner:
+{{ with .Owner }}
+  Name: {{ .Name }}
+  Age: {{ .Age }}
+{{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>运行程序，得到下面的输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Pet Info:
+Name: Orange
+Age: 2
+Owner:
+
+  Name: dj
+  Age: 28</pre></td></tr></table>
+</div>
+</div>
+<p>可见，在<code>with</code>语句内，<code>.</code>被替换成了<code>Owner</code>字段的值。</p>
+
+<h3 id="包含动作">包含动作</h3>
+
+<p>包含动作可以在一个模板中嵌入另一个模板，方便模板的复用。</p>
+
+<p>形式一：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ template &#34;name&#34; }}</pre></td></tr></table>
+</div>
+</div>
+<p>形式二：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ template &#34;name&#34; pipeline }}</pre></td></tr></table>
+</div>
+</div>
+<p>其中<code>name</code>表示嵌入的模板名称。第一种形式，将使用<code>nil</code>作为传入内嵌模板的参数。第二种形式，管道<code>pipeline</code>的值将会作为参数传给内嵌的模板。举个栗子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+	<span class="s">&#34;text/template&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test1&#34;</span><span class="p">,</span> <span class="s">&#34;test2&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="s">&#34;test data&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>ParseFiles</code>方法接收可变参数，可将任意多个文件名传给该方法。</p>
+
+<p>模板<code>test1</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">This is in test1.
+{{ template &#34;test2&#34; }}
+
+{{ template &#34;test2&#34; . }}</pre></td></tr></table>
+</div>
+</div>
+<p>模板<code>test2</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">This is in test2.
+Get: {{ . }}.</pre></td></tr></table>
+</div>
+</div>
+<p>运行程序得到输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">This is in test1.
+This is in test2.
+Get: &lt;no value&gt;.
+
+This is in test2.
+Get: test data.</pre></td></tr></table>
+</div>
+</div>
+<p>前一个嵌入模板，没有传递参数。后一个传入<code>.</code>，即传给<code>test1</code>模板的参数。</p>
+
+<h2 id="其它元素">其它元素</h2>
+
+<p>在介绍了几种动作之后，我们回过头来看几种基本组成部分。</p>
+
+<h3 id="注释">注释</h3>
+
+<p>注释只有一种语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ /* 注释 */ }}</pre></td></tr></table>
+</div>
+</div>
+<p>注释的内容不会呈现在输出中，它就像代码注释一样，是为了让模板更易读。</p>
+
+<h3 id="参数">参数</h3>
+
+<p>一个参数就是模板中的一个值。它的取值有多种：</p>
+
+<ul>
+<li>布尔值、字符串、字符、整数、浮点数、虚数和复数等<strong>字面量</strong>；</li>
+<li>结构中的一个字段或 map 中的一个键。<strong>结构的字段名必须是导出的，即大写字母开头，map 的键名则不必</strong>；</li>
+<li>一个函数或方法。必须只返回一个值，或者只返回一个值和一个错误。如果返回了非空的错误，则<code>Execute</code>方法执行终止，返回该错误给调用者；</li>
+<li>等等等等。</li>
+</ul>
+
+<p>上面几种形式可以结合使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ .Field1.Key1.Method1.Field2.Key2.Method2 }</pre></td></tr></table>
+</div>
+</div>
+<p>其实，我们已经用过很多次参数了。下面看一个方法调用的栗子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">FirstName</span> 	<span class="kt">string</span>
+	<span class="nx">LastName</span>	<span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="nx">User</span><span class="p">)</span> <span class="nf">FullName</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">u</span><span class="p">.</span><span class="nx">FirstName</span> <span class="o">+</span> <span class="s">&#34; &#34;</span> <span class="o">+</span> <span class="nx">u</span><span class="p">.</span><span class="nx">LastName</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">User</span><span class="p">{</span><span class="nx">FirstName</span><span class="p">:</span> <span class="s">&#34;lee&#34;</span><span class="p">,</span> <span class="nx">LastName</span><span class="p">:</span> <span class="s">&#34;darjun&#34;</span><span class="p">})</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>模板文件<code>test</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">My full name is {{ .FullName }}.</pre></td></tr></table>
+</div>
+</div>
+<p>模板执行会使用<code>FullName</code>方法的返回值替换<code>{{ .FullName }}</code>，输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">My full name is lee darjun.</pre></td></tr></table>
+</div>
+</div>
+<p>关于参数的几个要点：</p>
+
+<ul>
+<li>参数可以是任何类型；</li>
+<li>如果参数为指针，实现会根据需要取其基础类型；</li>
+<li>如果参数计算得到一个函数类型，它不会自动调用。例如<code>{{ .Method1 }}</code>，如果<code>Method1</code>方法返回一个函数，那么返回值函数不会调用。如果要调用它，使用内置的<code>call</code>函数。</li>
+</ul>
+
+<h3 id="管道">管道</h3>
+
+<p>管道的语法与 Linux 中的管道类似，即<strong>命令</strong>的链式序列：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ p1 | p2 | p3 }}</pre></td></tr></table>
+</div>
+</div>
+<p>每个单独的命令（即<code>p1/p2/p3...</code>）可以是下面三种类型：</p>
+
+<ul>
+<li>参数，见上面；</li>
+<li>可能带有参数的方法调用；</li>
+<li>可能带有参数的函数调用。</li>
+</ul>
+
+<p><strong>在一个链式管道中，每个命令的结果会作为下一个命令的最后一个参数。最后一个命令的结果作为整个管道的值。</strong></p>
+
+<p>管道必须只返回一个值，或者只返回一个值和一个错误。如果返回了非空的错误，那么<code>Execute</code>方法执行终止，并将该错误返回给调用者。</p>
+
+<p>在迭代程序的基础上稍作修改：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Item</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span>  <span class="kt">string</span>
+	<span class="nx">Price</span> <span class="kt">float64</span>
+	<span class="nx">Num</span>   <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">item</span> <span class="nx">Item</span><span class="p">)</span> <span class="nf">Total</span><span class="p">()</span> <span class="kt">float64</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">item</span><span class="p">.</span><span class="nx">Price</span> <span class="o">*</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">Num</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">item</span> <span class="o">:=</span> <span class="nx">Item</span> <span class="p">{</span><span class="s">&#34;iPhone&#34;</span><span class="p">,</span> <span class="mf">5499.99</span><span class="p">,</span> <span class="mi">2</span> <span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>模板文件<code>test</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Product: {{ .Name }}
+Price: ￥{{ .Price }}
+Num: {{ .Num }}
+Total: ￥{{ .Total | printf &#34;%.2f&#34; }}</pre></td></tr></table>
+</div>
+</div>
+<p>先调用<code>Item.Total</code>方法计算商品总价，然后使用<code>printf</code>格式化，保留两位小数。最终输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Product: iPhone
+Price: ￥5499.99
+Num: 2
+Total: ￥10999.98</pre></td></tr></table>
+</div>
+</div>
+<p><code>printf</code>是 Go 模板内置的函数，这样的函数还有很多。</p>
+
+<h3 id="变量">变量</h3>
+
+<p>在动作中，可以用管道的值定义一个变量。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$variable := pipeline</pre></td></tr></table>
+</div>
+</div>
+<p><code>$variable</code>为变量名，声明变量的动作不生成输出。</p>
+
+<p>类似地，变量也可以重新赋值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$variable = pipeline</pre></td></tr></table>
+</div>
+</div>
+<p>在<code>range</code>动作中可以定义两个变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">range $index, $element := range pipeline</pre></td></tr></table>
+</div>
+</div>
+<p>这样就可以在循环中通过<code>$index</code>和<code>$element</code>访问索引和元素了。</p>
+
+<p>变量的作用域持续到定义它的控制结构的<code>{{ end }}</code>动作。如果没有这样的控制结构，则持续到模板结束。模板调用不继承变量。</p>
+
+<p>执行开始时，<code>$</code>被设置为传入的数据参数，即<code>.</code>的值。</p>
+
+<h3 id="函数">函数</h3>
+
+<p>Go 模板提供了大量的预定义函数，如果有特殊需求也可以实现自定义函数。模板执行时，遇到函数调用，先从模板自定义函数表中查找，而后查找全局函数表。</p>
+
+<h4 id="预定义函数">预定义函数</h4>
+
+<p>预定义函数分为以下几类：</p>
+
+<ul>
+<li>逻辑运算，<code>and/or/not</code>；</li>
+<li>调用操作，<code>call</code>；</li>
+<li>格式化操作，<code>print/printf/println</code>，与用参数直接调用<code>fmt.Sprint/Sprintf/Sprintln</code>得到的内容相同；</li>
+<li>比较运算，<code>eq/ne/lt/le/gt/ge</code>。</li>
+</ul>
+
+<p>在上面条件动作的示例代码中，我们在代码中计算出大小关系再传入模板，这样比较繁琐，可以直接使用比较运算简化。</p>
+
+<p>有两点需要注意：</p>
+
+<ul>
+<li>由于是函数调用，所有的参数都会被求值，没有<strong>短路求值</strong>；</li>
+<li>比较运算只作用于基本类型，且没有 Go 语法那么严格，例如可以比较有符号和无符号整数。</li>
+</ul>
+
+<h4 id="自定义函数">自定义函数</h4>
+
+<p>默认情况下，模板中无自定义函数，可以使用模板的<code>Funcs</code>方法添加。下面我们实现一个格式化日期的自定义函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+	<span class="s">&#34;text/template&#34;</span>
+	<span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">formatDate</span><span class="p">(</span><span class="nx">t</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2016-01-02&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">funcMap</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">FuncMap</span> <span class="p">{</span>
+		<span class="s">&#34;fdate&#34;</span><span class="p">:</span> <span class="nx">formatDate</span><span class="p">,</span>
+	<span class="p">}</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">).</span><span class="nf">Funcs</span><span class="p">(</span><span class="nx">funcMap</span><span class="p">)</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse errr:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">())</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Exeute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>模板文件<code>test</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Today is {{ . | fdate }}.</pre></td></tr></table>
+</div>
+</div>
+<p>模板的<code>Func</code>方法接受一个<code>template.FuncMap</code>类型变量，键为函数名，值为实际定义的函数。
+可以一次设置多个自定义函数。自定义函数要求只返回一个值，或者返回一个值和一个错误。
+设置之后就可以在模板中使用<code>fdate</code>了，输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Today is 7016-01-07.</pre></td></tr></table>
+</div>
+</div>
+<p>这里不能使用<code>template.ParseFiles</code>，因为在解析模板文件的时候<code>fdate</code>未定义会导致解析失败。<strong>必须先创建模板，调用<code>Funcs</code>设置自定义函数，然后再解析模板。</strong></p>
+
+<h2 id="模板的几种创建方式">模板的几种创建方式</h2>
+
+<p>我们前面学习了两种模板的创建方式：</p>
+
+<ul>
+<li>先调用<code>template.New</code>创建模板，然后使用<code>Parse/ParseFiles</code>解析模板内容；</li>
+<li>直接使用<code>template.ParseFiles</code>创建并解析模板文件。</li>
+</ul>
+
+<p>第一种方式，调用<code>template.New</code>创建模板时需要传入一个模板名字，后续调用<code>ParseFiles</code>可以传入一个或多个文件，这些文件中必须有一个<strong>基础名</strong>（即去掉路径部分）与模板名相同。如果没有文件名与模板名相同，则<code>Execute</code>调用失败，返回错误。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+	<span class="s">&#34;text/template&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test1&#34;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面代码先创建模板<code>test</code>，然后解析文件<code>test1</code>。执行该程序会出现下面的错误：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Execute error:template: test: &#34;test&#34; is an incomplete or empty template</pre></td></tr></table>
+</div>
+</div>
+<p>Why？</p>
+
+<p>我们先来看看模板的结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/text/template.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">common</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">tmpl</span>   <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">Template</span> <span class="c1">// Map from name to defined templates.
+</span><span class="c1"></span>	<span class="nx">option</span> <span class="nx">option</span>
+	<span class="nx">muFuncs</span>    <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span> <span class="c1">// protects parseFuncs and execFuncs
+</span><span class="c1"></span>	<span class="nx">parseFuncs</span> <span class="nx">FuncMap</span>
+	<span class="nx">execFuncs</span>  <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Template</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">name</span> <span class="kt">string</span>
+	<span class="o">*</span><span class="nx">parse</span><span class="p">.</span><span class="nx">Tree</span>
+	<span class="o">*</span><span class="nx">common</span>
+	<span class="nx">leftDelim</span>  <span class="kt">string</span>
+	<span class="nx">rightDelim</span> <span class="kt">string</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>模板结构<code>Template</code>中有一个字段<code>common</code>，<code>common</code>中又有一个字段<code>tmpl</code>保存名字到模板的映射。其实，最外层的<code>Template</code>结构是<strong>主模板</strong>，我们调用<code>Execute</code>方法时执行的就是主模板。
+<strong>执行<code>ParseFiles</code>方法时，每个文件都会生成一个模板。只有文件基础名与模板名相同时，该文件的内容才会解析到主模板中。这也是上面的程序执行失败的原因——主模板为空。</strong>
+其它文件解析生成<strong>关联模板</strong>，存储在字段<code>tmpl</code>中。关联模板可以是在主模板中通过<code>{{ define }}</code>动作定义，或者在非主模板文件中定义。关联模板也可以执行，但是需要使用<code>ExecuteTemplate</code>方法，显式传入模板名：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span>
+    <span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+    <span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;test1&#34;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;in associatedTemplate Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">ExecuteTemplate</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="s">&#34;test1&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;in associatedTemplate Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>第二种方式将创建和解析两步合并在一起了。<code>template.ParseFiles</code>方法将传入的第一个文件名作为模板名称，其余的文件（如果有的话）解析后存放在<code>tmpl</code>中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;file1&#34;</span><span class="p">,</span> <span class="s">&#34;file2&#34;</span><span class="p">,</span> <span class="s">&#34;file3&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>其实就等价于：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;file1&#34;</span><span class="p">)</span>
+<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;file1&#34;</span><span class="p">,</span> <span class="s">&#34;file2&#34;</span><span class="p">,</span> <span class="s">&#34;file3&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>少了不一致的可能性，所以调用<code>Execute</code>方法时不会出现上面的错误。</p>
+
+<p>还有一种创建方式，使用<code>ParseGlob</code>函数。<code>ParseGlob</code>会对匹配给定模式的所有文件进行语法分析。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseGlob</span><span class="p">(</span><span class="s">&#34;tmpl*.glob&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;in globTemplate parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">ExecuteTemplate</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;tmpl%d.glob&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">),</span> <span class="kc">nil</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>ParseGlob</code>返回的模板以匹配的第一个文件基础名作为名称。<code>ParseGlob</code>解析时会对同一个目录下的文件进行排序，所以第一个文件总是固定的。</p>
+
+<p>我们创建三个模板文件，<code>tmpl1.glob</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">In glob template file1.</pre></td></tr></table>
+</div>
+</div>
+<p><code>tmpl2.glob</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">In glob template file2.</pre></td></tr></table>
+</div>
+</div>
+<p><code>tmpl3.glob</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">In glob template file3.</pre></td></tr></table>
+</div>
+</div>
+<p>最终输出为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">In glob template file1.
+In glob template file1.
+In glob template file2.
+In glob template file3.</pre></td></tr></table>
+</div>
+</div>
+<p>注意，<strong>如果多个不同路径下的文件名相同，那么后解析的会覆盖之前的。</strong></p>
+
+<h2 id="嵌套模板">嵌套模板</h2>
+
+<p>在一个模板文件中还可以通过<code>{{ define }}</code>动作定义其它的模板，这些模板就是<strong>嵌套模板</strong>。模板定义必须在模板内容的最顶层，像 Go 程序中的全局变量一样。</p>
+
+<p>嵌套模板一般用于<strong>布局（layout）</strong>。很多文本的结构其实非常固定，例如邮件有标题和正文，网页有首部、正文和尾部等。
+我们可以为这些固定结构的每部分定义一个模板。</p>
+
+<p>定义模板文件<code>layout.tmpl</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ define &#34;layout&#34; }}
+This is body.
+{{ template &#34;content&#34; . }}
+{{ end }}
+
+{{ define &#34;content&#34; }}
+This is {{ . }} content.
+{{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>上面定义了两个模板<code>layout</code>和<code>content</code>，<code>layout</code>中使用了<code>content</code>。执行这种方式定义的模板必须使用<code>ExecuteTemplate</code>方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;layout.tmpl&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">ExecuteTemplate</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="s">&#34;layout&#34;</span><span class="p">,</span> <span class="s">&#34;amazing&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Execute error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>嵌套模板在网页布局中应用非常广泛，下一篇文章介绍<code>html/template</code>时还会讲到。</p>
+
+<h3 id="块动作">块动作</h3>
+
+<p>块动作其实就是定义一个默认模板，语法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ block &#34;name&#34; arg }}
+T1
+{{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>其实它就等价于定义一个模板，然后立即使用它：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ define &#34;name&#34; }}
+T1
+{{ end }}
+
+{{ template &#34;name&#34; arg }}</pre></td></tr></table>
+</div>
+</div>
+<p>如果后面定义了模板<code>content</code>，那么使用后面的定义，否则使用默认模板。</p>
+
+<p>例如上面的示例中，我们将模板修改如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">{{ define &#34;layout&#34; }}
+This is body.
+{{ block &#34;content&#34; . }}
+This is default content.
+{{ end }}
+{{ end }}</pre></td></tr></table>
+</div>
+</div>
+<p>去掉后面的<code>content</code>模板定义，执行<code>layout</code>时，<code>content</code>部分会显示默认值。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>本文介绍了 Go 提供的模板<code>text/template</code>。模板比较简单易用，对于一些细节需要多加留意。代码在<a href="https://github.com/darjun/go-web-example/tree/master/5-template">Github</a>上。</p>
+
+<h2 id="参考链接">参考链接</h2>
+
+<ol>
+<li><a href="https://book.douban.com/subject/27204133/">Go Web 编程</a></li>
+<li><a href="https://golang.org/pkg/text/template/">text/template</a>文档</li>
+</ol>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2019-12-31
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2019/12/18/goweb/response/">
+            <span class="next-text nav-default">Go Web 编程之 响应</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2019/12/31/goweb/template1/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
