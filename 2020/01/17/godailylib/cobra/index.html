@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 cobra - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 cobra是一个命令行程序库，可以用来编写命令行程序。同时，它也提供了一个脚手架， 用于生成基于 cobra 的应用程序框架。非常多知名的开源项目使用" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2020/01/17/godailylib/cobra/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 cobra" />
+<meta property="og:description" content="简介 cobra是一个命令行程序库，可以用来编写命令行程序。同时，它也提供了一个脚手架， 用于生成基于 cobra 的应用程序框架。非常多知名的开源项目使用" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2020/01/17/godailylib/cobra/" />
+<meta property="article:published_time" content="2020-01-17T22:13:05+00:00" />
+<meta property="article:modified_time" content="2020-01-17T22:13:05+00:00" />
+<meta itemprop="name" content="Go 每日一库之 cobra">
+<meta itemprop="description" content="简介 cobra是一个命令行程序库，可以用来编写命令行程序。同时，它也提供了一个脚手架， 用于生成基于 cobra 的应用程序框架。非常多知名的开源项目使用">
+
+
+<meta itemprop="datePublished" content="2020-01-17T22:13:05&#43;00:00" />
+<meta itemprop="dateModified" content="2020-01-17T22:13:05&#43;00:00" />
+<meta itemprop="wordCount" content="4560">
+
+
+
+<meta itemprop="keywords" content="Go 每日一库," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 cobra"/>
+<meta name="twitter:description" content="简介 cobra是一个命令行程序库，可以用来编写命令行程序。同时，它也提供了一个脚手架， 用于生成基于 cobra 的应用程序框架。非常多知名的开源项目使用"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 cobra</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-01-17" class="post-time">
+          2020-01-17
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 4560 字 </span>
+          <span class="more-meta"> 预计阅读 10 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#特性">特性</a>
+<ul>
+<li><a href="#命令">命令</a></li>
+<li><a href="#选项">选项</a></li>
+</ul></li>
+<li><a href="#脚手架">脚手架</a></li>
+<li><a href="#其他">其他</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="简介">简介</h2>
+
+<p><a href="http://github.com/spf13/cobra">cobra</a>是一个命令行程序库，可以用来编写命令行程序。同时，它也提供了一个脚手架，
+用于生成基于 cobra 的应用程序框架。非常多知名的开源项目使用了 cobra 库构建命令行，如<a href="http://kubernetes.io/">Kubernetes</a>、<a href="http://gohugo.io/">Hugo</a>、<a href="https://github.com/coreos/etcd">etcd</a>等等等等。
+本文介绍 cobra 库的基本使用和一些有趣的特性。</p>
+
+<p>关于作者<a href="http://github.com/spf13">spf13</a>，这里多说两句。spf13 开源不少项目，而且他的开源项目质量都比较高。
+相信使用过 vim 的都知道<a href="https://github.com/spf13/spf13-vim">spf13-vim</a>，号称 vim 终极配置。
+可以一键配置，对于我这样的懒人来说绝对是福音。他的<a href="https://github.com/spf13/viper">viper</a>是一个完整的配置解决方案。
+完美支持 JSON/TOML/YAML/HCL/envfile/Java properties 配置文件等格式，还有一些比较实用的特性，如配置热更新、多查找目录、配置保存等。
+还有非常火的静态网站生成器<a href="https://gohugo.io/">hugo</a>也是他的作品。</p>
+
+<h2 id="快速使用">快速使用</h2>
+
+<p>第三方库都需要先安装，后使用。下面命令安装了<code>cobra</code>生成器程序和 cobra 库：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ go get github.com/spf13/cobra/cobra</pre></td></tr></table>
+</div>
+</div>
+<p>如果出现了<code>golang.org/x/text</code>库找不到之类的错误，需要手动从 GitHub 上下载该库，再执行上面的安装命令。我以前写过一篇博客<a href="https://darjun.github.io/2019/01/24/golang-dev-env/">搭建 Go 开发环境</a>提到了这个方法。</p>
+
+<p>我们实现一个简单的命令行程序 git，当然这不是真的 git，只是模拟其命令行。最终还是通过<code>os/exec</code>库调用外部程序执行真实的 git 命令，返回结果。
+所以我们的系统上要安装 git，且 git 在可执行路径中。目前我们只添加一个子命令<code>version</code>。目录结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">▾ get-started/
+    ▾ cmd/
+        helper.go
+        root.go
+        version.go
+    main.go</pre></td></tr></table>
+</div>
+</div>
+<p><code>root.go</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">cmd</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;errors&#34;</span>
+
+  <span class="s">&#34;github.com/spf13/cobra&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">rootCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span> <span class="p">{</span>
+  <span class="nx">Use</span><span class="p">:</span> <span class="s">&#34;git&#34;</span><span class="p">,</span>
+  <span class="nx">Short</span><span class="p">:</span> <span class="s">&#34;Git is a distributed version control system.&#34;</span><span class="p">,</span>
+  <span class="nx">Long</span><span class="p">:</span> <span class="s">`Git is a free and open source distributed version control system
+</span><span class="s">designed to handle everything from small to very large projects 
+</span><span class="s">with speed and efficiency.`</span><span class="p">,</span>
+  <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">Error</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;unrecognized command&#34;</span><span class="p">))</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Execute</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">Execute</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>version.go</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">cmd</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;fmt&#34;</span>
+  <span class="s">&#34;os&#34;</span>
+
+  <span class="s">&#34;github.com/spf13/cobra&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">versionCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span> <span class="p">{</span>
+  <span class="nx">Use</span><span class="p">:</span> <span class="s">&#34;version&#34;</span><span class="p">,</span>
+  <span class="nx">Short</span><span class="p">:</span> <span class="s">&#34;version subcommand show git version info.&#34;</span><span class="p">,</span>
+  
+  <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">output</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">ExecuteCommand</span><span class="p">(</span><span class="s">&#34;git&#34;</span><span class="p">,</span> <span class="s">&#34;version&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="o">...</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="nf">Error</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">output</span><span class="p">)</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">versionCmd</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>main.go</code>文件中只是调用命令入口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;github.com/darjun/go-daily-lib/cobra/get-started/cmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">cmd</span><span class="p">.</span><span class="nf">Execute</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>为了编码方便，在<code>helpers.go</code>中封装了调用外部程序和错误处理函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">cmd</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;fmt&#34;</span>
+  <span class="s">&#34;os&#34;</span>
+  <span class="s">&#34;os/exec&#34;</span>
+
+  <span class="s">&#34;github.com/spf13/cobra&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">ExecuteCommand</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">subname</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">args</span> <span class="p">=</span> <span class="nb">append</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span><span class="nx">subname</span><span class="p">},</span> <span class="nx">args</span><span class="o">...</span><span class="p">)</span>
+
+  <span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">Command</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">args</span><span class="o">...</span><span class="p">)</span>
+  <span class="nx">bytes</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">CombinedOutput</span><span class="p">()</span>
+
+  <span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">bytes</span><span class="p">),</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Error</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;execute %s args:%v error:%v\n&#34;</span><span class="p">,</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">Name</span><span class="p">(),</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>每个 cobra 程序都有一个根命令，可以给它添加任意多个子命令。我们在<code>version.go</code>的<code>init</code>函数中将子命令添加到根命令中。</p>
+
+<p>编译程序。注意，不能直接<code>go run main.go</code>，这已经不是单文件程序了。如果强行要用，请使用<code>go run .</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ go build -o main.exe</pre></td></tr></table>
+</div>
+</div>
+<p>cobra 自动生成的帮助信息，very cool：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ ./main.exe -h
+Git is a free and open source distributed version control system
+designed to handle everything from small to very large projects
+with speed and efficiency.
+
+Usage:
+  git [flags]
+  git [command]
+
+Available Commands:
+  help        Help about any command
+  version     version subcommand show git version info.
+
+Flags:
+  -h, --help   help for git
+
+Use &#34;git [command] --help&#34; for more information about a command.</pre></td></tr></table>
+</div>
+</div>
+<p>单个子命令的帮助信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ ./main.exe version -h
+version subcommand show git version info.
+
+Usage:
+  git version [flags]
+
+Flags:
+  -h, --help   help for version</pre></td></tr></table>
+</div>
+</div>
+<p>调用子命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ ./main.exe version
+git version 2.19.1.windows.1</pre></td></tr></table>
+</div>
+</div>
+<p>未识别的子命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ ./main.exe clone
+Error: unknown command &#34;clone&#34; for &#34;git&#34;
+Run &#39;git --help&#39; for usage.</pre></td></tr></table>
+</div>
+</div>
+<p>编译时可以将<code>main.exe</code>改成<code>git</code>，用起来会更有感觉🤩。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ go build -o git
+$ ./git version
+git version 2.19.1.windows.1</pre></td></tr></table>
+</div>
+</div>
+<p>使用 cobra 构建命令行时，程序的目录结构一般比较简单，推荐使用下面这种结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">▾ appName/
+    ▾ cmd/
+        cmd1.go
+        cmd2.go
+        cmd3.go
+        root.go
+    main.go</pre></td></tr></table>
+</div>
+</div>
+<p>每个命令实现一个文件，所有命令文件存放在<code>cmd</code>目录下。外层的<code>main.go</code>仅初始化 cobra。</p>
+
+<h2 id="特性">特性</h2>
+
+<p>cobra 提供非常丰富的功能：</p>
+
+<ul>
+<li>轻松支持子命令，如<code>app server</code>，<code>app fetch</code>等；</li>
+<li>完全兼容 POSIX 选项（包括短、长选项）；</li>
+<li>嵌套子命令；</li>
+<li>全局、本地层级选项。可以在多处设置选项，按照一定的顺序取用；</li>
+<li>使用脚手架轻松生成程序框架和命令。</li>
+</ul>
+
+<p>首先需要明确 3 个基本概念：</p>
+
+<ul>
+<li>命令（Command）：就是需要执行的操作；</li>
+<li>参数（Arg）：命令的参数，即要操作的对象；</li>
+<li>选项（Flag）：命令选项可以调整命令的行为。</li>
+</ul>
+
+<p>下面示例中，<code>server</code>是一个（子）命令，<code>--port</code>是选项：</p>
+
+<p><code>hugo server --port=1313</code></p>
+
+<p>下面示例中，<code>clone</code>是一个（子）命令，<code>URL</code>是参数，<code>--bare</code>是选项：</p>
+
+<p><code>git clone URL --bare</code></p>
+
+<h3 id="命令">命令</h3>
+
+<p>在 cobra 中，命令和子命令都是用<code>Command</code>结构表示的。<code>Command</code>有非常多的字段，用来定制命令的行为。
+在实际中，最常用的就那么几个。我们在前面示例中已经看到了<code>Use/Short/Long/Run</code>。</p>
+
+<p><code>Use</code>指定使用信息，即命令怎么被调用，格式为<code>name arg1 [arg2]</code>。<code>name</code>为命令名，后面的<code>arg1</code>为必填参数，<code>arg3</code>为可选参数，参数可以多个。</p>
+
+<p><code>Short/Long</code>都是指定命令的帮助信息，只是前者简短，后者详尽而已。</p>
+
+<p><code>Run</code>是实际执行操作的函数。</p>
+
+<p>定义新的子命令很简单，就是创建一个<code>cobra.Command</code>变量，设置一些字段，然后添加到根命令中。例如我们要添加一个<code>clone</code>子命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">cmd</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;fmt&#34;</span>
+  <span class="s">&#34;os&#34;</span>
+
+  <span class="s">&#34;github.com/spf13/cobra&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">cloneCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span> <span class="p">{</span>
+  <span class="nx">Use</span><span class="p">:</span> <span class="s">&#34;clone url [destination]&#34;</span><span class="p">,</span>
+  <span class="nx">Short</span><span class="p">:</span> <span class="s">&#34;Clone a repository into a new directory&#34;</span><span class="p">,</span>
+  <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">output</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">ExecuteCommand</span><span class="p">(</span><span class="s">&#34;git&#34;</span><span class="p">,</span> <span class="s">&#34;clone&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="o">...</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="nf">Error</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">output</span><span class="p">)</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">cloneCmd</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>其中<code>Use</code>字段<code>clone url [destination]</code>表示子命令名为<code>clone</code>，参数<code>url</code>是必须的，目标路径<code>destination</code>可选。</p>
+
+<p>我们将程序编译为<code>mygit</code>可执行文件，然后将它放到<code>$GOPATH/bin</code>中。我喜欢将<code>$GOPATH/bin</code>放到<code>$PATH</code>中，所以可以直接调用<code>mygit</code>命令了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ go build -o mygit
+$ mv mygit $GOPATH/bin
+$ mygit clone https://github.com/darjun/leetcode
+Cloning into &#39;leetcode&#39;...</pre></td></tr></table>
+</div>
+</div>
+<p>大家可以继续添加命令。但是我这边只是偷了个懒，将操作都转发到实际的 git 去执行了。这确实没什么实际的用处。
+有这个思路，试想一下，我们可以结合多个命令实现很多有用的工具，例如打包工具😉。</p>
+
+<h3 id="选项">选项</h3>
+
+<p>cobra 中选项分为两种，一种是<strong>永久选项</strong>，定义它的命令和其子命令都可以使用。通过给根命令添加一个选项定义全局选项。
+另一种是<strong>本地选项</strong>，只能在定义它的命令中使用。</p>
+
+<p>cobra 使用<a href="https://github.com/spf13/pflag">pflag</a>解析命令行选项。<code>pflag</code>使用上基本与<code>flag</code>相同，该系列文章有一篇介绍<code>flag</code>库的，<a href="https://darjun.github.io/2020/01/10/godailylib/flag/">Go 每日一库之 flag</a>。</p>
+
+<p>与<code>flag</code>一样，存储选项的变量也需要提前定义好：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">Verbose</span> <span class="kt">bool</span>
+<span class="kd">var</span> <span class="nx">Source</span> <span class="kt">string</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>设置永久选项：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">rootCmd</span><span class="p">.</span><span class="nf">PersistentFlags</span><span class="p">().</span><span class="nf">BoolVarP</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Verbose</span><span class="p">,</span> <span class="s">&#34;verbose&#34;</span><span class="p">,</span> <span class="s">&#34;v&#34;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s">&#34;verbose output&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>设置本地选项：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">localCmd</span><span class="p">.</span><span class="nf">Flags</span><span class="p">().</span><span class="nf">StringVarP</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Source</span><span class="p">,</span> <span class="s">&#34;source&#34;</span><span class="p">,</span> <span class="s">&#34;s&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;Source directory to read from&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>两种参数都是相同的，长选项/短选项名、默认值和帮助信息。</p>
+
+<p>下面，我们通过一个案例来演示选项的使用。</p>
+
+<p>假设我们要做一个简单的计算器，支持加、减、乘、除操作。并且可以通过选项设置是否忽略非数字参数，设置除 0 是否报错。
+显然，前一个选项应该放在全局选项中，后一个应该放在除法命令中。程序结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">▾ math/
+    ▾ cmd/
+        add.go
+        divide.go
+        minus.go
+        multiply.go
+        root.go
+    main.go</pre></td></tr></table>
+</div>
+</div>
+<p>这里展示<code>divide.go</code>和<code>root.go</code>，其它命令文件都类似。完整代码我放在<a href="https://github.com/darjun/go-daily-lib/tree/master/cobra">GitHub</a>上了。</p>
+
+<p><code>divide.go</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">dividedByZeroHanding</span> <span class="kt">int</span> <span class="c1">// 除 0 如何处理
+</span><span class="c1"></span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">divideCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span> <span class="p">{</span>
+  <span class="nx">Use</span><span class="p">:</span> <span class="s">&#34;divide&#34;</span><span class="p">,</span>
+  <span class="nx">Short</span><span class="p">:</span> <span class="s">&#34;Divide subcommand divide all passed args.&#34;</span><span class="p">,</span>
+  <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">values</span> <span class="o">:=</span> <span class="nf">ConvertArgsToFloat64Slice</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nf">ErrorHandling</span><span class="p">(</span><span class="nx">parseHandling</span><span class="p">))</span>
+    <span class="nx">result</span> <span class="o">:=</span> <span class="nf">calc</span><span class="p">(</span><span class="nx">values</span><span class="p">,</span> <span class="nx">DIVIDE</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s = %.2f\n&#34;</span><span class="p">,</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="s">&#34;/&#34;</span><span class="p">),</span> <span class="nx">result</span><span class="p">)</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">divideCmd</span><span class="p">.</span><span class="nf">Flags</span><span class="p">().</span><span class="nf">IntVarP</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">dividedByZeroHanding</span><span class="p">,</span> <span class="s">&#34;divide_by_zero&#34;</span><span class="p">,</span> <span class="s">&#34;d&#34;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nx">PanicOnDividedByZero</span><span class="p">),</span> <span class="s">&#34;do what when divided by zero&#34;</span><span class="p">)</span>
+
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">divideCmd</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>root.go</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">parseHandling</span> <span class="kt">int</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">rootCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span> <span class="p">{</span>
+  <span class="nx">Use</span><span class="p">:</span> <span class="s">&#34;math&#34;</span><span class="p">,</span>
+  <span class="nx">Short</span><span class="p">:</span> <span class="s">&#34;Math calc the accumulative result.&#34;</span><span class="p">,</span>
+  <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">Error</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;unrecognized subcommand&#34;</span><span class="p">))</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">PersistentFlags</span><span class="p">().</span><span class="nf">IntVarP</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">parseHandling</span><span class="p">,</span> <span class="s">&#34;parse_error&#34;</span><span class="p">,</span> <span class="s">&#34;p&#34;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nx">ContinueOnParseError</span><span class="p">),</span> <span class="s">&#34;do what when parse arg error&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Execute</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">Execute</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在<code>divide.go</code>中定义了如何处理除 0 错误的选项，在<code>root.go</code>中定义了如何处理解析错误的选项。选项枚举如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">ContinueOnParseError</span>  <span class="nx">ErrorHandling</span> <span class="p">=</span> <span class="mi">1</span> <span class="c1">// 解析错误尝试继续处理
+</span><span class="c1"></span>  <span class="nx">ExitOnParseError</span>      <span class="nx">ErrorHandling</span> <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 解析错误程序停止
+</span><span class="c1"></span>  <span class="nx">PanicOnParseError</span>     <span class="nx">ErrorHandling</span> <span class="p">=</span> <span class="mi">3</span> <span class="c1">// 解析错误 panic
+</span><span class="c1"></span>  <span class="nx">ReturnOnDividedByZero</span> <span class="nx">ErrorHandling</span> <span class="p">=</span> <span class="mi">4</span> <span class="c1">// 除0返回
+</span><span class="c1"></span>  <span class="nx">PanicOnDividedByZero</span>  <span class="nx">ErrorHandling</span> <span class="p">=</span> <span class="mi">5</span> <span class="c1">// 除0 painc
+</span><span class="c1"></span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>其实命令的执行逻辑并不复杂，就是将参数转为<code>float64</code>。然后执行相应的运算，输出结果。</p>
+
+<p>测试程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ go build -o math
+$ ./math add 1 2 3 4
+1+2+3+4 = 10.00
+
+$ ./math minus 1 2 3 4
+1-2-3-4 = -8.00
+
+$ ./math multiply 1 2 3 4
+1*2*3*4 = 24.00
+
+$ ./math divide 1 2 3 4
+1/2/3/4 = 0.04</pre></td></tr></table>
+</div>
+</div>
+<p>默认情况，解析错误被忽略，只计算格式正确的参数的结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ ./math add 1 2a 3b 4
+1+2a+3b+4 = 5.00
+
+$ ./math divide 1 2a 3b 4
+1/2a/3b/4 = 0.25</pre></td></tr></table>
+</div>
+</div>
+<p>设置解析失败的处理，2 表示退出程序，3 表示 panic（看上面的枚举）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ ./math add 1 2a 3b 4 -p 2
+invalid number: 2a
+
+$ ./math add 1 2a 3b 4 -p 3
+panic: strconv.ParseFloat: parsing &#34;2a&#34;: invalid syntax
+
+goroutine 1 [running]:
+github.com/darjun/go-daily-lib/cobra/math/cmd.ConvertArgsToFloat64Slice(0xc00004e300, 0x4, 0x6, 0x3, 0xc00008bd70, 0x504f6b, 0xc000098600)
+    D:/code/golang/src/github.com/darjun/go-daily-lib/cobra/math/cmd/helper.go:58 +0x2c3
+github.com/darjun/go-daily-lib/cobra/math/cmd.glob..func1(0x74c620, 0xc00004e300, 0x4, 0x6)
+    D:/code/golang/src/github.com/darjun/go-daily-lib/cobra/math/cmd/add.go:14 +0x6d
+github.com/spf13/cobra.(*Command).execute(0x74c620, 0xc00004e1e0, 0x6, 0x6, 0x74c620, 0xc00004e1e0)
+    D:/code/golang/src/github.com/spf13/cobra/command.go:835 +0x2b1
+github.com/spf13/cobra.(*Command).ExecuteC(0x74d020, 0x0, 0x599ee0, 0xc000056058)
+    D:/code/golang/src/github.com/spf13/cobra/command.go:919 +0x302
+github.com/spf13/cobra.(*Command).Execute(...)
+    D:/code/golang/src/github.com/spf13/cobra/command.go:869
+github.com/darjun/go-daily-lib/cobra/math/cmd.Execute(...)
+    D:/code/golang/src/github.com/darjun/go-daily-lib/cobra/math/cmd/root.go:45
+main.main()
+    D:/code/golang/src/github.com/darjun/go-daily-lib/cobra/math/main.go:8 +0x35</pre></td></tr></table>
+</div>
+</div>
+<p>至于除 0 选项大家自己试试。</p>
+
+<p>细心的朋友应该都注意到了，该程序还有一些不完善的地方。例如这里如果输入非数字参数，该参数也会显示在结果中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ ./math add 1 2 3d cc
+1+2+3d+cc = 3.00</pre></td></tr></table>
+</div>
+</div>
+<p>感兴趣可以自己完善一下~</p>
+
+<h2 id="脚手架">脚手架</h2>
+
+<p>通过前面的介绍，我们也看到了其实 cobra 命令的框架还是比较固定的。这就有了工具的用武之地了，可极大地提高我们的开发效率。</p>
+
+<p>前面安装 cobra 库的时候也将脚手架程序安装好了。下面我们介绍如何使用这个生成器。</p>
+
+<p>使用<code>cobra init</code>命令创建一个 cobra 应用程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ cobra init scaffold --pkg-name github.com/darjun/go-daily-lib/cobra/scaffold</pre></td></tr></table>
+</div>
+</div>
+<p>其中<code>scaffold</code>为应用程序名，后面通过<code>pkg-name</code>选项指定包路径。生成的程序目录结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">▾ scaffold/
+    ▾ cmd/
+        root.go
+    LICENSE
+    main.go</pre></td></tr></table>
+</div>
+</div>
+<p>这个项目结构与之前介绍的完全相同，也是 cobra 推荐使用的结构。同样地，<code>main.go</code>也仅仅是入口。</p>
+
+<p>在<code>root.go</code>中，工具额外帮我们生成了一些代码。</p>
+
+<p>在根命令中添加了配置文件选项，大部分应用程序都需要配置文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">cobra</span><span class="p">.</span><span class="nf">OnInitialize</span><span class="p">(</span><span class="nx">initConfig</span><span class="p">)</span>
+
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">PersistentFlags</span><span class="p">().</span><span class="nf">StringVar</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">cfgFile</span><span class="p">,</span> <span class="s">&#34;config&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;config file (default is $HOME/.scaffold.yaml)&#34;</span><span class="p">)</span>
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">Flags</span><span class="p">().</span><span class="nf">BoolP</span><span class="p">(</span><span class="s">&#34;toggle&#34;</span><span class="p">,</span> <span class="s">&#34;t&#34;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s">&#34;Help message for toggle&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在初始化完成的回调中，如果发现该选项为空，则默认使用主目录下的<code>.scaffold.yaml</code>文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">initConfig</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">cfgFile</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+    <span class="nx">viper</span><span class="p">.</span><span class="nf">SetConfigFile</span><span class="p">(</span><span class="nx">cfgFile</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">home</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">homedir</span><span class="p">.</span><span class="nf">Dir</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+      <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">viper</span><span class="p">.</span><span class="nf">AddConfigPath</span><span class="p">(</span><span class="nx">home</span><span class="p">)</span>
+    <span class="nx">viper</span><span class="p">.</span><span class="nf">SetConfigName</span><span class="p">(</span><span class="s">&#34;.scaffold&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">viper</span><span class="p">.</span><span class="nf">AutomaticEnv</span><span class="p">()</span>
+
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">ReadInConfig</span><span class="p">();</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Using config file:&#34;</span><span class="p">,</span> <span class="nx">viper</span><span class="p">.</span><span class="nf">ConfigFileUsed</span><span class="p">())</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这里用到了我前几天介绍的<a href="https://darjun.github.io/2020/01/14/godailylib/go-homedir/">go-homedir</a>库。配置文件的读取使用了 spf13 自己的开源项目<a href="https://github.com/spf13/viper">viper</a>（毒龙？真是起名天才）。</p>
+
+<p>除了代码文件，cobra 还生成了一个 LICENSE 文件。</p>
+
+<p>现在这个程序还不能做任何事情，我们需要给它添加子命令，使用<code>cobra add</code>命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ cobra add date</pre></td></tr></table>
+</div>
+</div>
+<p>该命令在<code>cmd</code>目录下新增了<code>date.go</code>文件。基本结构已经搭好了，剩下的就是修改一些描述，添加一些选项了。</p>
+
+<p>我们现在实现这样一个功能，根据传入的年、月，打印这个月的日历。如果没有传入选项，使用当前的年、月。</p>
+
+<p>选项定义：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">rootCmd</span><span class="p">.</span><span class="nf">AddCommand</span><span class="p">(</span><span class="nx">dateCmd</span><span class="p">)</span>
+
+  <span class="nx">dateCmd</span><span class="p">.</span><span class="nf">PersistentFlags</span><span class="p">().</span><span class="nf">IntVarP</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">year</span><span class="p">,</span> <span class="s">&#34;year&#34;</span><span class="p">,</span> <span class="s">&#34;y&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#34;year to show (should in [1000, 9999]&#34;</span><span class="p">)</span>
+  <span class="nx">dateCmd</span><span class="p">.</span><span class="nf">PersistentFlags</span><span class="p">().</span><span class="nf">IntVarP</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">month</span><span class="p">,</span> <span class="s">&#34;month&#34;</span><span class="p">,</span> <span class="s">&#34;m&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#34;month to show (should in [1, 12]&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>修改<code>dateCmd</code>的<code>Run</code>函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">year</span> <span class="p">&lt;</span> <span class="mi">1000</span> <span class="o">&amp;&amp;</span> <span class="nx">year</span> <span class="p">&gt;</span> <span class="mi">9999</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;invalid year should in [1000, 9999], actual:%d&#34;</span><span class="p">,</span> <span class="nx">year</span><span class="p">)</span>
+    <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="nx">month</span> <span class="p">&lt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">year</span> <span class="p">&gt;</span> <span class="mi">12</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;invalid month should in [1, 12], actual:%d&#34;</span><span class="p">,</span> <span class="nx">month</span><span class="p">)</span>
+    <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nf">showCalendar</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>showCalendar</code>函数就是利用<code>time</code>提供的方法实现的，这里就不赘述了。感兴趣可以去我的 GitHub 上查看实现。</p>
+
+<p>看看程序运行效果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ go build -o main.exe
+$ ./main.exe date
+  Sun  Mon  Tue  Wed  Thu  Fri  Sat
+                   1    2    3    4
+    5    6    7    8    9   10   11
+    12   13   14   15   16   17   18
+    19   20   21   22   23   24   25
+    26   27   28   29   30   31
+
+$ ./main.exe date --year 2019 --month 12
+  Sun  Mon  Tue  Wed  Thu  Fri  Sat
+    1    2    3    4    5    6    7
+    8    9   10   11   12   13   14
+   15   16   17   18   19   20   21
+   22   23   24   25   26   27   28
+   29   30   31</pre></td></tr></table>
+</div>
+</div>
+<p>可以再为这个程序添加其他功能，试一试吧~</p>
+
+<h2 id="其他">其他</h2>
+
+<p>cobra 提供了非常丰富的特性和定制化接口，例如：</p>
+
+<ul>
+<li>设置钩子函数，在命令执行前、后执行某些操作；</li>
+<li>生成 Markdown/ReStructed Text/Man Page 格式的文档；</li>
+<li>等等等等。</li>
+</ul>
+
+<p>由于篇幅限制，就不一一介绍了。有兴趣可自行研究。cobra 库的使用非常广泛，很多知名项目都有用到，前面也提到过这些项目。
+学习这些项目是如何使用 cobra 的，可以从中学习 cobra 的特性和最佳实践。这也是学习开源项目的一个很好的途径。</p>
+
+<p>文中所有示例代码都已上传至我的 GitHub，<a href="https://github.com/darjun/go-daily-lib/tree/master/cobra">Go 每日一库</a>，<a href="https://github.com/darjun/go-daily-lib/tree/master/cobra。">https://github.com/darjun/go-daily-lib/tree/master/cobra。</a></p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li><a href="https://github.com/spf13/cobra">cobra</a> GitHub 仓库</li>
+</ol>
+
+<h2 id="我">我</h2>
+
+<p><a href="https://darjun.github.io">我的博客</a></p>
+
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2020-01-17
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2020/01/16/goweb/db1/">
+            <span class="next-text nav-default">Go Web 编程之 存储（一）</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2020/01/17/godailylib/cobra/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
