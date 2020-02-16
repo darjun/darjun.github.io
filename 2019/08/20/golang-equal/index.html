@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.64.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2019/08/20/golang-equal/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,16 +69,13 @@
 <meta property="article:modified_time" content="2019-08-20T12:57:00+00:00" />
 <meta itemprop="name" content="深入理解Go之==">
 <meta itemprop="description" content="概述 相信==判等操作，大家每天都在用。之前在论坛上看到不少人在问 golang ==比较的结果。看到很多人对 golang 中==的结果不太了解。确实，golang 中对">
-
-
 <meta itemprop="datePublished" content="2019-08-20T12:57:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-20T12:57:00&#43;00:00" />
-<meta itemprop="wordCount" content="3512">
+<meta itemprop="wordCount" content="3504">
 
 
 
-<meta itemprop="keywords" content="深入理解Go," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="深入理解Go," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="深入理解Go之=="/>
 <meta name="twitter:description" content="概述 相信==判等操作，大家每天都在用。之前在论坛上看到不少人在问 golang ==比较的结果。看到很多人对 golang 中==的结果不太了解。确实，golang 中对"/>
 
@@ -363,8 +360,8 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 3512 字 </span>
-          <span class="more-meta"> 预计阅读 8 分钟 </span>
+        <span class="more-meta"> 约 3504 字 </span>
+          <span class="more-meta"> 预计阅读 7 分钟 </span>
 
         
         
@@ -384,58 +381,50 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#类型">类型</a>
-<ul>
-<li><a href="#基本类型">基本类型</a></li>
-<li><a href="#复合类型">复合类型</a></li>
-<li><a href="#引用类型">引用类型</a></li>
-<li><a href="#接口类型">接口类型</a></li>
-<li><a href="#使用-type-定义的类型">使用<code>type</code>定义的类型</a></li>
-</ul></li>
-<li><a href="#不可比较性">不可比较性</a></li>
-<li><a href="#谈谈-map">谈谈<code>map</code></a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#类型">类型</a>
+      <ul>
+        <li><a href="#基本类型">基本类型</a></li>
+        <li><a href="#复合类型">复合类型</a></li>
+        <li><a href="#引用类型">引用类型</a></li>
+        <li><a href="#接口类型">接口类型</a></li>
+        <li><a href="#使用type定义的类型">使用type定义的类型</a></li>
+      </ul>
+    </li>
+    <li><a href="#不可比较性">不可比较性</a></li>
+    <li><a href="#谈谈map">谈谈map</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="概述">概述</h2>
-
+      <h2 id="概述">概述</h2>
 <p>相信<code>==</code>判等操作，大家每天都在用。之前在论坛上看到不少人在问 golang <code>==</code>比较的结果。看到很多人对 golang 中<code>==</code>的结果不太了解。确实，golang 中对<code>==</code>的处理有一些细节的地方需要特别注意。虽然平时可能不太会遇到，但是碰到了就是大坑。本文将对 golang 中<code>==</code>操作做一个系统的介绍。希望能对大家有所帮助。</p>
-
 <h2 id="类型">类型</h2>
-
-<p>golang 中的数据类型可以分为以下 4 大类：
-1. 基本类型：整型（<code>int/uint/int8/uint8/int16/uint16/int32/uint32/int64/uint64/byte/rune</code>等）、浮点数（<code>float32/float64</code>）、复数类型（<code>complex64/complex128</code>）、字符串（<code>string</code>）。
-2. 复合类型（又叫聚合类型）：数组和结构体类型。
-3. 引用类型：切片（slice）、map、channel、指针。
-4. 接口类型：如<code>error</code>。</p>
-
+<p>golang 中的数据类型可以分为以下 4 大类：</p>
+<ol>
+<li>基本类型：整型（<code>int/uint/int8/uint8/int16/uint16/int32/uint32/int64/uint64/byte/rune</code>等）、浮点数（<code>float32/float64</code>）、复数类型（<code>complex64/complex128</code>）、字符串（<code>string</code>）。</li>
+<li>复合类型（又叫聚合类型）：数组和结构体类型。</li>
+<li>引用类型：切片（slice）、map、channel、指针。</li>
+<li>接口类型：如<code>error</code>。</li>
+</ol>
 <p><strong><code>==</code>操作最重要的一个前提是：两个操作数类型必须相同！类型必须相同！类型必须相同！</strong></p>
-
 <p>如果类型不同，那么<strong>编译时</strong>就会报错。</p>
-
-<p>注意：
-1. golang 的类型系统非常严格，没有<code>C/C++</code>中的隐式类型转换。虽然写起来稍微有些麻烦，但是能避免今后非常多的麻烦！！！
-2. golang 中可以通过<code>type</code>定义新类型。新定义的类型与底层类型不同，不能直接比较。</p>
-
+<p>注意：</p>
+<ol>
+<li>golang 的类型系统非常严格，没有<code>C/C++</code>中的隐式类型转换。虽然写起来稍微有些麻烦，但是能避免今后非常多的麻烦！！！</li>
+<li>golang 中可以通过<code>type</code>定义新类型。新定义的类型与底层类型不同，不能直接比较。</li>
+</ol>
 <p><strong>为了更容易看出类型，示例代码中的变量定义都显式指定了类型。</strong></p>
-
 <p>看下面的代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -445,24 +434,24 @@ if (!doNotTrack) {
 </span><span class="lnt"> 8
 </span><span class="lnt"> 9
 </span><span class="lnt">10
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><span class="kn">package</span> <span class="nx">main</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">a</span> <span class="kt">int8</span>
     <span class="kd">var</span> <span class="nx">b</span> <span class="kt">int16</span>
     <span class="c1">// 编译错误：invalid operation a == b (mismatched types int8 and int16)
 </span><span class="c1"></span>    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span> <span class="o">==</span> <span class="nx">b</span><span class="p">)</span>
-<span class="p">}</span></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>没有隐式类型转换。</strong></p>
+</div><p><strong>没有隐式类型转换。</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -473,93 +462,85 @@ if (!doNotTrack) {
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><span class="kn">package</span> <span class="nx">main</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">type</span> <span class="kt">int8</span> <span class="nx">myint8</span>
     <span class="kd">var</span> <span class="nx">a</span> <span class="kt">int8</span>
     <span class="kd">var</span> <span class="nx">b</span> <span class="nx">myint8</span>
     <span class="c1">// 编译错误：invalid operation a == b (mismatched types int8 and myint8)
 </span><span class="c1"></span>    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span> <span class="o">==</span> <span class="nx">b</span><span class="p">)</span>
-<span class="p">}</span></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>虽然myint8的底层类型是int8，但是他们是不同的类型。</strong></p>
-
+</div><p><strong>虽然myint8的底层类型是int8，但是他们是不同的类型。</strong></p>
 <p>下面依次通过这 4 种类型来说明<code>==</code>是如何做比较的。</p>
-
 <h3 id="基本类型">基本类型</h3>
-
 <p>这是最简单的一种类型。比较操作也很简单，直接比较值是否相等。没啥好说的，直接看例子。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var a uint32 = 10
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var a uint32 = 10
 var b uint32 = 20
 var c uint32 = 10
 fmt.Println(a == b) // false
-fmt.Println(a == c) // true</pre></td></tr></table>
+fmt.Println(a == c) // true
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>有一点需要注意，浮点数的比较问题：</p>
+</div><p>有一点需要注意，浮点数的比较问题：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var a float64 = 0.1
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var a float64 = 0.1
 var b float64 = 0.2
 var c float64 = 0.3
-fmt.Println(a + b == c) // false</pre></td></tr></table>
+fmt.Println(a + b == c) // false
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因为计算机中，有些浮点数不能精确表示，浮点运算结果会有误差。如果我们分别输出<code>a+b</code>和<code>c</code>的值，会发现它们确实是不同的：</p>
+</div><p>因为计算机中，有些浮点数不能精确表示，浮点运算结果会有误差。如果我们分别输出<code>a+b</code>和<code>c</code>的值，会发现它们确实是不同的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">fmt.Println(a + b)
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">fmt.Println(a + b)
 fmt.Println(c)
 
 // 0.30000000000000004
-// 0.3</pre></td></tr></table>
+// 0.3
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这个问题不是 golang 独有的，只要浮点数遵循 IEEE 754 标准的编程语言都有这个问题。需要特别注意，<strong>尽量不要做浮点数比较，确实需要比较时，计算两个浮点数的差的绝对值，如果小于一定的值就认为它们相等，比如<code>1e-9</code></strong>。</p>
-
+</div><p>这个问题不是 golang 独有的，只要浮点数遵循 IEEE 754 标准的编程语言都有这个问题。需要特别注意，<strong>尽量不要做浮点数比较，确实需要比较时，计算两个浮点数的差的绝对值，如果小于一定的值就认为它们相等，比如<code>1e-9</code></strong>。</p>
 <h3 id="复合类型">复合类型</h3>
-
 <p>复合类型也叫做聚合类型。golang 中的复合类型只有两种：数组和结构体。它们是逐元素/字段比较的。</p>
-
 <p>注意：<strong>数组的长度视为类型的一部分，长度不同的两个数组是不同的类型，不能直接比较</strong>。</p>
-
 <ul>
 <li>对于数组来说，依次比较各个<strong>元素</strong>的值。根据元素类型的不同，再依据是基本类型、复合类型、引用类型或接口类型，按照特定类型的规则进行比较。所有元素全都相等，数组才是相等的。</li>
 <li>对于结构体来说，依次比较各个<strong>字段</strong>的值。根据字段类型的不同，再依据是 4 中类型中的哪一种，按照特定类型的规则进行比较。所有字段全都相等，结构体才是相等的。</li>
 </ul>
-
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -574,9 +555,9 @@ fmt.Println(c)
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">a := [4]int{1, 2, 3, 4}
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">a := [4]int{1, 2, 3, 4}
 b := [4]int{1, 2, 3, 4}
 c := [4]int{1, 3, 4, 5}
 fmt.Println(a == b) // true
@@ -590,17 +571,15 @@ aa := A { a : 1, b : &#34;test1&#34; }
 bb := A { a : 1, b : &#34;test1&#34; }
 cc := A { a : 1, b : &#34;test2&#34; }
 fmt.Println(aa == bb)
-fmt.Println(aa == cc)</pre></td></tr></table>
+fmt.Println(aa == cc)
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="引用类型">引用类型</h3>
-
+</div><h3 id="引用类型">引用类型</h3>
 <p>引用类型是间接指向它所引用的数据的，保存的是数据的地址。<strong>引用类型的比较实际判断的是两个变量是不是指向同一份数据，它不会去比较实际指向的数据。</strong></p>
-
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -610,9 +589,9 @@ fmt.Println(aa == cc)</pre></td></tr></table>
 </span><span class="lnt"> 8
 </span><span class="lnt"> 9
 </span><span class="lnt">10
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">type A struct {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">type A struct {
     a int
     b string
 }
@@ -621,120 +600,112 @@ aa := &amp;A { a : 1, b : &#34;test1&#34; }
 bb := &amp;A { a : 1, b : &#34;test1&#34; }
 cc := aa
 fmt.Println(aa == bb)
-fmt.Println(aa == cc)</pre></td></tr></table>
+fmt.Println(aa == cc)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因为<code>aa</code>和<code>bb</code>指向的两个不同的结构体，虽然它们指向的值是相等的（见上面复合类型的比较），但是它们不等。
+</div><p>因为<code>aa</code>和<code>bb</code>指向的两个不同的结构体，虽然它们指向的值是相等的（见上面复合类型的比较），但是它们不等。
 <code>aa</code>和<code>cc</code>指向相同的结构体，所以它们相等。</p>
-
 <p>再看看<code>channel</code>的比较：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">ch1 := make(chan int, 1)
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">ch1 := make(chan int, 1)
 ch2 := make(chan int, 1)
 ch3 := ch1
 
 fmt.Println(ch1 == ch2)
-fmt.Println(ch1 == ch3)</pre></td></tr></table>
+fmt.Println(ch1 == ch3)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>ch1</code>和<code>ch2</code>虽然类型相同，但是指向不同的<code>channel</code>，所以它们不等。
+</div><p><code>ch1</code>和<code>ch2</code>虽然类型相同，但是指向不同的<code>channel</code>，所以它们不等。
 <code>ch1</code>和<code>ch3</code>指向相同的<code>channel</code>，所以它们相等。</p>
-
-<p>关于引用类型，有两个比较特殊的规定：
-* 切片之间不允许比较。切片只能与<code>nil</code>值比较。
-* <code>map</code>之间不允许比较。<code>map</code>只能与<code>nil</code>值比较。</p>
-
+<p>关于引用类型，有两个比较特殊的规定：</p>
+<ul>
+<li>切片之间不允许比较。切片只能与<code>nil</code>值比较。</li>
+<li><code>map</code>之间不允许比较。<code>map</code>只能与<code>nil</code>值比较。</li>
+</ul>
 <p>为什么要做这样的规定？我们先来说切片。因为切片是引用类型，它可以间接的指向自己。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">a := []interface{}{ 1, 2.0 }
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">a := []interface{}{ 1, 2.0 }
 a[1] = a
 fmt.Println(a)
 
 // !!!
 // runtime: goroutine stack exceeds 1000000000-byte limit
-// fatal error: stack overflow</pre></td></tr></table>
+// fatal error: stack overflow
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码将<code>a</code>赋值给<code>a[1]</code>导致递归引用，<code>fmt.Println(a)</code>语句直接爆栈。</p>
-
+</div><p>上面代码将<code>a</code>赋值给<code>a[1]</code>导致递归引用，<code>fmt.Println(a)</code>语句直接爆栈。</p>
 <ul>
 <li>切片如果直接比较引用地址，是不合适的。首先，切片与数组是比较相近的类型，比较方式的差异会造成使用者的混淆。另外，长度和容量是切片类型的一部分，不同长度和容量的切片如何比较？</li>
 <li>切片如果像数组那样比较里面的元素，又会出现上来提到的循环引用的问题。虽然可以在语言层面解决这个问题，但是 golang 团队认为不值得为此耗费精力。</li>
 </ul>
-
 <p>基于上面两点原因，golang 直接规定<strong>切片类型不可比较</strong>。使用<code>==</code>比较切片直接编译报错。</p>
-
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var a []int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var a []int
 var b []int
 
 // invalid operation: a == b (slice can only be compared to nil)
-fmt.Println(a == b)</pre></td></tr></table>
+fmt.Println(a == b)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>错误信息很明确。</p>
-
+</div><p>错误信息很明确。</p>
 <p><strong>因为<code>map</code>的值类型可能为不可比较类型（见下面，切片是不可比较类型），所以<code>map</code>类型也不可比较🤣。</strong></p>
-
 <h3 id="接口类型">接口类型</h3>
-
 <p>接口类型是 golang 中比较重要的一种类型。接口类型的值，我们称为接口值。一个接口值是由两个部分组成的，具体类型（即该接口存储的值的类型）和该类型的一个值。引用《go 程序设计语言》的名称，分别称为<strong>动态类型</strong>和<strong>动态值</strong>。接口值的比较涉及这两部分的比较，只有当<strong>动态类型完全相同</strong>且动态值相等（动态值使用<code>==</code>比较），两个接口值才是相等的。</p>
-
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var a interface{} = 1
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var a interface{} = 1
 var b interface{} = 2
 var c interface{} = 1
 var d interface{} = 1.0
 fmt.Println(a == b) // false
 fmt.Println(a == c) // true
-fmt.Println(a == d) // false</pre></td></tr></table>
+fmt.Println(a == d) // false
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>a</code>和<code>b</code>动态类型相同（都是<code>int</code>），动态值也相同（都是<code>1</code>，基本类型比较），故两者相等。
+</div><p><code>a</code>和<code>b</code>动态类型相同（都是<code>int</code>），动态值也相同（都是<code>1</code>，基本类型比较），故两者相等。
 <code>a</code>和<code>c</code>动态类型相同，动态值不等（分别为<code>1</code>和<code>2</code>，基本类型比较），故两者不等。
 <code>a</code>和<code>d</code>动态类型不同，<code>a</code>为<code>int</code>，<code>d</code>为<code>float64</code>，故两者不等。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -749,9 +720,9 @@ fmt.Println(a == d) // false</pre></td></tr></table>
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">type A struct {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">type A struct {
     a int
     b string
 }
@@ -765,36 +736,33 @@ fmt.Println(aa == cc) // false
 
 var dd interface{} = &amp;A { a: 1, b: &#34;test&#34; }
 var ee interface{} = &amp;A { a: 1, b: &#34;test&#34; }
-fmt.Println(dd == ee) // false</pre></td></tr></table>
+fmt.Println(dd == ee) // false
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>aa</code>和<code>bb</code>动态类型相同（都是<code>A</code>），动态值也相同（结构体<code>A</code>，见上面复合类型的比较规则），故两者相等。
+</div><p><code>aa</code>和<code>bb</code>动态类型相同（都是<code>A</code>），动态值也相同（结构体<code>A</code>，见上面复合类型的比较规则），故两者相等。
 <code>aa</code>和<code>cc</code>动态类型相同，动态值不同，故两者不等。
 <code>dd</code>和<code>ee</code>动态类型相同（都是<code>*A</code>），动态值使用指针（引用）类型的比较，由于不是指向同一个地址，故不等。</p>
-
 <p>注意：</p>
-
 <p><strong>如果接口的动态值不可比较，强行比较会<code>panic</code>！！！</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var a interface{} = []int{1, 2, 3, 4}
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var a interface{} = []int{1, 2, 3, 4}
 var b interface{} = []int{1, 2, 3, 4}
 // panic: runtime error: comparing uncomparable type []int
-fmt.Println(a == b)</pre></td></tr></table>
+fmt.Println(a == b)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>a</code>和<code>b</code>的动态值是切片类型，而切片类型不可比较，所以<code>a == b</code>会<code>panic</code>。</p>
-
+</div><p><code>a</code>和<code>b</code>的动态值是切片类型，而切片类型不可比较，所以<code>a == b</code>会<code>panic</code>。</p>
 <p><strong>接口值的比较不要求接口类型（注意不是动态类型）完全相同，只要一个接口可以转化为另一个就可以比较</strong>。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -803,9 +771,9 @@ fmt.Println(a == b)</pre></td></tr></table>
 </span><span class="lnt">7
 </span><span class="lnt">8
 </span><span class="lnt">9
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var f *os.File
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var f *os.File
 
 var r io.Reader = f
 var rc io.ReadCloser = f
@@ -813,34 +781,31 @@ fmt.Println(r == rc) // true
 
 var w io.Writer = f
 // invalid operation: r == w (mismatched types io.Reader and io.Writer)
-fmt.Println(r == w)</pre></td></tr></table>
+fmt.Println(r == w)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>r</code>的类型为<code>io.Reader</code>接口，<code>rc</code>的类型为<code>io.ReadCloser</code>接口。查看源码，<code>io.ReadCloser</code>的定义如下：</p>
+</div><p><code>r</code>的类型为<code>io.Reader</code>接口，<code>rc</code>的类型为<code>io.ReadCloser</code>接口。查看源码，<code>io.ReadCloser</code>的定义如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">type ReadCloser interface {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">type ReadCloser interface {
 	Reader
 	Closer
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>io.ReadCloser</code>可转化为<code>io.Reader</code>，故两者可比较。</p>
-
+</div><p><code>io.ReadCloser</code>可转化为<code>io.Reader</code>，故两者可比较。</p>
 <p>而<code>io.Writer</code>不可转化为<code>io.Reader</code>，编译报错。</p>
-
-<h3 id="使用-type-定义的类型">使用<code>type</code>定义的类型</h3>
-
+<h3 id="使用type定义的类型">使用<code>type</code>定义的类型</h3>
 <p>使用<code>type</code>可以基于现有类型定义新的类型。新类型会根据它们的底层类型来比较。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -853,9 +818,9 @@ fmt.Println(r == w)</pre></td></tr></table>
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">type myint int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">type myint int
 var a myint = 10
 var b myint = 20
 var c myint = 10
@@ -867,30 +832,24 @@ var aa arr4 = [4]int{1, 2, 3, 4}
 var bb arr4 = [4]int{1, 2, 3, 4}
 var cc arr4 = [4]int{1, 2, 3, 5}
 fmt.Println(aa == bb)
-fmt.Println(aa == cc)</pre></td></tr></table>
+fmt.Println(aa == cc)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>myint</code>根据底层类型<code>int</code>来比较。
+</div><p><code>myint</code>根据底层类型<code>int</code>来比较。
 <code>arr4</code>根据底层类型<code>[4]int</code>来比较。</p>
-
 <h2 id="不可比较性">不可比较性</h2>
-
 <p>前面说过，golang 中的切片类型是不可比较的。所有含有切片的类型都是不可比较的。例如：</p>
-
 <ul>
 <li>数组元素是切片类型。</li>
 <li>结构体有切片类型的字段。</li>
 <li>指针指向的是切片类型。</li>
 </ul>
-
 <p><strong>不可比较性会传递，如果一个结构体由于含有切片字段不可比较，那么将它作为元素的数组不可比较，将它作为字段类型的结构体不可比较</strong>。</p>
-
-<h2 id="谈谈-map">谈谈<code>map</code></h2>
-
+<h2 id="谈谈map">谈谈<code>map</code></h2>
 <p>由于<code>map</code>的<code>key</code>是使用<code>==</code>来判等的，所以所有不可比较的类型都不能作为<code>map</code>的<code>key</code>。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -899,9 +858,9 @@ fmt.Println(aa == cc)</pre></td></tr></table>
 </span><span class="lnt">7
 </span><span class="lnt">8
 </span><span class="lnt">9
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">// invalid map key type []int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// invalid map key type []int
 m1 := make(map[[]int]int)
 
 type A struct {
@@ -909,22 +868,17 @@ type A struct {
     b string
 }
 // invalid map key type A
-m2 := make(map[A]int)</pre></td></tr></table>
+m2 := make(map[A]int)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>由于切片类型不可比较，不能作为<code>map</code>的<code>key</code>，编译时<code>m1 := make(map[[]int]int)</code>报错。
+</div><p>由于切片类型不可比较，不能作为<code>map</code>的<code>key</code>，编译时<code>m1 := make(map[[]int]int)</code>报错。
 由于结构体<code>A</code>含有切片字段，不可比较，不能作为<code>map</code>的<code>key</code>，编译报错。</p>
-
 <h2 id="总结">总结</h2>
-
 <p>本文详尽介绍了 golang 中<code>==</code>操作的细节，希望能对大家有所帮助。</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://book.douban.com/subject/27044219/">Go程序设计语言</a></li>
 </ol>
-
 <p><a href="https://darjun.github.io">我的个人主页</a></p>
 
     </div>

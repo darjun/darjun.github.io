@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.64.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/01/09/goweb/template2/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,16 +69,13 @@
 <meta property="article:modified_time" content="2020-01-09T21:31:43+00:00" />
 <meta itemprop="name" content="Go Web 编程之 模板（二）">
 <meta itemprop="description" content="概述 在上一篇文章中，我们介绍了 Go 模板库text/template。 text/template库用于生成文本输出。在 Web 开发中，涉及到很多安全方">
-
-
 <meta itemprop="datePublished" content="2020-01-09T21:31:43&#43;00:00" />
 <meta itemprop="dateModified" content="2020-01-09T21:31:43&#43;00:00" />
-<meta itemprop="wordCount" content="4187">
+<meta itemprop="wordCount" content="4184">
 
 
 
-<meta itemprop="keywords" content="Go Web 编程," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go Web 编程," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go Web 编程之 模板（二）"/>
 <meta name="twitter:description" content="概述 在上一篇文章中，我们介绍了 Go 模板库text/template。 text/template库用于生成文本输出。在 Web 开发中，涉及到很多安全方"/>
 
@@ -363,7 +360,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 4187 字 </span>
+        <span class="more-meta"> 约 4184 字 </span>
           <span class="more-meta"> 预计阅读 9 分钟 </span>
 
         
@@ -384,58 +381,52 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#初体验">初体验</a></li>
-<li><a href="#动作">动作</a>
-<ul>
-<li><a href="#条件动作">条件动作</a></li>
-<li><a href="#迭代动作">迭代动作</a></li>
-<li><a href="#设置动作">设置动作</a></li>
-<li><a href="#包含动作">包含动作</a></li>
-</ul></li>
-<li><a href="#其它元素">其它元素</a>
-<ul>
-<li><a href="#管道">管道</a></li>
-<li><a href="#函数">函数</a></li>
-</ul></li>
-<li><a href="#上下文感知">上下文感知</a></li>
-<li><a href="#防御-xss-攻击">防御 XSS 攻击</a></li>
-<li><a href="#嵌套模板">嵌套模板</a>
-<ul>
-<li><a href="#使用块动作定义默认模板">使用块动作定义默认模板</a></li>
-</ul></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#初体验">初体验</a></li>
+    <li><a href="#动作">动作</a>
+      <ul>
+        <li><a href="#条件动作">条件动作</a></li>
+        <li><a href="#迭代动作">迭代动作</a></li>
+        <li><a href="#设置动作">设置动作</a></li>
+        <li><a href="#包含动作">包含动作</a></li>
+      </ul>
+    </li>
+    <li><a href="#其它元素">其它元素</a>
+      <ul>
+        <li><a href="#管道">管道</a></li>
+        <li><a href="#函数">函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#上下文感知">上下文感知</a></li>
+    <li><a href="#防御-xss-攻击">防御 XSS 攻击</a></li>
+    <li><a href="#嵌套模板">嵌套模板</a>
+      <ul>
+        <li><a href="#使用块动作定义默认模板">使用块动作定义默认模板</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="概述">概述</h2>
-
+      <h2 id="概述">概述</h2>
 <p>在<a href="https://darjun.github.io/2019/12/31/goweb/template1/">上一篇文章</a>中，我们介绍了 Go 模板库<code>text/template</code>。
 <code>text/template</code>库用于生成文本输出。在 Web 开发中，涉及到很多安全方面的问题。有些数据是用户输入的，不能直接替换到模板中，否则可能导致注入攻击。
 Go 提供了<code>html/template</code>库处理这些问题。<code>html/template</code>提供了与<code>text/template</code>一样的接口。
 我们通常使用<code>html/template</code>生成 HTML 输出。</p>
-
 <p>由于<a href="https://darjun.github.io/2019/12/31/goweb/template1/">上一篇文章</a>已经详细介绍了 Go 模板的基本概念，
 本文主要从使用的层面来介绍<code>html/template</code>库。中间会有安全方面的内容。那就开始吧！</p>
-
 <h2 id="初体验">初体验</h2>
-
 <p><code>html/template</code>库的使用与<code>text/template</code>基本一样：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -489,24 +480,24 @@ Go 提供了<code>html/template</code>库处理这些问题。<code>html/templat
 	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Hello World&#34;</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewServeMux</span><span class="p">()</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewServeMux</span><span class="p">(</span><span class="p">)</span>
 	<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">indexHandler</span><span class="p">)</span>
 
 	<span class="nx">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span> <span class="p">{</span>
 		<span class="nx">Addr</span><span class="p">:</span>    <span class="s">&#34;:8080&#34;</span><span class="p">,</span>
 		<span class="nx">Handler</span><span class="p">:</span> <span class="nx">mux</span><span class="p">,</span>
 	<span class="p">}</span>
-	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>hello.html</code>：</p>
+</div><p>模板文件<code>hello.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -521,61 +512,56 @@ Go 提供了<code>html/template</code>库处理这些问题。<code>html/templat
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
-<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Go Web 编程之 模板（二）<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p"></span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">title</span><span class="p"></span><span class="p">&gt;</span>Go Web 编程之 模板（二）<span class="p">&lt;</span><span class="p">/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p"></span><span class="p">&gt;</span>
 	{{ . }}
-<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板中的<code>{{ . }}</code>会被替换为传入的数据&rdquo;Hello World&rdquo;，程序将模板执行后生成的文本通过<code>ResponseWriter</code>传回客户端。</p>
-
+</div><p>模板中的<code>{{ . }}</code>会被替换为传入的数据&quot;Hello World&rdquo;，程序将模板执行后生成的文本通过<code>ResponseWriter</code>传回客户端。</p>
 <p>编译，运行程序（我的环境 Win10 + Git Bash）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go build -o main.exe main.go
-$ ./main.exe</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go build -o main.exe main.go
+$ ./main.exe
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>打开浏览器，输入<code>localhost:8080</code>，即可看到&rdquo;Hello World&rdquo;页面。</p>
-
+</div><p>打开浏览器，输入<code>localhost:8080</code>，即可看到&quot;Hello World&quot;页面。</p>
 <p>我们在介绍<code>text/template</code>库的时候，提到了<strong>空白问题</strong>。在生成 HTML 时一般不需要考虑这个问题，因为浏览器渲染的时候会自动去掉多余的空白。</p>
-
 <p>为了编写示例代码的便利，在解析时不进行错误处理，<code>html/template</code>库提供了<code>Must</code>方法。
 它接受两个参数，一个模板对象指针，一个错误。如果错误参数不为<code>nil</code>，直接 panic，否则返回模板对象指针。
 使用<code>Must</code>方法简化上面的处理器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">indexHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;hello.html&#34;</span><span class="p">))</span>
+    <span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;hello.html&#34;</span><span class="p">)</span><span class="p">)</span>
     <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Hello World&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="动作">动作</h2>
-
+</div><h2 id="动作">动作</h2>
 <p>接下来，我们通过示例再过一遍几种动作。</p>
-
 <h3 id="条件动作">条件动作</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -590,23 +576,23 @@ $ ./main.exe</pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">conditionHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">age</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseInt</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nf">Query</span><span class="p">().</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+	<span class="nx">age</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseInt</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">)</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
 		<span class="k">return</span>
 	<span class="p">}</span>
 
-	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;condition.html&#34;</span><span class="p">))</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;condition.html&#34;</span><span class="p">)</span><span class="p">)</span>
 	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">age</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/condition&#34;</span><span class="p">,</span> <span class="nx">conditionHandler</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/condition&#34;</span><span class="p">,</span> <span class="nx">conditionHandler</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件 condition.html 只有 body 部分不同：</p>
+</div><p>模板文件 condition.html 只有 body 部分不同：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -616,26 +602,23 @@ $ ./main.exe</pre></td></tr></table>
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Your age is: {{ . }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Your age is: {{ . }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
 {{ if gt . 60 }}
-<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Old People!<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Old People!<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
 {{ else if gt . 40 }}
-<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Middle Aged!<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Middle Aged!<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
 {{ else }}
-<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Young!<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
-{{ end }}</code></pre></td></tr></table>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Young!<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
+{{ end }}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板逻辑很简单，使用内置函数<code>gt</code>判断传入的年龄处于哪个区间，显示对应的文本。</p>
-
+</div><p>模板逻辑很简单，使用内置函数<code>gt</code>判断传入的年龄处于哪个区间，显示对应的文本。</p>
 <p>编译、运行程序，打开浏览器，输入<code>localhost:8080/condition?age=10</code>。</p>
-
 <h3 id="迭代动作">迭代动作</h3>
-
 <p>迭代动作一般用于生成一个列表。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -661,24 +644,24 @@ $ ./main.exe</pre></td></tr></table>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">iterateHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;iterate.html&#34;</span><span class="p">))</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;iterate.html&#34;</span><span class="p">)</span><span class="p">)</span>
 
-	<span class="nx">items</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">Item</span> <span class="p">{</span>
-		<span class="p">{</span> <span class="s">&#34;iPhone&#34;</span><span class="p">,</span> <span class="mi">5499</span> <span class="p">},</span>
-		<span class="p">{</span> <span class="s">&#34;iPad&#34;</span><span class="p">,</span> <span class="mi">6331</span> <span class="p">},</span>
-		<span class="p">{</span> <span class="s">&#34;iWatch&#34;</span><span class="p">,</span> <span class="mi">1499</span> <span class="p">},</span>
-		<span class="p">{</span> <span class="s">&#34;MacBook&#34;</span><span class="p">,</span> <span class="mi">8250</span> <span class="p">},</span>
+	<span class="nx">items</span> <span class="o">:=</span> <span class="p">[</span><span class="p">]</span><span class="nx">Item</span> <span class="p">{</span>
+		<span class="p">{</span> <span class="s">&#34;iPhone&#34;</span><span class="p">,</span> <span class="mi">5499</span> <span class="p">}</span><span class="p">,</span>
+		<span class="p">{</span> <span class="s">&#34;iPad&#34;</span><span class="p">,</span> <span class="mi">6331</span> <span class="p">}</span><span class="p">,</span>
+		<span class="p">{</span> <span class="s">&#34;iWatch&#34;</span><span class="p">,</span> <span class="mi">1499</span> <span class="p">}</span><span class="p">,</span>
+		<span class="p">{</span> <span class="s">&#34;MacBook&#34;</span><span class="p">,</span> <span class="mi">8250</span> <span class="p">}</span><span class="p">,</span>
 	<span class="p">}</span>
 	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">items</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/iterate&#34;</span><span class="p">,</span> <span class="nx">iterateHandler</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/iterate&#34;</span><span class="p">,</span> <span class="nx">iterateHandler</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>iterate.html</code>：</p>
+</div><p>模板文件<code>iterate.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -686,22 +669,20 @@ $ ./main.exe</pre></td></tr></table>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Apple Products<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">h1</span><span class="p"></span><span class="p">&gt;</span>Apple Products<span class="p">&lt;</span><span class="p">/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">ul</span><span class="p"></span><span class="p">&gt;</span>
 {{ range . }}
-<span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>{{ .Name }}: ￥{{ .Price }}<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">li</span><span class="p"></span><span class="p">&gt;</span>{{ .Name }}: ￥{{ .Price }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">li</span><span class="p">&gt;</span>
 {{ end }}
-<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>再次提醒，在<code>{{ range }}</code>中，<code>.</code>会被替换为当前遍历的元素值。</p>
-
+</div><p>再次提醒，在<code>{{ range }}</code>中，<code>.</code>会被替换为当前遍历的元素值。</p>
 <h3 id="设置动作">设置动作</h3>
-
 <p>设置动作允许用户在指定范围内为<code>.</code>设置值。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -741,7 +722,7 @@ $ ./main.exe</pre></td></tr></table>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">setHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;set.html&#34;</span><span class="p">))</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;set.html&#34;</span><span class="p">)</span><span class="p">)</span>
 
 	<span class="nx">pet</span> <span class="o">:=</span> <span class="nx">Pet</span> <span class="p">{</span>
 		<span class="nx">Name</span><span class="p">:</span>	<span class="s">&#34;Orange&#34;</span><span class="p">,</span>
@@ -749,18 +730,18 @@ $ ./main.exe</pre></td></tr></table>
 		<span class="nx">Owner</span><span class="p">:</span>	<span class="nx">User</span> <span class="p">{</span>
 			<span class="nx">Name</span><span class="p">:</span>	<span class="s">&#34;dj&#34;</span><span class="p">,</span>
 			<span class="nx">Age</span><span class="p">:</span>	<span class="mi">28</span><span class="p">,</span>
-		<span class="p">},</span>
+		<span class="p">}</span><span class="p">,</span>
 	<span class="p">}</span>
 	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">pet</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/set&#34;</span><span class="p">,</span> <span class="nx">setHandler</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/set&#34;</span><span class="p">,</span> <span class="nx">setHandler</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>set.html</code>：</p>
+</div><p>模板文件<code>set.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -770,39 +751,37 @@ $ ./main.exe</pre></td></tr></table>
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Pet Info<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Name: {{ .Name }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Age: {{ .Age }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Owner:<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">h1</span><span class="p"></span><span class="p">&gt;</span>Pet Info<span class="p">&lt;</span><span class="p">/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Name: {{ .Name }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Age: {{ .Age }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Owner:<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
 {{ with .Owner }}
-<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Name: {{ .Name }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Age: {{ .Age }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
-{{ end }}</code></pre></td></tr></table>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Name: {{ .Name }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Age: {{ .Age }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
+{{ end }}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在<code>{{ with .Owner }}</code>和<code>{{ end }}</code>之间，可以直接通过<code>{{ .Name }}</code>和<code>{{ .Age }}</code>访问宠物主人的信息。</p>
-
+</div><p>在<code>{{ with .Owner }}</code>和<code>{{ end }}</code>之间，可以直接通过<code>{{ .Name }}</code>和<code>{{ .Age }}</code>访问宠物主人的信息。</p>
 <h3 id="包含动作">包含动作</h3>
-
 <p>包含动作允许用户在一个模板里面包含另一个模板，从而构造出嵌套的模板。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">includeHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;include1.html&#34;</span><span class="p">,</span> <span class="s">&#34;include2.html&#34;</span><span class="p">))</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;include1.html&#34;</span><span class="p">,</span> <span class="s">&#34;include2.html&#34;</span><span class="p">)</span><span class="p">)</span>
 	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Hello World!&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板<code>include1.html</code>：</p>
+</div><p>模板<code>include1.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -825,48 +804,44 @@ $ ./main.exe</pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
-<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Go Web 编程之 模板（二）<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>This is in template include1.html<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>The value of dot is {{ . }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">hr</span><span class="p">/&gt;</span>
-	<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Don&#39;t pass argument to include2.html:<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p"></span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">title</span><span class="p"></span><span class="p">&gt;</span>Go Web 编程之 模板（二）<span class="p">&lt;</span><span class="p">/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">div</span><span class="p"></span><span class="p">&gt;</span>This is in template include1.html<span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>The value of dot is {{ . }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">hr</span><span class="p">/</span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Don&#39;t pass argument to include2.html:<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
 	{{ template &#34;include2.html&#34; }}
-	<span class="p">&lt;</span><span class="nt">hr</span><span class="p">/&gt;</span>
-	<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Pass dot to include2.html<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">hr</span><span class="p">/</span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Pass dot to include2.html<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
 	{{ template &#34;include2.html&#34; . }}
-	<span class="p">&lt;</span><span class="nt">hr</span><span class="p">/&gt;</span>
-<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></td></tr></table>
+	<span class="p">&lt;</span><span class="nt">hr</span><span class="p">/</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板<code>include2.html</code>：</p>
+</div><p>模板<code>include2.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Get dot of value [{{ . }}]<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>Get dot of value [{{ . }}]<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>建议自己动手运行一下程序，观察输出。</p>
-
+</div><p>建议自己动手运行一下程序，观察输出。</p>
 <p><code>{{ template &quot;include2.html&quot; }}</code>未传入参数给模板<code>include2.html</code>，<code>{{ template &quot;include2.html&quot; . }}</code>将模板<code>include1.html</code>的参数传给了<code>include2.html</code>。</p>
-
 <h2 id="其它元素">其它元素</h2>
-
 <h3 id="管道">管道</h3>
-
 <p>管道我们可以理解为数据的流向，在数据流向输出的每个阶段进行特定的处理。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -875,31 +850,29 @@ $ ./main.exe</pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">pipelineHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;pipeline.html&#34;</span><span class="p">))</span>
-	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Float64</span><span class="p">())</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;pipeline.html&#34;</span><span class="p">)</span><span class="p">)</span>
+	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Float64</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/pipeline&#34;</span><span class="p">,</span> <span class="nx">pipelineHandler</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/pipeline&#34;</span><span class="p">,</span> <span class="nx">pipelineHandler</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>pipeline.html</code>：</p>
+</div><p>模板文件<code>pipeline.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>{{ . | printf &#34;%.2f&#34; }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">p</span><span class="p"></span><span class="p">&gt;</span>{{ . | printf &#34;%.2f&#34; }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>该程序实现的功能非常简单，将传入的浮点数格式化为只保留小数点后两位。<code>|</code>是管道符号，前面的输出将作为后面的输入（如果是函数或方法调用，前面的输出将作为最后一个参数）。
+</div><p>该程序实现的功能非常简单，将传入的浮点数格式化为只保留小数点后两位。<code>|</code>是管道符号，前面的输出将作为后面的输入（如果是函数或方法调用，前面的输出将作为最后一个参数）。
 实际上，<code>{{ . | printf &quot;%.2f&quot; }}</code>的输出<code>fmt.Sprintf(&quot;%.2f&quot;, .表示的数据)</code>的返回字符串相同。</p>
-
 <h3 id="函数">函数</h3>
-
 <p>Go 模板库内置了一些基础的函数，如果要实现更为复杂的功能，可以自定义函数。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -918,34 +891,32 @@ $ ./main.exe</pre></td></tr></table>
 
 <span class="kd">func</span> <span class="nf">funcsHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">funcMap</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">FuncMap</span><span class="p">{</span> <span class="s">&#34;fdate&#34;</span><span class="p">:</span> <span class="nx">formateDate</span> <span class="p">}</span>
-	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;funcs.html&#34;</span><span class="p">).</span><span class="nf">Funcs</span><span class="p">(</span><span class="nx">funcMap</span><span class="p">).</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;funcs.html&#34;</span><span class="p">))</span>
-	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">())</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;funcs.html&#34;</span><span class="p">)</span><span class="p">.</span><span class="nf">Funcs</span><span class="p">(</span><span class="nx">funcMap</span><span class="p">)</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;funcs.html&#34;</span><span class="p">)</span><span class="p">)</span>
+	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/funcs&#34;</span><span class="p">,</span> <span class="nx">funcsHandler</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/funcs&#34;</span><span class="p">,</span> <span class="nx">funcsHandler</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>funcs.html</code>：</p>
+</div><p>模板文件<code>funcs.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Today is {{ . | fdate }}<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p"></span><span class="p">&gt;</span>Today is {{ . | fdate }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>自定义函数可以接受任意多个参数，但是只能返回一个值，或者返回一个值和一个错误。
+</div><p>自定义函数可以接受任意多个参数，但是只能返回一个值，或者返回一个值和一个错误。
 上面代码中，我们必须先通过<code>template.New</code>创建模板，然后调用<code>Funcs</code>设置自定义函数，最后再解析模板文件。
 因为模板文件中使用了<code>fdate</code>，未设置之前会解析失败。</p>
-
 <h2 id="上下文感知">上下文感知</h2>
-
 <p>上下文感知是<code>html/template</code>库的一个非常有趣的特性。根据需要替换的文本在文档中所处的位置，模板在显示这些内容的时候会对其进行相应的修改。
 上下文感知的一个常见用途就是对内容进行转义。如果需要显示的是 HTML 的内容，那么进行 HTML 转义。如果显示的是 JavaScript 内容，那么进行 JavaScript 转义。
 Go 模板引擎还能识别出内容中的 URL 或 CSS，可以对它们实施正确的转义。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -954,32 +925,32 @@ Go 模板引擎还能识别出内容中的 URL 或 CSS，可以对它们实施�
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">contextAwareHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;context-aware.html&#34;</span><span class="p">))</span>
-	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">`He saied: &lt;i&gt;&#34;She&#39;s alone?&#34;&lt;/i&gt;`</span><span class="p">)</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;context-aware.html&#34;</span><span class="p">)</span><span class="p">)</span>
+	<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">`</span><span class="s">He saied: &lt;i&gt;&#34;She&#39;s alone?&#34;&lt;/i&gt;</span><span class="s">`</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/contextAware&#34;</span><span class="p">,</span> <span class="nx">contextAwareHandler</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/contextAware&#34;</span><span class="p">,</span> <span class="nx">contextAwareHandler</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>context-aware.html</code>：</p>
+</div><p>模板文件<code>context-aware.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>{{ . }}<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/{{ . }}&#34;</span><span class="p">&gt;</span>Path<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/?q={{ . }}&#34;</span><span class="p">&gt;</span>Query<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&#34;f(&#39;{{ . }}&#39;)&#34;</span><span class="p">&gt;</span>JavaScript<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p"></span><span class="p">&gt;</span>{{ . }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p"></span><span class="p">&gt;</span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/{{ . }}&#34;</span><span class="p"></span><span class="p">&gt;</span>Path<span class="p">&lt;</span><span class="p">/</span><span class="nt">a</span><span class="p">&gt;</span><span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p"></span><span class="p">&gt;</span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/?q={{ . }}&#34;</span><span class="p"></span><span class="p">&gt;</span>Query<span class="p">&lt;</span><span class="p">/</span><span class="nt">a</span><span class="p">&gt;</span><span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p"></span><span class="p">&gt;</span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&#34;f(&#39;{{ . }}&#39;)&#34;</span><span class="p"></span><span class="p">&gt;</span>JavaScript<span class="p">&lt;</span><span class="p">/</span><span class="nt">a</span><span class="p">&gt;</span><span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>编译、运行程序，使用 curl 访问<code>localhost:8080/contextAware</code>，得到下面的内容：</p>
+</div><p>编译、运行程序，使用 curl 访问<code>localhost:8080/contextAware</code>，得到下面的内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -994,9 +965,9 @@ Go 模板引擎还能识别出内容中的 URL 或 CSS，可以对它们实施�
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">&lt;!DOCTYPE html&gt;
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;!DOCTYPE html&gt;
 &lt;html lang=&#34;en&#34;&gt;
 &lt;head&gt;
   &lt;meta charset=&#34;UTF-8&#34;&gt;
@@ -1010,27 +981,23 @@ Go 模板引擎还能识别出内容中的 URL 或 CSS，可以对它们实施�
   &lt;div&gt;&lt;a href=&#34;/?q=He%20saied%3a%20%3ci%3e%22She%27s%20alone%3f%22%3c%2fi%3e&#34;&gt;Query&lt;/a&gt;&lt;/div&gt;
   &lt;div&gt;&lt;a onclick=&#34;f(&#39;He saied: \x3ci\x3e\x22She\x27s alone?\x22\x3c\/i\x3e&#39;)&#34;&gt;JavaScript&lt;/a&gt;&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</pre></td></tr></table>
+&lt;/html&gt;
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们依次来看，需要呈现的数据是<code>He saied: &lt;i&gt;&quot;She's alone?&quot;&lt;/i&gt;</code>：</p>
-
+</div><p>我们依次来看，需要呈现的数据是<code>He saied: &lt;i&gt;&quot;She's alone?&quot;&lt;/i&gt;</code>：</p>
 <ul>
 <li>第一个<code>div</code>中，直接在页面中显示，其中 HTML 标签<code>&lt;i&gt;</code>和单、双引号都被转义了；</li>
 <li>第二个<code>div</code>中，数据出现在 URL 的路径中，所有非法的路径字符都被转义了，包括空格、尖括号、单双引号；</li>
 <li>第三个<code>div</code>中，数据出现在查询字符串中，除了 URL 路径中非法的字符，还有冒号（<code>:</code>）、问号（<code>?</code>）和斜杠也被转义了；</li>
 <li>第四个<code>div</code>中，数据出现在 OnClick 代码中，单双引号和斜杠都被转义了。</li>
 </ul>
-
 <p>这四种转义方式又有所不同，第一种转义为 HTML 字符实体，第二、三种转义为 URL 转义字符（<code>%</code>后跟字符编码的十六进制表示） ，第四种转义为 Go 中的十六进制字符表示。</p>
-
 <h2 id="防御-xss-攻击">防御 XSS 攻击</h2>
-
 <p>XSS 是一种常见的攻击形式。在论坛之类的可以接受用户输入的网站，攻击者可以内容中添加<code>&lt;scrpit&gt;</code>标签。如果网站未对输入的内容进行处理，
 其他用户浏览该页面时，<code>&lt;script&gt;</code>标签中的内容就会被执行，泄露用户的私密信息或利用用户的权限做破坏。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1045,63 +1012,55 @@ Go 模板引擎还能识别出内容中的 URL 或 CSS，可以对它们实施�
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">xssHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
 	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Method</span> <span class="o">==</span> <span class="s">&#34;POST&#34;</span> <span class="p">{</span>
-		<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;xss-display.html&#34;</span><span class="p">))</span>
-		<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;comment&#34;</span><span class="p">))</span>
+		<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;xss-display.html&#34;</span><span class="p">)</span><span class="p">)</span>
+		<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;comment&#34;</span><span class="p">)</span><span class="p">)</span>
 	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-		<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;xss-form.html&#34;</span><span class="p">))</span>
+		<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;xss-form.html&#34;</span><span class="p">)</span><span class="p">)</span>
 		<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
 	<span class="p">}</span>
 <span class="p">}</span>
 
-<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/xss&#34;</span><span class="p">,</span> <span class="nx">xssHandler</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/xss&#34;</span><span class="p">,</span> <span class="nx">xssHandler</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>xss-form.html</code>：</p>
+</div><p>模板文件<code>xss-form.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;/xss&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span><span class="p">&gt;</span>
-	Comment: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;comment&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span><span class="p">&gt;</span>
-	<span class="p">&lt;</span><span class="nt">hr</span><span class="p">/&gt;</span>
-	<span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;submit&#34;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;/xss&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span><span class="p"></span><span class="p">&gt;</span>
+	Comment: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;comment&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span><span class="p"></span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">hr</span><span class="p">/</span><span class="p">&gt;</span>
+	<span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;submit&#34;</span><span class="p"></span><span class="p">&gt;</span>Submit<span class="p">&lt;</span><span class="p">/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">form</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>xss-display.html</code>：</p>
+</div><p>模板文件<code>xss-display.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html">{{ . }}</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-html" data-lang="html">{{ . }}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>处理器中我们根据请求方法的不同进行不同的处理。GET 请求返回一个表单页面，POST 请求显示用户输入的评论信息。</p>
-
+</div><p>处理器中我们根据请求方法的不同进行不同的处理。GET 请求返回一个表单页面，POST 请求显示用户输入的评论信息。</p>
 <p>编译、运行程序，打开浏览器输入<code>localhost:8080/xss</code>，然后在输入框中输入<code>&lt;script&gt;alert(&quot;Boom!&quot;)&lt;/script&gt;</code>：</p>
-
-<p><img src="/img/in-post/goweb/template1.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/template1.png#center" alt=""></p>
 <p>点击 Submit 按钮：</p>
-
-<p><img src="/img/in-post/goweb/template2.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/template2.png#center" alt=""></p>
 <p><code>alert</code>代码并没有执行，为什么？</p>
-
 <p>我们之前说过 Go 模板有上下文感知的功能，它检测到在 HTML 页面中，所以输入数据会被转义。查看网页源码可以看到转义后的结果：</p>
-
-<p><img src="/img/in-post/goweb/template3.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/template3.png#center" alt=""></p>
 <p>那么如何才能不转义呢？<code>html/template</code>提供了<code>HTML</code>类型，Go 模板不会对该类型的变量进行转义。如果我们把上面的处理器修改为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1114,27 +1073,23 @@ Go 模板引擎还能识别出内容中的 URL 或 CSS，可以对它们实施�
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">xssHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
 	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Method</span> <span class="o">==</span> <span class="s">&#34;POST&#34;</span> <span class="p">{</span>
-		<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;xss-display.html&#34;</span><span class="p">))</span>
-		<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">template</span><span class="p">.</span><span class="nf">HTML</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;comment&#34;</span><span class="p">)))</span>
+		<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;xss-display.html&#34;</span><span class="p">)</span><span class="p">)</span>
+		<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">template</span><span class="p">.</span><span class="nf">HTML</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;comment&#34;</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
 	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-		<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;xss-form.html&#34;</span><span class="p">))</span>
+		<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;xss-form.html&#34;</span><span class="p">)</span><span class="p">)</span>
 		<span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
 	<span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>再次实验，提交上面的内容，在 Chrome 浏览器中显示：</p>
-
-<p><img src="/img/in-post/goweb/template4.png#center" alt="" /></p>
-
+</div><p>再次实验，提交上面的内容，在 Chrome 浏览器中显示：</p>
+<p><img src="/img/in-post/goweb/template4.png#center" alt=""></p>
 <p>这意味着攻击者可以让网站上的其他用户执行任意可能的攻击代码。</p>
-
 <h2 id="嵌套模板">嵌套模板</h2>
-
 <p>上一篇文章中说过，嵌套模板在定义网页布局时非常有用。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1151,23 +1106,23 @@ Go 模板引擎还能识别出内容中的 URL 或 CSS，可以对它们实施�
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">NestInfo</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="nx">Name</span> <span class="kt">string</span>
-	<span class="nx">Todos</span> <span class="p">[]</span><span class="kt">string</span>
+	<span class="nx">Todos</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">nestHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;layout.html&#34;</span><span class="p">))</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">ParseFiles</span><span class="p">(</span><span class="s">&#34;layout.html&#34;</span><span class="p">)</span><span class="p">)</span>
 
 	<span class="nx">data</span> <span class="o">:=</span> <span class="nx">NestInfo</span> <span class="p">{</span>
-		<span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;Homework&#34;</span><span class="p">,</span> <span class="s">&#34;Game&#34;</span><span class="p">,</span> <span class="s">&#34;Cleaning&#34;</span><span class="p">},</span>
+		<span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;Homework&#34;</span><span class="p">,</span> <span class="s">&#34;Game&#34;</span><span class="p">,</span> <span class="s">&#34;Cleaning&#34;</span><span class="p">}</span><span class="p">,</span>
 	<span class="p">}</span>
 	<span class="nx">t</span><span class="p">.</span><span class="nf">ExecuteTemplate</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;layout&#34;</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>模板文件<code>layout.html</code>：</p>
+</div><p>模板文件<code>layout.html</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1206,51 +1161,48 @@ Go 模板引擎还能识别出内容中的 URL 或 CSS，可以对它们实施�
 <td class="lntd">
 <pre class="chroma"><code class="language-html" data-lang="html">{{ define &#34;layout&#34; }}
 <span class="cp">&lt;!DOCTYPE html&gt;</span>
-<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Go Web 编程之 模板（二）<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p"></span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p"></span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p"></span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p"></span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p"></span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p"></span><span class="p">&gt;</span>Go Web 编程之 模板（二）<span class="p">&lt;</span><span class="p">/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p"></span><span class="p">&gt;</span>
   {{ template &#34;header&#34; . }}
 
   {{ template &#34;content&#34; . }}
 
   {{ template &#34;footer&#34; . }}
-<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">html</span><span class="p">&gt;</span>
 {{ end }}
  
 {{ define &#34;header&#34; }}
-<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hi, {{ .Name }}!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p"></span><span class="p">&gt;</span>Hi, {{ .Name }}!<span class="p">&lt;</span><span class="p">/</span><span class="nt">h1</span><span class="p">&gt;</span>
 {{ end }}
 
 {{ define &#34;content&#34; }}
 Todo:
-<span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">ul</span><span class="p"></span><span class="p">&gt;</span>
   {{ range .Todos }}
-  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>{{ . }}<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p"></span><span class="p">&gt;</span>{{ . }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">li</span><span class="p">&gt;</span>
   {{ end }}
-<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">ul</span><span class="p">&gt;</span>
 {{ end }}
 
 {{ define &#34;footer&#34; }}
 Copyright © 2020 darjun.
-{{ end }}</code></pre></td></tr></table>
+{{ end }}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们将网页主体拆为三个部分：header、content和footer。header 一般显示导航栏，欢迎信息。content 展示主体内容。footer 中显示版权，联系方式等信息。</p>
-
+</div><p>我们将网页主体拆为三个部分：header、content和footer。header 一般显示导航栏，欢迎信息。content 展示主体内容。footer 中显示版权，联系方式等信息。</p>
 <p>解析之后，我们需要调用<code>ExecuteTemplate</code>执行<code>layout</code>模板，不能直接使用<code>Execute</code>，因为主模板中只是定义了一些模板，没有具体的内容。</p>
-
 <h3 id="使用块动作定义默认模板">使用块动作定义默认模板</h3>
-
 <p>在上面的<code>layout.html</code>文件中，我们定义了模板<code>layout</code>，<code>layout</code>中使用了在本模板文件中定义的三个模板<code>header/content/footer</code>。其实这几个模板的定义和使用可以通过<code>block</code>动作合并在一起：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1282,82 +1234,75 @@ Copyright © 2020 darjun.
 <td class="lntd">
 <pre class="chroma"><code class="language-html" data-lang="html">{{ define &#34;layout&#34; }}
 <span class="cp">&lt;!DOCTYPE html&gt;</span>
-<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Go Web 编程之 模板（二）<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p"></span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p"></span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p"></span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p"></span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p"></span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p"></span><span class="p">&gt;</span>Go Web 编程之 模板（二）<span class="p">&lt;</span><span class="p">/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p"></span><span class="p">&gt;</span>
   {{ block &#34;header&#34; . }}
-  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hi, {{ .Name }}!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p"></span><span class="p">&gt;</span>Hi, {{ .Name }}!<span class="p">&lt;</span><span class="p">/</span><span class="nt">h1</span><span class="p">&gt;</span>
   {{ end }}
 
   {{ block &#34;content&#34; . }}
   Todo:
-  <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ul</span><span class="p"></span><span class="p">&gt;</span>
     {{ range .Todos }}
-    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>{{ . }}<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p"></span><span class="p">&gt;</span>{{ . }}<span class="p">&lt;</span><span class="p">/</span><span class="nt">li</span><span class="p">&gt;</span>
     {{ end }}
-  <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="p">/</span><span class="nt">ul</span><span class="p">&gt;</span>
   {{ end }}
 	
   {{ block &#34;footer&#34; . }}
   Copyright © 2020 darjun.
   {{ end }}
-<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>block</code>相当于定义模板后立即使用。</p>
+</div><p><code>block</code>相当于定义模板后立即使用。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">{{ block &#34;name&#34; arg }}
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">{{ block &#34;name&#34; arg }}
 ...
-{{ end }}</pre></td></tr></table>
+{{ end }}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>等价于：</p>
+</div><p>等价于：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">{{ define &#34;name&#34; }}
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">{{ define &#34;name&#34; }}
 ...
 {{ end }}
 
-{{ template &#34;name&#34; arg }}</pre></td></tr></table>
+{{ template &#34;name&#34; arg }}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="总结">总结</h2>
-
+</div><h2 id="总结">总结</h2>
 <p>本文详细介绍了<code>html/template</code>库，更多地通过案例来介绍，关注如何使用。模板在 Web 开发中是非常重要的部件，需要我们牢牢掌握。</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://book.douban.com/subject/27204133/">Go Web 编程</a></li>
 <li><a href="https://golang.org/pkg/html/template/">html/template</a>文档</li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 

@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.64.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/05/24/redis-skiplist/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,16 +69,13 @@
 <meta property="article:modified_time" content="2018-05-24T09:07:00+00:00" />
 <meta itemprop="name" content="Redis源码阅读-skiplist">
 <meta itemprop="description" content="概述 跳跃表是zset（有序集合）的基础数据结构。跳跃表可以高效地保持元素有序，并且实现相比平衡树简单、直观。Redis的跳跃表是基于Will">
-
-
 <meta itemprop="datePublished" content="2018-05-24T09:07:00&#43;00:00" />
 <meta itemprop="dateModified" content="2018-05-24T09:07:00&#43;00:00" />
-<meta itemprop="wordCount" content="5495">
+<meta itemprop="wordCount" content="5492">
 
 
 
-<meta itemprop="keywords" content="Redis源码阅读," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Redis源码阅读," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Redis源码阅读-skiplist"/>
 <meta name="twitter:description" content="概述 跳跃表是zset（有序集合）的基础数据结构。跳跃表可以高效地保持元素有序，并且实现相比平衡树简单、直观。Redis的跳跃表是基于Will"/>
 
@@ -363,7 +360,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/redis/"> Redis </a>
             
           </div>
-        <span class="more-meta"> 约 5495 字 </span>
+        <span class="more-meta"> 约 5492 字 </span>
           <span class="more-meta"> 预计阅读 11 分钟 </span>
 
         
@@ -384,70 +381,48 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#span-id-概述-概述-span"><span id="概述">概述</span></a></li>
-<li><a href="#span-id-实现结构-实现结构-span"><span id="实现结构">实现结构</span></a></li>
-<li><a href="#span-id-跳跃表操作-3-跳跃表操作-span"><span id="跳跃表操作">3.跳跃表操作</span></a>
-<ul>
-<li><a href="#span-id-创建跳跃表-3-1-创建跳跃表-span"><span id="创建跳跃表">3.1.创建跳跃表</span></a></li>
-<li><a href="#span-id-销毁跳跃表-3-2-销毁跳跃表-span"><span id="销毁跳跃表">3.2.销毁跳跃表</span></a></li>
-<li><a href="#span-id-插入节点-3-3-插入节点-span"><span id="插入节点">3.3.插入节点</span></a></li>
-<li><a href="#span-id-范围-3-4-范围-span"><span id="范围">3.4.范围</span></a>
-<ul>
-<li><a href="#span-id-数值范围-3-4-1-数值范围-span"><span id="数值范围">3.4.1.数值范围</span></a></li>
-<li><a href="#span-id-字典序范围-3-4-2-字典序范围-span"><span id="字典序范围">3.4.2.字典序范围</span></a></li>
-</ul></li>
-<li><a href="#span-id-删除节点-3-5-删除节点-span"><span id="删除节点">3.5.删除节点</span></a>
-<ul>
-<li><a href="#span-id-删除指定score和obj的节点-3-5-1-删除指定score和obj的节点-span"><span id="删除指定score和obj的节点">3.5.1.删除指定score和obj的节点</span></a></li>
-<li><a href="#span-id-删除一个score范围内的节点-3-5-2-删除一个score范围内的节点-span"><span id="删除一个score范围内的节点">3.5.2.删除一个score范围内的节点</span></a></li>
-<li><a href="#span-id-删除一个字典序范围内的节点-3-5-2-删除一个字典序范围内的节点-span"><span id="删除一个字典序范围内的节点">3.5.2.删除一个字典序范围内的节点</span></a></li>
-<li><a href="#span-id-删除一个rank范围内的节点-3-5-4-删除一个rank范围内的节点-span"><span id="删除一个rank范围内的节点">3.5.4.删除一个rank范围内的节点</span></a></li>
-</ul></li>
-<li><a href="#span-id-查询-3-6-查询-span"><span id="查询">3.6.查询</span></a>
-<ul>
-<li><a href="#span-id-查找score和obj的rank-3-6-1-查找score和obj的rank-span"><span id="查找score和obj的rank">3.6.1.查找score和obj的rank</span></a></li>
-<li><a href="#span-id-查找某个rank的节点-3-6-2-查找某个rank的节点-span"><span id="查找某个rank的节点">3.6.2.查找某个rank的节点</span></a></li>
-</ul></li>
-</ul></li>
-<li><a href="#span-id-总结-4-总结-span"><span id="总结">4.总结</span></a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#span-id概述概述span">概述</a></li>
+    <li><a href="#span-id实现结构实现结构span">实现结构</a></li>
+    <li><a href="#span-id跳跃表操作3跳跃表操作span">3.跳跃表操作</a>
+      <ul>
+        <li><a href="#span-id创建跳跃表31创建跳跃表span">3.1.创建跳跃表</a></li>
+        <li><a href="#span-id销毁跳跃表32销毁跳跃表span">3.2.销毁跳跃表</a></li>
+        <li><a href="#span-id插入节点33插入节点span">3.3.插入节点</a></li>
+        <li><a href="#span-id范围34范围span">3.4.范围</a></li>
+        <li><a href="#span-id删除节点35删除节点span">3.5.删除节点</a></li>
+        <li><a href="#span-id查询36查询span">3.6.查询</a></li>
+      </ul>
+    </li>
+    <li><a href="#span-id总结4总结span">4.总结</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="span-id-概述-概述-span"><span id="概述">概述</span></h2>
-
-<p>跳跃表是<code>zset</code>（有序集合）的基础数据结构。跳跃表可以高效地保持元素有序，并且实现相比平衡树简单、直观。Redis的跳跃表是基于William Pugh在<a href="https://www.epaperpress.com/sortsearch/download/skiplist.pdf">《Skip lists: a probabilistic alternative to balanced trees》</a>中描述的算法实现的。做了以下几点改动：
-1. 允许重复分数。
-2. 比较不仅会涉及键，还可能涉及节点数据（键相等时）。
-3. 有一个后退指针，所以是一个双向链表。便于实现<code>ZREVRANGE</code>等命令。</p>
-
-<h2 id="span-id-实现结构-实现结构-span"><span id="实现结构">实现结构</span></h2>
-
+      <h2 id="span-id概述概述span"><!-- raw HTML omitted -->概述<!-- raw HTML omitted --></h2>
+<p>跳跃表是<code>zset</code>（有序集合）的基础数据结构。跳跃表可以高效地保持元素有序，并且实现相比平衡树简单、直观。Redis的跳跃表是基于William Pugh在<a href="https://www.epaperpress.com/sortsearch/download/skiplist.pdf">《Skip lists: a probabilistic alternative to balanced trees》</a>中描述的算法实现的。做了以下几点改动：</p>
+<ol>
+<li>允许重复分数。</li>
+<li>比较不仅会涉及键，还可能涉及节点数据（键相等时）。</li>
+<li>有一个后退指针，所以是一个双向链表。便于实现<code>ZREVRANGE</code>等命令。</li>
+</ol>
+<h2 id="span-id实现结构实现结构span"><!-- raw HTML omitted -->实现结构<!-- raw HTML omitted --></h2>
 <p>实现在<code>redis.h</code>和<code>t_zset.c</code>两个文件中。</p>
-
 <p>跳跃表的基本结构如下（来自William Pugh的论文）：
-<img src="/img/in-post/redis-skiplist/skiplist-structure.png" alt="skiplist结构" /></p>
-
+<img src="/img/in-post/redis-skiplist/skiplist-structure.png" alt="skiplist结构"></p>
 <ul>
 <li>表头：维护跳跃表各层的指针。</li>
 <li>中间节点：维护节点数据和各层的前进后退指针。</li>
 <li>层：保存指向该层下一个节点的指针和与下个节点的间隔（span）。为了提高查找效率，程序总是先从高层开始访问，然后随着范围的缩小慢慢降低层次。</li>
 <li>表尾：全部为NULL，表示跳跃表各层的末尾。</li>
 </ul>
-
 <p>跳跃表的一个节点用结构<code>zskiplistNode</code>表示：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -460,9 +435,9 @@ if (!doNotTrack) {
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">typedef struct zskiplistNode {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct zskiplistNode {
     // redis中通用对象，用来保存节点数据
     robj *obj;
     // 分数
@@ -474,13 +449,13 @@ if (!doNotTrack) {
         struct zskiplistNode *forward;
         unsigned int span;
     } level[];
-} zskiplist;</pre></td></tr></table>
+} zskiplist;
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>跳跃表用结构<code>zskiplist</code>表示：</p>
+</div><p>跳跃表用结构<code>zskiplist</code>表示：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -488,26 +463,24 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">typedef struct zskiplist {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct zskiplist {
     // 跳跃表的头部和尾部
     struct zskiplistNode *header, *tail;
     // 跳跃表的长度
     unsigned long length;
     // 层高
     int level;
-} zskiplist;</pre></td></tr></table>
+} zskiplist;
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="span-id-跳跃表操作-3-跳跃表操作-span"><span id="跳跃表操作">3.跳跃表操作</span></h2>
-
-<h3 id="span-id-创建跳跃表-3-1-创建跳跃表-span"><span id="创建跳跃表">3.1.创建跳跃表</span></h3>
-
+</div><h2 id="span-id跳跃表操作3跳跃表操作span"><!-- raw HTML omitted -->3.跳跃表操作<!-- raw HTML omitted --></h2>
+<h3 id="span-id创建跳跃表31创建跳跃表span"><!-- raw HTML omitted -->3.1.创建跳跃表<!-- raw HTML omitted --></h3>
 <p>调用<code>zslCreate</code>创建一个空的跳跃表。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -536,9 +509,9 @@ if (!doNotTrack) {
 </span><span class="lnt">27
 </span><span class="lnt">28
 </span><span class="lnt">29
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">// 创建一个层高为level的跳跃表节点，以score为分数，obj为数据
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 创建一个层高为level的跳跃表节点，以score为分数，obj为数据
 zskiplistNode *zslCreateNode(int level, double score, robj *obj) {
     zskiplistNode *zn = zmalloc(sizeof(*zn)+level*sizeof(struct zskiplistLevel));
     zn-&gt;score = score;
@@ -566,15 +539,14 @@ zskiplist *zslCreate(void) {
     zsl-&gt;header-&gt;backward = NULL;
     zsl-&gt;tail = NULL;
     return zsl;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="span-id-销毁跳跃表-3-2-销毁跳跃表-span"><span id="销毁跳跃表">3.2.销毁跳跃表</span></h3>
-
+</div><h3 id="span-id销毁跳跃表32销毁跳跃表span"><!-- raw HTML omitted -->3.2.销毁跳跃表<!-- raw HTML omitted --></h3>
 <p>跳跃表结构使用完后，需要调用<code>zslFree</code>来释放。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -595,9 +567,9 @@ zskiplist *zslCreate(void) {
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void zslFreeNode(zskiplistNode *node) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void zslFreeNode(zskiplistNode *node) {
     // obj是redis对象，使用引用计数管理的
     decrRefCount(node-&gt;obj);
     zfree(node);
@@ -617,15 +589,14 @@ void zslFree(zskiplist *zsl) {
     }
     // 释放zskiplist结构
     zfree(zsl);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="span-id-插入节点-3-3-插入节点-span"><span id="插入节点">3.3.插入节点</span></h3>
-
+</div><h3 id="span-id插入节点33插入节点span"><!-- raw HTML omitted -->3.3.插入节点<!-- raw HTML omitted --></h3>
 <p>向跳跃表中插入节点时，以Redis对象<code>obj</code>和与之关联的分数<code>score</code>调用<code>zslInsert</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -694,9 +665,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">67
 </span><span class="lnt">68
 </span><span class="lnt">69
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">zskiplistNode *zslInsert(zskiplist *zsl, double score, robj *obj) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">zskiplistNode *zslInsert(zskiplist *zsl, double score, robj *obj) {
     // update记录的是各层新节点插入位置的前一个节点
     zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
     unsigned int rank[ZSKIPLIST_MAXLEVEL];
@@ -764,64 +735,62 @@ void zslFree(zskiplist *zsl) {
         zsl-&gt;tail = x;
     zsl-&gt;length++;
     return x;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>随机层高算法：</p>
+</div><p>随机层高算法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">int zslRandomLevel(void) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">int zslRandomLevel(void) {
     int level = 1;
     // level每次循环有1/4概率增加层高
     while ((random()&amp;0xFFFF) &lt; (ZSKIPLIST_P * 0xFFFF))
         level += 1;
     return (level&lt;ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="span-id-范围-3-4-范围-span"><span id="范围">3.4.范围</span></h3>
-
-<h4 id="span-id-数值范围-3-4-1-数值范围-span"><span id="数值范围">3.4.1.数值范围</span></h4>
-
+</div><h3 id="span-id范围34范围span"><!-- raw HTML omitted -->3.4.范围<!-- raw HTML omitted --></h3>
+<h4 id="span-id数值范围341数值范围span"><!-- raw HTML omitted -->3.4.1.数值范围<!-- raw HTML omitted --></h4>
 <p><code>zslValueGteMin</code>判断<code>value</code>是否大于等于（由<code>minex</code>决定是否取等于）范围<code>spec</code>中的最小值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">static int zslValueGteMin(double value, zrangespec *spec) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">static int zslValueGteMin(double value, zrangespec *spec) {
     return spec-&gt;minex ? (value &gt; spec-&gt;min) : (value &gt;= spec-&gt;min);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslValueGteMax</code>判断<code>value</code>是否小于等于（由<code>maxex</code>决定是否取等于）范围<code>spec</code>中的最大值：</p>
+</div><p><code>zslValueGteMax</code>判断<code>value</code>是否小于等于（由<code>maxex</code>决定是否取等于）范围<code>spec</code>中的最大值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">static int zslValueLteMax(double value, zrangespec *spec) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">static int zslValueLteMax(double value, zrangespec *spec) {
     return spec-&gt;maxex ? (value &lt; spec-&gt;max) : (value &lt;= spec-&gt;max);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslIsInRange</code>判断跳跃表中是否有节点处于范围<code>range</code>中。这里有个前提，所有节点的<code>score</code>都相等。</p>
+</div><p><code>zslIsInRange</code>判断跳跃表中是否有节点处于范围<code>range</code>中。这里有个前提，所有节点的<code>score</code>都相等。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -838,9 +807,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">15
 </span><span class="lnt">16
 </span><span class="lnt">17
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">int zslIsInRange(zskiplist *zsl, zrangespec *range) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">int zslIsInRange(zskiplist *zsl, zrangespec *range) {
     zskiplistNode *x;
 
     // 范围大小为0
@@ -856,13 +825,13 @@ void zslFree(zskiplist *zsl) {
     if (x == NULL || !zslValueLteMax(x-&gt;score,range))
         return 0;
     return 1;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslFirstInRange</code>返回跳跃表中处于范围<code>range</code>中的第一个节点：</p>
+</div><p><code>zslFirstInRange</code>返回跳跃表中处于范围<code>range</code>中的第一个节点：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -884,9 +853,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">20
 </span><span class="lnt">21
 </span><span class="lnt">22
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">zskiplistNode *zslFirstInRange(zskiplist *zsl, zrangespec *range) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">zskiplistNode *zslFirstInRange(zskiplist *zsl, zrangespec *range) {
     zskiplistNode *x;
     int i;
 
@@ -907,13 +876,13 @@ void zslFree(zskiplist *zsl) {
 
     if (!zslValueLteMax(x-&gt;score,range)) return NULL;
     return x;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslLastInRange</code>返回跳跃表中处于范围<code>range</code>中的最后一个节点：</p>
+</div><p><code>zslLastInRange</code>返回跳跃表中处于范围<code>range</code>中的最后一个节点：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -933,9 +902,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">18
 </span><span class="lnt">19
 </span><span class="lnt">20
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">zskiplistNode *zslLastInRange(zskiplist *zsl, zrangespec *range) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">zskiplistNode *zslLastInRange(zskiplist *zsl, zrangespec *range) {
     zskiplistNode *x;
     int i;
 
@@ -954,32 +923,31 @@ void zslFree(zskiplist *zsl) {
 
     if (!zslValueGteMin(x-&gt;score,range)) return NULL;
     return x;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-字典序范围-3-4-2-字典序范围-span"><span id="字典序范围">3.4.2.字典序范围</span></h4>
-
+</div><h4 id="span-id字典序范围342字典序范围span"><!-- raw HTML omitted -->3.4.2.字典序范围<!-- raw HTML omitted --></h4>
 <p><code>zslLexValueGteMin</code>判断<code>value</code>是否大于等于（由<code>minex</code>决定是否取等于）范围<code>spec</code>的最小值。通过字典序来比较。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">static int zslLexValueGteMin(robj *value, zlexrangespec *spec) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">static int zslLexValueGteMin(robj *value, zlexrangespec *spec) {
     return spec-&gt;minex ?
         (compareStringObjectsForLexRange(value,spec-&gt;min) &gt; 0) :
         (compareStringObjectsForLexRange(value,spec-&gt;min) &gt;= 0);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这里使用<code>compareStringObjectsForLexRange</code>来比较字典序：</p>
+</div><p>这里使用<code>compareStringObjectsForLexRange</code>来比较字典序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -987,39 +955,39 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">int compareStringObjectsForLexRange(robj *a, robj *b) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">int compareStringObjectsForLexRange(robj *a, robj *b) {
     if (a == b) return 0;
 
     // minstring和maxstring是Redis预定义的用于表示最小和最大字符串的
     if (a == shared.minstring || b == shared.maxstring) return -1;
     if (a == shared.maxstring || b == shared.minstring) return 1;
     return compareStringObjects(a,b);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslLexValueLteMax</code>判断<code>value</code>是否小于等于（由<code>maxex</code>决定是否取等于）范围<code>spec</code>的最大值。通过字典序来比较。</p>
+</div><p><code>zslLexValueLteMax</code>判断<code>value</code>是否小于等于（由<code>maxex</code>决定是否取等于）范围<code>spec</code>的最大值。通过字典序来比较。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">static int zslLexValueLteMax(robj *value, zlexrangespec *spec) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">static int zslLexValueLteMax(robj *value, zlexrangespec *spec) {
     return spec-&gt;maxex ?
         (compareStringObjectsForLexRange(value,spec-&gt;max) &lt; 0) :
         (compareStringObjectsForLexRange(value,spec-&gt;max) &lt;= 0);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslIsInLexRange</code>判断跳跃表中是否有节点的数据<code>obj</code>处于范围<code>range</code>中。这里有个前提，所有节点的<code>score</code>都相等。</p>
+</div><p><code>zslIsInLexRange</code>判断跳跃表中是否有节点的数据<code>obj</code>处于范围<code>range</code>中。这里有个前提，所有节点的<code>score</code>都相等。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1037,9 +1005,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">int zslIsInLexRange(zskiplist *zsl, zlexrangespec *range) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">int zslIsInLexRange(zskiplist *zsl, zlexrangespec *range) {
     zskiplistNode *x;
 
     // 范围为空
@@ -1056,13 +1024,13 @@ void zslFree(zskiplist *zsl) {
     if (x == NULL || !zslLexValueLteMax(x-&gt;obj,range))
         return 0;
     return 1;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslFirstInLexRange</code>返回跳跃表处于范围<code>range</code>中的第一个节点：</p>
+</div><p><code>zslFirstInLexRange</code>返回跳跃表处于范围<code>range</code>中的第一个节点：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1085,9 +1053,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">21
 </span><span class="lnt">22
 </span><span class="lnt">23
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">zskiplistNode *zslFirstInLexRange(zskiplist *zsl, zlexrangespec *spec) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">zskiplistNode *zslFirstInLexRange(zskiplist *zsl, zlexrangespec *spec) {
     zskiplistNode *x;
     int i;
 
@@ -1109,13 +1077,13 @@ void zslFree(zskiplist *zsl) {
     // x是第一个大于range最小值的节点，必须满足小于range的最大值
     if (!zslLexValueLteMax(x-&gt;obj,range)) return NULL;
     return x;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslLastInLexRange</code>返回跳跃表处于范围<code>range</code>中的最后一个节点：</p>
+</div><p><code>zslLastInLexRange</code>返回跳跃表处于范围<code>range</code>中的最后一个节点：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1136,9 +1104,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">zskiplistNode *zslLastInLexRange(zskiplist *zsl, zlexrangespec *range) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">zskiplistNode *zslLastInLexRange(zskiplist *zsl, zlexrangespec *range) {
     zskiplistNode *x;
     int i;
 
@@ -1158,19 +1126,16 @@ void zslFree(zskiplist *zsl) {
     // x是小于range最大值的最后一个节点，必须满足大于range最小值这个限制
     if (!zslLexValueGteMin(x-&gt;obj,range)) return NULL;
     return x;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="span-id-删除节点-3-5-删除节点-span"><span id="删除节点">3.5.删除节点</span></h3>
-
+</div><h3 id="span-id删除节点35删除节点span"><!-- raw HTML omitted -->3.5.删除节点<!-- raw HTML omitted --></h3>
 <p>Redis中实现了跳跃表的多种删除方式。下面依次介绍：</p>
-
-<h4 id="span-id-删除指定score和obj的节点-3-5-1-删除指定score和obj的节点-span"><span id="删除指定score和obj的节点">3.5.1.删除指定score和obj的节点</span></h4>
-
+<h4 id="span-id删除指定score和obj的节点351删除指定score和obj的节点span"><!-- raw HTML omitted -->3.5.1.删除指定score和obj的节点<!-- raw HTML omitted --></h4>
 <p>这是一种最基本的删除方式，由分数<code>score</code>和对象<code>obj</code>指定需要删除的节点。调用<code>zslDelete</code>完成这个任务。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1198,9 +1163,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">26
 </span><span class="lnt">27
 </span><span class="lnt">28
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">int zslDelete(zskiplist *zsl, double score, robj *obj) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">int zslDelete(zskiplist *zsl, double score, robj *obj) {
     // 各层需要修改的节点
     zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
     int i;
@@ -1227,13 +1192,13 @@ void zslFree(zskiplist *zsl) {
     }
     // 没找到
     return 0;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zslDelete</code>调用通用的节点删除函数<code>zslDeleteNode</code>，<code>zslDeleteNode</code>被其他几个删除函数使用。</p>
+</div><p><code>zslDelete</code>调用通用的节点删除函数<code>zslDeleteNode</code>，<code>zslDeleteNode</code>被其他几个删除函数使用。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1259,9 +1224,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">24
 </span><span class="lnt">25
 </span><span class="lnt">26
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void zslDeleteNode(zskiplist *zsl, zskiplistNode *x, zskiplistNode **update) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void zslDeleteNode(zskiplist *zsl, zskiplistNode *x, zskiplistNode **update) {
     int i;
     for (i = 0; i &lt; zsl-&gt;level; i++) {
         if (update[i]-&gt;level[i].forward == x) {
@@ -1286,32 +1251,32 @@ void zslFree(zskiplist *zsl) {
         zsl-&gt;level--;
     }
     zsl-&gt;length--;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-删除一个score范围内的节点-3-5-2-删除一个score范围内的节点-span"><span id="删除一个score范围内的节点">3.5.2.删除一个score范围内的节点</span></h4>
-
+</div><h4 id="span-id删除一个score范围内的节点352删除一个score范围内的节点span"><!-- raw HTML omitted -->3.5.2.删除一个score范围内的节点<!-- raw HTML omitted --></h4>
 <p>删除分数介于<code>min</code>和<code>max</code>之间的所有节点。函数<code>zslDeleteRangeByScore</code>完成这个功能。范围由<code>zrangespec</code>指定：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">typedef struct {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct {
     // 最小最大值
     double min, max;
     // 是否包括最小值/最大值
     int minex, maxex;
-} zrangespec;</pre></td></tr></table>
+} zrangespec;
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1344,9 +1309,9 @@ void zslFree(zskiplist *zsl) {
 </span><span class="lnt">31
 </span><span class="lnt">32
 </span><span class="lnt">33
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">// 删除的节点也需要从dict中删除
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 删除的节点也需要从dict中删除
 unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dict) {
     zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
     unsigned long removed = 0;
@@ -1378,34 +1343,33 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
         x = next;
     }
     return removed;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-删除一个字典序范围内的节点-3-5-2-删除一个字典序范围内的节点-span"><span id="删除一个字典序范围内的节点">3.5.2.删除一个字典序范围内的节点</span></h4>
-
+</div><h4 id="span-id删除一个字典序范围内的节点352删除一个字典序范围内的节点span"><!-- raw HTML omitted -->3.5.2.删除一个字典序范围内的节点<!-- raw HTML omitted --></h4>
 <p>函数<code>zslDeleteRangeByLex</code>删除以字典序表示的范围内所有节点。这个方法有个前提条件，<strong>跳跃表中的所有score都是相同的</strong>。在概述中提到过，如果<code>score</code>相同，会比较<code>obj</code>。</p>
-
 <p>字典序范围用结构<code>zlexrangespec</code>表示：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">typedef struct {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct {
     // 最小最大值
     robj *min, *max;
     // 是否包括最小/大值
     int minex, maxex;
-} zlexrangespec;</pre></td></tr></table>
+} zlexrangespec;
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1435,9 +1399,9 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
 </span><span class="lnt">28
 </span><span class="lnt">29
 </span><span class="lnt">30
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">unsigned long zslDeleteRangeByLex(zskiplist *zsl, zlexrangespec *range, dict *dict) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">unsigned long zslDeleteRangeByLex(zskiplist *zsl, zlexrangespec *range, dict *dict) {
     zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
     unsigned long removed = 0;
     int i;
@@ -1466,15 +1430,14 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
         x = next;
     }
     return removed;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-删除一个rank范围内的节点-3-5-4-删除一个rank范围内的节点-span"><span id="删除一个rank范围内的节点">3.5.4.删除一个rank范围内的节点</span></h4>
-
+</div><h4 id="span-id删除一个rank范围内的节点354删除一个rank范围内的节点span"><!-- raw HTML omitted -->3.5.4.删除一个rank范围内的节点<!-- raw HTML omitted --></h4>
 <p><code>zslDeleteRangeByRank</code>可以删除一个rank范围内的所有节点。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1506,9 +1469,9 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
 </span><span class="lnt">30
 </span><span class="lnt">31
 </span><span class="lnt">32
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">unsigned long zslDeleteRangeByRank(zskiplist *zsl, unsigned int start, unsigned int end, dict *dict) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">unsigned long zslDeleteRangeByRank(zskiplist *zsl, unsigned int start, unsigned int end, dict *dict) {
     zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
     unsigned long traversed = 0, removed = 0;
     int i = 0;
@@ -1539,17 +1502,15 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
         x = next;
     }
     return removed;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="span-id-查询-3-6-查询-span"><span id="查询">3.6.查询</span></h3>
-
-<h4 id="span-id-查找score和obj的rank-3-6-1-查找score和obj的rank-span"><span id="查找score和obj的rank">3.6.1.查找score和obj的rank</span></h4>
-
+</div><h3 id="span-id查询36查询span"><!-- raw HTML omitted -->3.6.查询<!-- raw HTML omitted --></h3>
+<h4 id="span-id查找score和obj的rank361查找score和obj的rankspan"><!-- raw HTML omitted -->3.6.1.查找score和obj的rank<!-- raw HTML omitted --></h4>
 <p>查找跳跃表中由<code>score</code>和<code>obj</code>指定的节点的rank。rank从1开始，没有该节点时返回0。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1571,9 +1532,9 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
 </span><span class="lnt">20
 </span><span class="lnt">21
 </span><span class="lnt">22
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">unsigned long zslGetRank(zskiplist *zsl, double score, robj *o) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">unsigned long zslGetRank(zskiplist *zsl, double score, robj *o) {
     zskiplistNode *x;
     unsigned long rank = 0;
     int i;
@@ -1594,15 +1555,14 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
         }
     }
     return 0;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-查找某个rank的节点-3-6-2-查找某个rank的节点-span"><span id="查找某个rank的节点">3.6.2.查找某个rank的节点</span></h4>
-
+</div><h4 id="span-id查找某个rank的节点362查找某个rank的节点span"><!-- raw HTML omitted -->3.6.2.查找某个rank的节点<!-- raw HTML omitted --></h4>
 <p>函数<code>zslGetElementByRank</code>查找某个rank的节点。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1620,9 +1580,9 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">zskiplistNode *zslGetElementByRank(zskiplist *zsl, unsigned long rank) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">zskiplistNode *zslGetElementByRank(zskiplist *zsl, unsigned long rank) {
     zskiplistNode *x;
     unsigned long traversed = 0;
     int i = 0;
@@ -1639,11 +1599,10 @@ unsigned long zslDeleteRangeByScore(zskiplist *zsl, zrangespec *range, dict *dic
         }
     }
     return NULL;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="span-id-总结-4-总结-span"><span id="总结">4.总结</span></h2>
-
+</div><h2 id="span-id总结4总结span"><!-- raw HTML omitted -->4.总结<!-- raw HTML omitted --></h2>
 <p>跳跃表实现简单，插入、查找、删除等操作性能都不错。Redis基于William Pugh的算法按照自己的需求做了一些扩展，如允许相同分数、增加后退指针等。</p>
 
     </div>

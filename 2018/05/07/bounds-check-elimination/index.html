@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.64.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/05/07/bounds-check-elimination/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,16 +69,13 @@
 <meta property="article:modified_time" content="2018-05-07T11:00:00+00:00" />
 <meta itemprop="name" content="深入理解Go之BCE优化">
 <meta itemprop="description" content="概述 自Go 1.7以后，标准Go编译器采用了一个新的编译器后端。该后端基于静态单赋值形式（简称SSA）。SSA利用BCE（Bounds Check Eli">
-
-
 <meta itemprop="datePublished" content="2018-05-07T11:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2018-05-07T11:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="1574">
 
 
 
-<meta itemprop="keywords" content="深入理解Go," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="深入理解Go," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="深入理解Go之BCE优化"/>
 <meta name="twitter:description" content="概述 自Go 1.7以后，标准Go编译器采用了一个新的编译器后端。该后端基于静态单赋值形式（简称SSA）。SSA利用BCE（Bounds Check Eli"/>
 
@@ -384,40 +381,34 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#边界检测消除的情形">边界检测消除的情形</a>
-<ul>
-<li><a href="#1-重复检测">1. 重复检测</a></li>
-<li><a href="#2-常量大小">2. 常量大小</a></li>
-<li><a href="#3-常量索引">3. 常量索引</a></li>
-<li><a href="#4-常量索引常量大小">4. 常量索引常量大小</a></li>
-<li><a href="#5-迭代中索引">5. 迭代中索引</a></li>
-<li><a href="#6-逐渐减小的常量索引">6. 逐渐减小的常量索引</a></li>
-<li><a href="#7-特殊情况">7. 特殊情况</a></li>
-</ul></li>
-<li><a href="#程序优化">程序优化</a></li>
-<li><a href="#参考链接">参考链接：</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#边界检测消除的情形">边界检测消除的情形</a>
+      <ul>
+        <li><a href="#1-重复检测">1. 重复检测</a></li>
+        <li><a href="#2-常量大小">2. 常量大小</a></li>
+        <li><a href="#3-常量索引">3. 常量索引</a></li>
+        <li><a href="#4-常量索引常量大小">4. 常量索引常量大小</a></li>
+        <li><a href="#5-迭代中索引">5. 迭代中索引</a></li>
+        <li><a href="#6-逐渐减小的常量索引">6. 逐渐减小的常量索引</a></li>
+        <li><a href="#7-特殊情况">7. 特殊情况</a></li>
+      </ul>
+    </li>
+    <li><a href="#程序优化">程序优化</a></li>
+    <li><a href="#参考链接">参考链接：</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="概述">概述</h2>
-
+      <h2 id="概述">概述</h2>
 <p>自<a href="https://blog.golang.org/go1.7">Go 1.7</a>以后，标准Go编译器采用了一个新的编译器后端。该后端基于<a href="https://zh.wikipedia.org/wiki/%E9%9D%99%E6%80%81%E5%8D%95%E8%B5%8B%E5%80%BC%E5%BD%A2%E5%BC%8F">静态单赋值形式</a>（简称SSA）。SSA利用BCE（Bounds Check Elimination）和CSE（Common Subexpression Elimination)优化可以让Go编译器生成更高效的代码。</p>
-
 <p>BCE顾名思义，叫做边界检测消除。通常，Go程序中对一个slice或string的越界访问会抛出异常。有两种形式的边界检测：索引（a[i]）和切片（a[i:j]）。Go编译器会在每个访问处插入边界检测的代码。不可否认，边界检测是非常重要的。它能帮助我们在早期捕获常见的编程错误。但是在大多数情况下，这都是没有必要的，完全可以根据上下文进行推断。例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -426,182 +417,177 @@ if (!doNotTrack) {
 </span><span class="lnt">7
 </span><span class="lnt">8
 </span><span class="lnt">9
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><span class="kn">package</span> <span class="nx">main</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
-<span class="kd">func</span> <span class="nf">f</span><span class="p">(</span><span class="nx">s</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">f</span><span class="p">(</span><span class="nx">s</span> <span class="p">[</span><span class="p">]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">_</span> <span class="p">=</span> <span class="nx">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
     <span class="nx">_</span> <span class="p">=</span> <span class="nx">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="nx">_</span> <span class="p">=</span> <span class="nx">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{}</span></pre></td></tr></table>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在Go的早期版本（1.7之前），上面的方法中每处切片索引都会做边界检测。但是我们知道，只需要给<code>_ = s[2]</code>添加边界检测。因为如果索引2未越界，1和0不可能越界。</p>
-
+</div><p>在Go的早期版本（1.7之前），上面的方法中每处切片索引都会做边界检测。但是我们知道，只需要给<code>_ = s[2]</code>添加边界检测。因为如果索引2未越界，1和0不可能越界。</p>
 <p>在Go 1.7之后的版本中，后两行代码的边界检测就被消除了。可以使用<code>-gcflags=&quot;-d=ssa/check_bce/debug=1&quot;</code>查看是否引入了边界检测：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go build -gcflags=&#34;-d=ssa/check_bce/debug=1&#34; main.go</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go build -gcflags=&#34;-d=ssa/check_bce/debug=1&#34; main.go
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">.\main.go:4:7: Found IsInBounds</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">.\main.go:4:7: Found IsInBounds
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>那么什么情况下的边界检测会消除呢？</p>
-
+</div><p>那么什么情况下的边界检测会消除呢？</p>
 <h2 id="边界检测消除的情形">边界检测消除的情形</h2>
-
 <h3 id="1-重复检测">1. 重复检测</h3>
-
 <p>相同的索引被重复访问时，后面的访问无需边界检测。例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var s[]int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var s[]int
 
 _ = s[i] // 插入边界检测
-_ = s[i] // 相同索引，不需要</pre></td></tr></table>
+_ = s[i] // 相同索引，不需要
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">_ = s[:i] // 插入边界检测
-_ = s[:i] // 不需要</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">_ = s[:i] // 插入边界检测
+_ = s[:i] // 不需要
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">_ = s[i:] // 插入边界检测
-_ = s[i:] // 不需要</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">_ = s[i:] // 插入边界检测
+_ = s[i:] // 不需要
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="2-常量大小">2. 常量大小</h3>
-
+</div><h3 id="2-常量大小">2. 常量大小</h3>
 <p>访问数组（大小固定），并且索引使用某些位操作计算得到。例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var a[17]int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var a[17]int
 _ = a[i&amp;5] // 因为i&amp;5 &lt;= 5 &lt; 17，边界检测消除
-_ = a[i%5] // 不能消除，因为有可能为负数</pre></td></tr></table>
+_ = a[i%5] // 不能消除，因为有可能为负数
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="3-常量索引">3. 常量索引</h3>
-
+</div><h3 id="3-常量索引">3. 常量索引</h3>
 <p>使用常量索引访问。例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var s[]int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var s[]int
 if 5 &lt; len(s) {
     _ = s[5] // 5 &lt; len(s)，边界检测消除
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="4-常量索引常量大小">4. 常量索引常量大小</h3>
-
+</div><h3 id="4-常量索引常量大小">4. 常量索引常量大小</h3>
 <p>使用常量索引访问数组。例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var s[10]int
-_ = s[5]   // 5 &lt; 10，边界检测消除</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var s[10]int
+_ = s[5]   // 5 &lt; 10，边界检测消除
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="5-迭代中索引">5. 迭代中索引</h3>
-
+</div><h3 id="5-迭代中索引">5. 迭代中索引</h3>
 <p>当使用迭代中索引时，一些边界检测可以消除。例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var s[]int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var s[]int
 for i := range s {
     _ = s[i] // 消除
     _ = s[i:] // 消除
     _ = s[:i] // 消除
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var s[]int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var s[]int
 for i := 0; i &lt; len(s); i++ {
     _ = s[i] // 消除
     _ = s[i:] // 消除
     _ = s[:i] // 消除
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var a[]int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var a[]int
 for i := range s {
     _ = s[:i+1] // 消除
     _ = s[i+1:] // 消除
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="6-逐渐减小的常量索引">6. 逐渐减小的常量索引</h3>
-
+</div><h3 id="6-逐渐减小的常量索引">6. 逐渐减小的常量索引</h3>
 <p>正如概述中例子：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -612,9 +598,9 @@ for i := range s {
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var s[]int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var s[]int
 _ = s[3] // 插入边界检测
 _, _, _ = s[1], s[2], s[3] // 消除
 
@@ -624,40 +610,40 @@ _, _, _ = s[3], s[2], s[1] // 一个边界检测
 // 或
 if len(s) &lt; 3 {
     _, _, _ = s[0], s[1], s[2] // 没有边界检测
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="7-特殊情况">7. 特殊情况</h3>
+</div><h3 id="7-特殊情况">7. 特殊情况</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">var s[]int
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">var s[]int
 var index int
 _ = s[:index] // 插入边界检测
-_ = s[index:] // 插入边界检测</pre></td></tr></table>
+_ = s[index:] // 插入边界检测
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>为什么上面两条赋值语句都需要边界检测？因为一个子切片可以比原来的切片大。
+</div><p>为什么上面两条赋值语句都需要边界检测？因为一个子切片可以比原来的切片大。
 在Go中，<code>s[a:b]</code>有两个限制：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">0 &lt;= a &lt;= len(s)
-a &lt;= b &lt;= cap(s)</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">0 &lt;= a &lt;= len(s)
+a &lt;= b &lt;= cap(s)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>例如：</p>
+</div><p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -665,47 +651,45 @@ a &lt;= b &lt;= cap(s)</pre></td></tr></table>
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">s0 := make([]int, 5, 10) // len(s0) == 5, cap(s0) == 10
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">s0 := make([]int, 5, 10) // len(s0) == 5, cap(s0) == 10
 
 index := 8
 
 _ = s0[:index] // 这行没问题
 
 // 因为index &gt; len(s0)，所以异常了
-_ = s0[index:] // panic: runtime error: slice bounds out of range</pre></td></tr></table>
+_ = s0[index:] // panic: runtime error: slice bounds out of range
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="程序优化">程序优化</h2>
-
+</div><h2 id="程序优化">程序优化</h2>
 <p>我们可以利用边界检测消除优化程序性能。为了能够利用BCE，需要对程序做一点细小的调整。下面有几个例子：</p>
-
 <p>例一：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">func f(is []int, bs []byte) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func f(is []int, bs []byte) {
     if len(is) &gt;= 256 {
         for _, n := range bs {
             _ = is[n] // for循环内边界检测会执行多次
         }
     }
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以调整为：</p>
+</div><p>可以调整为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -713,43 +697,43 @@ _ = s0[index:] // panic: runtime error: slice bounds out of range</pre></td></tr
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">func f(is []int, bs []byte) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func f(is []int, bs []byte) {
     if len(is) &gt;= 256 {
         is = is[:256] // 避免下面for循环中的边界检测
         for _, n := range bs {
             _ = is[n] // 边界检测消除！
         }
     }
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>例二：</p>
+</div><p>例二：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">func f(isa []int, isb []int) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func f(isa []int, isb []int) {
     if len(isa) &gt; 0xFFF {
         for _, n := range isb {
             _ = isa[n &amp; 0xFFF] // for循环内边界检测会执行多次
         }
     }
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以调整为：</p>
+</div><p>可以调整为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -757,43 +741,43 @@ _ = s0[index:] // panic: runtime error: slice bounds out of range</pre></td></tr
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">func f(isa []int, isb []int) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func f(isa []int, isb []int) {
     if len(isa) &gt; 0xFFF {
         isa = isa[:0xFFF+1] // 避免下面for循环中的边界检测
         for _, n := range isb {
             _ = isa[n &amp; 0xFFF] // 边界检测消除！
         }
     }
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>例三：</p>
+</div><p>例三：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">func f(s []int) []int {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func f(s []int) []int {
     s2 := make([]int, len(s))
     for i := range s {
         s2[i] = -s[i] // 插入边界检测
     }
     return s2
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以调整为：</p>
+</div><p>可以调整为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -801,20 +785,19 @@ _ = s0[index:] // panic: runtime error: slice bounds out of range</pre></td></tr
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">func f(s []int) []int {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func f(s []int) []int {
     s2 := make([]int, len(s))
     s2 = s2[:len(s)] // 避免下面的边界检测
     for i := range s {
         s2[i] = -s[i] // 边界检测消除！
     }
     return s2
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="参考链接">参考链接：</h2>
-
+</div><h2 id="参考链接">参考链接：</h2>
 <ol>
 <li><a href="https://docs.google.com/document/d/1vdAEAjYdzjnPA9WDOQ1e4e05cYVMpqSxJYZT33Cqw2g/edit">gBounds Checking Elimination</a></li>
 <li><a href="https://go101.org/article/bounds-check-elimination.html">https://go101.org/article/bounds-check-elimination.html</a></li>

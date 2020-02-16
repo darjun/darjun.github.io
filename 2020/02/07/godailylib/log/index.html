@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.64.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/07/godailylib/log/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,16 +69,13 @@
 <meta property="article:modified_time" content="2020-02-07T10:30:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 log">
 <meta itemprop="description" content="简介 在日常开发中，日志是必不可少的功能。虽然有时可以用fmt库输出一些信息，但是灵活性不够。Go 标准库提供了一个日志库log。本文介绍log">
-
-
 <meta itemprop="datePublished" content="2020-02-07T10:30:23&#43;00:00" />
 <meta itemprop="dateModified" content="2020-02-07T10:30:23&#43;00:00" />
-<meta itemprop="wordCount" content="2554">
+<meta itemprop="wordCount" content="2556">
 
 
 
-<meta itemprop="keywords" content="Go 每日一库," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 log"/>
 <meta name="twitter:description" content="简介 在日常开发中，日志是必不可少的功能。虽然有时可以用fmt库输出一些信息，但是灵活性不够。Go 标准库提供了一个日志库log。本文介绍log"/>
 
@@ -363,7 +360,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 2554 字 </span>
+        <span class="more-meta"> 约 2556 字 </span>
           <span class="more-meta"> 预计阅读 6 分钟 </span>
 
         
@@ -384,41 +381,34 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#定制">定制</a>
-<ul>
-<li><a href="#前缀">前缀</a></li>
-<li><a href="#选项">选项</a></li>
-<li><a href="#自定义">自定义</a></li>
-</ul></li>
-<li><a href="#实现">实现</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#定制">定制</a>
+      <ul>
+        <li><a href="#前缀">前缀</a></li>
+        <li><a href="#选项">选项</a></li>
+        <li><a href="#自定义">自定义</a></li>
+      </ul>
+    </li>
+    <li><a href="#实现">实现</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>在日常开发中，日志是必不可少的功能。虽然有时可以用<code>fmt</code>库输出一些信息，但是灵活性不够。Go 标准库提供了一个日志库<code>log</code>。本文介绍<code>log</code>库的使用。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p><code>log</code>是 Go 标准库提供的，不需要另外安装。可直接使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -439,6 +429,7 @@ if (!doNotTrack) {
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
+</span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
@@ -452,7 +443,7 @@ if (!doNotTrack) {
   <span class="nx">Age</span>  <span class="kt">int</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">u</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
     <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
     <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
@@ -461,31 +452,25 @@ if (!doNotTrack) {
   <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s login, age:%d&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Panicf</span><span class="p">(</span><span class="s">&#34;Oh, system error when %s login&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;Danger! hacker %s login&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
-</div>
-</div>
-<p><code>log</code>默认输出到标准错误（<code>stderr</code>），每条日志前会自动加上日期和时间。如果日志不是以换行符结尾的，那么<code>log</code>会自动加上换行符。即每条日志会在新行中输出。</p>
+<span class="p">}</span>
 
+</code></pre></td></tr></table>
+</div>
+</div><p><code>log</code>默认输出到标准错误（<code>stderr</code>），每条日志前会自动加上日期和时间。如果日志不是以换行符结尾的，那么<code>log</code>会自动加上换行符。即每条日志会在新行中输出。</p>
 <p><code>log</code>提供了三组函数：</p>
-
 <ul>
 <li><code>Print/Printf/Println</code>：正常输出日志；</li>
 <li><code>Panic/Panicf/Panicln</code>：输出日志后，以拼装好的字符串为参数调用<code>panic</code>；</li>
 <li><code>Fatal/Fatalf/Fatalln</code>：输出日志后，调用<code>os.Exit(1)</code>退出程序。</li>
 </ul>
-
 <p>命名比较容易辨别，带<code>f</code>后缀的有格式化功能，带<code>ln</code>后缀的会在日志后增加一个换行符。</p>
-
 <p>注意，上面的程序中由于调用<code>log.Panicf</code>会<code>panic</code>，所以<code>log.Fatalf</code>并不会调用。</p>
-
 <h2 id="定制">定制</h2>
-
 <h3 id="前缀">前缀</h3>
-
 <p>调用<code>log.SetPrefix</code>为每条日志文本前增加一个前缀。例如，在上面的程序中设置<code>Login:</code>前缀：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -518,7 +503,7 @@ if (!doNotTrack) {
   <span class="nx">Age</span>  <span class="kt">int</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">u</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
     <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
     <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
@@ -526,19 +511,16 @@ if (!doNotTrack) {
 
   <span class="nx">log</span><span class="p">.</span><span class="nf">SetPrefix</span><span class="p">(</span><span class="s">&#34;Login: &#34;</span><span class="p">)</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s login, age:%d&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>调用<code>log.Prefix</code>可以获取当前设置的前缀。</p>
-
+</div><p>调用<code>log.Prefix</code>可以获取当前设置的前缀。</p>
 <h3 id="选项">选项</h3>
-
 <p>设置选项可在每条输出的文本前增加一些额外信息，如日期时间、文件名等。</p>
-
 <p><code>log</code>库提供了 6 个选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -557,10 +539,10 @@ if (!doNotTrack) {
   <span class="nx">Llongfile</span>                
   <span class="nx">Lshortfile</span>               
   <span class="nx">LUTC</span>                     
-<span class="p">)</span></code></pre></td></tr></table>
+<span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li><code>Ldate</code>：输出当地时区的日期，如<code>2020/02/07</code>；</li>
 <li><code>Ltime</code>：输出当地时区的时间，如<code>11:45:45</code>；</li>
 <li><code>Lmicroseconds</code>：输出的时间精确到微秒，设置了该选项就不用设置<code>Ltime</code>了。如<code>11:45:45.123123</code>；</li>
@@ -568,11 +550,10 @@ if (!doNotTrack) {
 <li><code>Lshortfile</code>：输出短文件名+行号，不含包名，如<code>main.go:50</code>；</li>
 <li><code>LUTC</code>：如果设置了<code>Ldate</code>或<code>Ltime</code>，将输出 UTC 时间，而非当地时区。</li>
 </ul>
-
 <p>调用<code>log.SetFlag</code>设置选项，可以一次设置多个：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -606,7 +587,7 @@ if (!doNotTrack) {
   <span class="nx">Age</span>  <span class="kt">int</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">u</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
     <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
     <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
@@ -615,26 +596,24 @@ if (!doNotTrack) {
   <span class="nx">log</span><span class="p">.</span><span class="nf">SetFlags</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">Lshortfile</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Ldate</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span><span class="p">)</span>
 
   <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s login, age:%d&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>调用<code>log.Flags()</code>可以获取当前设置的选项。</p>
-
+</div><p>调用<code>log.Flags()</code>可以获取当前设置的选项。</p>
 <p>运行代码，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">2020/02/07 11:56:59.061615 main.go:20: dj login, age:18</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">2020/02/07 11:56:59.061615 main.go:20: dj login, age:18
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意，调用<code>log.SetFlag</code>之后，原有的选项会被覆盖掉！</p>
-
+</div><p>注意，调用<code>log.SetFlag</code>之后，原有的选项会被覆盖掉！</p>
 <p><code>log</code>库还定义了一个<code>Lstdflag</code>，为<code>Ldate | Ltime</code>，这就是我们默认的选项。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -643,17 +622,15 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/log/log.go
 </span><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
   <span class="nx">LstdFlags</span> <span class="p">=</span> <span class="nx">Ldate</span> <span class="p">|</span> <span class="nx">Ltime</span>
-<span class="p">)</span></code></pre></td></tr></table>
+<span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这就是为什么默认情况下，每条日志前会自动加上日期和时间。</p>
-
+</div><p>这就是为什么默认情况下，每条日志前会自动加上日期和时间。</p>
 <h3 id="自定义">自定义</h3>
-
 <p>实际上，<code>log</code>库为我们定义了一个默认的<code>Logger</code>，名为<code>std</code>，意为标准日志。我们直接调用的<code>log</code>库的方法，其内部是调用<code>std</code>的对应方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -675,26 +652,26 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/log/log.go
 </span><span class="c1"></span><span class="kd">var</span> <span class="nx">std</span> <span class="p">=</span> <span class="nf">New</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">LstdFlags</span><span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">Printf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
-  <span class="nx">std</span><span class="p">.</span><span class="nf">Output</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">v</span><span class="o">...</span><span class="p">))</span>
+<span class="kd">func</span> <span class="nf">Printf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{</span><span class="p">}</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">std</span><span class="p">.</span><span class="nf">Output</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">v</span><span class="o">...</span><span class="p">)</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">Fatalf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
-  <span class="nx">std</span><span class="p">.</span><span class="nf">Output</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">v</span><span class="o">...</span><span class="p">))</span>
+<span class="kd">func</span> <span class="nf">Fatalf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{</span><span class="p">}</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">std</span><span class="p">.</span><span class="nf">Output</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">v</span><span class="o">...</span><span class="p">)</span><span class="p">)</span>
   <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">Panicf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">Panicf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{</span><span class="p">}</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">s</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">v</span><span class="o">...</span><span class="p">)</span>
   <span class="nx">std</span><span class="p">.</span><span class="nf">Output</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span>
   <span class="nb">panic</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>当然，我们也可以定义自己的<code>Logger</code>：</p>
+</div><p>当然，我们也可以定义自己的<code>Logger</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -735,46 +712,45 @@ if (!doNotTrack) {
   <span class="nx">Age</span>  <span class="kt">int</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">u</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
     <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
     <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
   <span class="p">}</span>
 
-  <span class="nx">buf</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span><span class="p">{}</span>
+  <span class="nx">buf</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span><span class="p">{</span><span class="p">}</span>
   <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lshortfile</span><span class="p">|</span><span class="nx">log</span><span class="p">.</span><span class="nx">LstdFlags</span><span class="p">)</span>
 
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s login, age:%d&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
 
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">buf</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
-<span class="p">}</span></code></pre></td></tr></table>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">buf</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>log.New</code>接受三个参数：</p>
-
+</div><p><code>log.New</code>接受三个参数：</p>
 <ul>
 <li><code>io.Writer</code>：日志都会写到这个<code>Writer</code>中；</li>
 <li><code>prefix</code>：前缀，也可以后面调用<code>logger.SetPrefix</code>设置；</li>
 <li><code>flag</code>：选项，也可以后面调用<code>logger.SetFlag</code>设置。</li>
 </ul>
-
 <p>上面代码将日志输出到一个<code>bytes.Buffer</code>，然后将这个<code>buf</code>打印到标准输出。</p>
-
 <p>运行代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span><span class="lnt">3
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go run main.go 
-2020/02/07 13:48:54 main.go:23: dj login, age:18</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go run main.go 
+2020/02/07 13:48:54 main.go:23: dj login, age:18
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意到，第一个参数为<code>io.Writer</code>，我们可以使用<code>io.MultiWriter</code>实现多目的地输出。下面我们将日志同时输出到标准输出、<code>bytes.Buffer</code>和文件中：</p>
+</div><p>注意到，第一个参数为<code>io.Writer</code>，我们可以使用<code>io.MultiWriter</code>实现多目的地输出。下面我们将日志同时输出到标准输出、<code>bytes.Buffer</code>和文件中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -820,32 +796,30 @@ if (!doNotTrack) {
   <span class="nx">Age</span>  <span class="kt">int</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">u</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
     <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
     <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
   <span class="p">}</span>
 
-  <span class="nx">writer1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span><span class="p">{}</span>
+  <span class="nx">writer1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span><span class="p">{</span><span class="p">}</span>
   <span class="nx">writer2</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span>
   <span class="nx">writer3</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="s">&#34;log.txt&#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">,</span> <span class="mo">0755</span><span class="p">)</span>
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;create file log.txt failed: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
 
-  <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">io</span><span class="p">.</span><span class="nf">MultiWriter</span><span class="p">(</span><span class="nx">writer1</span><span class="p">,</span> <span class="nx">writer2</span><span class="p">,</span> <span class="nx">writer3</span><span class="p">),</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lshortfile</span><span class="p">|</span><span class="nx">log</span><span class="p">.</span><span class="nx">LstdFlags</span><span class="p">)</span>
+  <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">io</span><span class="p">.</span><span class="nf">MultiWriter</span><span class="p">(</span><span class="nx">writer1</span><span class="p">,</span> <span class="nx">writer2</span><span class="p">,</span> <span class="nx">writer3</span><span class="p">)</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lshortfile</span><span class="p">|</span><span class="nx">log</span><span class="p">.</span><span class="nx">LstdFlags</span><span class="p">)</span>
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s login, age:%d&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果你愿意，还可以发送到到网络。</p>
-
+</div><p>如果你愿意，还可以发送到到网络。</p>
 <h2 id="实现">实现</h2>
-
 <p><code>log</code>库的核心是<code>Output</code>方法，我们简单看一下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -876,23 +850,23 @@ if (!doNotTrack) {
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/log/log.go
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">Logger</span><span class="p">)</span> <span class="nf">Output</span><span class="p">(</span><span class="nx">calldepth</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="nx">now</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span> <span class="c1">// get this early.
+  <span class="nx">now</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(</span><span class="p">)</span> <span class="c1">// get this early.
 </span><span class="c1"></span>  <span class="kd">var</span> <span class="nx">file</span> <span class="kt">string</span>
   <span class="kd">var</span> <span class="nx">line</span> <span class="kt">int</span>
-  <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-  <span class="k">defer</span> <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+  <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">(</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">(</span><span class="p">)</span>
   <span class="k">if</span> <span class="nx">l</span><span class="p">.</span><span class="nx">flag</span><span class="o">&amp;</span><span class="p">(</span><span class="nx">Lshortfile</span><span class="p">|</span><span class="nx">Llongfile</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
     <span class="c1">// Release lock while getting caller info - it&#39;s expensive.
-</span><span class="c1"></span>    <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span><span class="c1"></span>    <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">(</span><span class="p">)</span>
     <span class="kd">var</span> <span class="nx">ok</span> <span class="kt">bool</span>
     <span class="nx">_</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">ok</span> <span class="p">=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">Caller</span><span class="p">(</span><span class="nx">calldepth</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
       <span class="nx">file</span> <span class="p">=</span> <span class="s">&#34;???&#34;</span>
       <span class="nx">line</span> <span class="p">=</span> <span class="mi">0</span>
     <span class="p">}</span>
-    <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+    <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">(</span><span class="p">)</span>
   <span class="p">}</span>
-  <span class="nx">l</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">buf</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+  <span class="nx">l</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>
   <span class="nx">l</span><span class="p">.</span><span class="nf">formatHeader</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">l</span><span class="p">.</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">now</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">line</span><span class="p">)</span>
   <span class="nx">l</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">s</span><span class="o">...</span><span class="p">)</span>
   <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">s</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\n&#39;</span> <span class="p">{</span>
@@ -900,53 +874,37 @@ if (!doNotTrack) {
   <span class="p">}</span>
   <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">err</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果设置了<code>Lshortfile</code>或<code>Llongfile</code>，<code>Ouput</code>方法中会调用<code>runtime.Caller</code>获取文件名和行号。<code>runtime.Caller</code>的参数<code>calldepth</code>表示获取调用栈向上多少层的信息，当前层为 0。</p>
-
+</div><p>如果设置了<code>Lshortfile</code>或<code>Llongfile</code>，<code>Ouput</code>方法中会调用<code>runtime.Caller</code>获取文件名和行号。<code>runtime.Caller</code>的参数<code>calldepth</code>表示获取调用栈向上多少层的信息，当前层为 0。</p>
 <p>一般的调用路径是：</p>
-
 <ul>
 <li>程序中使用<code>log.Printf</code>之类的函数；</li>
 <li>在<code>log.Printf</code>内调用<code>std.Output</code>。</li>
 </ul>
-
 <p>我们在<code>Output</code>方法中需要获取调用<code>log.Printf</code>的文件和行号。
 <code>calldepth</code>传入 0 表示<code>Output</code>方法内调用<code>runtime.Caller</code>的那一行信息，传入 1 表示<code>log.Printf</code>内调用<code>std.Output</code>那一行的信息，
 传入 2 表示程序中调用<code>log.Printf</code>的那一行信息。显然这里要用 2。</p>
-
 <p>然后调用<code>formatHeader</code>处理前缀和选项。</p>
-
 <p>最后将生成的字节流写入到<code>Writer</code>中。</p>
-
 <p>这里有两个优化技巧：</p>
-
 <ul>
 <li>由于<code>runtime.Caller</code>调用比较耗时，先释放锁，避免等待时间过长；</li>
 <li>为了避免频繁的内存分配，<code>logger</code>中保存了一个类型为<code>[]byte</code>的<code>buf</code>，可重复使用。前缀和日志内容先写到这个<code>buf</code>中，然后统一写入<code>Writer</code>，减少 io 操作。</li>
 </ul>
-
 <h2 id="总结">总结</h2>
-
 <p><code>log</code>实现了一个小巧的日志库，可供简单使用。本文介绍了它的基本使用，简单地分析了一下源码。
 如果<code>log</code>库的功能不能满足需求，我们可以在它之上做二次封装。看煎鱼大佬的<a href="https://book.eddycjy.com/golang/gin/log.html">这篇文章</a>。</p>
-
 <p>除此之外，社区也涌现了很多优秀的、功能丰富的日志库，可以选用。</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://golang.org/pkg/log">log</a>官方文档</li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 

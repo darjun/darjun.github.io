@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.64.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2019/11/25/goweb/hello-world/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.af20b78e95c84de86b00a0242a4a77bd2601700e1b250edf27537d957ac0041d.css" integrity="sha256-ryC3jpXITehrAKAkKkp3vSYBcA4bJQ7fJ1N9lXrABB0=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,16 +69,13 @@
 <meta property="article:modified_time" content="2019-11-25T21:30:00+00:00" />
 <meta itemprop="name" content="Go Web 编程之 Hello World">
 <meta itemprop="description" content="概述 计划写一个讲 Go Web 编程的系列文章。从基于 net/http 包编写 Go Web 程序开始，讲述处理器，请求，响应等基础知识。然后到框架的使用。中间会穿插一些源码的分析">
-
-
 <meta itemprop="datePublished" content="2019-11-25T21:30:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-11-25T21:30:00&#43;00:00" />
-<meta itemprop="wordCount" content="2758">
+<meta itemprop="wordCount" content="2757">
 
 
 
-<meta itemprop="keywords" content="Go Web 编程," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go Web 编程," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go Web 编程之 Hello World"/>
 <meta name="twitter:description" content="概述 计划写一个讲 Go Web 编程的系列文章。从基于 net/http 包编写 Go Web 程序开始，讲述处理器，请求，响应等基础知识。然后到框架的使用。中间会穿插一些源码的分析"/>
 
@@ -363,7 +360,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 2758 字 </span>
+        <span class="more-meta"> 约 2757 字 </span>
           <span class="more-meta"> 预计阅读 6 分钟 </span>
 
         
@@ -384,166 +381,137 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#http">HTTP</a>
-<ul>
-<li><a href="#http-请求">HTTP 请求</a></li>
-<li><a href="#http-响应">HTTP 响应</a></li>
-</ul></li>
-<li><a href="#第一个-go-web-程序">第一个 Go Web 程序</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#http">HTTP</a>
+      <ul>
+        <li><a href="#http-请求">HTTP 请求</a></li>
+        <li><a href="#http-响应">HTTP 响应</a></li>
+      </ul>
+    </li>
+    <li><a href="#第一个-go-web-程序">第一个 Go Web 程序</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="概述">概述</h2>
-
+      <h2 id="概述">概述</h2>
 <p>计划写一个讲 Go Web 编程的系列文章。从基于 net/http 包编写 Go Web 程序开始，讲述处理器，请求，响应等基础知识。然后到框架的使用。中间会穿插一些源码的分析。最后做一个实战项目。</p>
-
 <p>目前 Go 社区已经有非常多关于 Web 开发的库或框架。大而全的有<a href="https://github.com/astaxie/beego">beego</a>，<a href="https://github.com/revel/revel">revel</a>。超高性能的有<a href="https://github.com/labstack/echo">echo</a>，<a href="https://github.com/valyala/fasthttp">fasthttp</a>，<a href="https://github.com/gin-gonic/gin">gin</a>（目前 GitHub 星标最多）。还有不少专注于具体某个方面的，最多要属路由了，例如：<a href="https://github.com/gorilla/mux">mux</a>/<a href="https://github.com/julienschmidt/httprouter">httprouter</a>。</p>
-
 <p>那为什么还要从最原始的 net/http 包开始学起？因为这些库/框架大多是基于 net/http 包做了包装，提供易于使用的功能，如路由参数（<code>/:name/:age</code>）/路由分组等。熟练掌握了基础知识和 net/http，学习其他框架必然能有事半功倍的效果。不管是快速上手使用库和框架，还是深入阅读源码，都能得心应手。</p>
-
 <h2 id="http">HTTP</h2>
-
 <p>HTTP 协议是整个互联网的基石。不管技术，产品还是运营，甚至是非互联网行业的人，每天都在与 HTTP 协议打交道。我们每天浏览网页都在使用 HTTP。现在很多 APP 也都在内部使用 HTTP 与服务器交互。所以学习 Web 编程，HTTP 协议是必须要掌握的。</p>
-
 <p>HTTP 是一个无状态的，基于文本的协议。它灵活，稳定，强大。自 1991 年发布以来只进行了几次修订。下面是 HTTP 发展简史：</p>
-
 <ul>
 <li>1991 年，HTTP 的第一个版本 0.9 由 Tim Berners-Lee 创建。最初只有一个方法 GET，而且规定服务器返回的只能是 HTML 格式的数据。</li>
 <li>1996 年，HTTP 1.0 发布，支持了 POST 和 HEAD 方法。</li>
 <li>1999 年，HTTP 1.1 发布，添加了 PUT/DELETE/OPTIONS/TRACE/CONNECT 这 5 个方法，<strong>并允许开发者自行添加更多方法</strong>。</li>
 <li>2015 年，HTTP 2.0 发布，为提升性能做出了不少修改，如采用二进制格式，完全多路复用。</li>
 </ul>
-
 <p>HTTP 是一种请求——响应模式的协议，所有操作以一个请求开始，以一个响应结束。</p>
-
 <h3 id="http-请求">HTTP 请求</h3>
-
 <p>HTTP 请求的格式非常简单。一个请求由以下 4 个部分组成：</p>
-
 <ul>
 <li>请求行（request-line）；</li>
 <li>零个或多个首部（header）；</li>
 <li>一个空行；</li>
 <li>一个可选的报文主体（body）。</li>
 </ul>
-
 <p>第一个重要的部分为请求行，其格式如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">Method Path Version</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Method Path Version
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li><code>Method</code>：请求的方法，表示对资源进行的操作。常用的方法有<code>GET/POST/PUT/DELETE</code>；</li>
 <li><code>Path</code>：请求资源的路径，如<code>/user/info.html</code>；</li>
 <li><code>Version</code>：即 HTTP 的版本号，1.1 版本写做<code>HTTP/1.1</code>。</li>
 </ul>
-
 <p>第二个部分为请求的首部，每个首部占一行。首部使用由冒号（<code>:</code>）分隔的键值对表示，如<code>Content-Type: x-www-form-urlencoded</code>。</p>
-
 <p>第三个部分为一个空行。注意，<strong>即使没有首部，后面的空行也不能省略</strong>。</p>
-
 <p>最后为一个可选的报文主体。如果有主体，服务器会根据首部中<code>Content-Type</code>指定的格式来解析这部分内容。</p>
-
 <h3 id="http-响应">HTTP 响应</h3>
-
 <p>HTTP 响应的格式与请求非常相似。一个响应由以下 4 个部分组成：</p>
-
 <ul>
 <li>响应行（response line）；</li>
 <li>零个或多个首部（header）；</li>
 <li>一个空行；</li>
 <li>一个可选的报文主体（body）。</li>
 </ul>
-
 <p>响应行的格式为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">StatusCode Description</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">StatusCode Description
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li><code>StatusCode</code>：状态码，表示请求状态；</li>
 <li><code>Description</code>：对状态码的简短描述。</li>
 </ul>
-
 <p>响应的首部与主体和请求的一样，这里就不多说了。</p>
-
 <p>这里简单介绍一下状态码。HTTP 将状态码分为了 5 大类，<code>1XX/2XX/3XX/4XX/5XX</code>。</p>
-
 <ul>
-<li><p><code>1XX</code>：情报状态码，又叫做信息状态码。服务器通过这类状态码告知客户端，自己已经收到了客户端发送的请求。几个常见的状态码如下：</p>
-
+<li>
+<p><code>1XX</code>：情报状态码，又叫做信息状态码。服务器通过这类状态码告知客户端，自己已经收到了客户端发送的请求。几个常见的状态码如下：</p>
 <ul>
 <li><code>100 Continue</code>：表示服务器到目前为止收到的内容都正常，客户端应该继续请求。如果已经完成，则忽略它。</li>
 <li><code>101 Switching Protocol</code>：这个状态码是响应客户端的<code>Upgrade</code>首部发送的，并且指示服务器也正在切换的协议。如客户端请求切换协议，服务器将协议切换至 Websocket，就会发送该状态码给客户端，并且在<code>Upgrade</code>首部中填上 Websocket。</li>
-</ul></li>
-
-<li><p><code>2XX</code>：成功状态码。表示服务器已经收到了客户端的请求，并成功对请求进行了处理。几个常见的状态码如下：</p>
-
+</ul>
+</li>
+<li>
+<p><code>2XX</code>：成功状态码。表示服务器已经收到了客户端的请求，并成功对请求进行了处理。几个常见的状态码如下：</p>
 <ul>
 <li><code>200 OK</code>：这最常见的状态码了，表示请求成功。</li>
 <li><code>201 Created</code>：请求已成功，并因此创建了一个新的资源。</li>
-</ul></li>
-
-<li><p><code>3XX</code>：重定向状态码。服务器收到了请求，但是为了完整地处理该请求，客户端还需要执行指定的动作。一般用于 URL 重定向。几个常见的状态码如下：</p>
-
+</ul>
+</li>
+<li>
+<p><code>3XX</code>：重定向状态码。服务器收到了请求，但是为了完整地处理该请求，客户端还需要执行指定的动作。一般用于 URL 重定向。几个常见的状态码如下：</p>
 <ul>
 <li><code>300 Multiple Choice</code>：被请求的资源有一系列可供选择的回馈信息，每个都有自己特定的地址。用户或浏览器可自行选择一个地址进行重定向。</li>
 <li><code>302 Moved Permanently</code>：被请求的资源已经永久移动到新的位置了。</li>
-</ul></li>
-
-<li><p><code>4XX</code>：客户端错误状态码。表示客户端发送的请求中有错误，如格式不对。常见的状态码如下：</p>
-
+</ul>
+</li>
+<li>
+<p><code>4XX</code>：客户端错误状态码。表示客户端发送的请求中有错误，如格式不对。常见的状态码如下：</p>
 <ul>
 <li><code>404 Not Found</code>：最常见的状态码了，表示页面不存在。</li>
 <li><code>405 Method Not Allowed</code>：请求的方法不允许。</li>
-</ul></li>
-
-<li><p><code>5XX</code>：服务器错误状态码。表示服务器由于某些原因无法正确处理请求。常见的状态码如下：</p>
-
+</ul>
+</li>
+<li>
+<p><code>5XX</code>：服务器错误状态码。表示服务器由于某些原因无法正确处理请求。常见的状态码如下：</p>
 <ul>
 <li><code>500 Internal Server Error</code>：服务器遇到了不知道如何处理的情况。</li>
 <li><code>501 Not Implemented</code>：此请求方法不被服务器支持。</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="第一个-go-web-程序">第一个 Go Web 程序</h2>
-
 <blockquote>
 <p>Talk is cheap, show me the Code!</p>
 </blockquote>
-
 <p>接下来，我们来编写一个 Web 版本的 &ldquo;Hello World&rdquo; 程序。我们将使用 Go 语言提供的 net/http 包。该包的功能十分强大，使用起来也非常方便。</p>
-
 <ul>
 <li>首先，在<code>$GOPATH</code>目录下创建一个项目目录<code>go-web-example</code>；</li>
 <li>在<code>go-web-example</code>目录下创建一个<code>1-hello_world</code>程序目录；</li>
-
-<li><p>创建<code>server.go</code>文件，输入下面内容：</p>
+<li>创建<code>server.go</code>文件，输入下面内容：</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -563,62 +531,45 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
-<span class="s">&#34;fmt&#34;</span>
-<span class="s">&#34;net/http&#34;</span>
+  <span class="s">&#34;fmt&#34;</span>
+  <span class="s">&#34;net/http&#34;</span>
 <span class="p">)</span>
 
 <span class="kd">func</span> <span class="nf">hello</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Hello, World!&#34;</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Hello, World!&#34;</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-<span class="nx">http</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">hello</span><span class="p">)</span>
-<span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">hello</span><span class="p">)</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div></li>
-
-<li><p>打开命令行，进入<code>$GOPATH/go-web-example/1-hello_world</code>目录，输入命令：<code>go run server.go</code>，我们的第一个服务器程序就跑起来了。</p></li>
+</div><ul>
+<li>打开命令行，进入<code>$GOPATH/go-web-example/1-hello_world</code>目录，输入命令：<code>go run server.go</code>，我们的第一个服务器程序就跑起来了。</li>
 </ul>
-
-<p><img src="/img/in-post/goweb/helloworld1.png" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/helloworld1.png" alt=""></p>
 <ul>
-<li>打开浏览器，输入网址<code>localhost:8080</code>，&rdquo;Hello, World&rdquo;就在网页上显示出来了！</li>
+<li>打开浏览器，输入网址<code>localhost:8080</code>，&ldquo;Hello, World&quot;就在网页上显示出来了！</li>
 </ul>
-
-<p><img src="/img/in-post/goweb/helloworld3.png" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/helloworld3.png" alt=""></p>
 <p>我们来解析一下该程序。</p>
-
 <p><code>http.HandleFunc</code>将<code>hello</code>函数注册到根路径<code>/</code>上，<code>hello</code>函数我们也叫做处理器。它接收两个参数，第一个参数为一个类型为<code>http.ResponseWriter</code>的接口，响应就是通过它发送给客户端的。第二个参数是一个类型为<code>http.Request</code>的结构指针，客户端发送的信息都可以通过这个结构获取。</p>
-
 <p>然后，<code>http.ListenAndServe</code>将在 8080 端口上监听请求，然后交由<code>hello</code>处理。</p>
-
 <p>由于 net/http 包为我们封装了很多细节，所以我们的使用如此简单。</p>
-
 <h2 id="总结">总结</h2>
-
 <p>本文简单介绍了 HTTP 的发展简史、HTTP 请求和响应的格式，并且编写了第一个 Go Web 程序。作为整个互联网的基石，HTTP 协议的重要性怎么形容都不为过，是每个开发人员都必须掌握的知识。Go 语言的 net/http 为 Web 程序的开发封装了很多细节。使用它来开发 Web 程序非常简单。最后，为了能加深学习的印象，我画了一个脑图。期望学完之后能形成一个完整的知识体系。</p>
-
-<p><img src="/img/in-post/goweb/helloworld4.png" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/helloworld4.png" alt=""></p>
 <p>接下来，我们来深入学习 HTTP 请求的内容。</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://book.douban.com/subject/27204133/">Go Web 编程</a></li>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">HTTP 响应码</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
