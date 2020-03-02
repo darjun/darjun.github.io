@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 wire - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 之前的一篇文章Go 每日一库之 dig介绍了 uber 开源的依赖注入框架dig。读了这篇文章后，@overtalk推荐了 Google 开源的wire工具。所以就" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.64.1" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2020/03/02/godailylib/wire/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 wire" />
+<meta property="og:description" content="简介 之前的一篇文章Go 每日一库之 dig介绍了 uber 开源的依赖注入框架dig。读了这篇文章后，@overtalk推荐了 Google 开源的wire工具。所以就" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2020/03/02/godailylib/wire/" />
+<meta property="article:published_time" content="2020-03-02T15:11:23+00:00" />
+<meta property="article:modified_time" content="2020-03-02T15:11:23+00:00" />
+<meta itemprop="name" content="Go 每日一库之 wire">
+<meta itemprop="description" content="简介 之前的一篇文章Go 每日一库之 dig介绍了 uber 开源的依赖注入框架dig。读了这篇文章后，@overtalk推荐了 Google 开源的wire工具。所以就">
+<meta itemprop="datePublished" content="2020-03-02T15:11:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-03-02T15:11:23&#43;00:00" />
+<meta itemprop="wordCount" content="4669">
+
+
+
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 wire"/>
+<meta name="twitter:description" content="简介 之前的一篇文章Go 每日一库之 dig介绍了 uber 开源的依赖注入框架dig。读了这篇文章后，@overtalk推荐了 Google 开源的wire工具。所以就"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 wire</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-03-02" class="post-time">
+          2020-03-02
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 4669 字 </span>
+          <span class="more-meta"> 预计阅读 10 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#基础概念">基础概念</a></li>
+    <li><a href="#参数">参数</a></li>
+    <li><a href="#错误">错误</a></li>
+    <li><a href="#高级特性">高级特性</a>
+      <ul>
+        <li><a href="#providerset">ProviderSet</a></li>
+        <li><a href="#结构构造器">结构构造器</a></li>
+        <li><a href="#绑定值">绑定值</a></li>
+        <li><a href="#结构字段作为构造器">结构字段作为构造器</a></li>
+        <li><a href="#清理函数">清理函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#一些细节">一些细节</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="简介">简介</h2>
+<p>之前的一篇文章<a href="https://darjun.github.io/2020/02/22/godailylib/dig/">Go 每日一库之 dig</a>介绍了 uber 开源的依赖注入框架<code>dig</code>。读了这篇文章后，<a href="https://github.com/overtalk">@overtalk</a>推荐了 Google 开源的<code>wire</code>工具。所以就有了今天这篇文章，感谢推荐👍</p>
+<p><a href="https://github.com/google/wire"><code>wire</code></a>是 Google 开源的一个依赖注入工具。它是一个代码生成器，并不是一个框架。我们只需要在一个特殊的<code>go</code>文件中告诉<code>wire</code>类型之间的依赖关系，它会自动帮我们生成代码，帮助我们创建指定类型的对象，并组装它的依赖。</p>
+<h2 id="快速使用">快速使用</h2>
+<p>先安装工具：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">google</span><span class="o">/</span><span class="nx">wire</span><span class="o">/</span><span class="nx">cmd</span><span class="o">/</span><span class="nx">wire</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的命令会在<code>$GOPATH/bin</code>中生成一个可执行程序<code>wire</code>，这就是代码生成器。我个人习惯把<code>$GOPATH/bin</code>加入系统环境变量<code>$PATH</code>中，所以可直接在命令行中执行<code>wire</code>命令。</p>
+<p>下面我们在一个例子中看看如何使用<code>wire</code>。</p>
+<p>现在，我们来到一个黑暗的世界，这个世界中有一个邪恶的怪兽。我们用下面的结构表示，同时编写一个创建方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Monster</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="p">)</span> <span class="nx">Monster</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">Monster</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;kitty&#34;</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>有怪兽肯定就有勇士，结构如下，同样地它也有创建方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Player</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Player</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">Player</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>终于有一天，勇士完成了他的使命，战胜了怪兽：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Mission</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Player</span>  <span class="nx">Player</span>
+  <span class="nx">Monster</span> <span class="nx">Monster</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">p</span> <span class="nx">Player</span><span class="p">,</span> <span class="nx">m</span> <span class="nx">Monster</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">Mission</span><span class="p">{</span><span class="nx">p</span><span class="p">,</span> <span class="nx">m</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">Mission</span><span class="p">)</span> <span class="nf">Start</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s defeats %s, world peace!\n&#34;</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">Player</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">Monster</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这可能是某个游戏里面的场景哈，我们看如何将上面的结构组装起来放在一个应用程序中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="p">)</span>
+  <span class="nx">player</span> <span class="o">:=</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">)</span>
+  <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
+
+  <span class="nx">mission</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>代码量少，结构不复杂的情况下，上面的实现方式确实没什么问题。但是项目庞大到一定程度，结构之间的关系变得非常复杂的时候，这种手动创建每个依赖，然后将它们组装起来的方式就会变得异常繁琐，并且容易出错。这个时候勇士<code>wire</code>出现了！</p>
+<p><code>wire</code>的要求很简单，新建一个<code>wire.go</code>文件（文件名可以随意），创建我们的初始化函数。比如，我们要创建并初始化一个<code>Mission</code>对象，我们就可以这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">//+build wireinject
+</span><span class="c1"></span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&#34;github.com/google/wire&#34;</span>
+
+<span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewMission</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">Mission</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>首先这个函数的返回值就是我们需要创建的对象类型，<code>wire</code>只需要知道类型，<code>return</code>后返回什么不重要。然后在函数中，我们调用<code>wire.Build()</code>将创建<code>Mission</code>所依赖的类型的构造器传进去。例如，需要调用<code>NewMission()</code>创建<code>Mission</code>类型，<code>NewMission()</code>接受两个参数一个<code>Monster</code>类型，一个<code>Player</code>类型。<code>Monster</code>类型对象需要调用<code>NewMonster()</code>创建，<code>Player</code>类型对象需要调用<code>NewPlayer()</code>创建。所以<code>NewMonster()</code>和<code>NewPlayer()</code>我们也需要传给<code>wire</code>。</p>
+<p>文件编写完成之后，执行<code>wire</code>命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">wire</span>
+<span class="nx">wire</span><span class="p">:</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">wire</span><span class="o">/</span><span class="nx">get</span><span class="o">-</span><span class="nx">started</span><span class="o">/</span><span class="nx">after</span><span class="p">:</span> <span class="err">\</span>
+<span class="nx">wrote</span> <span class="nx">D</span><span class="p">:</span><span class="err">\</span><span class="nx">code</span><span class="err">\</span><span class="nx">golang</span><span class="err">\</span><span class="nx">src</span><span class="err">\</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="err">\</span><span class="nx">darjun</span><span class="err">\</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="err">\</span><span class="nx">wire</span><span class="err">\</span><span class="nx">get</span><span class="o">-</span><span class="nx">started</span><span class="err">\</span><span class="nx">after</span><span class="err">\</span><span class="nx">wire_gen</span><span class="p">.</span><span class="k">go</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们看看生成的<code>wire_gen.go</code>文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// Code generated by Wire. DO NOT EDIT.
+</span><span class="c1"></span>
+<span class="c1">//go:generate wire
+</span><span class="c1"></span><span class="c1">//+build !wireinject
+</span><span class="c1"></span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="c1">// Injectors from wire.go:
+</span><span class="c1"></span>
+<span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
+  <span class="nx">player</span> <span class="o">:=</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+  <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="p">)</span>
+  <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">mission</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个<code>InitMission()</code>函数是不是和我们在<code>main.go</code>中编写的代码一毛一样！接下来，我们可以直接在<code>main.go</code>调用<code>InitMission()</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">InitMission</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">)</span>
+
+  <span class="nx">mission</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>细心的童鞋可能发现了，<code>wire.go</code>和<code>wire_gen.go</code>文件头部位置都有一个<code>+build</code>，不过一个后面是<code>wireinject</code>，另一个是<code>!wireinject</code>。<code>+build</code>其实是 Go 语言的一个特性。类似 C/C++ 的条件编译，在执行<code>go build</code>时可传入一些选项，根据这个选项决定某些文件是否编译。<code>wire</code>工具只会处理有<code>wireinject</code>的文件，所以我们的<code>wire.go</code>文件要加上这个。生成的<code>wire_gen.go</code>是给我们来使用的，<code>wire</code>不需要处理，故有<code>!wireinject</code>。</p>
+<p>由于现在是两个文件，我们不能用<code>go run main.go</code>运行程序，可以用<code>go run .</code>运行。运行结果与之前的例子一模一样！</p>
+<p>注意，如果你运行时，出现了<code>InitMission</code>重定义，那么检查一下你的<code>//+build wireinject</code>与<code>package main</code>这两行之间是否有空行，这个空行必须要有！见<a href="https://github.com/google/wire/issues/117">https://github.com/google/wire/issues/117</a>。中招的默默在心里打个 1 好嘛😂</p>
+<h2 id="基础概念">基础概念</h2>
+<p><code>wire</code>有两个基础概念，<code>Provider</code>（构造器）和<code>Injector</code>（注入器）。<code>Provider</code>实际上就是创建函数，大家意会一下。我们上面<code>InitMission</code>就是<code>Injector</code>。每个注入器实际上就是一个对象的创建和初始化函数。在这个函数中，我们只需要告诉<code>wire</code>要创建什么类型的对象，这个类型的依赖，<code>wire</code>工具会为我们生成一个函数完成对象的创建和初始化工作。</p>
+<h2 id="参数">参数</h2>
+<p>同样细心的你应该发现了，我们上面编写的<code>InitMission()</code>函数带有一个<code>string</code>类型的参数。并且在生成的<code>InitMission()</code>函数中，这个参数传给了<code>NewPlayer()</code>。<code>NewPlayer()</code>需要<code>string</code>类型的参数，而参数类型就是<code>string</code>。所以生成的<code>InitMission()</code>函数中，这个参数就被传给了<code>NewPlayer()</code>。如果我们让<code>NewMonster()</code>也接受一个<code>string</code>参数呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Monster</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">Monster</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么生成的<code>InitMission()</code>函数中<code>NewPlayer()</code>和<code>NewMonster()</code>都会得到这个参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
+  <span class="nx">player</span> <span class="o">:=</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+  <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+  <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">mission</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>实际上，<code>wire</code>在生成代码时，构造器需要的参数（或者叫依赖）会从参数中查找或通过其它构造器生成。决定选择哪个参数或构造器完全根据类型。如果参数或构造器生成的对象有类型相同的情况，运行<code>wire</code>工具时会报错。如果我们想要定制创建行为，就需要为不同类型创建不同的参数结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">PlayerParam</span> <span class="kt">string</span>
+<span class="kd">type</span> <span class="nx">MonsterParam</span> <span class="kt">string</span>
+
+<span class="kd">func</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span> <span class="nx">PlayerParam</span><span class="p">)</span> <span class="nx">Player</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">Player</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nb">string</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="nx">name</span> <span class="nx">MonsterParam</span><span class="p">)</span> <span class="nx">Monster</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">Monster</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nb">string</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">InitMission</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="s">&#34;kitty&#34;</span><span class="p">)</span>
+  <span class="nx">mission</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// wire.go
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">p</span> <span class="nx">PlayerParam</span><span class="p">,</span> <span class="nx">m</span> <span class="nx">MonsterParam</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewMission</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">Mission</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>生成的代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">m</span> <span class="nx">MonsterParam</span><span class="p">,</span> <span class="nx">p</span> <span class="nx">PlayerParam</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
+  <span class="nx">player</span> <span class="o">:=</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+  <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+  <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">mission</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在参数比较复杂的时候，建议将参数放在一个结构中。</p>
+<h2 id="错误">错误</h2>
+<p>不是所有的构造操作都能成功，没准勇士出山前就死于小人之手：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Player</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">Unix</span><span class="p">(</span><span class="p">)</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Player</span><span class="p">{</span><span class="p">}</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;player dead&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">Player</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">}</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们使创建<strong>随机失败</strong>，修改注入器<code>InitMission()</code>的签名，增加<code>error</code>返回值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Mission</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewMission</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">Mission</span><span class="p">{</span><span class="p">}</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>生成的代码，会将<code>NewPlayer()</code>返回的错误，作为<code>InitMission()</code>的返回值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Mission</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">player</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Mission</span><span class="p">{</span><span class="p">}</span><span class="p">,</span> <span class="nx">err</span>
+  <span class="p">}</span>
+  <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="p">)</span>
+  <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">mission</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>wire</code>遵循<strong>fail-fast</strong>的原则，错误必须被处理。如果我们的注入器不返回错误，但构造器返回错误，<code>wire</code>工具会报错！</p>
+<h2 id="高级特性">高级特性</h2>
+<p>下面简单介绍一下<code>wire</code>的高级特性。</p>
+<h3 id="providerset">ProviderSet</h3>
+<p>有时候可能多个类型有相同的依赖，我们每次都将相同的构造器传给<code>wire.Build()</code>不仅繁琐，而且不易维护，一个依赖修改了，所有传入<code>wire.Build()</code>的地方都要修改。为此，<code>wire</code>提供了一个<code>ProviderSet</code>（构造器集合），可以将多个构造器打包成一个集合，后续只需要使用这个集合即可。假设，我们有关勇士和怪兽的故事有两个结局：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">EndingA</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Player</span>  <span class="nx">Player</span>
+  <span class="nx">Monster</span> <span class="nx">Monster</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">NewEndingA</span><span class="p">(</span><span class="nx">p</span> <span class="nx">Player</span><span class="p">,</span> <span class="nx">m</span> <span class="nx">Monster</span><span class="p">)</span> <span class="nx">EndingA</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">EndingA</span><span class="p">{</span><span class="nx">p</span><span class="p">,</span> <span class="nx">m</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">EndingA</span><span class="p">)</span> <span class="nf">Appear</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s defeats %s, world peace!\n&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Player</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Monster</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">EndingB</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Player</span>  <span class="nx">Player</span>
+  <span class="nx">Monster</span> <span class="nx">Monster</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">NewEndingB</span><span class="p">(</span><span class="nx">p</span> <span class="nx">Player</span><span class="p">,</span> <span class="nx">m</span> <span class="nx">Monster</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{</span><span class="nx">p</span><span class="p">,</span> <span class="nx">m</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">EndingB</span><span class="p">)</span> <span class="nf">Appear</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s defeats %s, but become monster, world darker!\n&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Player</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Monster</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>编写两个注入器：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitEndingA</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingA</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewEndingA</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">EndingA</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">InitEndingB</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewEndingB</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们观察到两次调用<code>wire.Build()</code>都需要传入<code>NewMonster</code>和<code>NewPlayer</code>。两个还好，如果很多的话写起来就麻烦了，而且修改也不容易。这种情况下，我们可以先定义一个<code>ProviderSet</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">monsterPlayerSet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>后续直接使用这个<code>set</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitEndingA</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingA</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">NewEndingA</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">EndingA</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">InitEndingB</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">NewEndingB</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>而后如果要添加或删除某个构造器，直接修改<code>set</code>的定义处即可。</p>
+<h3 id="结构构造器">结构构造器</h3>
+<p>因为我们的<code>EndingA</code>和<code>EndingB</code>的字段只有<code>Player</code>和<code>Monster</code>，我们就不需要显式为它们提供构造器，可以直接使用<code>wire</code>提供的<strong>结构构造器</strong>（Struct Provider）。结构构造器创建某个类型的结构，然后用参数或调用其它构造器填充它的字段。例如上面的例子，我们去掉<code>NewEndingA()</code>和<code>NewEndingB()</code>，然后为它们提供结构构造器：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">monsterPlayerSet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">endingASet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Struct</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">EndingA</span><span class="p">)</span><span class="p">,</span> <span class="s">&#34;Player&#34;</span><span class="p">,</span> <span class="s">&#34;Monster&#34;</span><span class="p">)</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">endingBSet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Struct</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">EndingB</span><span class="p">)</span><span class="p">,</span> <span class="s">&#34;Player&#34;</span><span class="p">,</span> <span class="s">&#34;Monster&#34;</span><span class="p">)</span><span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">InitEndingA</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingA</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">endingASet</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">EndingA</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">InitEndingB</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">endingBSet</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>结构构造器使用<code>wire.Struct</code>注入，第一个参数固定为<code>new(结构名)</code>，后面可接任意多个参数，表示需要为该结构的哪些字段注入值。上面我们需要注入<code>Player</code>和<code>Monster</code>两个字段。或者我们也可以使用通配符<code>*</code>表示注入所有字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">endingASet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Struct</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">EndingA</span><span class="p">)</span><span class="p">,</span> <span class="s">&#34;*&#34;</span><span class="p">)</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">endingBSet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Struct</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">EndingB</span><span class="p">)</span><span class="p">,</span> <span class="s">&#34;*&#34;</span><span class="p">)</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>wire</code>为我们生成正确的代码，非常棒：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitEndingA</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingA</span> <span class="p">{</span>
+  <span class="nx">player</span> <span class="o">:=</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+  <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="p">)</span>
+  <span class="nx">endingA</span> <span class="o">:=</span> <span class="nx">EndingA</span><span class="p">{</span>
+    <span class="nx">Player</span><span class="p">:</span>  <span class="nx">player</span><span class="p">,</span>
+    <span class="nx">Monster</span><span class="p">:</span> <span class="nx">monster</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">endingA</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="绑定值">绑定值</h3>
+<p>有时候，我们需要为某个类型绑定一个值，而不想依赖构造器每次都创建一个新的值。有些类型天生就是单例，例如配置，数据库对象（<code>sql.DB</code>）。这时我们可以使用<code>wire.Value</code>绑定值，使用<code>wire.InterfaceValue</code>绑定接口。例如，我们的怪兽一直是一个<code>Kitty</code>，我们就不用每次都取创建它了，直接绑定这个值就 ok 了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">kitty</span> <span class="p">=</span> <span class="nx">Monster</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;kitty&#34;</span><span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">InitEndingA</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingA</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Value</span><span class="p">(</span><span class="nx">kitty</span><span class="p">)</span><span class="p">,</span> <span class="nx">NewEndingA</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">EndingA</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">InitEndingB</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Value</span><span class="p">(</span><span class="nx">kitty</span><span class="p">)</span><span class="p">,</span> <span class="nx">NewEndingB</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>注意一点，这个值每次使用时都会拷贝，需要确保拷贝无副作用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// wire_gen.go
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">InitEndingA</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingA</span> <span class="p">{</span>
+  <span class="nx">player</span> <span class="o">:=</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+  <span class="nx">monster</span> <span class="o">:=</span> <span class="nx">_wireMonsterValue</span>
+  <span class="nx">endingA</span> <span class="o">:=</span> <span class="nf">NewEndingA</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">endingA</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">_wireMonsterValue</span> <span class="p">=</span> <span class="nx">kitty</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="结构字段作为构造器">结构字段作为构造器</h3>
+<p>有时候我们编写一个构造器，只是简单的返回某个结构的一个字段，这时可以使用<code>wire.FieldsOf</code>简化操作。现在我们直接创建了<code>Mission</code>结构，如果想获得<code>Monster</code>和<code>Player</code>类型的对象，就可以对<code>Mission</code>使用<code>wire.FieldsOf</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewMission</span><span class="p">(</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
+  <span class="nx">p</span> <span class="o">:=</span> <span class="nx">Player</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">}</span>
+  <span class="nx">m</span> <span class="o">:=</span> <span class="nx">Monster</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;kitty&#34;</span><span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">Mission</span><span class="p">{</span><span class="nx">p</span><span class="p">,</span> <span class="nx">m</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// wire.go
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">InitPlayer</span><span class="p">(</span><span class="p">)</span> <span class="nx">Player</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMission</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">FieldsOf</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">Mission</span><span class="p">)</span><span class="p">,</span> <span class="s">&#34;Player&#34;</span><span class="p">)</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">InitMonster</span><span class="p">(</span><span class="p">)</span> <span class="nx">Monster</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMission</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">FieldsOf</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">Mission</span><span class="p">)</span><span class="p">,</span> <span class="s">&#34;Monster&#34;</span><span class="p">)</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// main.go
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">p</span> <span class="o">:=</span> <span class="nf">InitPlayer</span><span class="p">(</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同样的，第一个参数为<code>new(结构名)</code>，后面跟多个参数表示将哪些字段作为构造器，<code>*</code>表示全部。</p>
+<h3 id="清理函数">清理函数</h3>
+<p>构造器可以提供一个清理函数，如果后续的构造器返回失败，前面构造器返回的清理函数都会调用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Player</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">cleanup</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;cleanup!&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">Unix</span><span class="p">(</span><span class="p">)</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Player</span><span class="p">{</span><span class="p">}</span><span class="p">,</span> <span class="nx">cleanup</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;player dead&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">Player</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">}</span><span class="p">,</span> <span class="nx">cleanup</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">mission</span><span class="p">,</span> <span class="nx">cleanup</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">InitMission</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">mission</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="p">)</span>
+  <span class="nf">cleanup</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// wire.go
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Mission</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewMission</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">Mission</span><span class="p">{</span><span class="p">}</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="一些细节">一些细节</h2>
+<p>首先，我们调用<code>wire</code>生成<code>wire_gen.go</code>之后，如果<code>wire.go</code>文件有修改，只需要执行<code>go generate</code>即可。<code>go generate</code>很方便，我之前一篇文章写过<code>generate</code>，感兴趣可以看看<a href="https://darjun.github.io/2019/08/21/golang-generate/">深入理解Go之generate</a>。</p>
+<h2 id="总结">总结</h2>
+<p><code>wire</code>是随着<code>go-cloud</code>的示例<a href="https://github.com/google/go-cloud/tree/master/samples/guestbook"><code>guestbook</code></a>一起发布的，可以阅读<code>guestbook</code>看看它是怎么使用<code>wire</code>的。与<code>dig</code>不同，<code>wire</code>只是生成代码，不使用<code>reflect</code>库，性能方面是不用担心的。因为它生成的代码与你自己写的基本是一样的。如果生成的代码有性能问题，自己写大概率也会有😂。</p>
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>wire GitHub：<a href="https://github.com/google/wire">https://github.com/google/wire</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+<h2 id="我">我</h2>
+<p><a href="https://darjun.github.io">我的博客</a></p>
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2020-03-02
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2020/03/01/godailylib/watermill/">
+            <span class="next-text nav-default">Go 每日一库之 watermill</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2020/03/02/godailylib/wire/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
