@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.64.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/01/10/godailylib/go-flags/" />
@@ -69,13 +69,16 @@
 <meta property="article:modified_time" content="2020-01-12T21:04:43+00:00" />
 <meta itemprop="name" content="Go 每日一库之 go-flags">
 <meta itemprop="description" content="简介 在上一篇文章中，我们介绍了flag库。flag库是用于解析命令行选项的。但是flag有几个缺点： 不显示支持短选项。当然上一篇文章中也提到">
+
+
 <meta itemprop="datePublished" content="2020-01-12T21:04:43&#43;00:00" />
 <meta itemprop="dateModified" content="2020-01-12T21:04:43&#43;00:00" />
 <meta itemprop="wordCount" content="3299">
 
 
 
-<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go 每日一库," />
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 go-flags"/>
 <meta name="twitter:description" content="简介 在上一篇文章中，我们介绍了flag库。flag库是用于解析命令行选项的。但是flag有几个缺点： 不显示支持短选项。当然上一篇文章中也提到"/>
 
@@ -381,40 +384,48 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#简介">简介</a></li>
-    <li><a href="#快速开始">快速开始</a></li>
-    <li><a href="#基本特性">基本特性</a>
-      <ul>
-        <li><a href="#支持丰富的数据类型">支持丰富的数据类型</a></li>
-        <li><a href="#常用设置">常用设置</a></li>
-      </ul>
-    </li>
-    <li><a href="#高级特性">高级特性</a>
-      <ul>
-        <li><a href="#选项分组">选项分组</a></li>
-        <li><a href="#子命令">子命令</a></li>
-      </ul>
-    </li>
-    <li><a href="#其他">其他</a></li>
-    <li><a href="#参考">参考</a></li>
-    <li><a href="#我">我</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速开始">快速开始</a></li>
+<li><a href="#基本特性">基本特性</a>
+<ul>
+<li><a href="#支持丰富的数据类型">支持丰富的数据类型</a></li>
+<li><a href="#常用设置">常用设置</a></li>
+</ul></li>
+<li><a href="#高级特性">高级特性</a>
+<ul>
+<li><a href="#选项分组">选项分组</a></li>
+<li><a href="#子命令">子命令</a></li>
+</ul></li>
+<li><a href="#其他">其他</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="简介">简介</h2>
+      
+
+<h2 id="简介">简介</h2>
+
 <p>在<a href="https://darjun.github.io/2020/01/07/godailylib/flag/">上一篇文章</a>中，我们介绍了<code>flag</code>库。<code>flag</code>库是用于解析命令行选项的。但是<code>flag</code>有几个缺点：</p>
+
 <ul>
 <li>不显示支持短选项。当然上一篇文章中也提到过可以通过将两个选项共享同一个变量迂回实现，但写起来比较繁琐；</li>
 <li>选项变量的定义比较繁琐，每个选项都需要根据类型调用对应的<code>Type</code>或<code>TypeVar</code>函数；</li>
 <li>默认只支持有限的数据类型，当前只有基本类型<code>bool/int/uint/string</code>和<code>time.Duration</code>；</li>
 </ul>
+
 <p>为了解决这些问题，出现了不少第三方解析命令行选项的库，今天的主角<a href="https://github.com/jessevdk/go-flags"><code>go-flags</code></a>就是其中一个。第一次看到<code>go-flags</code>库是在阅读<a href="https://github.com/sosedoff/pgweb">pgweb</a>源码的时候。</p>
+
 <p><code>go-flags</code>提供了比标准库<code>flag</code>更多的选项。它利用结构标签（struct tag）和反射提供了一个方便、简洁的接口。它除了基本的功能，还提供了丰富的特性：</p>
+
 <ul>
 <li>支持短选项（-v）和长选项（&ndash;verbose）；</li>
 <li>支持短选项合写，如<code>-aux</code>；</li>
@@ -423,31 +434,35 @@ if (!doNotTrack) {
 <li>支持命名空间和选项组；</li>
 <li>等等。</li>
 </ul>
+
 <p>上面只是粗略介绍了<code>go-flags</code>的特性，下面我们依次来介绍。</p>
+
 <h2 id="快速开始">快速开始</h2>
+
 <p>学习从使用开始！我们先来看看<code>go-flags</code>的基本使用。</p>
+
 <p>由于是第三方库，使用前需要安装，执行下面的命令安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/jessevdk/go-flags
-</code></pre></td></tr></table>
+<pre class="chroma">$ go get github.com/jessevdk/go-flags</pre></td></tr></table>
 </div>
-</div><p>代码中使用<code>import</code>导入该库：</p>
+</div>
+<p>代码中使用<code>import</code>导入该库：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">import &#34;github.com/jessevdk/go-flags&#34;
-</code></pre></td></tr></table>
+<pre class="chroma">import &#34;github.com/jessevdk/go-flags&#34;</pre></td></tr></table>
 </div>
-</div><p>完整示例代码如下：</p>
+</div>
+<p>完整示例代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -476,112 +491,120 @@ if (!doNotTrack) {
 <span class="p">)</span>
 
 <span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Verbose</span> <span class="p">[</span><span class="p">]</span><span class="kt">bool</span> <span class="s">`</span><span class="s">short:&#34;v&#34; long:&#34;verbose&#34; description:&#34;Show verbose debug message&#34;</span><span class="s">`</span>
+  <span class="nx">Verbose</span> <span class="p">[]</span><span class="kt">bool</span> <span class="s">`short:&#34;v&#34; long:&#34;verbose&#34; description:&#34;Show verbose debug message&#34;`</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
   <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">)</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">Verbose</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>使用<code>go-flags</code>的一般步骤：</p>
+</div>
+<p>使用<code>go-flags</code>的一般步骤：</p>
+
 <ul>
 <li>定义选项结构，在结构标签中设置选项信息。通过<code>short</code>和<code>long</code>设置短、长选项名字，<code>description</code>设置帮助信息。命令行传参时，短选项前加<code>-</code>，长选项前加<code>--</code>；</li>
 <li>声明选项变量；</li>
 <li>调用<code>go-flags</code>的解析方法解析。</li>
 </ul>
+
 <p>编译、运行代码（我的环境是 Win10 + Git Bash）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go build -o main.exe main.go
-</code></pre></td></tr></table>
+<pre class="chroma">$ go build -o main.exe main.go</pre></td></tr></table>
 </div>
-</div><p>短选项：</p>
+</div>
+<p>短选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe -v
-[true]
-</code></pre></td></tr></table>
+<pre class="chroma">$ ./main.exe -v
+[true]</pre></td></tr></table>
 </div>
-</div><p>长选项：</p>
+</div>
+<p>长选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe --verbose
-[true]
-</code></pre></td></tr></table>
+<pre class="chroma">$ ./main.exe --verbose
+[true]</pre></td></tr></table>
 </div>
-</div><p>由于<code>Verbose</code>字段是切片类型，每次遇到<code>-v</code>或<code>--verbose</code>都会追加一个<code>true</code>到切片中。</p>
+</div>
+<p>由于<code>Verbose</code>字段是切片类型，每次遇到<code>-v</code>或<code>--verbose</code>都会追加一个<code>true</code>到切片中。</p>
+
 <p>多个短选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe -v -v
-[true true]
-</code></pre></td></tr></table>
+<pre class="chroma">$ ./main.exe -v -v
+[true true]</pre></td></tr></table>
 </div>
-</div><p>多个长选项：</p>
+</div>
+<p>多个长选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe --verbose --verbose
-[true true]
-</code></pre></td></tr></table>
+<pre class="chroma">$ ./main.exe --verbose --verbose
+[true true]</pre></td></tr></table>
 </div>
-</div><p>短选项 + 长选项：</p>
+</div>
+<p>短选项 + 长选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe -v --verbose -v
-[true true true]
-</code></pre></td></tr></table>
+<pre class="chroma">$ ./main.exe -v --verbose -v
+[true true true]</pre></td></tr></table>
 </div>
-</div><p>短选项合写：</p>
+</div>
+<p>短选项合写：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe -vvv
-[true true true]
-</code></pre></td></tr></table>
+<pre class="chroma">$ ./main.exe -vvv
+[true true true]</pre></td></tr></table>
 </div>
-</div><h2 id="基本特性">基本特性</h2>
+</div>
+<h2 id="基本特性">基本特性</h2>
+
 <h3 id="支持丰富的数据类型">支持丰富的数据类型</h3>
+
 <p><code>go-flags</code>相比标准库<code>flag</code>支持更丰富的数据类型：</p>
+
 <ul>
 <li>所有的基本类型（包括有符号整数<code>int/int8/int16/int32/int64</code>，无符号整数<code>uint/uint8/uint16/uint32/uint64</code>，浮点数<code>float32/float64</code>，布尔类型<code>bool</code>和字符串<code>string</code>）和<strong>它们的切片</strong>；</li>
 <li>map 类型。只支持键为<code>string</code>，值为基础类型的 map；</li>
 <li>函数类型。</li>
 </ul>
+
 <p>如果字段是基本类型的切片，基本解析流程与对应的基本类型是一样的。切片类型选项的不同之处在于，遇到相同的选项时，值会被追加到切片中。而非切片类型的选项，后出现的值会覆盖先出现的值。</p>
+
 <p>下面来看一个示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -640,26 +663,26 @@ if (!doNotTrack) {
 <span class="p">)</span>
 
 <span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">IntFlag</span>         <span class="kt">int</span>             <span class="s">`</span><span class="s">short:&#34;i&#34; long:&#34;int&#34; description:&#34;int flag value&#34;</span><span class="s">`</span>
-  <span class="nx">IntSlice</span>        <span class="p">[</span><span class="p">]</span><span class="kt">int</span>           <span class="s">`</span><span class="s">long:&#34;intslice&#34; description:&#34;int slice flag value&#34;</span><span class="s">`</span>
-  <span class="nx">BoolFlag</span>        <span class="kt">bool</span>            <span class="s">`</span><span class="s">long:&#34;bool&#34; description:&#34;bool flag value&#34;</span><span class="s">`</span>
-  <span class="nx">BoolSlice</span>       <span class="p">[</span><span class="p">]</span><span class="kt">bool</span>          <span class="s">`</span><span class="s">long:&#34;boolslice&#34; description:&#34;bool slice flag value&#34;</span><span class="s">`</span>
-  <span class="nx">FloatFlag</span>       <span class="kt">float64</span>         <span class="s">`</span><span class="s">long:&#34;float&#34;, description:&#34;float64 flag value&#34;</span><span class="s">`</span>
-  <span class="nx">FloatSlice</span>      <span class="p">[</span><span class="p">]</span><span class="kt">float64</span>       <span class="s">`</span><span class="s">long:&#34;floatslice&#34; description:&#34;float64 slice flag value&#34;</span><span class="s">`</span>
-  <span class="nx">StringFlag</span>      <span class="kt">string</span>          <span class="s">`</span><span class="s">short:&#34;s&#34; long:&#34;string&#34; description:&#34;string flag value&#34;</span><span class="s">`</span>
-  <span class="nx">StringSlice</span>     <span class="p">[</span><span class="p">]</span><span class="kt">string</span>        <span class="s">`</span><span class="s">long:&#34;strslice&#34; description:&#34;string slice flag value&#34;</span><span class="s">`</span>
-  <span class="nx">PtrStringSlice</span>  <span class="p">[</span><span class="p">]</span><span class="o">*</span><span class="kt">string</span>       <span class="s">`</span><span class="s">long:&#34;pstrslice&#34; description:&#34;slice of pointer of string flag value&#34;</span><span class="s">`</span>
-  <span class="nx">Call</span>            <span class="kd">func</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span>    <span class="s">`</span><span class="s">long:&#34;call&#34; description:&#34;callback&#34;</span><span class="s">`</span>
-  <span class="nx">IntMap</span>          <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span>  <span class="s">`</span><span class="s">long:&#34;intmap&#34; description:&#34;A map from string to int&#34;</span><span class="s">`</span>
+  <span class="nx">IntFlag</span>         <span class="kt">int</span>             <span class="s">`short:&#34;i&#34; long:&#34;int&#34; description:&#34;int flag value&#34;`</span>
+  <span class="nx">IntSlice</span>        <span class="p">[]</span><span class="kt">int</span>           <span class="s">`long:&#34;intslice&#34; description:&#34;int slice flag value&#34;`</span>
+  <span class="nx">BoolFlag</span>        <span class="kt">bool</span>            <span class="s">`long:&#34;bool&#34; description:&#34;bool flag value&#34;`</span>
+  <span class="nx">BoolSlice</span>       <span class="p">[]</span><span class="kt">bool</span>          <span class="s">`long:&#34;boolslice&#34; description:&#34;bool slice flag value&#34;`</span>
+  <span class="nx">FloatFlag</span>       <span class="kt">float64</span>         <span class="s">`long:&#34;float&#34;, description:&#34;float64 flag value&#34;`</span>
+  <span class="nx">FloatSlice</span>      <span class="p">[]</span><span class="kt">float64</span>       <span class="s">`long:&#34;floatslice&#34; description:&#34;float64 slice flag value&#34;`</span>
+  <span class="nx">StringFlag</span>      <span class="kt">string</span>          <span class="s">`short:&#34;s&#34; long:&#34;string&#34; description:&#34;string flag value&#34;`</span>
+  <span class="nx">StringSlice</span>     <span class="p">[]</span><span class="kt">string</span>        <span class="s">`long:&#34;strslice&#34; description:&#34;string slice flag value&#34;`</span>
+  <span class="nx">PtrStringSlice</span>  <span class="p">[]</span><span class="o">*</span><span class="kt">string</span>       <span class="s">`long:&#34;pstrslice&#34; description:&#34;slice of pointer of string flag value&#34;`</span>
+  <span class="nx">Call</span>            <span class="kd">func</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span>    <span class="s">`long:&#34;call&#34; description:&#34;callback&#34;`</span>
+  <span class="nx">IntMap</span>          <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span>  <span class="s">`long:&#34;intmap&#34; description:&#34;A map from string to int&#34;`</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
   <span class="nx">opt</span><span class="p">.</span><span class="nx">Call</span> <span class="p">=</span> <span class="kd">func</span> <span class="p">(</span><span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;in callback: &#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
   <span class="p">}</span>
   
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
     <span class="k">return</span>
@@ -674,64 +697,69 @@ if (!doNotTrack) {
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;string flag: %v\n&#34;</span><span class="p">,</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">StringFlag</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;string slice flag: %v\n&#34;</span><span class="p">,</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">StringSlice</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;slice of pointer of string flag: &#34;</span><span class="p">)</span>
-  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">PtrStringSlice</span><span class="p">)</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;\t%d: %v\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="o">*</span><span class="nx">opt</span><span class="p">.</span><span class="nx">PtrStringSlice</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">PtrStringSlice</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;\t%d: %v\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="o">*</span><span class="nx">opt</span><span class="p">.</span><span class="nx">PtrStringSlice</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;int map: %v\n&#34;</span><span class="p">,</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">IntMap</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>基本类型和其切片比较简单，就不过多介绍了。值得留意的是基本类型指针的切片，即上面的<code>PtrStringSlice</code>字段，类型为<code>[]*string</code>。
+</div>
+<p>基本类型和其切片比较简单，就不过多介绍了。值得留意的是基本类型指针的切片，即上面的<code>PtrStringSlice</code>字段，类型为<code>[]*string</code>。
 由于结构中存储的是字符串指针，<code>go-flags</code>在解析过程中遇到该选项会自动创建字符串，将指针追加到切片中。</p>
+
 <p>运行程序，传入<code>--pstrslice</code>选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe --pstrslice test1 --pstrslice test2
+<pre class="chroma">$ ./main.exe --pstrslice test1 --pstrslice test2
 slice of pointer of string flag:
     0: test1
-    1: test2
-</code></pre></td></tr></table>
+    1: test2</pre></td></tr></table>
 </div>
-</div><p>另外，我们可以在选项中定义函数类型。该函数的唯一要求是有一个字符串类型的参数。解析中每次遇到该选项就会以选项值为参数调用这个函数。
+</div>
+<p>另外，我们可以在选项中定义函数类型。该函数的唯一要求是有一个字符串类型的参数。解析中每次遇到该选项就会以选项值为参数调用这个函数。
 上面代码中，<code>Call</code>函数只是简单的打印传入的选项值。运行代码，传入<code>--call</code>选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe --call test1 --call test2
+<pre class="chroma">$ ./main.exe --call test1 --call test2
 in callback:  test1
-in callback:  test2
-</code></pre></td></tr></table>
+in callback:  test2</pre></td></tr></table>
 </div>
-</div><p>最后，<code>go-flags</code>还支持 map 类型。虽然限制键必须是<code>string</code>类型，值必须是基本类型，也能实现比较灵活的配置。
+</div>
+<p>最后，<code>go-flags</code>还支持 map 类型。虽然限制键必须是<code>string</code>类型，值必须是基本类型，也能实现比较灵活的配置。
 <code>map</code>类型的选项值中键-值通过<code>:</code>分隔，如<code>key:value</code>，可设置多个。运行代码，传入<code>--intmap</code>选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe --intmap key1:12 --intmap key2:58
-int map: map[key1:12 key2:58]
-</code></pre></td></tr></table>
+<pre class="chroma">$ ./main.exe --intmap key1:12 --intmap key2:58
+int map: map[key1:12 key2:58]</pre></td></tr></table>
 </div>
-</div><h3 id="常用设置">常用设置</h3>
+</div>
+<h3 id="常用设置">常用设置</h3>
+
 <p><code>go-flags</code>提供了非常多的设置选项，具体可参见<a href="https://godoc.org/github.com/jessevdk/go-flags">文档</a>。这里重点介绍两个<code>required</code>和<code>default</code>。</p>
+
 <p><code>required</code>非空时，表示对应的选项必须设置值，否则解析时返回<code>ErrRequired</code>错误。</p>
+
 <p><code>default</code>用于设置选项的默认值。如果已经设置了默认值，那么<code>required</code>是否设置并不影响，也就是说命令行参数中该选项可以没有。</p>
+
 <p>看下面示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -767,11 +795,11 @@ int map: map[key1:12 key2:58]
 <span class="p">)</span>
 
 <span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Required</span>    <span class="kt">string</span>  <span class="s">`</span><span class="s">short:&#34;r&#34; long:&#34;required&#34; required:&#34;true&#34;</span><span class="s">`</span>
-  <span class="nx">Default</span>     <span class="kt">string</span>  <span class="s">`</span><span class="s">short:&#34;d&#34; long:&#34;default&#34; default:&#34;default&#34;</span><span class="s">`</span>
+  <span class="nx">Required</span>    <span class="kt">string</span>  <span class="s">`short:&#34;r&#34; long:&#34;required&#34; required:&#34;true&#34;`</span>
+  <span class="nx">Default</span>     <span class="kt">string</span>  <span class="s">`short:&#34;d&#34; long:&#34;default&#34; default:&#34;default&#34;`</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
   <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">)</span>
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
@@ -780,13 +808,13 @@ int map: map[key1:12 key2:58]
     
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;required: &#34;</span><span class="p">,</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">Required</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;default: &#34;</span><span class="p">,</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">Default</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>运行程序，不传入<code>default</code>选项，<code>Default</code>字段取默认值，不传入<code>required</code>选项，执行报错：</p>
+</div>
+<p>运行程序，不传入<code>default</code>选项，<code>Default</code>字段取默认值，不传入<code>required</code>选项，执行报错：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -797,9 +825,9 @@ int map: map[key1:12 key2:58]
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe -r required-data
+<pre class="chroma">$ ./main.exe -r required-data
 required:  required-data
 default:  default
 
@@ -809,14 +837,15 @@ default:  default-data
 
 $ ./main.exe
 the required flag `/r, /required&#39; was not specified
-2020/01/09 18:07:39 Parse error:the required flag `/r, /required&#39; was not specified
-</code></pre></td></tr></table>
+2020/01/09 18:07:39 Parse error:the required flag `/r, /required&#39; was not specified</pre></td></tr></table>
 </div>
-</div><h2 id="高级特性">高级特性</h2>
+</div>
+<h2 id="高级特性">高级特性</h2>
+
 <h3 id="选项分组">选项分组</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -876,49 +905,49 @@ the required flag `/r, /required&#39; was not specified
 <span class="p">)</span>
 
 <span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Basic</span> <span class="nx">GroupBasicOption</span> <span class="s">`</span><span class="s">description:&#34;basic type&#34; group:&#34;basic&#34;</span><span class="s">`</span>
-  <span class="nx">Slice</span> <span class="nx">GroupSliceOption</span> <span class="s">`</span><span class="s">description:&#34;slice of basic type&#34; group:&#34;slice&#34;</span><span class="s">`</span>
+  <span class="nx">Basic</span> <span class="nx">GroupBasicOption</span> <span class="s">`description:&#34;basic type&#34; group:&#34;basic&#34;`</span>
+  <span class="nx">Slice</span> <span class="nx">GroupSliceOption</span> <span class="s">`description:&#34;slice of basic type&#34; group:&#34;slice&#34;`</span>
 <span class="p">}</span>
 
 <span class="kd">type</span> <span class="nx">GroupBasicOption</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">IntFlag</span>    <span class="kt">int</span>     <span class="s">`</span><span class="s">short:&#34;i&#34; long:&#34;intflag&#34; description:&#34;int flag&#34;</span><span class="s">`</span>
-  <span class="nx">BoolFlag</span>   <span class="kt">bool</span>    <span class="s">`</span><span class="s">short:&#34;b&#34; long:&#34;boolflag&#34; description:&#34;bool flag&#34;</span><span class="s">`</span>
-  <span class="nx">FloatFlag</span>  <span class="kt">float64</span> <span class="s">`</span><span class="s">short:&#34;f&#34; long:&#34;floatflag&#34; description:&#34;float flag&#34;</span><span class="s">`</span>
-  <span class="nx">StringFlag</span> <span class="kt">string</span>  <span class="s">`</span><span class="s">short:&#34;s&#34; long:&#34;stringflag&#34; description:&#34;string flag&#34;</span><span class="s">`</span>
+  <span class="nx">IntFlag</span>    <span class="kt">int</span>     <span class="s">`short:&#34;i&#34; long:&#34;intflag&#34; description:&#34;int flag&#34;`</span>
+  <span class="nx">BoolFlag</span>   <span class="kt">bool</span>    <span class="s">`short:&#34;b&#34; long:&#34;boolflag&#34; description:&#34;bool flag&#34;`</span>
+  <span class="nx">FloatFlag</span>  <span class="kt">float64</span> <span class="s">`short:&#34;f&#34; long:&#34;floatflag&#34; description:&#34;float flag&#34;`</span>
+  <span class="nx">StringFlag</span> <span class="kt">string</span>  <span class="s">`short:&#34;s&#34; long:&#34;stringflag&#34; description:&#34;string flag&#34;`</span>
 <span class="p">}</span>
 
 <span class="kd">type</span> <span class="nx">GroupSliceOption</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">IntSlice</span>		<span class="kt">int</span>			<span class="s">`</span><span class="s">long:&#34;intslice&#34; description:&#34;int slice&#34;</span><span class="s">`</span>
-  <span class="nx">BoolSlice</span>		<span class="kt">bool</span>		<span class="s">`</span><span class="s">long:&#34;boolslice&#34; description:&#34;bool slice&#34;</span><span class="s">`</span>
-  <span class="nx">FloatSlice</span>	<span class="kt">float64</span>	<span class="s">`</span><span class="s">long:&#34;floatslice&#34; description:&#34;float slice&#34;</span><span class="s">`</span>
-  <span class="nx">StringSlice</span>	<span class="kt">string</span>	<span class="s">`</span><span class="s">long:&#34;stringslice&#34; description:&#34;string slice&#34;</span><span class="s">`</span>
+  <span class="nx">IntSlice</span>		<span class="kt">int</span>			<span class="s">`long:&#34;intslice&#34; description:&#34;int slice&#34;`</span>
+  <span class="nx">BoolSlice</span>		<span class="kt">bool</span>		<span class="s">`long:&#34;boolslice&#34; description:&#34;bool slice&#34;`</span>
+  <span class="nx">FloatSlice</span>	<span class="kt">float64</span>	<span class="s">`long:&#34;floatslice&#34; description:&#34;float slice&#34;`</span>
+  <span class="nx">StringSlice</span>	<span class="kt">string</span>	<span class="s">`long:&#34;stringslice&#34; description:&#34;string slice&#34;`</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
   <span class="nx">p</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">NewParser</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">,</span> <span class="nx">flags</span><span class="p">.</span><span class="nx">Default</span><span class="p">)</span>
-  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ParseArgs</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ParseArgs</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Parse error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
     
   <span class="nx">basicGroup</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Command</span><span class="p">.</span><span class="nx">Group</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;basic&#34;</span><span class="p">)</span>
-  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">option</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">basicGroup</span><span class="p">.</span><span class="nf">Options</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name:%s value:%v\n&#34;</span><span class="p">,</span> <span class="nx">option</span><span class="p">.</span><span class="nf">LongNameWithNamespace</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> <span class="nx">option</span><span class="p">.</span><span class="nf">Value</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">option</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">basicGroup</span><span class="p">.</span><span class="nf">Options</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name:%s value:%v\n&#34;</span><span class="p">,</span> <span class="nx">option</span><span class="p">.</span><span class="nf">LongNameWithNamespace</span><span class="p">(),</span> <span class="nx">option</span><span class="p">.</span><span class="nf">Value</span><span class="p">())</span>
   <span class="p">}</span>
 	
   <span class="nx">sliceGroup</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Command</span><span class="p">.</span><span class="nx">Group</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;slice&#34;</span><span class="p">)</span>
-  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">option</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">sliceGroup</span><span class="p">.</span><span class="nf">Options</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name:%s value:%v\n&#34;</span><span class="p">,</span> <span class="nx">option</span><span class="p">.</span><span class="nf">LongNameWithNamespace</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> <span class="nx">option</span><span class="p">.</span><span class="nf">Value</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">option</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">sliceGroup</span><span class="p">.</span><span class="nf">Options</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name:%s value:%v\n&#34;</span><span class="p">,</span> <span class="nx">option</span><span class="p">.</span><span class="nf">LongNameWithNamespace</span><span class="p">(),</span> <span class="nx">option</span><span class="p">.</span><span class="nf">Value</span><span class="p">())</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面代码中我们将基本类型和它们的切片类型选项拆分到两个结构体中，这样可以使代码看起来更清晰自然，特别是在代码量很大的情况下。
+</div>
+<p>上面代码中我们将基本类型和它们的切片类型选项拆分到两个结构体中，这样可以使代码看起来更清晰自然，特别是在代码量很大的情况下。
 这样做还有一个好处，我们试试用<code>--help</code>运行该程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -937,9 +966,9 @@ the required flag `/r, /required&#39; was not specified
 </span><span class="lnt">17
 </span><span class="lnt">18
 </span><span class="lnt">19
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe --help
+<pre class="chroma">$ ./main.exe --help
 Usage:
   D:\code\golang\src\github.com\darjun\go-daily-lib\go-flags\group\main.exe [OPTIONS]
 
@@ -957,16 +986,18 @@ slice:
 
 Help Options:
   /?                 Show this help message
-  /h, /help          Show this help message
-</code></pre></td></tr></table>
+  /h, /help          Show this help message</pre></td></tr></table>
 </div>
-</div><p>输出的帮助信息中，也是按照我们设定的分组显示了，便于查看。</p>
+</div>
+<p>输出的帮助信息中，也是按照我们设定的分组显示了，便于查看。</p>
+
 <h3 id="子命令">子命令</h3>
+
 <p><code>go-flags</code>支持子命令。我们经常使用的 Go 和 Git 命令行程序就有大量的子命令。例如<code>go version</code>、<code>go build</code>、<code>go run</code>、<code>git status</code>、<code>git commit</code>这些命令中<code>version/build/run/status/commit</code>就是子命令。
 使用<code>go-flags</code>定义子命令比较简单：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1031,12 +1062,12 @@ Help Options:
 <span class="p">)</span>
 
 <span class="kd">type</span> <span class="nx">MathCommand</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Op</span> <span class="kt">string</span> <span class="s">`</span><span class="s">long:&#34;op&#34; description:&#34;operation to execute&#34;</span><span class="s">`</span>
-  <span class="nx">Args</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span>
+  <span class="nx">Op</span> <span class="kt">string</span> <span class="s">`long:&#34;op&#34; description:&#34;operation to execute&#34;`</span>
+  <span class="nx">Args</span> <span class="p">[]</span><span class="kt">string</span>
   <span class="nx">Result</span> <span class="kt">int64</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MathCommand</span><span class="p">)</span> <span class="nf">Execute</span><span class="p">(</span><span class="nx">args</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MathCommand</span><span class="p">)</span> <span class="nf">Execute</span><span class="p">(</span><span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
   <span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">Op</span> <span class="o">!=</span> <span class="s">&#34;+&#34;</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">Op</span> <span class="o">!=</span> <span class="s">&#34;-&#34;</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">Op</span> <span class="o">!=</span> <span class="s">&#34;x&#34;</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">Op</span> <span class="o">!=</span> <span class="s">&#34;/&#34;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;invalid op&#34;</span><span class="p">)</span>
   <span class="p">}</span>
@@ -1055,10 +1086,10 @@ Help Options:
 <span class="p">}</span>
 
 <span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">Math</span> <span class="nx">MathCommand</span> <span class="s">`</span><span class="s">command:&#34;math&#34;</span><span class="s">`</span>
+	<span class="nx">Math</span> <span class="nx">MathCommand</span> <span class="s">`command:&#34;math&#34;`</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
 	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">)</span>
 
@@ -1066,30 +1097,32 @@ Help Options:
 		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
 
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;The result of %s is %d&#34;</span><span class="p">,</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">Math</span><span class="p">.</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">Math</span><span class="p">.</span><span class="nx">Op</span><span class="p">)</span><span class="p">,</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">Math</span><span class="p">.</span><span class="nx">Result</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;The result of %s is %d&#34;</span><span class="p">,</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">Math</span><span class="p">.</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">Math</span><span class="p">.</span><span class="nx">Op</span><span class="p">),</span> <span class="nx">opt</span><span class="p">.</span><span class="nx">Math</span><span class="p">.</span><span class="nx">Result</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>子命令必须实现<code>go-flags</code>定义的<code>Commander</code>接口：</p>
+</div>
+<p>子命令必须实现<code>go-flags</code>定义的<code>Commander</code>接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Commander</span> <span class="kd">interface</span> <span class="p">{</span>
-    <span class="nf">Execute</span><span class="p">(</span><span class="nx">args</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+    <span class="nf">Execute</span><span class="p">(</span><span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>解析命令行时，如果遇到不是以<code>-</code>或<code>--</code>开头的参数，<code>go-flags</code>会尝试将其解释为子命令名。子命令的名字通过在结构标签中使用<code>command</code>指定。
+</div>
+<p>解析命令行时，如果遇到不是以<code>-</code>或<code>--</code>开头的参数，<code>go-flags</code>会尝试将其解释为子命令名。子命令的名字通过在结构标签中使用<code>command</code>指定。
 子命令后面的参数都将作为子命令的参数，子命令也可以有选项。</p>
+
 <p>上面代码中，我们实现了一个可以计算任意个整数的加、减、乘、除子命令<code>math</code>。</p>
+
 <p>接下来看看如何使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1100,9 +1133,9 @@ Help Options:
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe math --op + 1 2 3 4 5
+<pre class="chroma">$ ./main.exe math --op + 1 2 3 4 5
 The result of 1+2+3+4+5 is 15
 
 $ ./main.exe math --op - 1 2 3 4 5
@@ -1112,21 +1145,29 @@ $ ./main.exe math --op x 1 2 3 4 5
 The result of 1x2x3x4x5 is 120
 
 $ ./main.exe math --op ÷ 120 2 3 4 5
-The result of 120÷2÷3÷4÷5 is 1
-</code></pre></td></tr></table>
+The result of 120÷2÷3÷4÷5 is 1</pre></td></tr></table>
 </div>
-</div><p>注意，不能使用乘法符号<code>*</code>和除法符号<code>/</code>，它们都不可识别。</p>
+</div>
+<p>注意，不能使用乘法符号<code>*</code>和除法符号<code>/</code>，它们都不可识别。</p>
+
 <h2 id="其他">其他</h2>
+
 <p><code>go-flags</code>库还有很多有意思的特性，例如支持 Windows 选项格式（<code>/v</code>和<code>/verbose</code>）、从环境变量中读取默认值、从 ini 文件中读取默认设置等等。大家有兴趣可以自行去研究~</p>
+
 <h2 id="参考">参考</h2>
+
 <ol>
 <li><a href="https://github.com/jessevdk/go-flags">go-flags</a>Github 仓库</li>
 <li><a href="https://godoc.org/github.com/jessevdk/go-flags">go-flags</a>GoDoc 文档</li>
 </ol>
+
 <h2 id="我">我</h2>
+
 <p><a href="https://darjun.github.io">我的博客</a></p>
+
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
 
     </div>
 

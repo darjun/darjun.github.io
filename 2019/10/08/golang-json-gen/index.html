@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.64.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2019/10/08/golang-json-gen/" />
@@ -69,13 +69,16 @@
 <meta property="article:modified_time" content="2019-10-08T12:30:00+00:00" />
 <meta itemprop="name" content="高效生成JSON串——json-gen">
 <meta itemprop="description" content="概述 游戏服务端的很多操作（包括玩家的和非玩家的）需要传给公司中台收集汇总，根据运营的需求分析数据。中台那边要求传过去的数据为 JSON 格式。一开始我">
+
+
 <meta itemprop="datePublished" content="2019-10-08T12:30:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-10-08T12:30:00&#43;00:00" />
 <meta itemprop="wordCount" content="2292">
 
 
 
-<meta itemprop="keywords" content="开源项目," /><meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="开源项目," />
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="高效生成JSON串——json-gen"/>
 <meta name="twitter:description" content="概述 游戏服务端的很多操作（包括玩家的和非玩家的）需要传给公司中台收集汇总，根据运营的需求分析数据。中台那边要求传过去的数据为 JSON 格式。一开始我"/>
 
@@ -381,70 +384,79 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#概述">概述</a></li>
-    <li><a href="#使用">使用</a></li>
-    <li><a href="#实现">实现</a>
-      <ul>
-        <li><a href="#分类">分类</a></li>
-        <li><a href="#quotedvalue">QuotedValue</a></li>
-        <li><a href="#unquotedvalue">UnquotedValue</a></li>
-        <li><a href="#array">Array</a></li>
-        <li><a href="#map">Map</a></li>
-      </ul>
-    </li>
-    <li><a href="#结语">结语</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#概述">概述</a></li>
+<li><a href="#使用">使用</a></li>
+<li><a href="#实现">实现</a>
+<ul>
+<li><a href="#分类">分类</a></li>
+<li><a href="#quotedvalue"><code>QuotedValue</code></a></li>
+<li><a href="#unquotedvalue"><code>UnquotedValue</code></a></li>
+<li><a href="#array"><code>Array</code></a></li>
+<li><a href="#map"><code>Map</code></a></li>
+</ul></li>
+<li><a href="#结语">结语</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="概述">概述</h2>
+      
+
+<h2 id="概述">概述</h2>
+
 <p>游戏服务端的很多操作（包括玩家的和非玩家的）需要传给公司中台收集汇总，根据运营的需求分析数据。中台那边要求传过去的数据为 JSON 格式。一开始我们使用 golang 标准库中的<code>encoding/json</code>，发现性能不够理想（因为序列化使用了反射，涉及多次内存分配）。由于数据原始格式都是<code>map[string]interface{}</code>，且需要自己一个字段一个字段构造，于是我想可以在构造过程中就计算出最终 JSON 串的长度，那么就只需要一次内存分配了。</p>
+
 <h2 id="使用">使用</h2>
+
 <p>下载：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">json</span><span class="o">-</span><span class="nx">gen</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">json</span><span class="o">-</span><span class="nx">gen</span></code></pre></td></tr></table>
 </div>
-</div><p>导入：</p>
+</div>
+<p>导入：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">import</span> <span class="p">(</span>
   <span class="nx">jsongen</span> <span class="s">&#34;github.com/darjun/json-gen&#34;</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>使用起来还是比较方便的：</p>
+</div>
+<p>使用起来还是比较方便的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">m</span> <span class="o">:=</span> <span class="nx">jsongen</span><span class="p">.</span><span class="nf">NewMap</span><span class="p">(</span><span class="p">)</span>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">m</span> <span class="o">:=</span> <span class="nx">jsongen</span><span class="p">.</span><span class="nf">NewMap</span><span class="p">()</span>
 <span class="nx">m</span><span class="p">.</span><span class="nf">PutUint</span><span class="p">(</span><span class="s">&#34;key1&#34;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
 <span class="nx">m</span><span class="p">.</span><span class="nf">PutInt</span><span class="p">(</span><span class="s">&#34;key2&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">456</span><span class="p">)</span>
-<span class="nx">m</span><span class="p">.</span><span class="nf">PutUintArray</span><span class="p">(</span><span class="s">&#34;key3&#34;</span><span class="p">,</span> <span class="p">[</span><span class="p">]</span><span class="kt">uint64</span><span class="p">{</span><span class="mi">78</span><span class="p">,</span> <span class="mi">90</span><span class="p">}</span><span class="p">)</span>
-<span class="nx">data</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nf">Serialize</span><span class="p">(</span><span class="kc">nil</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="nx">m</span><span class="p">.</span><span class="nf">PutUintArray</span><span class="p">(</span><span class="s">&#34;key3&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="kt">uint64</span><span class="p">{</span><span class="mi">78</span><span class="p">,</span> <span class="mi">90</span><span class="p">})</span>
+<span class="nx">data</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nf">Serialize</span><span class="p">(</span><span class="kc">nil</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p><code>data</code>即为最终序列化完成的 JSON 串。当然，类型可以任意嵌套。代码参见<a href="https://github.com/darjun/json-gen">github</a>。</p>
+</div>
+<p><code>data</code>即为最终序列化完成的 JSON 串。当然，类型可以任意嵌套。代码参见<a href="https://github.com/darjun/json-gen">github</a>。</p>
+
 <p><code>github</code>上有 Benchmark，是标准 JSON 库的性能的 10 倍！</p>
+
 <table>
 <thead>
 <tr>
@@ -454,6 +466,7 @@ if (!doNotTrack) {
 <th>allocs/op</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>encoding/json</td>
@@ -461,6 +474,7 @@ if (!doNotTrack) {
 <td>6673</td>
 <td>127</td>
 </tr>
+
 <tr>
 <td>darjun/json-gen</td>
 <td>3300</td>
@@ -469,49 +483,57 @@ if (!doNotTrack) {
 </tr>
 </tbody>
 </table>
+
 <h2 id="实现">实现</h2>
+
 <p>首先定义一个接口<code>Value</code>，所有可以序列化为 JSON 的值都实现这个接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Value</span> <span class="kd">interface</span> <span class="p">{</span>
-  <span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span>
-  <span class="nf">Size</span><span class="p">(</span><span class="p">)</span> <span class="kt">int</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+  <span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[]</span><span class="kt">byte</span>
+  <span class="nf">Size</span><span class="p">()</span> <span class="kt">int</span>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><ul>
+</div>
+<ul>
 <li><code>Serialize</code>可以传入一个分配好的内存，该方法会将值序列化后的 JSON 串追加到<code>buf</code>后面。</li>
 <li><code>Size</code>返回该值最终在 JSON 串中占用的字节数。</li>
 </ul>
+
 <h3 id="分类">分类</h3>
+
 <p>我将可序列化为 JSON 串的值分为了 4 类：</p>
+
 <ul>
 <li><code>QuotedValue</code>：在最终的串中需要用<code>&quot;</code>包裹起来的值，例如 golang 中的字符串。</li>
 <li><code>UnquotedValue</code>：在最终的串中不需要用<code>&quot;</code>包裹起来的值，例如<code>uint/int/bool/float32</code>等。</li>
 <li><code>Array</code>：对应 JSON 中的数组。</li>
 <li><code>Map</code>：对应 JSON 中的映射。</li>
 </ul>
+
 <p>目前这 4 种类型已经可以满足我的需求了，后续扩展也很方便，只需要实现<code>Value</code>接口即可。下面根据<code>Value</code>的两个接口讨论这 4 种类型的实现。</p>
+
 <h3 id="quotedvalue"><code>QuotedValue</code></h3>
+
 <p>底层基于<code>string</code>类型定义<code>QuotedValue</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">QuotedValue</span> <span class="kt">string</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">QuotedValue</span> <span class="kt">string</span></code></pre></td></tr></table>
 </div>
-</div><p>由于<code>QuotedValue</code>最终在 JSON 串中会有 2 个<code>&quot;</code>，故其大小为：长度 + 2。我们来看<code>Serialize</code>和<code>Size</code>方法的实现：</p>
+</div>
+<p>由于<code>QuotedValue</code>最终在 JSON 串中会有 2 个<code>&quot;</code>，故其大小为：长度 + 2。我们来看<code>Serialize</code>和<code>Size</code>方法的实现：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -522,42 +544,45 @@ if (!doNotTrack) {
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="nx">QuotedValue</span><span class="p">)</span> <span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span> <span class="p">{</span>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="nx">QuotedValue</span><span class="p">)</span> <span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[]</span><span class="kt">byte</span> <span class="p">{</span>
   <span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;&#34;&#39;</span><span class="p">)</span>
-  <span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="p">[</span><span class="p">]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">q</span><span class="p">)</span><span class="o">...</span><span class="p">)</span>
+  <span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">q</span><span class="p">)</span><span class="o">...</span><span class="p">)</span>
   <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;&#34;&#39;</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="nx">QuotedValue</span><span class="p">)</span> <span class="nf">Size</span><span class="p">(</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="nx">QuotedValue</span><span class="p">)</span> <span class="nf">Size</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h3 id="unquotedvalue"><code>UnquotedValue</code></h3>
+</div>
+<h3 id="unquotedvalue"><code>UnquotedValue</code></h3>
+
 <p>同样基于<code>string</code>类型定义<code>UnquotedValue</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">UnquotedValue</span> <span class="kt">string</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">UnquotedValue</span> <span class="kt">string</span></code></pre></td></tr></table>
 </div>
-</div><p>与<code>QuotedValue</code>不同的是，<code>UnquotedValue</code>不需要<code>&quot;</code>包裹，<code>Serialize</code>和<code>Size</code>方法的实现可以参见上面，比较简单！</p>
+</div>
+<p>与<code>QuotedValue</code>不同的是，<code>UnquotedValue</code>不需要<code>&quot;</code>包裹，<code>Serialize</code>和<code>Size</code>方法的实现可以参见上面，比较简单！</p>
+
 <h3 id="array"><code>Array</code></h3>
+
 <p><code>Array</code>表示一个 JSON 的数组。因为 JSON 数组可以包含任意类型的数据，我们可以基于<code>[]Value</code>为底层类型定义<code>Array</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Array</span> <span class="p">[</span><span class="p">]</span><span class="nx">Value</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Array</span> <span class="p">[]</span><span class="nx">Value</span></code></pre></td></tr></table>
 </div>
-</div><p>这样<code>Array</code>在最终 JSON 串中占用的字节包括所有元素大小、元素之间的<code>,</code>和数组前后的<code>[]</code>，<code>Size</code>方法实现如下：</p>
+</div>
+<p>这样<code>Array</code>在最终 JSON 串中占用的字节包括所有元素大小、元素之间的<code>,</code>和数组前后的<code>[]</code>，<code>Size</code>方法实现如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -575,11 +600,11 @@ if (!doNotTrack) {
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="nx">Array</span><span class="p">)</span> <span class="nf">Size</span><span class="p">(</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="nx">Array</span><span class="p">)</span> <span class="nf">Size</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
   <span class="nx">size</span> <span class="o">:=</span> <span class="mi">0</span>
   <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">e</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">a</span> <span class="p">{</span>
     <span class="c1">// 递归求元素的大小
-</span><span class="c1"></span>    <span class="nx">size</span> <span class="o">+=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="p">)</span>
+</span><span class="c1"></span>    <span class="nx">size</span> <span class="o">+=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span>
   <span class="p">}</span>
 
   <span class="c1">// for []
@@ -590,13 +615,13 @@ if (!doNotTrack) {
   <span class="p">}</span>
 
   <span class="k">return</span> <span class="nx">size</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>Serialize</code>方法递归调用元素的<code>Serialize</code>方法，在元素之间添加<code>,</code>，整个数组用<code>[]</code>包裹。</p>
+</div>
+<p><code>Serialize</code>方法递归调用元素的<code>Serialize</code>方法，在元素之间添加<code>,</code>，整个数组用<code>[]</code>包裹。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -616,10 +641,10 @@ if (!doNotTrack) {
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="nx">Array</span><span class="p">)</span> <span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span> <span class="p">{</span>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="nx">Array</span><span class="p">)</span> <span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[]</span><span class="kt">byte</span> <span class="p">{</span>
   <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
     <span class="c1">// 如果未传入分配好的空间，根据 Size 分配空间
-</span><span class="c1"></span>    <span class="nx">buf</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">a</span><span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+</span><span class="c1"></span>    <span class="nx">buf</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">a</span><span class="p">.</span><span class="nf">Size</span><span class="p">())</span>
   <span class="p">}</span>
 
   <span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;[&#39;</span><span class="p">)</span>
@@ -633,14 +658,15 @@ if (!doNotTrack) {
   <span class="p">}</span>
 
   <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;]&#39;</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>为了方便操作数组，我给数组添加很多方法，常用的基本类型和<code>Array/Map</code>都有对应的操作方法。操作方法命名为<code>AppendType</code>和<code>AppendTypeArray</code>（其中<code>Type</code>为<code>uint/int/bool/float/Array/Map</code>等类型名）。</p>
+</div>
+<p>为了方便操作数组，我给数组添加很多方法，常用的基本类型和<code>Array/Map</code>都有对应的操作方法。操作方法命名为<code>AppendType</code>和<code>AppendTypeArray</code>（其中<code>Type</code>为<code>uint/int/bool/float/Array/Map</code>等类型名）。</p>
+
 <p>除了<code>string/Array/Map</code>，其它的基本类型都使用<code>strconv</code>转为字符串，且强制转换为<code>UnquotedValue</code>，因为它不需要<code>&quot;</code>包裹。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -672,50 +698,53 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Array</span><span class="p">)</span> <span class="nf">AppendUint</span><span class="p">(</span><span class="nx">u</span> <span class="kt">uint64</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">value</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatUint</span><span class="p">(</span><span class="nx">u</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 
-	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">a</span><span class="p">,</span> <span class="nf">UnquotedValue</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="p">)</span>
+	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">a</span><span class="p">,</span> <span class="nf">UnquotedValue</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Array</span><span class="p">)</span> <span class="nf">AppendString</span><span class="p">(</span><span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">a</span><span class="p">,</span> <span class="nf">QuotedValue</span><span class="p">(</span><span class="nf">escapeString</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">a</span><span class="p">,</span> <span class="nf">QuotedValue</span><span class="p">(</span><span class="nf">escapeString</span><span class="p">(</span><span class="nx">value</span><span class="p">)))</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Array</span><span class="p">)</span> <span class="nf">AppendUintArray</span><span class="p">(</span><span class="nx">u</span> <span class="p">[</span><span class="p">]</span><span class="kt">uint64</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">value</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="nx">Value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">u</span><span class="p">)</span><span class="p">)</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Array</span><span class="p">)</span> <span class="nf">AppendUintArray</span><span class="p">(</span><span class="nx">u</span> <span class="p">[]</span><span class="kt">uint64</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">value</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">Value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">u</span><span class="p">))</span>
 	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">u</span> <span class="p">{</span>
-		<span class="nx">value</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nf">UnquotedValue</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatUint</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+		<span class="nx">value</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nf">UnquotedValue</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatUint</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
 	<span class="p">}</span>
 
-	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">a</span><span class="p">,</span> <span class="nf">Array</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="p">)</span>
+	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">a</span><span class="p">,</span> <span class="nf">Array</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Array</span><span class="p">)</span> <span class="nf">AppendStringArray</span><span class="p">(</span><span class="nx">s</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">value</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="nx">Value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span><span class="p">)</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Array</span><span class="p">)</span> <span class="nf">AppendStringArray</span><span class="p">(</span><span class="nx">s</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">value</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">Value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
 	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
-		<span class="nx">value</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nf">QuotedValue</span><span class="p">(</span><span class="nf">escapeString</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+		<span class="nx">value</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nf">QuotedValue</span><span class="p">(</span><span class="nf">escapeString</span><span class="p">(</span><span class="nx">v</span><span class="p">)))</span>
 	<span class="p">}</span>
 
-	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">a</span><span class="p">,</span> <span class="nf">Array</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">a</span><span class="p">,</span> <span class="nf">Array</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>这里有点需要注意，由于<code>Append*</code>方法会修改<code>Array</code>（即切片），所以接收者需要使用指针！</p>
+</div>
+<p>这里有点需要注意，由于<code>Append*</code>方法会修改<code>Array</code>（即切片），所以接收者需要使用指针！</p>
+
 <h3 id="map"><code>Map</code></h3>
+
 <p>实现<code>Map</code>时，有两种选择。第一种定义为<code>map[string]Value</code>，这样结构简单，但是由于<code>map</code>遍历的随机性会导致同一个<code>Map</code>生成的 JSON 串不一样。最终我选择了第二种方案，即键和值分开存放，这样可以保证在最终的 JSON 串中，键的顺序与插入的顺序相同：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Map</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">keys</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span>
-  <span class="nx">values</span> <span class="p">[</span><span class="p">]</span><span class="nx">Value</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+  <span class="nx">keys</span> <span class="p">[]</span><span class="kt">string</span>
+  <span class="nx">values</span> <span class="p">[]</span><span class="nx">Value</span>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>Map</code>的大小包含多个部分：</p>
+</div>
+<p><code>Map</code>的大小包含多个部分：</p>
+
 <ul>
 <li>键和值的大小。</li>
 <li>前后需要<code>{}</code>包裹。</li>
@@ -723,10 +752,11 @@ if (!doNotTrack) {
 <li>键和值之间需要有一个<code>:</code>。</li>
 <li>每个键值对之间需要用<code>,</code>分隔。</li>
 </ul>
+
 <p>搞清楚了这些组成部分，<code>Size</code>方法的实现就简单了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -746,12 +776,12 @@ if (!doNotTrack) {
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">Map</span><span class="p">)</span> <span class="nf">Size</span><span class="p">(</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">Map</span><span class="p">)</span> <span class="nf">Size</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
   <span class="nx">size</span> <span class="o">:=</span> <span class="mi">0</span>
 	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">key</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">m</span><span class="p">.</span><span class="nx">keys</span> <span class="p">{</span>
 		<span class="c1">// +2 for &#34;, +1 for :
 </span><span class="c1"></span>		<span class="nx">size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
-		<span class="nx">size</span> <span class="o">+=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="p">)</span>
+		<span class="nx">size</span> <span class="o">+=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">Size</span><span class="p">()</span>
 	<span class="p">}</span>
 
 	<span class="c1">// +2 for {}
@@ -763,13 +793,13 @@ if (!doNotTrack) {
 	<span class="p">}</span>
 
 	<span class="k">return</span> <span class="nx">size</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>Serialize</code>将多个键值对组装：</p>
+</div>
+<p><code>Serialize</code>将多个键值对组装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -790,31 +820,31 @@ if (!doNotTrack) {
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">Map</span><span class="p">)</span> <span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span> <span class="p">{</span>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">Map</span><span class="p">)</span> <span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[]</span><span class="kt">byte</span> <span class="p">{</span>
 	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-		<span class="nx">buf</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+		<span class="nx">buf</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nf">Size</span><span class="p">())</span>
 	<span class="p">}</span>
 
 	<span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;{&#39;</span><span class="p">)</span>
 	<span class="nx">count</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">keys</span><span class="p">)</span>
 	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">key</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">m</span><span class="p">.</span><span class="nx">keys</span> <span class="p">{</span>
 		<span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;&#34;&#39;</span><span class="p">)</span>
-		<span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="p">[</span><span class="p">]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span><span class="o">...</span><span class="p">)</span>
+		<span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span><span class="o">...</span><span class="p">)</span>
 		<span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;&#34;&#39;</span><span class="p">)</span>
 		<span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;:&#39;</span><span class="p">)</span>
-		<span class="nx">buf</span> <span class="p">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="p">.</span><span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+		<span class="nx">buf</span> <span class="p">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">Serialize</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
 		<span class="k">if</span> <span class="nx">i</span> <span class="o">!=</span> <span class="nx">count</span><span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
 			<span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;,&#39;</span><span class="p">)</span>
 		<span class="p">}</span>
 	<span class="p">}</span>
 	<span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="sc">&#39;}&#39;</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>与<code>Array</code>类似，为了方便操作<code>Map</code>，我给<code>Map</code>添加了很多方法，常见的基本数据类型和<code>Array/Map</code>都有对应的操作方法。操作方法命名为<code>PutType</code>和<code>PutTypeArray</code>（其中<code>Type</code>为<code>uint/int/bool/float/Array/Map</code>等）。</p>
+</div>
+<p>与<code>Array</code>类似，为了方便操作<code>Map</code>，我给<code>Map</code>添加了很多方法，常见的基本数据类型和<code>Array/Map</code>都有对应的操作方法。操作方法命名为<code>PutType</code>和<code>PutTypeArray</code>（其中<code>Type</code>为<code>uint/int/bool/float/Array/Map</code>等）。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -843,20 +873,21 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Map</span><span class="p">)</span> <span class="nf">PutUint</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">u</span> <span class="kt">uint64</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">value</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatUint</span><span class="p">(</span><span class="nx">u</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 
-	<span class="nx">m</span><span class="p">.</span><span class="nf">put</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nf">UnquotedValue</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="p">)</span>
+	<span class="nx">m</span><span class="p">.</span><span class="nf">put</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nf">UnquotedValue</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Map</span><span class="p">)</span> <span class="nf">PutUintArray</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">u</span> <span class="p">[</span><span class="p">]</span><span class="kt">uint64</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">value</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="nx">Value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">u</span><span class="p">)</span><span class="p">)</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Map</span><span class="p">)</span> <span class="nf">PutUintArray</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">u</span> <span class="p">[]</span><span class="kt">uint64</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">value</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">Value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">u</span><span class="p">))</span>
 	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">u</span> <span class="p">{</span>
-		<span class="nx">value</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nf">UnquotedValue</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatUint</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+		<span class="nx">value</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nf">UnquotedValue</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatUint</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
 	<span class="p">}</span>
 
-	<span class="nx">m</span><span class="p">.</span><span class="nf">put</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nf">Array</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+	<span class="nx">m</span><span class="p">.</span><span class="nf">put</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nf">Array</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="结语">结语</h2>
+</div>
+<h2 id="结语">结语</h2>
+
 <p>我根据自身需求实现了一个生成 JSON 串的库，性能大为提升，尽管还不完善，但是后续扩展也非常简单。希望能给有相同需求的朋友带来启发。</p>
 
     </div>

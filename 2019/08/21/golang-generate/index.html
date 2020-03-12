@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.64.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2019/08/21/golang-generate/" />
@@ -69,13 +69,16 @@
 <meta property="article:modified_time" content="2019-08-21T22:24:00+00:00" />
 <meta itemprop="name" content="深入理解Go之generate">
 <meta itemprop="description" content="概述 开发中经常有定义错误码这样的需求，错误码唯一标识具体的错误信息。另外还需要设置每个错误的具体描述。在 HTTP 协议中，200 表示 &ldquo;O">
+
+
 <meta itemprop="datePublished" content="2019-08-21T22:24:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-21T22:24:00&#43;00:00" />
-<meta itemprop="wordCount" content="2273">
+<meta itemprop="wordCount" content="2275">
 
 
 
-<meta itemprop="keywords" content="深入理解Go," /><meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="深入理解Go," />
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="深入理解Go之generate"/>
 <meta name="twitter:description" content="概述 开发中经常有定义错误码这样的需求，错误码唯一标识具体的错误信息。另外还需要设置每个错误的具体描述。在 HTTP 协议中，200 表示 &ldquo;O"/>
 
@@ -360,7 +363,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 2273 字 </span>
+        <span class="more-meta"> 约 2275 字 </span>
           <span class="more-meta"> 预计阅读 5 分钟 </span>
 
         
@@ -381,34 +384,44 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#概述">概述</a></li>
-    <li><a href="#传统方式">传统方式</a></li>
-    <li><a href="#go-generate">go generate</a>
-      <ul>
-        <li><a href="#安装stringer">安装stringer</a></li>
-        <li><a href="#使用">使用</a></li>
-        <li><a href="#自动化">自动化</a></li>
-      </ul>
-    </li>
-    <li><a href="#参考链接">参考链接</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#概述">概述</a></li>
+<li><a href="#传统方式">传统方式</a></li>
+<li><a href="#go-generate"><code>go generate</code></a>
+<ul>
+<li><a href="#安装-stringer">安装<code>stringer</code></a></li>
+<li><a href="#使用">使用</a></li>
+<li><a href="#自动化">自动化</a></li>
+</ul></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="概述">概述</h2>
-<p>开发中经常有定义错误码这样的需求，错误码唯一标识具体的错误信息。另外还需要设置每个错误的具体描述。在 HTTP 协议中，200 表示 &ldquo;OK&rdquo;，404 表示&quot;Not Found&rdquo;。在 Linux 系统中，<code>ENOENT</code> 的值为 2，表示&quot;No such file or directory&rdquo;。<code>syscall</code>包中定义了<code>Errno</code>类型表示系统错误码，非常易用使用，建议去看看。</p>
+      
+
+<h2 id="概述">概述</h2>
+
+<p>开发中经常有定义错误码这样的需求，错误码唯一标识具体的错误信息。另外还需要设置每个错误的具体描述。在 HTTP 协议中，200 表示 &ldquo;OK&rdquo;，404 表示&rdquo;Not Found&rdquo;。在 Linux 系统中，<code>ENOENT</code> 的值为 2，表示&rdquo;No such file or directory&rdquo;。<code>syscall</code>包中定义了<code>Errno</code>类型表示系统错误码，非常易用使用，建议去看看。</p>
+
 <p>每次定义错误码的时候，同时需要添加描述信息。而且描述信息经常会忘。本文介绍<code>go generate</code> + <code>stringer</code>工具链优雅地解决这个问题。</p>
+
 <p>这里顺带提一句，golang tools 是官方提供的工具集，是 Gophers 的工具宝库，值得好好探索一番，参见<a href="https://github.com/golang/tools/">Github 地址</a>，<a href="https://godoc.org/golang.org/x/tools">文档地址</a>。里面有丰富的开发辅助工具，所有的 Go 开发插件都离不开这些工具的支持。例如<code>goimports</code>工具自动导入使用的包，去掉未使用的包；<code>gorename</code>用来重命名标识符。</p>
+
 <p>今天要使用的<code>stringer</code>工具也在<code>tools</code>工具包中。</p>
+
 <h2 id="传统方式">传统方式</h2>
+
 <p>定义错误码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -436,9 +449,9 @@ if (!doNotTrack) {
 </span><span class="lnt">26
 </span><span class="lnt">27
 </span><span class="lnt">28
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">errcode</span>
+<pre class="chroma"><span class="kn">package</span> <span class="nx">errcode</span>
 
 <span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
 
@@ -460,18 +473,18 @@ if (!doNotTrack) {
 
 <span class="c1">// 根据错误码返回描述信息
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">GetDescription</span><span class="p">(</span><span class="nx">errCode</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">desc</span><span class="p">,</span> <span class="nx">exist</span> <span class="o">:=</span> <span class="nx">mapErrDesc</span><span class="p">[</span><span class="nx">errCode</span><span class="p">]</span><span class="p">;</span> <span class="nx">exist</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">desc</span><span class="p">,</span> <span class="nx">exist</span> <span class="o">:=</span> <span class="nx">mapErrDesc</span><span class="p">[</span><span class="nx">errCode</span><span class="p">];</span> <span class="nx">exist</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">desc</span>
     <span class="p">}</span>
     
     <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;error code: %d&#34;</span><span class="p">,</span> <span class="nx">errCode</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></pre></td></tr></table>
 </div>
-</div><p>使用错误码：</p>
+</div>
+<p>使用错误码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -483,26 +496,26 @@ if (!doNotTrack) {
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+<pre class="chroma"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
     <span class="s">&#34;github.com/darjun/errcode&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">code</span> <span class="o">:=</span> <span class="nx">errcode</span><span class="p">.</span><span class="nx">ERR_CODE_INVALID_PARAMS</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">errcode</span><span class="p">.</span><span class="nf">GetDescription</span><span class="p">(</span><span class="nx">errCode</span><span class="p">)</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">errcode</span><span class="p">.</span><span class="nf">GetDescription</span><span class="p">(</span><span class="nx">errCode</span><span class="p">))</span>
     
     <span class="c1">// 输出: 1 无效参数
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">}</span></pre></td></tr></table>
 </div>
-</div><p>为了使用方便，我们可以为错误码定义一个新的类型，然后为该类型定义<code>String()</code>方法，这样就不用手动调用<code>GetDescription</code>函数了。修改如下：</p>
+</div>
+<p>为了使用方便，我们可以为错误码定义一个新的类型，然后为该类型定义<code>String()</code>方法，这样就不用手动调用<code>GetDescription</code>函数了。修改如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -513,9 +526,9 @@ if (!doNotTrack) {
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">type ErrCode int
+<pre class="chroma">type ErrCode int
 
 const (
     ERR_CODE_OK ErrCode = 0 // OK
@@ -525,80 +538,91 @@ const (
 
 func (e ErrCode) String() string {
     return GetDescription(e)
-}
-</code></pre></td></tr></table>
+}</pre></td></tr></table>
 </div>
-</div><p>现在已经不需要在外部调用<code>GetDescription</code>函数了，从而不需要导出。将函数名改为<code>getDescription</code>即不导出。</p>
+</div>
+<p>现在已经不需要在外部调用<code>GetDescription</code>函数了，从而不需要导出。将函数名改为<code>getDescription</code>即不导出。</p>
+
 <p>这种方式有什么问题呢？</p>
+
 <p>每次增加错误码时，都需要修改<code>mapErrDesc</code>，有时候可能会忘。另外，错误描述在注释和<code>mapErrDesc</code>都出现了。那么能不能只写注释，然后使用工具自动生成我们想要的代码呢？</p>
+
 <p>接下我们看看如何通过<code>go generate</code> + <code>stringer</code>解决这个问题。</p>
+
 <h2 id="go-generate"><code>go generate</code></h2>
+
 <p><code>go generate</code>是 Go 自带的工具。使用命令<code>go generate</code>执行。<code>go generate</code>是利用源代码中的注释工作的。格式如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">//go:generate command arg1 arg2
-</code></pre></td></tr></table>
+<pre class="chroma">//go:generate command arg1 arg2</pre></td></tr></table>
 </div>
-</div><p>这样在同一个目录下执行命令<code>go generate</code>就会自动运行命令<code>command arg1 arg2</code>。<code>command</code>可以是在<code>PATH</code>中的任何命令，应用非常广泛。官网提供了几种示例，见<a href="https://docs.google.com/document/d/1V03LUfjSADDooDMhe-_K59EgpTEm3V8uvQRuNMAEnjg/edit#heading=h.j6dsjy94dn2q">文档</a>。</p>
+</div>
+<p>这样在同一个目录下执行命令<code>go generate</code>就会自动运行命令<code>command arg1 arg2</code>。<code>command</code>可以是在<code>PATH</code>中的任何命令，应用非常广泛。官网提供了几种示例，见<a href="https://docs.google.com/document/d/1V03LUfjSADDooDMhe-_K59EgpTEm3V8uvQRuNMAEnjg/edit#heading=h.j6dsjy94dn2q">文档</a>。</p>
+
 <p><code>stringer</code>命令可以为给定类型生成<code>String</code>方法。</p>
-<h3 id="安装stringer">安装<code>stringer</code></h3>
+
+<h3 id="安装-stringer">安装<code>stringer</code></h3>
+
 <p><code>stringer</code>并不是 Go 自带的工具，需要手动安装。可以执行下面的命令安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get golang.org/x/tools/cmd/stringer
-</code></pre></td></tr></table>
+<pre class="chroma">$ go get golang.org/x/tools/cmd/stringer</pre></td></tr></table>
 </div>
-</div><p>上面的命令需要翻墙。也可以通过 Github 上的<a href="https://github.com/golang/tools/">镜像</a>来安装。假设你已经配置好 Go 的开发环境了，安装方法如下：</p>
+</div>
+<p>上面的命令需要翻墙。也可以通过 Github 上的<a href="https://github.com/golang/tools/">镜像</a>来安装。假设你已经配置好 Go 的开发环境了，安装方法如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ git clone https://github.com/golang/tools/ $GOPATH/src/golang.org/x/tools
-$ go install golang.org/x/tools/cmd/stringer
-</code></pre></td></tr></table>
+<pre class="chroma">$ git clone https://github.com/golang/tools/ $GOPATH/src/golang.org/x/tools
+$ go install golang.org/x/tools/cmd/stringer</pre></td></tr></table>
 </div>
-</div><p>安装好的<code>stringer</code>命令位于<code>$GOPATH/bin</code>目录下，<strong>强烈建议将这个目录加入系统<code>PATH</code>中</strong>。</p>
+</div>
+<p>安装好的<code>stringer</code>命令位于<code>$GOPATH/bin</code>目录下，<strong>强烈建议将这个目录加入系统<code>PATH</code>中</strong>。</p>
+
 <h3 id="使用">使用</h3>
+
 <p><code>stringer</code>有两种模式，默认是根据变量/常量名来生成字符串描述。我们在常量定义上增加注释：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">//go:generate stringer -type ErrCode
-</code></pre></td></tr></table>
+<pre class="chroma">//go:generate stringer -type ErrCode</pre></td></tr></table>
 </div>
-</div><p>选项<code>-type</code>指定<code>stringer</code>命令作用的类型名。</p>
+</div>
+<p>选项<code>-type</code>指定<code>stringer</code>命令作用的类型名。</p>
+
 <p>然后在同一个目录下执行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go generate
-</code></pre></td></tr></table>
+<pre class="chroma">$ go generate</pre></td></tr></table>
 </div>
-</div><p>会在同一个目录下生成一个文件<code>errcode_string.go</code>。文件名格式是<code>类型名小写_string.go</code>。也可以通过<code>-output</code>选项指定输出文件名，例如下面就是指定输出文件名为<code>code_string.go</code>：</p>
+</div>
+<p>会在同一个目录下生成一个文件<code>errcode_string.go</code>。文件名格式是<code>类型名小写_string.go</code>。也可以通过<code>-output</code>选项指定输出文件名，例如下面就是指定输出文件名为<code>code_string.go</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">//go:generate stringer -type ErrCode -output code_string.go
-</code></pre></td></tr></table>
+<pre class="chroma">//go:generate stringer -type ErrCode -output code_string.go</pre></td></tr></table>
 </div>
-</div><p>我们来看看这个文件的内容：</p>
+</div>
+<p>我们来看看这个文件的内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -614,9 +638,9 @@ $ go install golang.org/x/tools/cmd/stringer
 </span><span class="lnt">14
 </span><span class="lnt">15
 </span><span class="lnt">16
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Code generated by &#34;stringer -type ErrCode -output errcode_string.go&#34;; DO NOT EDIT.
+<pre class="chroma"><span class="c1">// Code generated by &#34;stringer -type ErrCode -output errcode_string.go&#34;; DO NOT EDIT.
 </span><span class="c1"></span>
 <span class="kn">package</span> <span class="nx">errcode</span>
 
@@ -626,65 +650,77 @@ $ go install golang.org/x/tools/cmd/stringer
 
 <span class="kd">var</span> <span class="nx">_ErrCode_index</span> <span class="p">=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="kt">uint8</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">50</span><span class="p">}</span>
 
-<span class="kd">func</span> <span class="p">(</span><span class="nx">i</span> <span class="nx">ErrCode</span><span class="p">)</span> <span class="nf">String</span><span class="p">(</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">i</span> <span class="nx">ErrCode</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
 	<span class="k">if</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="nf">ErrCode</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">_ErrCode_index</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">return</span> <span class="s">&#34;ErrCode(&#34;</span> <span class="o">+</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatInt</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#34;)&#34;</span>
+		<span class="k">return</span> <span class="s">&#34;ErrCode(&#34;</span> <span class="o">+</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatInt</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">i</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#34;)&#34;</span>
 	<span class="p">}</span>
-	<span class="k">return</span> <span class="nx">_ErrCode_name</span><span class="p">[</span><span class="nx">_ErrCode_index</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="p">:</span><span class="nx">_ErrCode_index</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+	<span class="k">return</span> <span class="nx">_ErrCode_name</span><span class="p">[</span><span class="nx">_ErrCode_index</span><span class="p">[</span><span class="nx">i</span><span class="p">]:</span><span class="nx">_ErrCode_index</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span>
+<span class="p">}</span></pre></td></tr></table>
 </div>
-</div><p>生成的代码做了一些优化，减少了字符串对象的数量。</p>
+</div>
+<p>生成的代码做了一些优化，减少了字符串对象的数量。</p>
+
 <p>这时<code>ERR_CODE_INVALID_PARAMS.String()</code>返回的描述信息是<code>ERR_CODE_INVALID_PARAMS</code>。在一些上下文中甚至不需要自己调用<code>String()</code>方法，如<code>fmt.Println</code>。因为<code>ErrCode</code>实现了<code>fmt.Stringer</code>，一些上下文中会自动调用。</p>
+
 <p>这样<code>errcode.go</code>文件中<code>mapErrDesc</code>全局变量和<code>getDescription</code>函数都可以去掉了。</p>
+
 <p>但是我们更希望的是能返回后面的注释作为错误描述。这就需要使用<code>stringer</code>的<code>-linecomment</code>选项。修改<code>go:generate</code>如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">//go:generate stringer -type ErrCode -linecomment -output code_string.go
-</code></pre></td></tr></table>
+<pre class="chroma">//go:generate stringer -type ErrCode -linecomment -output code_string.go</pre></td></tr></table>
 </div>
-</div><p>然后，执行<code>go generate</code>命令。生成的<code>code_string.go</code>与之前的有所不同，如下：</p>
+</div>
+<p>然后，执行<code>go generate</code>命令。生成的<code>code_string.go</code>与之前的有所不同，如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">const _ErrCode_name = &#34;OK无效参数超时&#34;
+<pre class="chroma">const _ErrCode_name = &#34;OK无效参数超时&#34;
 
-var _ErrCode_index = [...]uint8{0, 2, 14, 20}
-</code></pre></td></tr></table>
+var _ErrCode_index = [...]uint8{0, 2, 14, 20}</pre></td></tr></table>
 </div>
-</div><p>可以看到确实通过注释生成了错误消息。</p>
+</div>
+<p>可以看到确实通过注释生成了错误消息。</p>
+
 <p>注意点：</p>
+
 <ol>
 <li><code>go:generate</code>前面只能使用<code>//</code>注释，注释必须在行首，前面不能有空格且<code>//</code>与<code>go:generate</code>之间不能有空格！！！</li>
 <li><code>go:generate</code>可以在任何 Go 源文件中，最好在类型定义的地方。</li>
 </ol>
+
 <h3 id="自动化">自动化</h3>
+
 <p>有人会说，这样还是很麻烦啊：每次都要执行一次<code>go generate</code>命令，我忘了怎么办？我很懒，也不想手动敲这个命令。没问题，不会偷懒不是一个好程序员。我们可以在构建项目的脚本中执行这个命令，例如在 makefile 中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">all:
-    go generate &amp;&amp; go build .
-</code></pre></td></tr></table>
+<pre class="chroma">all:
+    go generate &amp;&amp; go build .</pre></td></tr></table>
 </div>
-</div><p>这样一个<code>make</code>命令就可以执行<code>go generate</code>同时编译项目了。完美！</p>
+</div>
+<p>这样一个<code>make</code>命令就可以执行<code>go generate</code>同时编译项目了。完美！</p>
+
 <p>当然上面命令比较简单，实际项目中可能需要处理一下目录。</p>
+
 <p>代码在<a href="https://github.com/darjun/errcode">Github</a>上。</p>
+
 <h2 id="参考链接">参考链接</h2>
+
 <ol>
 <li><a href="https://blog.golang.org/generate">go blog - generate</a></li>
 <li><a href="https://docs.google.com/document/d/1V03LUfjSADDooDMhe-_K59EgpTEm3V8uvQRuNMAEnjg/edit#heading=h.j6dsjy94dn2q">go generate文档</a></li>
 </ol>
+
 <p><a href="https://darjun.github.io">个人主页</a></p>
 
     </div>
