@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 gjson - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 之前我们介绍过gojsonq，可以方便地从一个 JSON 串中读取值。同时它也支持各种查询、汇总统计等功能。今天我们再介绍一个类似的库gjson。" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2020/03/22/godailylib/gjson/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 gjson" />
+<meta property="og:description" content="简介 之前我们介绍过gojsonq，可以方便地从一个 JSON 串中读取值。同时它也支持各种查询、汇总统计等功能。今天我们再介绍一个类似的库gjson。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2020/03/22/godailylib/gjson/" />
+<meta property="article:published_time" content="2020-03-22T19:32:39+00:00" />
+<meta property="article:modified_time" content="2020-03-22T19:32:39+00:00" />
+<meta itemprop="name" content="Go 每日一库之 gjson">
+<meta itemprop="description" content="简介 之前我们介绍过gojsonq，可以方便地从一个 JSON 串中读取值。同时它也支持各种查询、汇总统计等功能。今天我们再介绍一个类似的库gjson。">
+
+
+<meta itemprop="datePublished" content="2020-03-22T19:32:39&#43;00:00" />
+<meta itemprop="dateModified" content="2020-03-22T19:32:39&#43;00:00" />
+<meta itemprop="wordCount" content="4609">
+
+
+
+<meta itemprop="keywords" content="Go 每日一库," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 gjson"/>
+<meta name="twitter:description" content="简介 之前我们介绍过gojsonq，可以方便地从一个 JSON 串中读取值。同时它也支持各种查询、汇总统计等功能。今天我们再介绍一个类似的库gjson。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 gjson</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-03-22" class="post-time">
+          2020-03-22
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 4609 字 </span>
+          <span class="more-meta"> 预计阅读 10 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#键路径">键路径</a></li>
+<li><a href="#修饰符">修饰符</a>
+<ul>
+<li><a href="#修饰符参数">修饰符参数</a></li>
+<li><a href="#自定义修饰符">自定义修饰符</a></li>
+</ul></li>
+<li><a href="#json-行">JSON 行</a></li>
+<li><a href="#遍历">遍历</a>
+<ul>
+<li><a href="#校验-json">校验 JSON</a></li>
+</ul></li>
+<li><a href="#一次获取多个值">一次获取多个值</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="简介">简介</h2>
+
+<p>之前我们介绍过<a href="https://darjun.github.io/2020/02/24/godailylib/gojsonq/"><code>gojsonq</code></a>，可以方便地从一个 JSON 串中读取值。同时它也支持各种查询、汇总统计等功能。今天我们再介绍一个类似的库<a href="https://github.com/tidwall/gjson"><code>gjson</code></a>。在上一篇文章<a href="https://darjun.github.io/2020/03/21/godailylib/buntdb/">Go 每日一库之 buntdb</a>中我们介绍过 JSON 索引，内部实现其实就是使用<code>gjson</code>这个库。<code>gjson</code>实际上是<code>get + json</code>的缩写，用于读取 JSON 串，同样的还有一个<a href="https://github.com/tidwall/sjson"><code>sjson</code></a>（<code>set + json</code>）库用来设置 JSON 串。</p>
+
+<h2 id="快速使用">快速使用</h2>
+
+<p>先安装：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">tidwall</span><span class="o">/</span><span class="nx">gjson</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>后使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;fmt&#34;</span>
+
+  <span class="s">&#34;github.com/tidwall/gjson&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">json</span> <span class="o">:=</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;li&#34;,&#34;last&#34;:&#34;dj&#34;},&#34;age&#34;:18}`</span>
+  <span class="nx">lastName</span> <span class="o">:=</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;name.last&#34;</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;last name:&#34;</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
+
+  <span class="nx">age</span> <span class="o">:=</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;age&#34;</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;age:&#34;</span><span class="p">,</span> <span class="nx">age</span><span class="p">.</span><span class="nf">Int</span><span class="p">())</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>使用很简单，只需要传入 JSON 串和要读取的键路径即可。注意一点细节，因为<code>gjson.Get()</code>函数实际上返回的是<code>gjson.Result</code>类型，我们要调用其相应的方法进行转换对应的类型。如上面的<code>String()</code>和<code>Int()</code>方法。</p>
+
+<p>如果是直接打印输出，其实可以省略<code>String()</code>，<code>fmt</code>包的大部分函数都可以对实现<code>fmt.Stringer</code>接口的类型调用<code>String()</code>方法。</p>
+
+<h2 id="键路径">键路径</h2>
+
+<p>键路径实际上是以<code>.</code>分隔的一系列键。<code>gjson</code>支持在键中包含通配符<code>*</code>和<code>?</code>，<code>*</code>匹配任意多个字符，<code>?</code>匹配单个字符，例如<code>ca*</code>可以匹配<code>cat/cate/cake</code>等以<code>ca</code>开头的键，<code>ca?</code>只能匹配<code>cat/cap</code>等以<code>ca</code>开头且后面只有一个字符的键。</p>
+
+<p>数组使用<strong>键名 + <code>.</code> + 索引</strong>（索引从 0 开始）的方式读取元素，如果键<code>pets</code>对应的值是一个数组，那么<code>pets.0</code>读取数组的第一个元素，<code>pets.1</code>读取第二个元素。</p>
+
+<p>数组长度使用<strong>键名 + <code>.</code> + <code>#</code></strong>获取，例如<code>pets.#</code>返回数组<code>pets</code>的长度。</p>
+
+<p>如果键名中出现<code>.</code>，那么需要使用<code>\</code>进行转义。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kd">const</span> <span class="nx">json</span> <span class="p">=</span> <span class="s">`
+</span><span class="s">{
+</span><span class="s">  &#34;name&#34;:{&#34;first&#34;:&#34;Tom&#34;, &#34;last&#34;: &#34;Anderson&#34;},
+</span><span class="s">  &#34;age&#34;: 37,
+</span><span class="s">  &#34;children&#34;: [&#34;Sara&#34;, &#34;Alex&#34;, &#34;Jack&#34;],
+</span><span class="s">  &#34;fav.movie&#34;: &#34;Dear Hunter&#34;,
+</span><span class="s">  &#34;friends&#34;: [
+</span><span class="s">    {&#34;first&#34;: &#34;Dale&#34;, &#34;last&#34;:&#34;Murphy&#34;, &#34;age&#34;: 44, &#34;nets&#34;: [&#34;ig&#34;, &#34;fb&#34;, &#34;tw&#34;]},
+</span><span class="s">    {&#34;first&#34;: &#34;Roger&#34;, &#34;last&#34;: &#34;Craig&#34;, &#34;age&#34;: 68, &#34;nets&#34;: [&#34;fb&#34;, &#34;tw&#34;]},
+</span><span class="s">    {&#34;first&#34;: &#34;Jane&#34;, &#34;last&#34;: &#34;Murphy&#34;, &#34;age&#34;: 47, &#34;nets&#34;: [&#34;ig&#34;, &#34;tw&#34;]}
+</span><span class="s">  ]
+</span><span class="s">}
+</span><span class="s">`</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;last name:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;name.last&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;age:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;age&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;children:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;children&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;children count:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;children.#&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;second child:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;children.1&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;third child*:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;child*.2&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;first c?ild:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;c?ildren.0&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;fav.moive&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`fav.\moive`</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;first name of friends:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;friends.#.first&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;last name of second friend:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;friends.1.last&#34;</span><span class="p">))</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>前 3 个比较简单，就不赘述了。看后面几个：</p>
+
+<ul>
+<li><code>children.#</code>：返回数组<code>children</code>的长度；</li>
+<li><code>children.1</code>：读取数组<code>children</code>的第 2 个元素（注意索引从 0 开始）；</li>
+<li><code>child*.2</code>：首先<code>child*</code>匹配<code>children</code>，<code>.2</code>读取第 3 个元素；</li>
+<li><code>c?ildren.0</code>：<code>c?ildren</code>匹配到<code>children</code>，<code>.0</code>读取第一个元素；</li>
+<li><code>fav.\moive</code>：因为键名中含有<code>.</code>，故需要<code>\</code>转义；</li>
+<li><code>friends.#.first</code>：如果数组后<code>#</code>后还有内容，则以后面的路径读取数组中的每个元素，返回一个新的数组。所以该查询返回的数组所有<code>friends</code>的<code>first</code>字段组成；</li>
+<li><code>friends.1.last</code>：读取<code>friends</code>第 2 个元素的<code>last</code>字段。</li>
+</ul>
+
+<p>运行结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">last</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">Anderson</span>
+<span class="nx">age</span><span class="p">:</span> <span class="mi">37</span>
+<span class="nx">children</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;Sara&#34;</span><span class="p">,</span> <span class="s">&#34;Alex&#34;</span><span class="p">,</span> <span class="s">&#34;Jack&#34;</span><span class="p">]</span>
+<span class="nx">children</span> <span class="nx">count</span><span class="p">:</span> <span class="mi">3</span>
+<span class="nx">second</span> <span class="nx">child</span><span class="p">:</span> <span class="nx">Alex</span>
+<span class="nx">third</span> <span class="nx">child</span><span class="o">*</span><span class="p">:</span> <span class="nx">Jack</span>
+<span class="nx">first</span> <span class="nx">c</span><span class="err">?</span><span class="nx">ild</span><span class="p">:</span> <span class="nx">Sara</span>
+<span class="nx">fave</span><span class="p">.</span><span class="nx">moive</span> 
+<span class="nx">first</span> <span class="nx">name</span> <span class="nx">of</span> <span class="nx">friends</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;Dale&#34;</span><span class="p">,</span><span class="s">&#34;Roger&#34;</span><span class="p">,</span><span class="s">&#34;Jane&#34;</span><span class="p">]</span>
+<span class="nx">last</span> <span class="nx">name</span> <span class="nx">of</span> <span class="nx">second</span> <span class="nx">friend</span><span class="p">:</span> <span class="nx">Craig</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>对于数组，<code>gjson</code>还支持按条件查询元素，<code>#(条件)</code>返回第一个满足条件的元素，<code>#(条件)#</code>返回所有满足条件的元素。括号内的条件可以有<code>==</code>、<code>!=</code>、<code>&lt;</code>、<code>&lt;=</code>、<code>&gt;</code>、<code>&gt;=</code>，还有简单的模式匹配<code>%</code>（符合某个模式），<code>!%</code>（不符合某个模式）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`friends.#(last=&#34;Murphy&#34;).first`</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`friends.#(last=&#34;Murphy&#34;)#.first`</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;friends.#(age&gt;45)#.last&#34;</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`friends.#(first%&#34;D*&#34;).last`</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`friends.#(first!%&#34;D*&#34;).last`</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`friends.#(nets.#(==&#34;fb&#34;))#.first`</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>还是使用上面的 JSON 串。</p>
+
+<ul>
+<li><code>friends.#(last=&quot;Murphy&quot;).first</code>：<code>friends.#(last=&quot;Murphy&quot;)</code>返回数组<code>friends</code>中第一个<code>last</code>为<code>Murphy</code>的元素，<code>.first</code>表示取出该元素的<code>first</code>字段返回；</li>
+<li><code>friends.#(last=&quot;Murphy&quot;)#.first</code>：<code>friends.#(last=&quot;Murphy&quot;)#</code>返回数组<code>friends</code>中所有的<code>last</code>为<code>Murphy</code>的元素，然后读取它们的<code>first</code>字段放在一个数组中返回。注意与上面一个的区别；</li>
+<li><code>friends.#(age&gt;45)#.last</code>：<code>friends.#(age&gt;45)#</code>返回数组<code>friends</code>中所有年龄大于 45 的元素，然后读取它们的<code>last</code>字段返回；</li>
+<li><code>friends.#(first%&quot;D*&quot;).last</code>：<code>friends.#(first%&quot;D*&quot;)</code>返回数组<code>friends</code>中第一个<code>first</code>字段满足模式<code>D*</code>的元素，取出其<code>last</code>字段返回；</li>
+<li><code>friends.#(first!%&quot;D*&quot;).last</code>：`<code>friends.#(first!%&quot;D*&quot;)</code>返回数组<code>friends</code>中第一个<code>first</code>字段<strong>不</strong>满足模式<code>D*</code>的元素，读取其<code>last</code>字段返回；</li>
+<li><code>friends.#(nets.#(==&quot;fb&quot;))#.first</code>：这是个嵌套条件，<code>friends.#(nets.#(==&quot;fb&quot;))#</code>返回数组<code>friends</code>的元素的<code>nets</code>字段中有<code>fb</code>的所有元素，然后取出<code>first</code>字段返回。</li>
+</ul>
+
+<p>运行结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Dale</span>
+<span class="p">[</span><span class="s">&#34;Dale&#34;</span><span class="p">,</span><span class="s">&#34;Jane&#34;</span><span class="p">]</span>
+<span class="p">[</span><span class="s">&#34;Craig&#34;</span><span class="p">,</span><span class="s">&#34;Murphy&#34;</span><span class="p">]</span>
+<span class="nx">Murphy</span>
+<span class="nx">Craig</span>
+<span class="p">[</span><span class="s">&#34;Dale&#34;</span><span class="p">,</span><span class="s">&#34;Roger&#34;</span><span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="修饰符">修饰符</h2>
+
+<p><strong>修饰符</strong>是<code>gjson</code>提供的非常强大的功能，和键路径搭配使用。<code>gjson</code>提供了一些内置的修饰符：</p>
+
+<ul>
+<li><code>@reverse</code>：翻转一个数组；</li>
+<li><code>@ugly</code>：移除 JSON 中的所有空白符；</li>
+<li><code>@pretty</code>：使 JSON 更易用阅读；</li>
+<li><code>@this</code>：返回当前的元素，可以用来返回根元素；</li>
+<li><code>@valid</code>：校验 JSON 的合法性；</li>
+<li><code>@flatten</code>：数组平坦化，即将<code>[&quot;a&quot;, [&quot;b&quot;, &quot;c&quot;]]</code>转为<code>[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]</code>；</li>
+<li><code>@join</code>：将多个对象合并到一个对象中。</li>
+</ul>
+
+<p>修饰符的语法和管道类似，以<code>|</code>分隔键路径和分隔符。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="nx">json</span> <span class="p">=</span> <span class="s">`{
+</span><span class="s">  &#34;name&#34;:{&#34;first&#34;:&#34;Tom&#34;, &#34;last&#34;: &#34;Anderson&#34;},
+</span><span class="s">  &#34;age&#34;: 37,
+</span><span class="s">  &#34;children&#34;: [&#34;Sara&#34;, &#34;Alex&#34;, &#34;Jack&#34;],
+</span><span class="s">  &#34;fav.movie&#34;: &#34;Dear Hunter&#34;,
+</span><span class="s">  &#34;friends&#34;: [
+</span><span class="s">    {&#34;first&#34;: &#34;Dale&#34;, &#34;last&#34;:&#34;Murphy&#34;, &#34;age&#34;: 44, &#34;nets&#34;: [&#34;ig&#34;, &#34;fb&#34;, &#34;tw&#34;]},
+</span><span class="s">    {&#34;first&#34;: &#34;Roger&#34;, &#34;last&#34;: &#34;Craig&#34;, &#34;age&#34;: 68, &#34;nets&#34;: [&#34;fb&#34;, &#34;tw&#34;]},
+</span><span class="s">    {&#34;first&#34;: &#34;Jane&#34;, &#34;last&#34;: &#34;Murphy&#34;, &#34;age&#34;: 47, &#34;nets&#34;: [&#34;ig&#34;, &#34;tw&#34;]}
+</span><span class="s">  ]
+</span><span class="s">}`</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;children|@reverse&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;children|@reverse|0&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;friends|@ugly&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;friends|@pretty&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;@this&#34;</span><span class="p">))</span>
+
+  <span class="nx">nestedJSON</span> <span class="o">:=</span> <span class="s">`{&#34;nested&#34;: [&#34;one&#34;, &#34;two&#34;, [&#34;three&#34;, &#34;four&#34;]]}`</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">nestedJSON</span><span class="p">,</span> <span class="s">&#34;nested|@flatten&#34;</span><span class="p">))</span>
+
+  <span class="nx">userJSON</span> <span class="o">:=</span> <span class="s">`{&#34;info&#34;:[{&#34;name&#34;:&#34;dj&#34;, &#34;age&#34;:18},{&#34;phone&#34;:&#34;123456789&#34;,&#34;email&#34;:&#34;dj@example.com&#34;}]}`</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">userJSON</span><span class="p">,</span> <span class="s">&#34;info|@join&#34;</span><span class="p">))</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>children|@reverse</code>先读取数组<code>children</code>，然后使用修饰符<code>@reverse</code>翻转之后返回，输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">[</span><span class="s">&#34;Jack&#34;</span><span class="p">,</span><span class="s">&#34;Alex&#34;</span><span class="p">,</span><span class="s">&#34;Sara&#34;</span><span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>children|@reverse|0</code>在上面翻转的基础上读取第一个元素，即原数组的最后一个元素，输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Jack</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>friends|@ugly</code>移除<code>friends</code>数组中的所有空白字符，返回一行长长的字符串：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">[{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;Dale&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;Murphy&#34;</span><span class="p">,</span><span class="s">&#34;age&#34;</span><span class="p">:</span><span class="mi">44</span><span class="p">,</span><span class="s">&#34;nets&#34;</span><span class="p">:[</span><span class="s">&#34;ig&#34;</span><span class="p">,</span><span class="s">&#34;fb&#34;</span><span class="p">,</span><span class="s">&#34;tw&#34;</span><span class="p">]},{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;Roger&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;Craig&#34;</span><span class="p">,</span><span class="s">&#34;age&#34;</span><span class="p">:</span><span class="mi">68</span><span class="p">,</span><span class="s">&#34;nets&#34;</span><span class="p">:[</span><span class="s">&#34;fb&#34;</span><span class="p">,</span><span class="s">&#34;tw&#34;</span><span class="p">]},{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;Jane&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;Murphy&#34;</span><span class="p">,</span><span class="s">&#34;age&#34;</span><span class="p">:</span><span class="mi">47</span><span class="p">,</span><span class="s">&#34;nets&#34;</span><span class="p">:[</span><span class="s">&#34;ig&#34;</span><span class="p">,</span><span class="s">&#34;tw&#34;</span><span class="p">]}]</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>friends|@pretty</code>格式化<code>friends</code>数组，使之更易读：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;Dale&#34;</span><span class="p">,</span>
+    <span class="s">&#34;last&#34;</span><span class="p">:</span> <span class="s">&#34;Murphy&#34;</span><span class="p">,</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span>
+    <span class="s">&#34;nets&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;ig&#34;</span><span class="p">,</span> <span class="s">&#34;fb&#34;</span><span class="p">,</span> <span class="s">&#34;tw&#34;</span><span class="p">]</span>
+  <span class="p">},</span> 
+  <span class="p">{</span>
+    <span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;Roger&#34;</span><span class="p">,</span>
+    <span class="s">&#34;last&#34;</span><span class="p">:</span> <span class="s">&#34;Craig&#34;</span><span class="p">,</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">68</span><span class="p">,</span>
+    <span class="s">&#34;nets&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;fb&#34;</span><span class="p">,</span> <span class="s">&#34;tw&#34;</span><span class="p">]</span>
+  <span class="p">},</span> 
+  <span class="p">{</span>
+    <span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;Jane&#34;</span><span class="p">,</span>
+    <span class="s">&#34;last&#34;</span><span class="p">:</span> <span class="s">&#34;Murphy&#34;</span><span class="p">,</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">47</span><span class="p">,</span>
+    <span class="s">&#34;nets&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;ig&#34;</span><span class="p">,</span> <span class="s">&#34;tw&#34;</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>@this</code>返回原始的 JSON 串。</p>
+
+<p><code>@flatten</code>将数组<code>nested</code>的内层数组平坦到外层后返回，即将所有内层数组的元素依次添加到外层数组后面并移除内层数组，输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">[</span><span class="s">&#34;one&#34;</span><span class="p">,</span><span class="s">&#34;two&#34;</span><span class="p">,</span><span class="s">&#34;three&#34;</span><span class="p">,</span> <span class="s">&#34;four&#34;</span><span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>@join</code>将一个数组中的各个对象合并到一个中，例子中将数组中存放的部分个人信息合并成一个对象返回：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">,</span><span class="s">&#34;age&#34;</span><span class="p">:</span><span class="mi">18</span><span class="p">,</span><span class="s">&#34;phone&#34;</span><span class="p">:</span><span class="s">&#34;123456789&#34;</span><span class="p">,</span><span class="s">&#34;email&#34;</span><span class="p">:</span><span class="s">&#34;dj@example.com&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="修饰符参数">修饰符参数</h3>
+
+<p>修饰符还可以有参数，通过在修饰符后加<code>:</code>后跟参数。如果我们在格式化 JSON 串时，想要对键进行排序，那么可以使用<code>@pretty</code>修饰符的<code>sortKeys</code>参数。我们还是那上面的 JSON 数据举例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`friends|@pretty:{&#34;sortKeys&#34;:true}`</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>最终按键名顺序输出 JSON 串：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span>
+    <span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;Dale&#34;</span><span class="p">,</span>
+    <span class="s">&#34;last&#34;</span><span class="p">:</span> <span class="s">&#34;Murphy&#34;</span><span class="p">,</span>
+    <span class="s">&#34;nets&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;ig&#34;</span><span class="p">,</span> <span class="s">&#34;fb&#34;</span><span class="p">,</span> <span class="s">&#34;tw&#34;</span><span class="p">]</span>
+  <span class="p">},</span> 
+  <span class="p">{</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">68</span><span class="p">,</span>
+    <span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;Roger&#34;</span><span class="p">,</span>
+    <span class="s">&#34;last&#34;</span><span class="p">:</span> <span class="s">&#34;Craig&#34;</span><span class="p">,</span>
+    <span class="s">&#34;nets&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;fb&#34;</span><span class="p">,</span> <span class="s">&#34;tw&#34;</span><span class="p">]</span>
+  <span class="p">},</span> 
+  <span class="p">{</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">47</span><span class="p">,</span>
+    <span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;Jane&#34;</span><span class="p">,</span>
+    <span class="s">&#34;last&#34;</span><span class="p">:</span> <span class="s">&#34;Murphy&#34;</span><span class="p">,</span>
+    <span class="s">&#34;nets&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;ig&#34;</span><span class="p">,</span> <span class="s">&#34;tw&#34;</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>当然还可以指定每行缩进<code>indent</code>（默认两个空格），每行开头字符串<code>prefix</code>（默认为空串）和一行最多显示字符数<code>width</code>（默认 80 字符）。下面在每行前增加两个空格：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`friends|@pretty:{&#34;sortKeys&#34;:true,&#34;prefix&#34;:&#34;  &#34;}`</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="自定义修饰符">自定义修饰符</h3>
+
+<p>如此强大的功当然要支持自定义！<code>gjson</code>使用<code>AddModifier()</code>添加一个修饰符，传入一个名字和类型为<code>func(json arg string) string</code>的处理函数。处理函数接受待处理的 JSON 值和修饰符参数，返回处理后的结果。下面编写一个转换大小写的修饰符：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">gjson</span><span class="p">.</span><span class="nf">AddModifier</span><span class="p">(</span><span class="s">&#34;case&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="nx">arg</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">arg</span> <span class="o">==</span> <span class="s">&#34;upper&#34;</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nx">arg</span> <span class="o">==</span> <span class="s">&#34;lower&#34;</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">ToLower</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">json</span>
+  <span class="p">})</span>
+
+  <span class="kd">const</span> <span class="nx">json</span> <span class="p">=</span> <span class="s">`{&#34;children&#34;: [&#34;Sara&#34;, &#34;Alex&#34;, &#34;Jack&#34;]}`</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;children|@case:upper&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;children|@case:lower&#34;</span><span class="p">))</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">[</span><span class="s">&#34;SARA&#34;</span><span class="p">,</span> <span class="s">&#34;ALEX&#34;</span><span class="p">,</span> <span class="s">&#34;JACK&#34;</span><span class="p">]</span>
+<span class="p">[</span><span class="s">&#34;sara&#34;</span><span class="p">,</span> <span class="s">&#34;alex&#34;</span><span class="p">,</span> <span class="s">&#34;jack&#34;</span><span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="json-行">JSON 行</h2>
+
+<p><code>gjson</code>提供<code>..</code>语法可以将多行数据看成一个数组，每行数据是一个元素：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="nx">json</span> <span class="p">=</span> <span class="s">`
+</span><span class="s">{&#34;name&#34;: &#34;Gilbert&#34;, &#34;age&#34;: 61}
+</span><span class="s">{&#34;name&#34;: &#34;Alexa&#34;, &#34;age&#34;: 34}
+</span><span class="s">{&#34;name&#34;: &#34;May&#34;, &#34;age&#34;: 57}
+</span><span class="s">{&#34;name&#34;: &#34;Deloise&#34;, &#34;age&#34;: 44}`</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;..#&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;..1&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;..#.name&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">`..#(name=&#34;May&#34;).age`</span><span class="p">))</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><code>..#</code>：返回有多少行 JSON 数据；</li>
+<li><code>..1</code>：返回第一行，即<code>{&quot;name&quot;: &quot;Gilbert&quot;, &quot;age&quot;: 61}</code>；</li>
+<li><code>..#.name</code>：<code>#</code>后再接路径，表示对数组中每个元素读取后面的路径，将读取到的值组成一个新数组返回；<code>..#.name</code>表示读取每一行中的<code>name</code>字段，最终返回<code>[&quot;Gilbert&quot;,&quot;Alexa&quot;,&quot;May&quot;,&quot;Deloise&quot;]</code>；</li>
+<li><code>..#(name=&quot;May&quot;).age</code>：括号中的内容<code>(name=&quot;May&quot;)</code>表示条件，所以该条含义为取<code>name</code>为<code>&quot;May&quot;</code>的行中的<code>age</code>字段。</li>
+</ul>
+
+<p><code>gjson</code>还提供了遍历 JSON 行的方法：<code>gjson.ForEachLine()</code>，参数为 JSON 串和类型为<code>func(line gjson.Result) bool</code>的回调函数。回调返回<code>false</code>时遍历停止。下面代码读取输出每一行的<code>name</code>字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">gjson</span><span class="p">.</span><span class="nf">ForEachLine</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">line</span> <span class="nx">gjson</span><span class="p">.</span><span class="nx">Result</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name:&#34;</span><span class="p">,</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">line</span><span class="p">.</span><span class="nf">String</span><span class="p">(),</span> <span class="s">&#34;name&#34;</span><span class="p">))</span>
+  <span class="k">return</span> <span class="kc">true</span>
+<span class="p">})</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="遍历">遍历</h2>
+
+<p>上面我们介绍了遍历 JSON 行的方式，实际上<code>gjson</code>还提供了通用的遍历数组和对象的方式。<code>gjson.Get()</code>方法返回一个<code>gjson.Result</code>类型的对象，<code>json.Result</code>提供了<code>ForEach()</code>方法用于遍历。该方法接受一个类型为<code>func (key, value gjson.Result) bool</code>的回调函数。遍历对象时<code>key</code>和<code>value</code>分别为对象的键和值；遍历数组时，<code>value</code>为数组元素，<code>key</code>为空（<strong>不是索引</strong>）。回调返回<code>false</code>时，遍历停止。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="nx">json</span> <span class="p">=</span> <span class="s">`
+</span><span class="s">{
+</span><span class="s">  &#34;name&#34;:&#34;dj&#34;,
+</span><span class="s">  &#34;age&#34;:18,
+</span><span class="s">  &#34;pets&#34;: [&#34;cat&#34;, &#34;dog&#34;],
+</span><span class="s">  &#34;contact&#34;: {
+</span><span class="s">    &#34;phone&#34;: &#34;123456789&#34;,
+</span><span class="s">    &#34;email&#34;: &#34;dj@example.com&#34;
+</span><span class="s">  }
+</span><span class="s">}`</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">pets</span> <span class="o">:=</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;pets&#34;</span><span class="p">)</span>
+  <span class="nx">pets</span><span class="p">.</span><span class="nf">ForEach</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">pet</span> <span class="nx">gjson</span><span class="p">.</span><span class="nx">Result</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pet</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">true</span>
+  <span class="p">})</span>
+
+  <span class="nx">contact</span> <span class="o">:=</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;contact&#34;</span><span class="p">)</span>
+  <span class="nx">contact</span><span class="p">.</span><span class="nf">ForEach</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="nx">gjson</span><span class="p">.</span><span class="nx">Result</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">true</span>
+  <span class="p">})</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="校验-json">校验 JSON</h3>
+
+<p>调用<code>gjson.Get()</code>时，<code>gjson</code>假设我们传入的 JSON 串是合法的。如果 JSON 非法也不会<code>panic</code>，这时会返回不确定的结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">json</span> <span class="p">=</span> <span class="s">`{&#34;name&#34;:dj,age:18}`</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">))</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面 JSON 串是非法的，<code>dj</code>和<code>age</code>都没有加上双引号（实际上习惯了 Go 语言<code>map</code>的写法，很容易把 JSON 写成这样😭）。上面代码输出<strong>18</strong>，显然是错误的。我们可以使用<code>gjson.Valid()</code>检测 JSON 串是否合法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">if</span> <span class="p">!</span><span class="nx">gjson</span><span class="p">.</span><span class="nf">Valid</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;error&#34;</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;ok&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="一次获取多个值">一次获取多个值</h2>
+
+<p>调用<code>gjson.Get()</code>一次只能读取一个值，多次调用又比较麻烦，<code>gjson</code>提供了<code>GetMany()</code>可以一次读取多个值，返回一个数组<code>[]gjson.Result</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="nx">json</span> <span class="p">=</span> <span class="s">`
+</span><span class="s">{
+</span><span class="s">  &#34;name&#34;:&#34;dj&#34;,
+</span><span class="s">  &#34;age&#34;:18,
+</span><span class="s">  &#34;pets&#34;: [&#34;cat&#34;, &#34;dog&#34;],
+</span><span class="s">  &#34;contact&#34;: {
+</span><span class="s">    &#34;phone&#34;: &#34;123456789&#34;,
+</span><span class="s">    &#34;email&#34;: &#34;dj@example.com&#34;
+</span><span class="s">  }
+</span><span class="s">}`</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">results</span> <span class="o">:=</span> <span class="nx">gjson</span><span class="p">.</span><span class="nf">GetMany</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="s">&#34;pets.#&#34;</span><span class="p">,</span> <span class="s">&#34;contact.phone&#34;</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">result</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">results</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面代码返回字段<code>name</code>、<code>age</code>、数组<code>pets</code>的长度和<code>contact.phone</code>字段。</p>
+
+<h2 id="总结">总结</h2>
+
+<p><code>gjson</code>使用比较方便，功能强大，性能可观，值得一学。</p>
+
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li>gjson GitHub：<a href="https://github.com/tidwall/gjson">https://github.com/tidwall/gjson</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+
+<h2 id="我">我</h2>
+
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2020-03-22
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2020/03/21/godailylib/buntdb/">
+            <span class="next-text nav-default">Go 每日一库之 buntdb</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2020/03/22/godailylib/gjson/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
