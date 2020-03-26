@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 jj - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 在前面两篇文章中，我们分别介绍了快速读取 JSON 值的库gjson和快速设置 JSON 值的库sjson。今天我们介绍它们的作者tidwall的一个基于g" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2020/03/25/godailylib/jj/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 jj" />
+<meta property="og:description" content="简介 在前面两篇文章中，我们分别介绍了快速读取 JSON 值的库gjson和快速设置 JSON 值的库sjson。今天我们介绍它们的作者tidwall的一个基于g" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2020/03/25/godailylib/jj/" />
+<meta property="article:published_time" content="2020-03-25T22:52:23+00:00" />
+<meta property="article:modified_time" content="2020-03-25T22:52:23+00:00" />
+<meta itemprop="name" content="Go 每日一库之 jj">
+<meta itemprop="description" content="简介 在前面两篇文章中，我们分别介绍了快速读取 JSON 值的库gjson和快速设置 JSON 值的库sjson。今天我们介绍它们的作者tidwall的一个基于g">
+
+
+<meta itemprop="datePublished" content="2020-03-25T22:52:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-03-25T22:52:23&#43;00:00" />
+<meta itemprop="wordCount" content="2171">
+
+
+
+<meta itemprop="keywords" content="Go 每日一库," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 jj"/>
+<meta name="twitter:description" content="简介 在前面两篇文章中，我们分别介绍了快速读取 JSON 值的库gjson和快速设置 JSON 值的库sjson。今天我们介绍它们的作者tidwall的一个基于g"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 jj</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-03-25" class="post-time">
+          2020-03-25
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 2171 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#读取和设置">读取和设置</a></li>
+<li><a href="#文件">文件</a></li>
+<li><a href="#格式化">格式化</a></li>
+<li><a href="#性能">性能</a></li>
+<li><a href="#用途">用途</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="简介">简介</h2>
+
+<p>在前面两篇文章中，我们分别介绍了快速读取 JSON 值的库<code>gjson</code>和快速设置 JSON 值的库<code>sjson</code>。今天我们介绍它们的作者<a href="https://github.com/tidwall">tidwall</a>的一个基于<code>gjson</code>和<code>sjson</code>的非常实用的命令行工具<a href="https://github.com/tidwall/jj"><code>jj</code></a>。它是使用 Go 编写的快速读取和设置 JSON 值的命令行程序。</p>
+
+<h2 id="快速使用">快速使用</h2>
+
+<p>Mac 上可以直接使用<code>brew install tidwall/jj/jj</code>安装。其他系统可以通过下载编译好的可执行程序，下载地址为<a href="https://github.com/tidwall/jj/releases">https://github.com/tidwall/jj/releases</a>。</p>
+
+<p>我选择使用<code>go get</code>安装：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">tidwall</span><span class="o">/</span><span class="nx">jj</span><span class="o">/</span><span class="nx">cmd</span><span class="o">/</span><span class="nx">jj</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面命令执行完成之后，编译生成的<code>jj</code>程序会放在<code>$GOPATH/bin</code>目录中，我习惯把<code>$GOPATH/bin</code>加入系统可执行目录<code>$PATH</code>中，故可以直接使用。</p>
+
+<p>简单的读取和设置（我的环境为 Win10 + Git Bash）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">name</span><span class="p">.</span><span class="nx">last</span>
+<span class="nx">dj</span>
+
+<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">dajun</span> <span class="nx">name</span><span class="p">.</span><span class="nx">last</span>
+<span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dajun&#34;</span><span class="p">}}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>通过<strong>键路径</strong>来指定读取/设置的位置，上面第一个命令读取字段<code>name.last</code>，返回<code>dj</code>。</p>
+
+<p><code>-v</code>选项指定设置的值。第二个命令将字段<code>name.last</code>设置为<code>dajun</code>，输出设置之后的 JSON 串。键路径在前两篇文章中有详细的介绍，不熟悉的可以回去看一下。</p>
+
+<h2 id="读取和设置">读取和设置</h2>
+
+<p>实际上读取和设置的语法和形式与我们前面介绍<code>gjson</code>和<code>sjson</code>提到的基本一样，只不过是在命令行上完成的而已。</p>
+
+<p>读取不存在的字段，返回<code>null</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">name</span><span class="p">.</span><span class="nx">middle</span>
+<span class="nx">null</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>读取一个对象类型的字段，返回该对象的 JSON 表示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">name</span>
+<span class="p">{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>使用索引（从 0 开始）读取数组的元素，非法的索引将返回空：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">fruits</span><span class="mf">.1</span>
+<span class="nx">orange</span>
+
+<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">fruits</span><span class="mf">.3</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>使用索引设置数组的元素，下面命令将数组<code>fruits</code>的第二个元素设置为<code>pear</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">pear</span> <span class="nx">fruits</span><span class="mf">.1</span>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;pear&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>使用<code>-1</code>或数组长度作为索引，可以在数组后添加一个元素。如果索引超过了数组长度，则会多一定数量的<code>null</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">strawberry</span> <span class="nx">fruits</span><span class="p">.</span><span class="o">-</span><span class="mi">1</span>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">,</span><span class="s">&#34;strawberry&#34;</span><span class="p">]}</span>
+
+<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">grape</span> <span class="nx">fruits</span><span class="mf">.3</span>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">,</span><span class="s">&#34;grape&#34;</span><span class="p">]}</span>
+
+<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">watermelon</span> <span class="nx">fruits</span><span class="mf">.5</span>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">,</span><span class="nx">null</span><span class="p">,</span><span class="nx">null</span><span class="p">,</span><span class="s">&#34;watermelon&#34;</span><span class="p">]}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>使用选项<code>-D</code>删除指定键路径上的元素，如果对应元素不存在，则无效果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">,</span><span class="s">&#34;age&#34;</span><span class="p">:</span><span class="mi">18</span><span class="p">}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">D</span> <span class="nx">age</span>
+<span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span>
+
+<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">D</span> <span class="nx">fruits</span><span class="mf">.2</span>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">]}</span>
+
+<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">D</span> <span class="nx">fruits</span><span class="mf">.5</span>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>第 1 个命令删除字段<code>age</code>；第 2 个命令删除数组<code>fruits</code>的第 2 个元素；第 3 个命令删除数组<code>fruits</code>的第 5 个元素，由于数组长度只有 3，故无效果。</p>
+
+<h2 id="文件">文件</h2>
+
+<p><code>jj</code>支持从文件中读取 JSON 串和将结果写到文件中。使用选项<code>-i</code>指定输入文件，选项<code>-o</code>指定输出文件。下面将从文件<code>fruits.txt</code>中读取 JSON 串，取数组的第 2 个元素，写到<code>out.txt</code>中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">fruits</span><span class="p">.</span><span class="nx">txt</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">out</span><span class="p">.</span><span class="nx">txt</span> <span class="nx">fruits</span><span class="mf">.1</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>fruits.txt</code>的文件内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>执行命令，输出文件的内容为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">orange</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="格式化">格式化</h2>
+
+<p><code>jj</code>支持将输出的 JSON 串进行一定的格式化。选项<code>-u</code>移除所有的空白符，节省存储空间。选项<code>-p</code>美化格式，便于阅读。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;li&#34;</span><span class="p">,</span> <span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">},</span> <span class="s">&#34;age&#34;</span><span class="p">:</span><span class="mi">18</span><span class="p">}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">name</span>
+<span class="p">{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span>
+
+<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;li&#34;</span><span class="p">,</span> <span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">},</span> <span class="s">&#34;age&#34;</span><span class="p">:</span><span class="mi">18</span><span class="p">}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">p</span> <span class="nx">name</span>
+<span class="p">{</span>
+  <span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;li&#34;</span><span class="p">,</span>
+  <span class="s">&#34;last&#34;</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="性能">性能</h2>
+
+<p>与另一个 JSON 的命令行工具<a href="https://stedolan.github.io/jq/"><code>jq</code></a>相比，<code>jj</code>是其性能的 10 倍以上。因为<code>jj</code>不会验证 JSON 串的有效性，并且它只关心键路径指定的值，一旦该值处理完成就停止。这里有性能对比：<a href="https://github.com/tidwall/jj#performance">https://github.com/tidwall/jj#performance</a></p>
+
+<h2 id="用途">用途</h2>
+
+<p><code>jj</code>一个很方便的用途在于日志处理，当前很多日志库都支持 JSON 的格式，例如前面我们介绍的<code>logrus</code>。我们可以使用<code>jj</code>在这些日志中找到相应的信息。我们先用<code>logrus</code>生成 20 条玩家登陆和下线的日志：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&#34;github.com/sirupsen/logrus&#34;</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">logrus</span><span class="p">.</span><span class="nf">SetFormatter</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">logrus</span><span class="p">.</span><span class="nx">JSONFormatter</span><span class="p">{})</span>
+
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">logrus</span><span class="p">.</span><span class="nf">WithFields</span><span class="p">(</span><span class="nx">logrus</span><span class="p">.</span><span class="nx">Fields</span><span class="p">{</span>
+      <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="nx">i</span><span class="p">,</span>
+    <span class="p">}).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;login&#34;</span><span class="p">)</span>
+    <span class="nx">logrus</span><span class="p">.</span><span class="nf">WithFields</span><span class="p">(</span><span class="nx">logrus</span><span class="p">.</span><span class="nx">Fields</span><span class="p">{</span>
+      <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="nx">i</span><span class="p">,</span>
+    <span class="p">}).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;logoff&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>生成日志存储在<code>log.txt</code>文件中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">4</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">4</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">5</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">5</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">6</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">6</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">7</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">7</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">8</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">8</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">9</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">9</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>由于每一行都是一个单独的 JSON 串，我们可以使用<code>jj</code>支持的 JSON 行特性，使用<code>..</code>路径标识这些行。<code>..</code>使得<code>jj</code>将这些行看成数组的元素。我们可以读取这些数组元素。</p>
+
+<p>获取数组长度，返回 20：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#</span>
+<span class="mi">20</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>只读取每一行中的<code>userid</code>信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#</span><span class="p">.</span><span class="nx">userid</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>只读取每一行中的<code>msg</code>信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#</span><span class="p">.</span><span class="nx">msg</span>
+<span class="p">[</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>更复杂一点的，如果我们要查看所有<code>userid=1</code>的日志：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#\</span><span class="p">(</span><span class="nx">userid</span><span class="p">=</span><span class="mi">1</span><span class="err">\</span><span class="p">)</span><span class="err">#</span> <span class="o">-</span><span class="nx">p</span>
+<span class="p">[</span>  
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;logoff&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="p">}</span>
+<span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面的命令注意两点，<code>(</code>和<code>)</code>是 shell 中的特殊字符，需要<code>\</code>转义。命令中我们使用<code>-p</code>选项使结果更易读。</p>
+
+<p>如果我们只需要查找第一条符合条件的日志，则可以去掉最右侧的<code>#</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#\</span><span class="p">(</span><span class="nx">userid</span><span class="p">=</span><span class="mi">1</span><span class="err">\</span><span class="p">)</span> <span class="o">-</span><span class="nx">p</span>
+<span class="p">{</span>
+  <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+  <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+  <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+  <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>如果要查看所有的登录信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#\</span><span class="p">(</span><span class="nx">msg</span><span class="p">=</span><span class="s">&#34;login&#34;</span><span class="err">\</span><span class="p">)</span><span class="err">#</span> <span class="o">-</span><span class="nx">p</span>
+<span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">3</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">4</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">5</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">6</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">7</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">8</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">9</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#34;level&#34;</span><span class="p">:</span> <span class="s">&#34;info&#34;</span><span class="p">,</span>
+    <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
+    <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
+    <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">10</span>
+  <span class="p">}</span>
+<span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="总结">总结</h2>
+
+<p><code>jj</code>是一个非常使用的 JSON 命令行工具，性能超赞。执行<code>jj -h</code>去看看其他选项吧。</p>
+
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li>jj GitHub：<a href="https://github.com/tidwall/jj">https://github.com/tidwall/jj</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+
+<h2 id="我">我</h2>
+
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2020-03-25
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2020/03/24/godailylib/sjson/">
+            <span class="next-text nav-default">Go 每日一库之 sjson</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2020/03/25/godailylib/jj/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
