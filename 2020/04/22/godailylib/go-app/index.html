@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 go-app - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 go-app是一个使用 Go &#43; WebAssembly 技术编写渐进式 Web 应用的库。WebAssembly 是一种可以运行在现代浏览器中的新式代码。近两年来，WebAs" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2020/04/22/godailylib/go-app/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 go-app" />
+<meta property="og:description" content="简介 go-app是一个使用 Go &#43; WebAssembly 技术编写渐进式 Web 应用的库。WebAssembly 是一种可以运行在现代浏览器中的新式代码。近两年来，WebAs" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2020/04/22/godailylib/go-app/" />
+<meta property="article:published_time" content="2020-04-22T21:30:23+00:00" />
+<meta property="article:modified_time" content="2020-04-22T21:30:23+00:00" />
+<meta itemprop="name" content="Go 每日一库之 go-app">
+<meta itemprop="description" content="简介 go-app是一个使用 Go &#43; WebAssembly 技术编写渐进式 Web 应用的库。WebAssembly 是一种可以运行在现代浏览器中的新式代码。近两年来，WebAs">
+
+
+<meta itemprop="datePublished" content="2020-04-22T21:30:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-04-22T21:30:23&#43;00:00" />
+<meta itemprop="wordCount" content="4038">
+
+
+
+<meta itemprop="keywords" content="Go 每日一库," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 go-app"/>
+<meta name="twitter:description" content="简介 go-app是一个使用 Go &#43; WebAssembly 技术编写渐进式 Web 应用的库。WebAssembly 是一种可以运行在现代浏览器中的新式代码。近两年来，WebAs"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 go-app</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-04-22" class="post-time">
+          2020-04-22
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 4038 字 </span>
+          <span class="more-meta"> 预计阅读 9 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#简单原理">简单原理</a></li>
+<li><a href="#组件">组件</a>
+<ul>
+<li><a href="#事件处理">事件处理</a></li>
+<li><a href="#嵌套组件">嵌套组件</a></li>
+<li><a href="#生命周期">生命周期</a></li>
+</ul></li>
+<li><a href="#编写-html">编写 HTML</a>
+<ul>
+<li><a href="#原生元素">原生元素</a></li>
+<li><a href="#条件">条件</a></li>
+<li><a href="#range"><code>Range</code></a></li>
+<li><a href="#上下文菜单">上下文菜单</a></li>
+</ul></li>
+<li><a href="#app-handler"><code>app.Handler</code></a></li>
+<li><a href="#本文代码">本文代码</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="简介">简介</h2>
+
+<p><a href="https://github.com/maxence-charriere/go-app"><code>go-app</code></a>是一个使用 Go + WebAssembly 技术编写<strong>渐进式 Web 应用</strong>的库。WebAssembly 是一种可以运行在现代浏览器中的新式代码。近两年来，WebAssembly 技术取得了较大的发展。我们现在已经可以使用 C/C++/Rust/Go 等高级语言编写 WebAssembly 代码。本来就来介绍<code>go-app</code>这个可以方便地使用 Go 语言来编写 WebAssembly 代码的库。</p>
+
+<h2 id="快速使用">快速使用</h2>
+
+<p><code>go-app</code>对 Go 语言版本有较高的要求（<strong>Go 1.14+</strong>），而且必须使用<code>Go module</code>。先创建一个目录并初始化<code>Go Module</code>（Win10 + Git Bash）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">mkdir</span> <span class="k">go</span><span class="o">-</span><span class="nx">app</span> <span class="o">&amp;&amp;</span> <span class="nx">cd</span> <span class="k">go</span><span class="o">-</span><span class="nx">app</span>
+<span class="err">$</span> <span class="k">go</span> <span class="nx">mod</span> <span class="nx">init</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>然后下载安装<code>go-app</code>包：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">u</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">maxence</span><span class="o">-</span><span class="nx">charriere</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">app</span><span class="o">/</span><span class="nx">v6</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>至于<code>Go module</code>的详细使用，去看煎鱼大佬的<a href="https://juejin.im/post/5e57537cf265da57584da62b">Go Modules 终极入门</a>。</p>
+
+<p>首先，我们要编写 WebAssembly 程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&#34;github.com/maxence-charriere/go-app/v6/pkg/app&#34;</span>
+
+<span class="kd">type</span> <span class="nx">Greeting</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span>
+  <span class="nx">name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Greeting</span><span class="p">)</span> <span class="nf">Render</span><span class="p">()</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">Div</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Main</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">H1</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+        <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;Hello, &#34;</span><span class="p">),</span>
+        <span class="nx">app</span><span class="p">.</span><span class="nf">If</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">name</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+          <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">name</span><span class="p">),</span>
+        <span class="p">).</span><span class="nf">Else</span><span class="p">(</span>
+          <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;World&#34;</span><span class="p">),</span>
+        <span class="p">),</span>
+      <span class="p">),</span>
+    <span class="p">),</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Input</span><span class="p">().</span>
+      <span class="nf">Value</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">name</span><span class="p">).</span>
+      <span class="nf">Placeholder</span><span class="p">(</span><span class="s">&#34;What is your name?&#34;</span><span class="p">).</span>
+      <span class="nf">AutoFocus</span><span class="p">(</span><span class="kc">true</span><span class="p">).</span>
+      <span class="nf">OnChange</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">OnInputChange</span><span class="p">),</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Greeting</span><span class="p">)</span> <span class="nf">OnInputChange</span><span class="p">(</span><span class="nx">src</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">e</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">g</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">src</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;value&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">()</span>
+  <span class="nx">g</span><span class="p">.</span><span class="nf">Update</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">Greeting</span><span class="p">{})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在<code>go-app</code>中使用<strong>组件</strong>来划分功能模块，每个组件结构中必须内嵌<code>app.Compo</code>。组件要实现<code>Render()</code>方法，在需要显示该组件时会调用此方法返回显示的页面。<code>go-app</code>使用<strong>声明式语法</strong>，完全使用 Go 就可以编写 HTML 页面，上面绘制 HTML 的部分比较好理解。上面代码中还实现了一个输入框的功能，并为它添加了一个监听器。每当输入框内容有修改，<code>OnInputChange</code>方法就会调用，<code>g.Update()</code>会使该组件重新渲染显示。</p>
+
+<p>最后将该组件挂载到路径<code>/</code>上。</p>
+
+<p>编写 WebAssembly 程序之后，需要使用交叉编译的方式将它编译为<code>.wasm</code>文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">GOARCH</span><span class="p">=</span><span class="nx">wasm</span> <span class="nx">GOOS</span><span class="p">=</span><span class="nx">js</span> <span class="k">go</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>如果编译出现错误，使用<code>go version</code>命令检查 Go 是否是 1.14 或更新的版本。</p>
+
+<p>接下来，我们需要编写一个 Go Web 程序使用这个<code>app.wasm</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;log&#34;</span>
+  <span class="s">&#34;net/http&#34;</span>
+
+  <span class="s">&#34;github.com/maxence-charriere/go-app/v6/pkg/app&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">h</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">app</span><span class="p">.</span><span class="nx">Handler</span><span class="p">{</span>
+    <span class="nx">Title</span><span class="p">:</span>  <span class="s">&#34;Go-App&#34;</span><span class="p">,</span>
+    <span class="nx">Author</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>go-app</code>提供了一个<code>app.Handler</code>结构，它会自动查找同目录下的<code>app.wasm</code>（这也是为什么将目标文件设置为<code>app.wasm</code>的原因）。然后我们将前面编译生成的<code>app.wasm</code>放到同一目录下，执行该程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>默认显示<code>&quot;Hello World&quot;</code>：</p>
+
+<p><img src="/img/in-post/godailylib/go-app1.png#center" alt="" /></p>
+
+<p>在输入框中输入内容之后，显示会随之变化：</p>
+
+<p><img src="/img/in-post/godailylib/go-app2.png#center" alt="" /></p>
+
+<p>可以看到，<code>go-app</code>为我们设置了一些基本的样式，网页图标等。</p>
+
+<h2 id="简单原理">简单原理</h2>
+
+<p>GitHub 上这张图很好地说明了 HTTP 请求的执行流程：</p>
+
+<p><img src="/img/in-post/godailylib/go-app3.png#center" alt="" /></p>
+
+<p>用户请求先到<code>app.Handler</code>层，它会去<code>app.wasm</code>中执行相关的路由逻辑、去磁盘上查找静态文件。响应经由<code>app.Handler</code>中转返回给用户。用户就看到了<code>app.wasm</code>渲染的页面。实际上，在本文中我们只需要编写一个 Go Web 程序，每次编写新的 WebAssembly 之后，将新编译生成的 app.wasm 文件拷贝到 Go Web 目录下重新运行程序即可。注意，<strong>如果页面未能及时刷新，可能是缓存导致的，可尝试清理浏览器缓存</strong>。</p>
+
+<h2 id="组件">组件</h2>
+
+<p>自定义一个组件很简单，只需要将<code>app.Compo</code>内嵌到结构中即可。实现<code>Render()</code>方法可定义组件的外观，实际上<code>app.Compo</code>有一个默认的外观，我们可以这样来查看：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/app&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span><span class="p">{})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>编译生成<code>app.wasm</code>之后，一开始的 Go Web 程序不需要修改，直接运行，打开浏览器查看：</p>
+
+<p><img src="/img/in-post/godailylib/go-app5.png#center" alt="" /></p>
+
+<h3 id="事件处理">事件处理</h3>
+
+<p>在<strong>快速开始</strong>中，我们还介绍了如何使用事件。使用声明式语法<code>app.Input().OnChange(handler)</code>即可监听内容变化。事件处理函数必须为<code>func (src app.Value, e app.Event)</code>类型，<code>app.Value</code>是触发对象，<code>app.Event</code>是事件的内容。通过<code>app.Value</code>我们可以得到输入框内容、选择框的选项等信息，通过<code>app.Event</code>可以得到事件的信息，是鼠标事件、键盘事件还是其它事件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">ShowSelect</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span>
+  <span class="nx">option</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">ShowSelect</span><span class="p">)</span> <span class="nf">Render</span><span class="p">()</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">Div</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Main</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">H1</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+        <span class="nx">app</span><span class="p">.</span><span class="nf">If</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">option</span> <span class="o">==</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+          <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;Please select!&#34;</span><span class="p">),</span>
+        <span class="p">).</span><span class="nf">Else</span><span class="p">(</span>
+          <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;You&#39;ve selected &#34;</span><span class="o">+</span><span class="nx">s</span><span class="p">.</span><span class="nx">option</span><span class="p">),</span>
+        <span class="p">),</span>
+      <span class="p">),</span>
+    <span class="p">),</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Select</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">Option</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+        <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;apple&#34;</span><span class="p">),</span>
+      <span class="p">),</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">Option</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+        <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;orange&#34;</span><span class="p">),</span>
+      <span class="p">),</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">Option</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+        <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;banana&#34;</span><span class="p">),</span>
+      <span class="p">),</span>
+    <span class="p">).</span>
+      <span class="nf">OnChange</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">OnSelectChange</span><span class="p">),</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">ShowSelect</span><span class="p">)</span> <span class="nf">OnSelectChange</span><span class="p">(</span><span class="nx">src</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">e</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nx">option</span> <span class="p">=</span> <span class="nx">src</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;value&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">()</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">Update</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ShowSelect</span><span class="p">{})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面代码显示一个选择框，当选项改变时上面显示的文字会做相应的改变。初始时：</p>
+
+<p><img src="/img/in-post/godailylib/go-app6.png#center" alt="" /></p>
+
+<p>选择后：</p>
+
+<p><img src="/img/in-post/godailylib/go-app7.png#center" alt="" /></p>
+
+<h3 id="嵌套组件">嵌套组件</h3>
+
+<p>组件可以嵌套使用，即在一个组件中使用另一个组件。渲染时将内部的组件表现为外部组件的一部分：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Greeting</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Greeting</span><span class="p">)</span> <span class="nf">Render</span><span class="p">()</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">P</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;Hello, &#34;</span><span class="p">),</span>
+    <span class="o">&amp;</span><span class="nx">Name</span><span class="p">{</span><span class="nx">name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">},</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Name</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span>
+  <span class="nx">name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="o">*</span><span class="nx">Name</span><span class="p">)</span> <span class="nf">Render</span><span class="p">()</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">Greeting</span><span class="p">{})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面代码在组件<code>Greeting</code>中内嵌了一个<code>Name</code>组件，运行显示：</p>
+
+<p><img src="/img/in-post/godailylib/go-app8.png#center" alt="" /></p>
+
+<h3 id="生命周期">生命周期</h3>
+
+<p><code>go-app</code>提供了组件的 3 个生命周期的钩子函数：</p>
+
+<ul>
+<li><code>OnMount</code>：当组件插入到 DOM 时调用；</li>
+<li><code>OnNav</code>：当一个组件所在页面被加载、刷新时调用；</li>
+<li><code>OnDismount</code>：当一个组件从页面中移除时调用。</li>
+</ul>
+
+<p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Foo</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">Foo</span><span class="p">)</span> <span class="nf">Render</span><span class="p">()</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">P</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;Hello World&#34;</span><span class="p">),</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">Foo</span><span class="p">)</span> <span class="nf">OnMount</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;component mounted&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">Foo</span><span class="p">)</span> <span class="nf">OnNav</span><span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">url</span><span class="p">.</span><span class="nx">URL</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;component navigated:&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">Foo</span><span class="p">)</span> <span class="nf">OnDismount</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;component dismounted&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">Foo</span><span class="p">{})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>编译运行，在浏览器中打开页面，打开<strong>浏览器控制台</strong>观察输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">component</span> <span class="nx">mounted</span>
+<span class="nx">component</span> <span class="nx">navigated</span><span class="p">:</span> <span class="nx">http</span><span class="p">:</span><span class="o">//</span><span class="nx">localhost</span><span class="p">:</span><span class="mi">8080</span><span class="o">/</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="编写-html">编写 HTML</h2>
+
+<p>在前面的例子中我们已经看到了如何使用<strong>声明式语法</strong>编写 HTML 页面。<code>go-app</code>为所有标准的 HTML 元素都提供了相关的类型。创建这些对象的方法名也比较好记，就是元素名的首字母大写。如<code>app.Div()</code>创建一个<code>div</code>元素，<code>app.P()</code>创建一个<code>p</code>元素，<code>app.H1()</code>创建一个<code>h1</code>元素等等。在<code>go-app</code>中，这些结构都是暴露出对应的接口供开发者使用的，如<code>div</code>对应<code>HTMLDiv</code>接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">HTMLDiv</span> <span class="kd">interface</span> <span class="p">{</span>
+  <span class="nf">Body</span><span class="p">(</span><span class="nx">nodes</span> <span class="o">...</span><span class="nx">Node</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
+  <span class="nf">Class</span><span class="p">(</span><span class="nx">v</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
+  <span class="nf">ID</span><span class="p">(</span><span class="nx">v</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
+  <span class="nf">Style</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
+
+  <span class="nf">OnClick</span><span class="p">(</span><span class="nx">h</span> <span class="nx">EventHandler</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
+  <span class="nf">OnKeyPress</span><span class="p">(</span><span class="nx">h</span> <span class="nx">EventHandler</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
+  <span class="nf">OnMouseOver</span><span class="p">(</span><span class="nx">h</span> <span class="nx">EventHandler</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看到每个方法都返回该<code>HTMLDiv</code>自身，所以支持<strong>链式调用</strong>。调用这些方法可以设置元素的各方面属性：</p>
+
+<ul>
+<li><code>Class</code>：添加 CSS Class；</li>
+<li><code>ID</code>：设置 ID 属性；</li>
+<li><code>Style</code>：设置内置样式；</li>
+<li><code>Body</code>：设置元素内容，可以随意嵌套。<code>div</code>中包含<code>h1</code>和<code>p</code>，<code>p</code>中包含<code>img</code>等；</li>
+</ul>
+
+<p>和设置事件监听：</p>
+
+<ul>
+<li><code>OnClick</code>：点击事件；</li>
+<li><code>OnKeyPress</code>：按键事件；</li>
+<li><code>OnMouseOver</code>：鼠标移过事件。</li>
+</ul>
+
+<p>例如下面代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">app</span><span class="p">.</span><span class="nf">Div</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">H1</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;Title&#34;</span><span class="p">),</span>
+  <span class="p">),</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">P</span><span class="p">().</span><span class="nf">ID</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">).</span>
+    <span class="nf">Class</span><span class="p">(</span><span class="s">&#34;content&#34;</span><span class="p">).</span><span class="nf">Body</span><span class="p">(</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;something interesting&#34;</span><span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>相当于 HTML 代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;id&#34;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;content&#34;</span><span class="p">&gt;</span>
+    something interesting
+  <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="原生元素">原生元素</h3>
+
+<p>我们可以在<code>app.Raw()</code>中直接写 HTML 代码，<code>app.Raw()</code>会生成对应的<code>app.UI</code>返回：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">svg</span> <span class="o">:=</span> <span class="nx">app</span><span class="p">.</span><span class="nf">Raw</span><span class="p">(</span><span class="s">`
+</span><span class="s">&lt;svg width=&#34;100&#34; height=&#34;100&#34;&gt;
+</span><span class="s">    &lt;circle cx=&#34;50&#34; cy=&#34;50&#34; r=&#34;40&#34; stroke=&#34;green&#34; stroke-width=&#34;4&#34; fill=&#34;yellow&#34; /&gt;
+</span><span class="s">&lt;/svg&gt;
+</span><span class="s">`</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>但是这种写法是不安全的，因为没有检查 HTML 的结构。</p>
+
+<h3 id="条件">条件</h3>
+
+<p>我们在最开始的例子中就已经用到了条件语句，条件语句对应 3 个方法：<code>If()/ElseIf()/Else()</code>。</p>
+
+<p><code>If</code>和<code>ElseIf</code>接收两个参数，第一个参数为<code>bool</code>值。如果为<code>true</code>，则显示第二个参数（类型为<code>app.UI</code>），否则不显示。</p>
+
+<p><code>Else</code>必须在<code>If</code>或<code>ElseIf</code>后使用，如果前面的条件都不满足，则显示传入<code>Else</code>方法的<code>app.UI</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">ScoreUI</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span>
+  <span class="nx">score</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ScoreUI</span><span class="p">)</span> <span class="nf">Render</span><span class="p">()</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">Div</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">If</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">score</span> <span class="o">&gt;=</span> <span class="mi">90</span><span class="p">,</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">H1</span><span class="p">().</span>
+        <span class="nf">Style</span><span class="p">(</span><span class="s">&#34;color&#34;</span><span class="p">,</span> <span class="s">&#34;green&#34;</span><span class="p">).</span>
+        <span class="nf">Body</span><span class="p">(</span>
+          <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;Good!&#34;</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">).</span><span class="nf">ElseIf</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">score</span> <span class="o">&gt;=</span> <span class="mi">60</span><span class="p">,</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">H1</span><span class="p">().</span>
+        <span class="nf">Style</span><span class="p">(</span><span class="s">&#34;color&#34;</span><span class="p">,</span> <span class="s">&#34;orange&#34;</span><span class="p">).</span>
+        <span class="nf">Body</span><span class="p">(</span>
+          <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;Pass!&#34;</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">).</span><span class="nf">Else</span><span class="p">(</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nf">H1</span><span class="p">().</span>
+        <span class="nf">Style</span><span class="p">(</span><span class="s">&#34;color&#34;</span><span class="p">,</span> <span class="s">&#34;red&#34;</span><span class="p">).</span>
+        <span class="nf">Body</span><span class="p">(</span>
+          <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;fail!&#34;</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">),</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Input</span><span class="p">().</span>
+      <span class="nf">Value</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">score</span><span class="p">).</span>
+      <span class="nf">Placeholder</span><span class="p">(</span><span class="s">&#34;Input your score?&#34;</span><span class="p">).</span>
+      <span class="nf">AutoFocus</span><span class="p">(</span><span class="kc">true</span><span class="p">).</span>
+      <span class="nf">OnChange</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">OnInputChange</span><span class="p">),</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ScoreUI</span><span class="p">)</span> <span class="nf">OnInputChange</span><span class="p">(</span><span class="nx">src</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">e</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">score</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseUint</span><span class="p">(</span><span class="nx">src</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;value&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+  <span class="nx">c</span><span class="p">.</span><span class="nx">score</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">score</span><span class="p">)</span>
+  <span class="nx">c</span><span class="p">.</span><span class="nf">Update</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ScoreUI</span><span class="p">{})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面我们根据输入的分数显示对应的文字，<code>90</code>及以上显示绿色的<code>Good!</code>，<code>60-90</code>之间显示橙色的<code>Pass!</code>，小于<code>60</code>显示红色的<code>Fail!</code>。下面是运行结果：</p>
+
+<p><img src="/img/in-post/godailylib/go-app10.png#center" alt="" /></p>
+
+<p><img src="/img/in-post/godailylib/go-app11.png#center" alt="" /></p>
+
+<p><img src="/img/in-post/godailylib/go-app12.png#center" alt="" /></p>
+
+<h3 id="range"><code>Range</code></h3>
+
+<p>假设我们要编写一个 HTML 列表，当前有一个字符串的切片。如果一个个写就太繁琐了，而且不够灵活，且容易出错。这时就可以使用<code>Range()</code>方法了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">RangeUI</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span>
+  <span class="nx">name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">RangeUI</span><span class="p">)</span> <span class="nf">Render</span><span class="p">()</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+  <span class="nx">langs</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;Go&#34;</span><span class="p">,</span> <span class="s">&#34;JavaScript&#34;</span><span class="p">,</span> <span class="s">&#34;Python&#34;</span><span class="p">,</span> <span class="s">&#34;C&#34;</span><span class="p">}</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">Ul</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Range</span><span class="p">(</span><span class="nx">langs</span><span class="p">).</span><span class="nf">Slice</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">Li</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+        <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="nx">langs</span><span class="p">[</span><span class="nx">i</span><span class="p">]),</span>
+      <span class="p">)</span>
+    <span class="p">}),</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">RangeUI</span><span class="p">{})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>Range()</code>可以对切片或<code>map</code>中每一项生成一个<code>app.UI</code>，然后平铺在某个元素的<code>Body()</code>方法中。</p>
+
+<p>运行结果：</p>
+
+<p><img src="/img/in-post/godailylib/go-app13.png#center" alt="" /></p>
+
+<h3 id="上下文菜单">上下文菜单</h3>
+
+<p>在<code>go-app</code>中，我们可以很方便的自定义右键弹出的菜单，并且为菜单项编写响应：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">ContextMenuUI</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span>
+  <span class="nx">name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ContextMenuUI</span><span class="p">)</span> <span class="nf">Render</span><span class="p">()</span> <span class="nx">app</span><span class="p">.</span><span class="nx">UI</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">.</span><span class="nf">Div</span><span class="p">().</span><span class="nf">Body</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;Hello, World&#34;</span><span class="p">),</span>
+  <span class="p">).</span><span class="nf">OnContextMenu</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">OnContextMenu</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">ContextMenuUI</span><span class="p">)</span> <span class="nf">OnContextMenu</span><span class="p">(</span><span class="nx">src</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">event</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">event</span><span class="p">.</span><span class="nf">PreventDefault</span><span class="p">()</span>
+
+  <span class="nx">app</span><span class="p">.</span><span class="nf">NewContextMenu</span><span class="p">(</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">MenuItem</span><span class="p">().</span>
+      <span class="nf">Label</span><span class="p">(</span><span class="s">&#34;item 1&#34;</span><span class="p">).</span>
+      <span class="nf">OnClick</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">src</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">e</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;item 1 clicked&#34;</span><span class="p">)</span>
+      <span class="p">}),</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">MenuItem</span><span class="p">().</span><span class="nf">Separator</span><span class="p">(),</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nf">MenuItem</span><span class="p">().</span>
+      <span class="nf">Label</span><span class="p">(</span><span class="s">&#34;item 2&#34;</span><span class="p">).</span>
+      <span class="nf">OnClick</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">src</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">e</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;item 2 clicked&#34;</span><span class="p">)</span>
+      <span class="p">}),</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ContextMenuUI</span><span class="p">{})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们在<code>OnContextMenu</code>中调用了<code>event.PreventDefault()</code>阻止默认菜单的弹出。看运行结果：</p>
+
+<p><img src="/img/in-post/godailylib/go-app14.png#center" alt="" /></p>
+
+<p>点击菜单项，观察控制台输出~</p>
+
+<h2 id="app-handler"><code>app.Handler</code></h2>
+
+<p>上面我们都是使用<code>go-app</code>内置的<code>app.Handler</code>处理客户端的请求。我们只设置了简单的两个属性<code>Author</code>和<code>Title</code>。<code>app.Handler</code>还有其它很多字段可以定制：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Handler</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Author</span> <span class="kt">string</span>
+  <span class="nx">BackgroundColor</span> <span class="kt">string</span>
+  <span class="nx">CacheableResources</span> <span class="p">[]</span><span class="kt">string</span>
+  <span class="nx">Description</span> <span class="kt">string</span>
+  <span class="nx">Env</span> <span class="nx">Environment</span>
+  <span class="nx">Icon</span> <span class="nx">Icon</span>
+  <span class="nx">Keywords</span> <span class="p">[]</span><span class="kt">string</span>
+  <span class="nx">LoadingLabel</span> <span class="kt">string</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+  <span class="nx">RawHeaders</span> <span class="p">[]</span><span class="kt">string</span>
+  <span class="nx">RootDir</span> <span class="kt">string</span>
+  <span class="nx">Scripts</span> <span class="p">[]</span><span class="kt">string</span>
+  <span class="nx">ShortName</span> <span class="kt">string</span>
+  <span class="nx">Styles</span> <span class="p">[]</span><span class="kt">string</span>
+  <span class="nx">ThemeColor</span> <span class="kt">string</span>
+  <span class="nx">Title</span> <span class="kt">string</span>
+
+  <span class="nx">UseMinimalDefaultStyles</span> <span class="kt">bool</span>
+  <span class="nx">Version</span> <span class="kt">string</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><code>Icon</code>：设置应用图标；</li>
+<li><code>Styles</code>：CSS 样式文件；</li>
+<li><code>Scripts</code>：JS 脚本文件。</li>
+</ul>
+
+<p>CSS 和 JS 文件必须在<code>app.Handler</code>中声明。下面是一个示例<code>app.Handler</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">h</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">app</span><span class="p">.</span><span class="nx">Handler</span><span class="p">{</span>
+  <span class="nx">Name</span><span class="p">:</span>        <span class="s">&#34;Luck&#34;</span><span class="p">,</span>
+  <span class="nx">Author</span><span class="p">:</span>      <span class="s">&#34;Maxence Charriere&#34;</span><span class="p">,</span>
+  <span class="nx">Description</span><span class="p">:</span> <span class="s">&#34;Lottery numbers generator.&#34;</span><span class="p">,</span>
+  <span class="nx">Icon</span><span class="p">:</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Icon</span><span class="p">{</span>
+    <span class="nx">Default</span><span class="p">:</span> <span class="s">&#34;/web/icon.png&#34;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nx">Keywords</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
+    <span class="s">&#34;EuroMillions&#34;</span><span class="p">,</span>
+    <span class="s">&#34;MEGA Millions&#34;</span><span class="p">,</span>
+    <span class="s">&#34;Powerball&#34;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nx">ThemeColor</span><span class="p">:</span>      <span class="s">&#34;#000000&#34;</span><span class="p">,</span>
+  <span class="nx">BackgroundColor</span><span class="p">:</span> <span class="s">&#34;#000000&#34;</span><span class="p">,</span>
+  <span class="nx">Styles</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
+    <span class="s">&#34;/web/luck.css&#34;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nx">Version</span><span class="p">:</span> <span class="s">&#34;wIKiverSiON&#34;</span><span class="p">,</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="本文代码">本文代码</h2>
+
+<p>本文中 WebAssembly 代码都在各自的目录中。Go Web 演示代码在 web 目录中。先进入某个目录，使用下面的命令编译：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">GOARCH</span><span class="p">=</span><span class="nx">wasm</span> <span class="nx">GOOS</span><span class="p">=</span><span class="nx">js</span> <span class="k">go</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>然后将生成的<code>app.wasm</code>拷贝到<code>web</code>目录：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">cp</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span> <span class="p">..</span><span class="o">/</span><span class="nx">web</span><span class="o">/</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>切换到 web 目录，启动服务器：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">cd</span> <span class="p">..</span><span class="o">/</span><span class="nx">web</span><span class="o">/</span>
+<span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="总结">总结</h2>
+
+<p>本文介绍如何使用<code>go-app</code>编写基于 WebAssembly 的 Web 应用程序。可能有人会觉得，<code>go-app</code>编写 HTML 的方式有点繁琐。但是我们可以写一个转换程序将普通的 HTML 代码转为<code>go-app</code>代码，感兴趣可以自己实现一下。WebAssembly 技术非常值得关注一波~</p>
+
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li>go-app GitHub：<a href="https://github.com/maxence-charriere/go-app">https://github.com/maxence-charriere/go-app</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+
+<h2 id="我">我</h2>
+
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2020-04-22
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2020/04/20/godailylib/gron/">
+            <span class="next-text nav-default">Go 每日一库之 gron</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2020/04/22/godailylib/go-app/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
