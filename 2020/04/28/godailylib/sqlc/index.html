@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 sqlc - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 在 Go 语言中编写数据库操作代码真的非常痛苦！database/sql标准库提供的都是比较底层的接口。我们需要编写大量重复的代码。大量的模板" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2020/04/28/godailylib/sqlc/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 sqlc" />
+<meta property="og:description" content="简介 在 Go 语言中编写数据库操作代码真的非常痛苦！database/sql标准库提供的都是比较底层的接口。我们需要编写大量重复的代码。大量的模板" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2020/04/28/godailylib/sqlc/" />
+<meta property="article:published_time" content="2020-04-28T23:09:23+00:00" />
+<meta property="article:modified_time" content="2020-04-28T23:09:23+00:00" />
+<meta itemprop="name" content="Go 每日一库之 sqlc">
+<meta itemprop="description" content="简介 在 Go 语言中编写数据库操作代码真的非常痛苦！database/sql标准库提供的都是比较底层的接口。我们需要编写大量重复的代码。大量的模板">
+
+
+<meta itemprop="datePublished" content="2020-04-28T23:09:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-04-28T23:09:23&#43;00:00" />
+<meta itemprop="wordCount" content="4912">
+
+
+
+<meta itemprop="keywords" content="Go 每日一库," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 sqlc"/>
+<meta name="twitter:description" content="简介 在 Go 语言中编写数据库操作代码真的非常痛苦！database/sql标准库提供的都是比较底层的接口。我们需要编写大量重复的代码。大量的模板"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 sqlc</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-04-28" class="post-time">
+          2020-04-28
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 4912 字 </span>
+          <span class="more-meta"> 预计阅读 10 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#代码生成">代码生成</a>
+<ul>
+<li><a href="#one"><code>:one</code></a></li>
+<li><a href="#many"><code>:many</code></a></li>
+<li><a href="#exec"><code>:exec</code></a></li>
+<li><a href="#execrows"><code>:execrows</code></a></li>
+<li><a href="#模型对象">模型对象</a></li>
+<li><a href="#配置字段">配置字段</a>
+<ul>
+<li><a href="#emit-json-tags"><code>emit_json_tags</code></a></li>
+<li><a href="#emit-prepared-queries"><code>emit_prepared_queries</code></a></li>
+<li><a href="#emit-interface"><code>emit_interface</code></a></li>
+</ul></li>
+<li><a href="#覆写类型">覆写类型</a></li>
+</ul></li>
+<li><a href="#安装-postgresql">安装 PostgreSQL</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="简介">简介</h2>
+
+<p>在 Go 语言中编写数据库操作代码真的非常痛苦！<code>database/sql</code>标准库提供的都是比较底层的接口。我们需要编写大量重复的代码。大量的模板代码不仅写起来烦，而且还容易出错。有时候字段类型修改了一下，可能就需要改动很多地方；添加了一个新字段，之前使用<code>select *</code>查询语句的地方都要修改。如果有些地方有遗漏，可能就会造成运行时<code>panic</code>。即使使用 ORM 库，这些问题也不能完全解决！这时候，<code>sqlc</code>来了！<code>sqlc</code>可以根据我们编写的 SQL 语句生成类型安全的、地道的 Go 接口代码，我们要做的只是调用这些方法。</p>
+
+<h2 id="快速使用">快速使用</h2>
+
+<p>先安装：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">kyleconroy</span><span class="o">/</span><span class="nx">sqlc</span><span class="o">/</span><span class="nx">cmd</span><span class="o">/</span><span class="nx">sqlc</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>当然还有对应的数据库驱动：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span><span class="nx">pq</span>
+<span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">sql</span><span class="o">-</span><span class="nx">driver</span><span class="o">/</span><span class="nx">mysql</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>sqlc</code>是一个命令行工具，上面代码会将可执行程序<code>sqlc</code>放到<code>$GOPATH/bin</code>目录下。我习惯把<code>$GOPATH/bin</code>目录加入到系统<code>PATH</code>中。所以可以执行使用这个命令。</p>
+
+<p>因为<code>sqlc</code>用到了一个 linux 下的库，在 windows 上无法正常编译。在 windows 上我们可以使用 docker 镜像<code>kjconroy/sqlc</code>。docker 的安装就不介绍了，网上有很多教程。拉取<code>kjconroy/sqlc</code>镜像：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">docker</span> <span class="nx">pull</span> <span class="nx">kjconroy</span><span class="o">/</span><span class="nx">sqlc</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>然后，编写 SQL 语句。在<code>schema.sql</code>文件中编写建表语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">authors</span> <span class="p">(</span>
+  <span class="n">id</span>   <span class="n">BIGSERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">name</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">bio</span>  <span class="nb">TEXT</span>
+<span class="p">);</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在<code>query.sql</code>文件中编写查询语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="c1">-- name: GetAuthor :one
+</span><span class="c1"></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">authors</span>
+<span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="err">$</span><span class="mi">1</span> <span class="k">LIMIT</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="c1">-- name: ListAuthors :many
+</span><span class="c1"></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">authors</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">name</span><span class="p">;</span>
+
+<span class="c1">-- name: CreateAuthor :exec
+</span><span class="c1"></span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">authors</span> <span class="p">(</span>
+  <span class="n">name</span><span class="p">,</span> <span class="n">bio</span>
+<span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span>
+  <span class="err">$</span><span class="mi">1</span><span class="p">,</span> <span class="err">$</span><span class="mi">2</span>
+<span class="p">)</span>
+<span class="n">RETURNING</span> <span class="o">*</span><span class="p">;</span>
+
+<span class="c1">-- name: DeleteAuthor :exec
+</span><span class="c1"></span><span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">authors</span>
+<span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="err">$</span><span class="mi">1</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>sqlc</code>支持 PostgreSQL 和 MySQL，<strong>不过对 MySQL 的支持是实验性的</strong>。期待后续完善对 MySQL 的支持，增加对其它数据库的支持。本文我们使用的是 PostgreSQL。编写数据库程序时，上面两个 sql 文件是少不了的。<code>sqlc</code>额外只需要一个小小的配置文件<code>sqlc.yaml</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">version</span><span class="p">:</span> <span class="s">&#34;1&#34;</span>
+<span class="nx">packages</span><span class="p">:</span>
+  <span class="o">-</span> <span class="nx">name</span><span class="p">:</span> <span class="s">&#34;db&#34;</span>
+    <span class="nx">path</span><span class="p">:</span> <span class="s">&#34;./db&#34;</span>
+    <span class="nx">queries</span><span class="p">:</span> <span class="s">&#34;./query.sql&#34;</span>
+    <span class="nx">schema</span><span class="p">:</span> <span class="s">&#34;./schema.sql&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><code>version</code>：版本；</li>
+<li><code>packages</code>：
+
+<ul>
+<li><code>name</code>：生成的包名；</li>
+<li><code>path</code>：生成文件的路径；</li>
+<li><code>queries</code>：查询 SQL 文件；</li>
+<li><code>schema</code>：建表 SQL 文件。</li>
+</ul></li>
+</ul>
+
+<p>在 windows 上执行下面的命令生成对应的 Go 代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">docker</span> <span class="nx">run</span> <span class="o">--</span><span class="nx">rm</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">CONFIG_PATH</span><span class="p">:</span><span class="o">/</span><span class="nx">src</span> <span class="o">-</span><span class="nx">w</span> <span class="o">/</span><span class="nx">src</span> <span class="nx">kjconroy</span><span class="o">/</span><span class="nx">sqlc</span> <span class="nx">generate</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面的<code>CONFIG_PATH</code>替换成配置所在目录，我的是<code>D:\code\golang\src\github.com\darjun\go-daily-lib\sqlc\get-started</code>。<code>sqlc</code>为我们在同级目录下生成了数据库操作代码，目录结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">db</span>
+<span class="err">├──</span> <span class="nx">db</span><span class="p">.</span><span class="k">go</span>
+<span class="err">├──</span> <span class="nx">models</span><span class="p">.</span><span class="k">go</span>
+<span class="err">└──</span> <span class="nx">query</span><span class="p">.</span><span class="nx">sql</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>sqlc</code>根据我们<code>schema.sql</code>和<code>query.sql</code>生成了模型对象结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// models.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Author</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ID</span>   <span class="kt">int64</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+  <span class="nx">Bio</span>  <span class="nx">sql</span><span class="p">.</span><span class="nx">NullString</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>和操作接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// query.sql.go
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">CreateAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="nx">CreateAuthorParams</span><span class="p">)</span> <span class="p">(</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">DeleteAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">id</span> <span class="kt">int64</span><span class="p">)</span> <span class="kt">error</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">GetAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">id</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">ListAuthors</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">([]</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>其中<code>Queries</code>是<code>sqlc</code>封装的一个结构。</p>
+
+<p>说了这么多，来看看如何使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;database/sql&#34;</span>
+  <span class="s">&#34;fmt&#34;</span>
+  <span class="s">&#34;log&#34;</span>
+
+  <span class="nx">_</span> <span class="s">&#34;github.com/lib/pq&#34;</span>
+  <span class="s">&#34;golang.org/x/net/context&#34;</span>
+
+  <span class="s">&#34;github.com/darjun/go-daily-lib/sqlc/get-started/db&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">pq</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">sql</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;postgres&#34;</span><span class="p">,</span> <span class="s">&#34;dbname=sqlc sslmode=disable&#34;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">queries</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">pq</span><span class="p">)</span>
+
+  <span class="nx">authors</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">ListAuthors</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;ListAuthors error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">authors</span><span class="p">)</span>
+
+  <span class="nx">insertedAuthor</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">CreateAuthor</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">db</span><span class="p">.</span><span class="nx">CreateAuthorParams</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;Brian Kernighan&#34;</span><span class="p">,</span>
+    <span class="nx">Bio</span><span class="p">:</span>  <span class="nx">sql</span><span class="p">.</span><span class="nx">NullString</span><span class="p">{</span><span class="nx">String</span><span class="p">:</span> <span class="s">&#34;Co-author of The C Programming Language and The Go Programming Language&#34;</span><span class="p">,</span> <span class="nx">Valid</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span>
+  <span class="p">})</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;CreateAuthor error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">insertedAuthor</span><span class="p">)</span>
+
+  <span class="nx">fetchedAuthor</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">GetAuthor</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">insertedAuthor</span><span class="p">.</span><span class="nx">ID</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;GetAuthor error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">fetchedAuthor</span><span class="p">)</span>
+
+  <span class="nx">err</span> <span class="p">=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">DeleteAuthor</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">insertedAuthor</span><span class="p">.</span><span class="nx">ID</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;DeleteAuthor error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>生成的代码在包<code>db</code>下（由<code>packages.name</code>选项指定），首先调用<code>db.New()</code>将<code>sql.Open()</code>的返回值<code>sql.DB</code>作为参数传入，得到<code>Queries</code>对象。我们对<code>authors</code>表的操作都需要通过该对象的方法。</p>
+
+<p>上面程序要运行，还需要启动 PostgreSQL，创建数据库和表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ createdb sqlc
+$ psql -f schema.sql -d sqlc</code></pre></td></tr></table>
+</div>
+</div>
+<p>上面第一条命令创建一个名为<code>sqlc</code>的数据库，第二条命令在数据库<code>sqlc</code>中执行<code>schema.sql</code>文件中的语句，即创建表。</p>
+
+<p>最后运行程序（多文件程序不能用<code>go run main.go</code>）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run .
+[]
+{1 Brian Kernighan {Co-author of The C Programming Language and The Go Programming Language true}}
+{1 Brian Kernighan {Co-author of The C Programming Language and The Go Programming Language true}}</code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="代码生成">代码生成</h2>
+
+<p>除了 SQL 语句本身，<code>sqlc</code>需要我们在编写 SQL 语句的时候通过注释的方式为生成的程序提供一些基本信息。语法为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="o">--</span> <span class="nx">name</span><span class="p">:</span> <span class="p">&lt;</span><span class="nx">name</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nx">cmd</span><span class="p">&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>name</code>为生成的方法名，如上面的<code>CreateAuthor/ListAuthors/GetAuthor/DeleteAuthor</code>等，<code>cmd</code>可以有以下取值：</p>
+
+<ul>
+<li><code>:one</code>：表示 SQL 语句返回一个对象，生成的方法的返回值为<code>(对象类型, error)</code>，对象类型可以从表名得出；</li>
+<li><code>:many</code>：表示 SQL 语句会返回多个对象，生成的方法的返回值为<code>([]对象类型, error)</code>；</li>
+<li><code>:exec</code>：表示 SQL 语句不返回对象，只返回一个<code>error</code>；</li>
+<li><code>:execrows</code>：表示 SQL 语句需要返回受影响的行数。</li>
+</ul>
+
+<h3 id="one"><code>:one</code></h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="c1">-- name: GetAuthor :one
+</span><span class="c1"></span><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bio</span> <span class="k">FROM</span> <span class="n">authors</span>
+<span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="err">$</span><span class="mi">1</span> <span class="k">LIMIT</span> <span class="mi">1</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>注释中<code>--name</code>指示生成方法<code>GetAuthor</code>，从表名得出返回的基础类型为<code>Author</code>。<code>:one</code>又表示只返回一个对象。故最终的返回值为<code>(Author, error)</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// db/query.sql.go
+</span><span class="c1"></span><span class="kd">const</span> <span class="nx">getAuthor</span> <span class="p">=</span> <span class="s">`-- name: GetAuthor :one
+</span><span class="s">SELECT id, name, bio FROM authors
+</span><span class="s">WHERE id = $1 LIMIT 1
+</span><span class="s">`</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">GetAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">id</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">row</span> <span class="o">:=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nf">QueryRowContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">getAuthor</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span>
+  <span class="kd">var</span> <span class="nx">i</span> <span class="nx">Author</span>
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">row</span><span class="p">.</span><span class="nf">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">Bio</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="many"><code>:many</code></h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="c1">-- name: ListAuthors :many
+</span><span class="c1"></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">authors</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">name</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>注释中<code>--name</code>指示生成方法<code>ListAuthors</code>，从表名<code>authors</code>得到返回的基础类型为<code>Author</code>。<code>:many</code>表示返回一个对象的切片。故最终的返回值为<code>([]Author, error)</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// db/query.sql.go
+</span><span class="c1"></span><span class="kd">const</span> <span class="nx">listAuthors</span> <span class="p">=</span> <span class="s">`-- name: ListAuthors :many
+</span><span class="s">SELECT id, name, bio FROM authors
+</span><span class="s">ORDER BY name
+</span><span class="s">`</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">ListAuthors</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">([]</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">rows</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nf">QueryContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">listAuthors</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+  <span class="p">}</span>
+  <span class="k">defer</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+  <span class="kd">var</span> <span class="nx">items</span> <span class="p">[]</span><span class="nx">Author</span>
+  <span class="k">for</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span> <span class="nx">Author</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">Bio</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="nx">items</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Close</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Err</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">items</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这里注意一个细节，即使我们使用了<code>select *</code>，生成的代码中 SQL 语句被也改写成了具体的字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bio</span> <span class="k">FROM</span> <span class="n">authors</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">name</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这样后续如果我们需要添加或删除字段，只要执行了<code>sqlc</code>命令，这个 SQL 语句和<code>ListAuthors()</code>方法就能保持一致！是不是很方便？</p>
+
+<h3 id="exec"><code>:exec</code></h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="c1">-- name: DeleteAuthor :exec
+</span><span class="c1"></span><span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">authors</span>
+<span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="err">$</span><span class="mi">1</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>注释中<code>--name</code>指示生成方法<code>DeleteAuthor</code>，从表名<code>authors</code>得到返回的基础类型为<code>Author</code>。<code>:exec</code>表示不返回对象。故最终的返回值为<code>error</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// db/query.sql.go
+</span><span class="c1"></span><span class="kd">const</span> <span class="nx">deleteAuthor</span> <span class="p">=</span> <span class="s">`-- name: DeleteAuthor :exec
+</span><span class="s">DELETE FROM authors
+</span><span class="s">WHERE id = $1
+</span><span class="s">`</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">DeleteAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">id</span> <span class="kt">int64</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nf">ExecContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">deleteAuthor</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="execrows"><code>:execrows</code></h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="c1">-- name: DeleteAuthorN :execrows
+</span><span class="c1"></span><span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">authors</span>
+<span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="err">$</span><span class="mi">1</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>注释中<code>--name</code>指示生成方法<code>DeleteAuthorN</code>，从表名<code>authors</code>得到返回的基础类型为<code>Author</code>。<code>:exec</code>表示返回受影响的行数（即删除了多少行）。故最终的返回值为<code>(int64, error)</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// db/query.sql.go
+</span><span class="c1"></span><span class="kd">const</span> <span class="nx">deleteAuthorN</span> <span class="p">=</span> <span class="s">`-- name: DeleteAuthorN :execrows
+</span><span class="s">DELETE FROM authors
+</span><span class="s">WHERE id = $1
+</span><span class="s">`</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">DeleteAuthorN</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">id</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="kt">int64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nf">ExecContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">deleteAuthorN</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nf">RowsAffected</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>不管编写的 SQL 多复杂，总是逃不过上面的规则。我们只需要在编写 SQL 语句时额外添加一行注释，<code>sqlc</code>就能为我们生成地道的 SQL 操作方法。生成的代码与我们自己手写的没什么不同，错误处理都很完善，而且了避免手写的麻烦与错误。</p>
+
+<h3 id="模型对象">模型对象</h3>
+
+<p><code>sqlc</code>为所有的建表语句生成对应的模型结构。结构名为表名的单数形式，且首字母大写。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">authors</span> <span class="p">(</span>
+  <span class="n">id</span>   <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">name</span> <span class="nb">text</span>   <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>生成对应的结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Author</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ID</span>   <span class="kt">int</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>而且<code>sqlc</code>可以解析<code>ALTER TABLE</code>语句，它会根据最终的表结构来生成模型对象的结构。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">authors</span> <span class="p">(</span>
+  <span class="n">id</span>          <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">birth_year</span>  <span class="nb">int</span>    <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">authors</span> <span class="k">ADD</span> <span class="k">COLUMN</span> <span class="n">bio</span> <span class="nb">text</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">;</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">authors</span> <span class="k">DROP</span> <span class="k">COLUMN</span> <span class="n">birth_year</span><span class="p">;</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">authors</span> <span class="k">RENAME</span> <span class="k">TO</span> <span class="n">writers</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面的 SQL 语句中，建表时有两列<code>id</code>和<code>birth_year</code>。第一条<code>ALTER TABLE</code>语句添加了一列<code>bio</code>，第二条删除了<code>birth_year</code>列，第三条将表名<code>authors</code>改为<code>writers</code>。<code>sqlc</code>依据最终的表名<code>writers</code>和表中的列<code>id</code>、<code>bio</code>生成代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">db</span>
+
+<span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ID</span>  <span class="kt">int</span>
+  <span class="nx">Bio</span> <span class="kt">string</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="配置字段">配置字段</h3>
+
+<p><code>sqlc.yaml</code>文件中还可以设置其他的配置字段。</p>
+
+<h4 id="emit-json-tags"><code>emit_json_tags</code></h4>
+
+<p>默认为<code>false</code>，设置该字段为<code>true</code>可以为生成的模型对象结构添加 JSON 标签。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">authors</span> <span class="p">(</span>
+  <span class="n">id</span>         <span class="nb">SERIAL</span>    <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">created_at</span> <span class="k">timestamp</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>生成：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">db</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Author</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ID</span>        <span class="kt">int</span>       <span class="s">`json:&#34;id&#34;`</span>
+  <span class="nx">CreatedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`json:&#34;created_at&#34;`</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="emit-prepared-queries"><code>emit_prepared_queries</code></h4>
+
+<p>默认为<code>false</code>，设置该字段为<code>true</code>，会为 SQL 生成对应的<code>prepared statement</code>。例如，在<strong>快速开始</strong>的示例中设置这个选项，最终生成的结构<code>Queries</code>中会添加所有 SQL 对应的<code>prepared statement</code>对象：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Queries</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">db</span>                <span class="nx">DBTX</span>
+  <span class="nx">tx</span>                <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">Tx</span>
+  <span class="nx">createAuthorStmt</span>  <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">Stmt</span>
+  <span class="nx">deleteAuthorStmt</span>  <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">Stmt</span>
+  <span class="nx">getAuthorStmt</span>     <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">Stmt</span>
+  <span class="nx">listAuthorsStmt</span>   <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">Stmt</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>和一个<code>Prepare()</code>方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">Prepare</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">db</span> <span class="nx">DBTX</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Queries</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">q</span> <span class="o">:=</span> <span class="nx">Queries</span><span class="p">{</span><span class="nx">db</span><span class="p">:</span> <span class="nx">db</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+  <span class="k">if</span> <span class="nx">q</span><span class="p">.</span><span class="nx">createAuthorStmt</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">PrepareContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">createAuthor</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;error preparing query CreateAuthor: %w&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">q</span><span class="p">.</span><span class="nx">deleteAuthorStmt</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">PrepareContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">deleteAuthor</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;error preparing query DeleteAuthor: %w&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">q</span><span class="p">.</span><span class="nx">getAuthorStmt</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">PrepareContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">getAuthor</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;error preparing query GetAuthor: %w&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">q</span><span class="p">.</span><span class="nx">listAuthorsStmt</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">PrepareContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">listAuthors</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;error preparing query ListAuthors: %w&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">q</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>生成的其它方法都使用了这些对象，而非直接使用 SQL 语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">q</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="nf">CreateAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="nx">CreateAuthorParams</span><span class="p">)</span> <span class="p">(</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">row</span> <span class="o">:=</span> <span class="nx">q</span><span class="p">.</span><span class="nf">queryRow</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">q</span><span class="p">.</span><span class="nx">createAuthorStmt</span><span class="p">,</span> <span class="nx">createAuthor</span><span class="p">,</span> <span class="nx">arg</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">arg</span><span class="p">.</span><span class="nx">Bio</span><span class="p">)</span>
+  <span class="kd">var</span> <span class="nx">i</span> <span class="nx">Author</span>
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">row</span><span class="p">.</span><span class="nf">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">i</span><span class="p">.</span><span class="nx">Bio</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们需要在程序初始化时调用这个<code>Prepare()</code>方法。</p>
+
+<h4 id="emit-interface"><code>emit_interface</code></h4>
+
+<p>默认为<code>false</code>，设置该字段为<code>true</code>，会为查询结构生成一个接口。例如，在<strong>快速开始</strong>的示例中设置这个选项，最终生成的代码会多出一个文件<code>querier.go</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// db/querier.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Querier</span> <span class="kd">interface</span> <span class="p">{</span>
+  <span class="nf">CreateAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="nx">CreateAuthorParams</span><span class="p">)</span> <span class="p">(</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+  <span class="nf">DeleteAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">id</span> <span class="kt">int64</span><span class="p">)</span> <span class="kt">error</span>
+  <span class="nf">DeleteAuthorN</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">id</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="kt">int64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+  <span class="nf">GetAuthor</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">id</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+  <span class="nf">ListAuthors</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">([]</span><span class="nx">Author</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="覆写类型">覆写类型</h3>
+
+<p><code>sqlc</code>在生成模型对象结构时会根据数据库表的字段类型推算出一个 Go 语言类型，例如<code>text</code>对应<code>string</code>。我们也可以在配置文件中指定这种类型映射。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s2">&#34;1&#34;</span><span class="w">
+</span><span class="w"></span>packages<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span><span class="s2">&#34;db&#34;</span><span class="w">
+</span><span class="w">    </span>path<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./db&#34;</span><span class="w">
+</span><span class="w">    </span>queries<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./query.sql&#34;</span><span class="w">
+</span><span class="w">    </span>schema<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./schema.sql&#34;</span><span class="w">
+</span><span class="w"></span>overrides<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>go_type<span class="p">:</span><span class="w"> </span><span class="s2">&#34;github.com/uniplaces/carbon.Time&#34;</span><span class="w">
+</span><span class="w">    </span>db_type<span class="p">:</span><span class="w"> </span><span class="s2">&#34;pg_catalog.timestamp&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在<code>overrides</code>下<code>go_type</code>表示使用的 Go 类型。如果是非标准类型，必须指定<strong>全限定类型</strong>（即包路径 + 类型名）。<code>db_type</code>设置为要映射的数据库类型。<code>sqlc</code>会自动导入对应的标准包或第三方包。生成代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">db</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;github.com/uniplaces/carbon&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Author</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ID</span>       <span class="kt">int32</span>
+  <span class="nx">Name</span>     <span class="kt">string</span>
+  <span class="nx">CreateAt</span> <span class="nx">carbon</span><span class="p">.</span><span class="nx">Time</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>需要注意的是<code>db_type</code>的表示，文档这里一笔带过，使用上还是有些晦涩。</strong>我也是看源码才找到如何覆写<code>timestamp</code>类型的，需要将<code>db_type</code>设置为<code>pg_catalog.timestamp</code>。同理<code>timestamptz</code>、<code>timetz</code>等类型也需要加上这个前缀。<strong>一般复杂类型都需要加上前缀，一般的基础类型可以加也可以不加。</strong>遇到不确定的情况，可以去看看源码<a href="https://github.com/kyleconroy/sqlc/blob/c7d3e4b067980323f5f33280a26a031cb743c92f/internal/dinosql/gen.go#L634">gen.go#L634</a>。</p>
+
+<p>也可以设定某个字段的类型，例如我们要将创建时间字段<code>created_at</code>设置为使用<code>carbon.Time</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s2">&#34;1&#34;</span><span class="w">
+</span><span class="w"></span>packages<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span><span class="s2">&#34;db&#34;</span><span class="w">
+</span><span class="w">    </span>path<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./db&#34;</span><span class="w">
+</span><span class="w">    </span>queries<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./query.sql&#34;</span><span class="w">
+</span><span class="w">    </span>schema<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./schema.sql&#34;</span><span class="w">
+</span><span class="w"></span>overrides<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>column<span class="p">:</span><span class="w"> </span><span class="s2">&#34;authors.create_at&#34;</span><span class="w">
+</span><span class="w">    </span>go_type<span class="p">:</span><span class="w"> </span><span class="s2">&#34;github.com/uniplaces/carbon.Time&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>生成代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// db/models.go
+</span><span class="c1"></span><span class="kn">package</span> <span class="nx">db</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;github.com/uniplaces/carbon&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Author</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ID</span>       <span class="kt">int32</span>
+  <span class="nx">Name</span>     <span class="kt">string</span>
+  <span class="nx">CreateAt</span> <span class="nx">carbon</span><span class="p">.</span><span class="nx">Time</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>最后我们还可以给生成的结构字段命名：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s2">&#34;1&#34;</span><span class="w">
+</span><span class="w"></span>packages<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span><span class="s2">&#34;db&#34;</span><span class="w">
+</span><span class="w">    </span>path<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./db&#34;</span><span class="w">
+</span><span class="w">    </span>queries<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./query.sql&#34;</span><span class="w">
+</span><span class="w">    </span>schema<span class="p">:</span><span class="w"> </span><span class="s2">&#34;./schema.sql&#34;</span><span class="w">
+</span><span class="w"></span>rename<span class="p">:</span><span class="w">
+</span><span class="w">    </span>id<span class="p">:</span><span class="w"> </span><span class="s2">&#34;Id&#34;</span><span class="w">
+</span><span class="w">    </span>name<span class="p">:</span><span class="w"> </span><span class="s2">&#34;UserName&#34;</span><span class="w">
+</span><span class="w">    </span>create_at<span class="p">:</span><span class="w"> </span><span class="s2">&#34;CreateTime&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面配置为生成的结构设置字段名，生成代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">db</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Author</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Id</span>         <span class="kt">int32</span>
+  <span class="nx">UserName</span>   <span class="kt">string</span>
+  <span class="nx">CreateTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="安装-postgresql">安装 PostgreSQL</h2>
+
+<p>我之前使用 MySQL 较多。由于<code>sqlc</code>对 MySQL 的支持不太好，在体验这个库的时候还是选择支持较好的  PostgreSQL。不得不说，在 win10 上，PostgreSQL 的<strong>安装门槛</strong>实在是太高了！我摸索了很久最后只能在<a href="https://www.enterprisedb.com/download-postgresql-binaries">https://www.enterprisedb.com/download-postgresql-binaries</a>下载可执行文件。我选择了 10.12 版本，下载、解压、将文件夹中的<code>bin</code>加入系统<code>PATH</code>。创建一个<code>data</code>目录，然后执行下面的命令初始化数据：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ initdb data</code></pre></td></tr></table>
+</div>
+</div>
+<p>注册 PostgreSQL 服务，这样每次系统重启后会自动启动：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ pg_ctl register -N <span class="s2">&#34;pgsql&#34;</span> -D D:\data</code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>这里的<code>data</code>目录就是上面创建的，并且一定要使用绝对路径！</strong></p>
+
+<p>启动服务：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ sc start pgsql</code></pre></td></tr></table>
+</div>
+</div>
+<p>最后使用我们前面介绍的命令创建数据库和表即可。</p>
+
+<p>如果有使用<code>installer</code>成功安装的小伙伴，还请不吝赐教！</p>
+
+<h2 id="总结">总结</h2>
+
+<p>虽然目前还有一些不完善的地方，例如对 MySQL 的支持是实验性的，<code>sqlc</code>工具的确能大大简化我们使用 Go 编写数据库代码的复杂度，提升我们的编码效率，减少我们出错的概率。使用 PostgreSQL 的小伙伴非常建议尝试一番！</p>
+
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li>sqlc GitHub：<a href="https://github.com/kyleconroy/sqlc">https://github.com/kyleconroy/sqlc</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+
+<h2 id="我">我</h2>
+
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2020-04-28
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2020/04/25/godailylib/nutsdb/">
+            <span class="next-text nav-default">Go 每日一库之 nutsdb</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2020/04/28/godailylib/sqlc/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
