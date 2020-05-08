@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 xorm - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 Go 标准库提供的数据库接口database/sql比较底层，使用它来操作数据库非常繁琐，而且容易出错。因而社区开源了不少第三方库，如上一篇" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2020/05/07/godailylib/xorm/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 xorm" />
+<meta property="og:description" content="简介 Go 标准库提供的数据库接口database/sql比较底层，使用它来操作数据库非常繁琐，而且容易出错。因而社区开源了不少第三方库，如上一篇" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2020/05/07/godailylib/xorm/" />
+<meta property="article:published_time" content="2020-05-07T21:56:23+00:00" />
+<meta property="article:modified_time" content="2020-05-07T21:56:23+00:00" />
+<meta itemprop="name" content="Go 每日一库之 xorm">
+<meta itemprop="description" content="简介 Go 标准库提供的数据库接口database/sql比较底层，使用它来操作数据库非常繁琐，而且容易出错。因而社区开源了不少第三方库，如上一篇">
+
+
+<meta itemprop="datePublished" content="2020-05-07T21:56:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-05-07T21:56:23&#43;00:00" />
+<meta itemprop="wordCount" content="4550">
+
+
+
+<meta itemprop="keywords" content="Go 每日一库," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 xorm"/>
+<meta name="twitter:description" content="简介 Go 标准库提供的数据库接口database/sql比较底层，使用它来操作数据库非常繁琐，而且容易出错。因而社区开源了不少第三方库，如上一篇"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 xorm</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-05-07" class="post-time">
+          2020-05-07
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 4550 字 </span>
+          <span class="more-meta"> 预计阅读 10 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#数据库操作">数据库操作</a>
+<ul>
+<li><a href="#查询-统计">查询&amp;统计</a>
+<ul>
+<li><a href="#get"><code>Get</code></a></li>
+<li><a href="#exist"><code>Exist</code></a></li>
+<li><a href="#find"><code>Find</code></a></li>
+<li><a href="#iterate"><code>Iterate</code></a></li>
+<li><a href="#count"><code>Count</code></a></li>
+<li><a href="#rows"><code>Rows</code></a></li>
+<li><a href="#sum"><code>Sum</code></a></li>
+</ul></li>
+<li><a href="#插入">插入</a></li>
+<li><a href="#更新">更新</a></li>
+<li><a href="#删除">删除</a></li>
+<li><a href="#创建时间-更新时间-软删除">创建时间、更新时间、软删除</a></li>
+<li><a href="#执行原始的-sql">执行原始的 SQL</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="简介">简介</h2>
+
+<p>Go 标准库提供的数据库接口<code>database/sql</code>比较底层，使用它来操作数据库非常繁琐，而且容易出错。因而社区开源了不少第三方库，如上一篇文章中的<code>sqlc</code>工具，还有各式各样的 ORM （Object Relational Mapping，对象关系映射库），如<a href="http://gorm.io/"><code>gorm</code></a>和<a href="https://github.com/go-xorm/xorm"><code>xorm</code></a>。本文介绍<code>xorm</code>。<code>xorm</code>是一个简单但强大的 Go 语言 ORM 库，使用它可以大大简化我们的数据库操作。</p>
+
+<h2 id="快速使用">快速使用</h2>
+
+<p>先安装：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">xorm</span><span class="p">.</span><span class="nx">io</span><span class="o">/</span><span class="nx">xorm</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>由于需要操作具体的数据库（本文中我们使用 MySQL），需要安装对应的驱动：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">sql</span><span class="o">-</span><span class="nx">driver</span><span class="o">/</span><span class="nx">mysql</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;log&#34;</span>
+  <span class="s">&#34;time&#34;</span>
+
+  <span class="nx">_</span> <span class="s">&#34;github.com/go-sql-driver/mysql&#34;</span>
+  <span class="s">&#34;xorm.io/xorm&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Id</span>      <span class="kt">int64</span>
+  <span class="nx">Name</span>    <span class="kt">string</span>
+  <span class="nx">Salt</span>    <span class="kt">string</span>
+  <span class="nx">Age</span>     <span class="kt">int</span>
+  <span class="nx">Passwd</span>  <span class="kt">string</span>    <span class="s">`xorm:&#34;varchar(200)&#34;`</span>
+  <span class="nx">Created</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;created&#34;`</span>
+  <span class="nx">Updated</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;updated&#34;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">err</span> <span class="p">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Sync2</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">User</span><span class="p">))</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>使用<code>xorm</code>来操作数据库，首先需要使用<code>xorm.NewEngine()</code>创建一个引擎。该方法的参数与<code>sql.Open()</code>参数相同。</p>
+
+<p>上面代码中，我们演示了<code>xorm</code>的一个非常实用的功能，将数据库中的表与对应 Go 代码中的结构体做同步。初始状态下，数据库<code>test</code>中没有表<code>user</code>，调用<code>Sync2()</code>方法会根据<code>User</code>的结构自动创建一个<code>user</code>表。执行后，通过<code>describe user</code>查看表结构：</p>
+
+<p><img src="/img/in-post/godailylib/xorm1.png#center" alt="" /></p>
+
+<p>如果表<code>user</code>已经存在，<code>Sync()</code>方法会对比<code>User</code>结构与表结构的不同，对表做相应的修改。我们给<code>User</code>结构添加一个<code>Level</code>字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Id</span>      <span class="kt">int64</span>
+  <span class="nx">Name</span>    <span class="kt">string</span>
+  <span class="nx">Salt</span>    <span class="kt">string</span>
+  <span class="nx">Age</span>     <span class="kt">int</span>
+  <span class="nx">Level</span>   <span class="kt">int</span>
+  <span class="nx">Passwd</span>  <span class="kt">string</span>    <span class="s">`xorm:&#34;varchar(200)&#34;`</span>
+  <span class="nx">Created</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;created&#34;`</span>
+  <span class="nx">Updated</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;updated&#34;`</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>再次执行这个程序后，用<code>describe user</code>命令查看表结构：</p>
+
+<p><img src="/img/in-post/godailylib/xorm2.png#center" alt="" /></p>
+
+<p>发现表中多了一个<code>level</code>字段。</p>
+
+<p><strong>此修改只限于添加字段。</strong>删除表中已有的字段会带来比较大的风险。如果我们<code>User</code>结构的<code>Salt</code>字段删除，然后执行程序。出现下面错误：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">[</span><span class="nx">xorm</span><span class="p">]</span> <span class="p">[</span><span class="nx">warn</span><span class="p">]</span>  <span class="mi">2020</span><span class="o">/</span><span class="mo">05</span><span class="o">/</span><span class="mo">07</span> <span class="mi">22</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mf">38.528784</span> <span class="nx">Table</span> <span class="nx">user</span> <span class="nx">has</span> <span class="nx">column</span> <span class="nx">salt</span> <span class="nx">but</span> <span class="kd">struct</span> <span class="nx">has</span> <span class="nx">not</span> <span class="nx">related</span> <span class="nx">field</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="数据库操作">数据库操作</h2>
+
+<h3 id="查询-统计">查询&amp;统计</h3>
+
+<p><code>xorm</code>提供了几个查询和统计方法，<code>Get/Exist/Find/Iterate/Count/Rows/Sum</code>。下面逐一介绍。</p>
+
+<p>为了代码演示方便，我在<code>user</code>表中插入了一些数据：</p>
+
+<p><img src="/img/in-post/godailylib/xorm3.png#center" alt="" /></p>
+
+<p>后面的代码为了简单起见，忽略了错误处理，实际使用中不要漏掉！</p>
+
+<h4 id="get"><code>Get</code></h4>
+
+<p><code>Get()</code>方法用于查询单条数据，并使用返回的字段为传入的对象赋值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Id</span>      <span class="kt">int64</span>
+  <span class="nx">Name</span>    <span class="kt">string</span>
+  <span class="nx">Salt</span>    <span class="kt">string</span>
+  <span class="nx">Age</span>     <span class="kt">int</span>
+  <span class="nx">Passwd</span>  <span class="kt">string</span>    <span class="s">`xorm:&#34;varchar(200)&#34;`</span>
+  <span class="nx">Created</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;created&#34;`</span>
+  <span class="nx">Updated</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;updated&#34;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">user1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+  <span class="nx">has</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">ID</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user1</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">has</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user1:%v\n&#34;</span><span class="p">,</span> <span class="nx">user1</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">user2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+  <span class="nx">has</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name=?&#34;</span><span class="p">,</span> <span class="s">&#34;dj&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user2</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">has</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user2:%v\n&#34;</span><span class="p">,</span> <span class="nx">user2</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">user3</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Id</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+  <span class="nx">has</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user3</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">has</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user3:%v\n&#34;</span><span class="p">,</span> <span class="nx">user3</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">user4</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;pipi&#34;</span><span class="p">}</span>
+  <span class="nx">has</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user4</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">has</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user4:%v\n&#34;</span><span class="p">,</span> <span class="nx">user4</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面演示了 3 种使用<code>Get()</code>的方式：</p>
+
+<ul>
+<li>使用主键：<code>engine.ID(1)</code>查询主键（即<code>id</code>）为 1 的用户；</li>
+<li>使用条件语句：<code>engine.Where(&quot;name=?&quot;, &quot;dj&quot;)</code>查询<code>name = &quot;dj&quot;</code>的用户；</li>
+<li>使用对象中的非空字段：<code>user3</code>设置了<code>Id</code>字段为 5，<code>engine.Get(user3)</code>查询<code>id = 5</code>的用户；<code>user4</code>设置了字段<code>Name</code>为<code>&quot;pipi&quot;</code>，<code>engine.Get(user4)</code>查询<code>name = &quot;pipi&quot;</code>的用户。</li>
+</ul>
+
+<p>运行程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">user1</span><span class="p">:</span><span class="o">&amp;</span><span class="p">{</span><span class="mi">1</span> <span class="nx">dj</span> <span class="nx">salt</span> <span class="mi">18</span> <span class="mi">12345</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mi">11</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mi">11</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span><span class="p">}</span>
+<span class="nx">user2</span><span class="p">:</span><span class="o">&amp;</span><span class="p">{</span><span class="mi">1</span> <span class="nx">dj</span> <span class="nx">salt</span> <span class="mi">18</span> <span class="mi">12345</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mi">11</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mi">11</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span><span class="p">}</span>
+<span class="nx">user3</span><span class="p">:</span><span class="o">&amp;</span><span class="p">{</span><span class="mi">5</span> <span class="nx">mxg</span> <span class="nx">salt</span> <span class="mi">54</span> <span class="mi">12345</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">31</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">31</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span><span class="p">}</span>
+<span class="nx">user4</span><span class="p">:</span><span class="o">&amp;</span><span class="p">{</span><span class="mi">3</span> <span class="nx">pipi</span> <span class="nx">salt</span> <span class="mi">2</span> <span class="mi">12345</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">31</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">31</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>查询条件的使用不区分调用顺序，但是必须在<code>Get()</code>方法之前调用。实际上后面介绍的查询&amp;统计方法也是如此，可以在调用实际的方法前添加一些过滤条件。除此之外<code>xorm</code>支持只返回指定的列（<code>xorm.Cols()</code>）或忽略特定的列（<code>xorm.Omit()</code>）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">user1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">ID</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">Cols</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;age&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user1</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user1:%v\n&#34;</span><span class="p">,</span> <span class="nx">user1</span><span class="p">)</span>
+
+  <span class="nx">user2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;pipi&#34;</span><span class="p">}</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Omit</span><span class="p">(</span><span class="s">&#34;created&#34;</span><span class="p">,</span> <span class="s">&#34;updated&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user2</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user2:%v\n&#34;</span><span class="p">,</span> <span class="nx">user2</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面第一个查询使用<code>Cols()</code>方法指定只返回<code>id</code>、<code>name</code>、<code>age</code>这 3 列，第二个查询使用<code>Omit()</code>方法忽略列<code>created</code>和<code>updated</code>。</p>
+
+<p>另外，为了便于排查可能出现的问题，<code>xorm</code>提供了<code>ShowSQL()</code>方法设置将执行的 SQL 同时在控制台中输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">ShowSQL</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+
+  <span class="nx">user</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">ID</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">Omit</span><span class="p">(</span><span class="s">&#34;created&#34;</span><span class="p">,</span> <span class="s">&#34;updated&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user:%v\n&#34;</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>运行程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">[</span><span class="nx">xorm</span><span class="p">]</span> <span class="p">[</span><span class="nx">info</span><span class="p">]</span>  <span class="mi">2020</span><span class="o">/</span><span class="mo">05</span><span class="o">/</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">38</span><span class="p">:</span><span class="mf">29.349976</span> <span class="p">[</span><span class="nx">SQL</span><span class="p">]</span> <span class="nx">SELECT</span> <span class="s">`id`</span><span class="p">,</span> <span class="s">`name`</span><span class="p">,</span> <span class="s">`salt`</span><span class="p">,</span> <span class="s">`age`</span><span class="p">,</span> <span class="s">`passwd`</span> <span class="nx">FROM</span> <span class="s">`user`</span> <span class="nx">WHERE</span> <span class="s">`id`</span><span class="p">=</span><span class="err">?</span> <span class="nx">LIMIT</span> <span class="mi">1</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">4.0033</span><span class="nx">ms</span>
+<span class="nx">user</span><span class="p">:</span><span class="o">&amp;</span><span class="p">{</span><span class="mi">1</span> <span class="nx">dj</span> <span class="nx">salt</span> <span class="mi">18</span> <span class="mi">12345</span> <span class="mo">0001</span><span class="o">-</span><span class="mo">01</span><span class="o">-</span><span class="mo">01</span> <span class="mo">00</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span> <span class="o">+</span><span class="mo">0000</span> <span class="nx">UTC</span> <span class="mo">0001</span><span class="o">-</span><span class="mo">01</span><span class="o">-</span><span class="mo">01</span> <span class="mo">00</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span> <span class="o">+</span><span class="mo">0000</span> <span class="nx">UTC</span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>由输出可以看出，执行的 SQL 语句为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">SELECT</span> <span class="s">`id`</span><span class="p">,</span> <span class="s">`name`</span><span class="p">,</span> <span class="s">`salt`</span><span class="p">,</span> <span class="s">`age`</span><span class="p">,</span> <span class="s">`passwd`</span> <span class="nx">FROM</span> <span class="s">`user`</span> <span class="nx">WHERE</span> <span class="s">`id`</span><span class="p">=</span><span class="err">?</span> <span class="nx">LIMIT</span> <span class="mi">1</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>该语句耗时 4.003 ms。在开发中这个方法非常好用！</p>
+
+<p>有时候，调试信息都输出到控制台并不利于我们查询，<code>xorm</code>可以设置日志选项，将日志输出到文件中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+  <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;sql.log&#34;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">SetLogger</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nf">NewSimpleLogger</span><span class="p">(</span><span class="nx">f</span><span class="p">))</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Logger</span><span class="p">().</span><span class="nf">SetLevel</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">LOG_DEBUG</span><span class="p">)</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">ShowSQL</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+
+  <span class="nx">user</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">ID</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">Omit</span><span class="p">(</span><span class="s">&#34;created&#34;</span><span class="p">,</span> <span class="s">&#34;updated&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user:%v\n&#34;</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这样<code>xorm</code>就会将调试日志输出到<code>sql.log</code>文件中。注意<code>log.NewSimpleLogger(f)</code>是<code>xorm</code>的子包<code>xorm.io/xorm/log</code>提供的简单日志封装，而非标准库<code>log</code>。</p>
+
+<h4 id="exist"><code>Exist</code></h4>
+
+<p><code>Exist()</code>方法查询符合条件的记录是否存在，它的返回与<code>Get()</code>方法一致，都是<code>(bool, error)</code>。不同之处在于<code>Get()</code>会将查询得到的字段赋值给传入的对象。相比之下<code>Exist()</code>方法效率要高一些。如果不需要获取数据，只要判断是否存在建议使用<code>Exist()</code>方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">user1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+  <span class="nx">has</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">ID</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">Exist</span><span class="p">(</span><span class="nx">user1</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">has</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user with id=1 exist&#34;</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user with id=1 not exist&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">user2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+  <span class="nx">has</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name=?&#34;</span><span class="p">,</span> <span class="s">&#34;dj2&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">user2</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">has</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user with name=dj2 exist&#34;</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user with name=dj2 not exist&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="find"><code>Find</code></h4>
+
+<p><code>Get()</code>方法只能返回单条记录，其生成的 SQL 语句总是有<code>LIMIT 1</code>。<code>Find()</code>方法返回所有符合条件的记录。<code>Find()</code>需要传入对象切片的指针或 map 的指针：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">slcUsers</span><span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">User</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age &gt; ? and age &lt; ?&#34;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">slcUsers</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;users whose age between [12,30]:&#34;</span><span class="p">,</span> <span class="nx">slcUsers</span><span class="p">)</span>
+
+  <span class="nx">mapUsers</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">int64</span><span class="p">]</span><span class="nx">User</span><span class="p">)</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;length(name) = ?&#34;</span><span class="p">,</span> <span class="mi">3</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">mapUsers</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;users whose has name of length 3:&#34;</span><span class="p">,</span> <span class="nx">mapUsers</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>map</code>的键为主键，所以如果表为复合主键就不能使用这种方式了。</p>
+
+<h4 id="iterate"><code>Iterate</code></h4>
+
+<p>与<code>Find()</code>一样，<code>Iterate()</code>也是找到满足条件的所有记录，只不过传入了一个回调去处理每条记录：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age &gt; ? and age &lt; ?&#34;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">).</span><span class="nf">Iterate</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{},</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">bean</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;user%d:%v\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">bean</span><span class="p">.(</span><span class="o">*</span><span class="nx">User</span><span class="p">))</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+  <span class="p">})</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>如果回调返回一个非<code>nil</code>的错误，后面的记录就不会再处理了。</p>
+
+<h4 id="count"><code>Count</code></h4>
+
+<p><code>Count()</code>方法统计满足条件的记录数量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">num</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age &gt;= ?&#34;</span><span class="p">,</span> <span class="mi">50</span><span class="p">).</span><span class="nf">Count</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;there are %d users whose age &gt;= 50&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="rows"><code>Rows</code></h4>
+
+<p><code>Rows()</code>方法与<code>Iterate()</code>类似，不过返回一个<code>Rows</code>对象由我们自己迭代，更加灵活：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">rows</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age &gt; ? and age &lt; ?&#34;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">).</span><span class="nf">Rows</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+  <span class="k">defer</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+
+  <span class="nx">u</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+  <span class="k">for</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">rows</span><span class="p">.</span><span class="nf">Scan</span><span class="p">(</span><span class="nx">u</span><span class="p">)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">u</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>Rows()</code>的使用与<code>database/sql</code>有些类似，但是<code>rows.Scan()</code>方法可以传入一个对象，比<code>database/sql</code>更方便。</p>
+
+<h4 id="sum"><code>Sum</code></h4>
+
+<p><code>xorm</code>提供了两组求和的方法：</p>
+
+<ul>
+<li><code>Sum/SumInt</code>：求某个字段的和，<code>Sum</code>返回<code>float64</code>，<code>SumInt</code>返回<code>int64</code>；</li>
+<li><code>Sums/SumsInt</code>：分别求某些字段的和，<code>Sums</code>返回<code>[]float64</code>，<code>SumsInt</code>返回<code>[]int64</code>。</li>
+</ul>
+
+<p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Sum</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Id</span>    <span class="kt">int64</span>
+  <span class="nx">Money</span> <span class="kt">int32</span>
+  <span class="nx">Rate</span>  <span class="kt">float32</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Sync2</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Sum</span><span class="p">{})</span>
+
+  <span class="kd">var</span> <span class="nx">slice</span> <span class="p">[]</span><span class="o">*</span><span class="nx">Sum</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">slice</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">Sum</span><span class="p">{</span>
+      <span class="nx">Money</span><span class="p">:</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Int31n</span><span class="p">(</span><span class="mi">10000</span><span class="p">),</span>
+      <span class="nx">Rate</span><span class="p">:</span>  <span class="nx">rand</span><span class="p">.</span><span class="nf">Float32</span><span class="p">(),</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">slice</span><span class="p">)</span>
+
+  <span class="nx">totalMoney</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">SumInt</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Sum</span><span class="p">{},</span> <span class="s">&#34;money&#34;</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;total money:&#34;</span><span class="p">,</span> <span class="nx">totalMoney</span><span class="p">)</span>
+
+  <span class="nx">totalRate</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Sum</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Sum</span><span class="p">{},</span> <span class="s">&#34;rate&#34;</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;total rate:&#34;</span><span class="p">,</span> <span class="nx">totalRate</span><span class="p">)</span>
+
+  <span class="nx">totals</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Sums</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Sum</span><span class="p">{},</span> <span class="s">&#34;money&#34;</span><span class="p">,</span> <span class="s">&#34;rate&#34;</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;total money:%f &amp; total rate:%f&#34;</span><span class="p">,</span> <span class="nx">totals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">totals</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="插入">插入</h3>
+
+<p>使用<code>engine.Insert()</code>方法，可以插入单条数据，也可以批量插入多条数据：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+  <span class="nx">user</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;lzy&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">50</span><span class="p">}</span>
+
+  <span class="nx">affected</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d records inserted, user.id:%d\n&#34;</span><span class="p">,</span> <span class="nx">affected</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Id</span><span class="p">)</span>
+
+  <span class="nx">users</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">User</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="nx">users</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;xhq&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">41</span><span class="p">}</span>
+  <span class="nx">users</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;lhy&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+
+  <span class="nx">affected</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d records inserted, id1:%d, id2:%d&#34;</span><span class="p">,</span> <span class="nx">affected</span><span class="p">,</span> <span class="nx">users</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Id</span><span class="p">,</span> <span class="nx">users</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">Id</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>插入单条记录传入一个对象指针，批量插入传入一个切片。需要注意的是，批量插入时，每个对象的<code>Id</code>字段不会被自动赋值，所以上面最后一行输出<code>id1</code>和<code>id2</code>均为 0。另外，一次<code>Insert()</code>调用可以传入多个参数，可以对应不同的表。</p>
+
+<h3 id="更新">更新</h3>
+
+<p>更新通过<code>engine.Update()</code>实现，可以传入结构指针或<code>map[string]interface{}</code>。对于传入结构体指针的情况，<strong><code>xorm</code>只会更新非空的字段</strong>。如果一定要更新空字段，需要使用<code>Cols()</code>方法显示指定更新的列。使用<code>Cols()</code>方法指定列后，即使字段为空也会更新：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">ID</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">Update</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;ldj&#34;</span><span class="p">})</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">ID</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">Cols</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;age&#34;</span><span class="p">).</span><span class="nf">Update</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">})</span>
+
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Table</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">ID</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">Update</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span><span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">18</span><span class="p">})</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>由于使用<code>map[string]interface{}</code>类型的参数，<code>xorm</code>无法推断表名，必须使用<code>Table()</code>方法指定。第一个<code>Update()</code>方法只会更新<code>name</code>字段，其他空字段不更新。第二个<code>Update()</code>方法会更新<code>name</code>和<code>age</code>两个字段，<code>age</code>被更新为 0。</p>
+
+<h3 id="删除">删除</h3>
+
+<p>直接调用<code>engine.Delete()</code>删除符合条件的记录，返回删除的条目数量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">affected</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;lzy&#34;</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d records deleted&#34;</span><span class="p">,</span> <span class="nx">affected</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="创建时间-更新时间-软删除">创建时间、更新时间、软删除</h3>
+
+<p>如果我们为<code>time.Time/int/int64</code>这些类型的字段设置<code>xorm:&quot;created&quot;</code>标签，<strong>插入数据时</strong>，该字段会自动更新为当前时间；</p>
+
+<p>如果我们为<code>tiem.Time/int/int64</code>这些类型的字段设置<code>xorm:&quot;updated&quot;</code>标签，<strong>插入和更新数据时</strong>，该字段会自动更新为当前时间；</p>
+
+<p>如果我们为<code>time.Time</code>类型的字段设置了<code>xorm:&quot;deleted&quot;</code>标签，<strong>删除数据时</strong>，只是设置删除时间，并不真正删除记录。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Player</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Id</span> <span class="kt">int64</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+  <span class="nx">Age</span> <span class="kt">int</span>
+  <span class="nx">CreatedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;created&#34;`</span>
+  <span class="nx">UpdatedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;updated&#34;`</span>
+  <span class="nx">DeletedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`xorm:&#34;deleted&#34;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Sync2</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Player</span><span class="p">{})</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Insert</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Player</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span><span class="mi">18</span><span class="p">})</span>
+
+  <span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Player</span><span class="p">{}</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;dj&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;after insert:&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+  <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Table</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Player</span><span class="p">{}).</span><span class="nf">ID</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">Id</span><span class="p">).</span><span class="nf">Update</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span><span class="s">&#34;age&#34;</span><span class="p">:</span><span class="mi">30</span><span class="p">})</span>
+
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;dj&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;after update:&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+  <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">ID</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">Id</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Player</span><span class="p">{})</span>
+
+  <span class="nx">engine</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;dj&#34;</span><span class="p">).</span><span class="nf">Unscoped</span><span class="p">().</span><span class="nf">Get</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;after delete:&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">after</span> <span class="nx">insert</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">{</span><span class="mi">1</span> <span class="nx">dj</span> <span class="mi">18</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span><span class="p">:</span><span class="mi">19</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span><span class="p">:</span><span class="mi">19</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mo">0001</span><span class="o">-</span><span class="mo">01</span><span class="o">-</span><span class="mo">01</span> <span class="mo">00</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span> <span class="o">+</span><span class="mo">0000</span> <span class="nx">UTC</span><span class="p">}</span>
+<span class="nx">after</span> <span class="nx">update</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">{</span><span class="mi">1</span> <span class="nx">dj</span> <span class="mi">30</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span><span class="p">:</span><span class="mi">19</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span><span class="p">:</span><span class="mi">24</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mo">0001</span><span class="o">-</span><span class="mo">01</span><span class="o">-</span><span class="mo">01</span> <span class="mo">00</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mo">00</span> <span class="o">+</span><span class="mo">0000</span> <span class="nx">UTC</span><span class="p">}</span>
+<span class="nx">after</span> <span class="nx">delete</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">{</span><span class="mi">1</span> <span class="nx">dj</span> <span class="mi">30</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span><span class="p">:</span><span class="mi">19</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span><span class="p">:</span><span class="mi">24</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span><span class="p">:</span><span class="mi">29</span> <span class="o">+</span><span class="mi">0800</span> <span class="nx">CST</span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>创建时间一旦创建成功就不会再改变了，更新时间每次更新都会变化。已删除的记录必须使用<code>Unscoped()</code>方法查询，如果要真正 删除某条记录，也可以使用<code>Unscoped()</code>。</p>
+
+<h3 id="执行原始的-sql">执行原始的 SQL</h3>
+
+<p>除了上面提供的方法外，<code>xorm</code>还可以执行原始的 SQL 语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">engine</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">xorm</span><span class="p">.</span><span class="nf">NewEngine</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:12345@/test?charset=utf8&#34;</span><span class="p">)</span>
+
+  <span class="nx">querySql</span> <span class="o">:=</span> <span class="s">&#34;select * from user limit 1&#34;</span>
+  <span class="nx">reuslts</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="nx">querySql</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">record</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">reuslts</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">record</span> <span class="p">{</span>
+      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">updateSql</span> <span class="o">:=</span> <span class="s">&#34;update `user` set name=? where id=?&#34;</span>
+  <span class="nx">res</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">engine</span><span class="p">.</span><span class="nf">Exec</span><span class="p">(</span><span class="nx">updateSql</span><span class="p">,</span> <span class="s">&#34;ldj&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nf">RowsAffected</span><span class="p">())</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>Query()</code>方法返回<code>[]map[string][]byte</code>，切片中的每个元素都代表一条记录，<code>map</code>的键对应列名，<code>[]byte</code>为值。还有<code>QueryInterface()</code>方法返回<code>[]map[string]interface{}</code>，<code>QueryString()</code>方法返回<code>[]map[string]interface{}</code>。</p>
+
+<p>运行程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">salt</span> <span class="nx">salt</span>
+<span class="nx">age</span> <span class="mi">18</span>
+<span class="nx">passwd</span> <span class="mi">12345</span>
+<span class="nx">created</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">21</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mi">11</span>
+<span class="nx">updated</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">08</span> <span class="mi">22</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mi">58</span>
+<span class="nx">id</span> <span class="mi">1</span>
+<span class="nx">name</span> <span class="nx">ldj</span>
+<span class="mi">1</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="总结">总结</h2>
+
+<p>本文对<code>xorm</code>做了一个简单的介绍，<code>xorm</code>的特性远不止于此。<code>xorm</code>可以定义结构体字段与表列名映射规则、创建索引、执行事务、导入导出 SQL 脚本等。感兴趣可自行探索。好在<code>xorm</code>有比较详尽的中文文档。</p>
+
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li>xorm GitHub：<a href="https://github.com/go-xorm/xorm">https://github.com/go-xorm/xorm</a></li>
+<li>xorm 手册：<a href="http://gobook.io/read/gitea.com/xorm/manual-zh-CN/">http://gobook.io/read/gitea.com/xorm/manual-zh-CN/</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+
+<h2 id="我">我</h2>
+
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2020-05-07
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2020/04/28/godailylib/sqlc/">
+            <span class="next-text nav-default">Go 每日一库之 sqlc</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    显示 Disqus 评论
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "https://darjun.github.io/2020/05/07/godailylib/xorm/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'https-maiyang-me';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
