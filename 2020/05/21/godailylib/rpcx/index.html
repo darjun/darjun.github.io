@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 rpcx - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 在之前的两篇文章rpc和json-rpc中，我们介绍了 Go 标准库提供的rpc实现。在实际开发中，rpc库的功能还是有所欠缺。今天我们介绍一" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.60.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2020/05/21/godailylib/rpcx/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 rpcx" />
+<meta property="og:description" content="简介 在之前的两篇文章rpc和json-rpc中，我们介绍了 Go 标准库提供的rpc实现。在实际开发中，rpc库的功能还是有所欠缺。今天我们介绍一" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2020/05/21/godailylib/rpcx/" />
+<meta property="article:published_time" content="2020-05-21T23:04:23+00:00" />
+<meta property="article:modified_time" content="2020-05-21T23:04:23+00:00" />
+<meta itemprop="name" content="Go 每日一库之 rpcx">
+<meta itemprop="description" content="简介 在之前的两篇文章rpc和json-rpc中，我们介绍了 Go 标准库提供的rpc实现。在实际开发中，rpc库的功能还是有所欠缺。今天我们介绍一">
+
+
+<meta itemprop="datePublished" content="2020-05-21T23:04:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-05-21T23:04:23&#43;00:00" />
+<meta itemprop="wordCount" content="3725">
+
+
+
+<meta itemprop="keywords" content="Go 每日一库," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 rpcx"/>
+<meta name="twitter:description" content="简介 在之前的两篇文章rpc和json-rpc中，我们介绍了 Go 标准库提供的rpc实现。在实际开发中，rpc库的功能还是有所欠缺。今天我们介绍一"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 rpcx</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-05-21" class="post-time">
+          2020-05-21
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 3725 字 </span>
+          <span class="more-meta"> 预计阅读 8 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#传输">传输</a></li>
+<li><a href="#注册函数">注册函数</a></li>
+<li><a href="#注册中心">注册中心</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="简介">简介</h2>
+
+<p>在之前的两篇文章<a href="https://darjun.github.io/2020/05/08/godailylib/rpc"><code>rpc</code></a>和<a href="https://darjun.github.io/2020/05/10/godailylib/jsonrpc"><code>json-rpc</code></a>中，我们介绍了 Go 标准库提供的<code>rpc</code>实现。在实际开发中，<code>rpc</code>库的功能还是有所欠缺。今天我们介绍一个非常优秀的 Go RPC 库——<code>rpcx</code>。<code>rpcx</code>是一位国人大牛开发的，详细开发历程可以在<a href="https://blog.rpcx.io/"><code>rpcx</code>官方博客</a>了解。<code>rpcx</code>拥有媲美，甚至某种程度上超越<code>gRPC</code>的性能，有完善的中文文档，提供服务发现和治理的插件。</p>
+
+<h2 id="快速使用">快速使用</h2>
+
+<p>本文示例使用<code>go modules</code>。</p>
+
+<p>首先是安装：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">v</span> <span class="o">-</span><span class="nx">tags</span> <span class="s">&#34;reuseport quic kcp zookeeper etcd consul ping&#34;</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">smallnest</span><span class="o">/</span><span class="nx">rpcx</span><span class="o">/...</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看出<code>rpcx</code>的安装有点特殊。使用<code>go get -v github.com/smallnest/rpcx/...</code>命令只会安装<code>rpcx</code>的基础功能。扩展功能都是通过<code>build tags</code>指定。为了使用方便，一般安装所有的<code>tags</code>，如上面命令所示。这也是官方推荐的安装方式。</p>
+
+<p>我们先编写服务端程序，实际上这个程序与用<code>rpc</code>标准库编写的程序几乎一模一样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;context&#34;</span>
+  <span class="s">&#34;errors&#34;</span>
+
+  <span class="s">&#34;github.com/smallnest/rpcx/server&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Args</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">A</span><span class="p">,</span> <span class="nx">B</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Quotient</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Quo</span><span class="p">,</span> <span class="nx">Rem</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Arith</span> <span class="kt">int</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Arith</span><span class="p">)</span> <span class="nf">Mul</span><span class="p">(</span><span class="nx">cxt</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">reply</span> <span class="o">*</span><span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="o">*</span><span class="nx">reply</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">*</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Arith</span><span class="p">)</span> <span class="nf">Div</span><span class="p">(</span><span class="nx">cxt</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">quo</span> <span class="o">*</span><span class="nx">Quotient</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;divide by 0&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">/</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">%</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">s</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">),</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>首先创建一个<code>Server</code>对象，调用它的<code>RegisterName()</code>方法在服务路径<code>Arith</code>下注册<code>Mul</code>和<code>Div</code>方法。与标准库相比，<code>rpcx</code>要求注册方法的第一个参数必须为<code>context.Context</code>类型。最后调用<code>s.Serve(&quot;tcp&quot;, &quot;:8972&quot;)</code>监听 TCP 端口 8972。是不是很简单？启动服务器：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go</code></pre></td></tr></table>
+</div>
+</div>
+<p>然后是客户端程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;context&#34;</span>
+  <span class="s">&#34;flag&#34;</span>
+  <span class="s">&#34;log&#34;</span>
+
+  <span class="s">&#34;github.com/smallnest/rpcx/client&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">addr</span> <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;addr&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">,</span> <span class="s">&#34;service address&#34;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">flag</span><span class="p">.</span><span class="nf">Parse</span><span class="p">()</span>
+
+  <span class="nx">d</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewPeer2PeerDiscovery</span><span class="p">(</span><span class="s">&#34;tcp@&#34;</span><span class="o">+*</span><span class="nx">addr</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+  <span class="nx">xclient</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewXClient</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Failtry</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">RandomSelect</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">DefaultOption</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+
+  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="nx">A</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="nx">B</span><span class="p">:</span><span class="mi">20</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
+
+  <span class="nx">err</span> <span class="o">:=</span><span class="nx">xclient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;Mul&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;failed to call: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
+
+  <span class="nx">args</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">50</span><span class="p">,</span> <span class="mi">20</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">quo</span> <span class="nx">Quotient</span>
+  <span class="nx">err</span> <span class="p">=</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;Div&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">quo</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;failed to call: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>rpcx</code>支持多种服务发现的方式让客户端找到服务器。上面代码中我们使用的是最简单的点到点的方式，也就是<strong>直连</strong>。要调用服务端的方法，必须先创建一个<code>Client</code>对象。使用<code>Client</code>对象来调用远程方法。运行客户端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
+10 * 20 = 200
+50 * 20 = 2...10</code></pre></td></tr></table>
+</div>
+</div>
+<p>注意到，创建<code>Client</code>对象的参数有<code>client.Failtry</code>和<code>client.RandomSelect</code>。这两个参数分别为<strong>失败模式</strong>和<strong>如何选择服务器</strong>。</p>
+
+<h2 id="传输">传输</h2>
+
+<p><code>rpcx</code>支持多种传输协议：</p>
+
+<ul>
+<li><code>TCP</code>：TCP 协议，网络名称为<code>tcp</code>；</li>
+<li><code>HTTP</code>：HTTP 协议，网络名称为<code>http</code>；</li>
+<li><code>UnixDomain</code>：unix 域协议，网络名称为<code>unix</code>；</li>
+<li><code>QUIC</code>：是 Quick UDP Internet Connections 的缩写，意为<strong>快速UDP网络连接</strong>。HTTP/3 底层就是 QUIC 协议，Google 出品。网络名称为<code>quic</code>；</li>
+<li><code>KCP</code>：快速并且可靠的 ARQ 协议，网络名称为<code>kcp</code>。</li>
+</ul>
+
+<p><code>rpcx</code>对这些协议做了非常好的封装。除了在创建服务器和客户端连接时需要指定协议名称，其它时候的使用基本是透明的。我们将上面的例子改装成使用<code>http</code>协议的：</p>
+
+<p>服务端改动：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;http&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>客户端改动：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">d</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewPeer2PeerDiscovery</span><span class="p">(</span><span class="s">&#34;http@&#34;</span><span class="o">+*</span><span class="nx">addr</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>QUIC</code>和<code>KCP</code>的使用有点特殊，<code>QUIC</code>必须与 TLS 一起使用，<code>KCP</code>也需要做传输加密。使用 Go 语言我们能很方便地生成一个证书和私钥：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;crypto/rand&#34;</span>
+  <span class="s">&#34;crypto/rsa&#34;</span>
+  <span class="s">&#34;crypto/x509&#34;</span>
+  <span class="s">&#34;crypto/x509/pkix&#34;</span>
+  <span class="s">&#34;encoding/pem&#34;</span>
+  <span class="s">&#34;math/big&#34;</span>
+  <span class="s">&#34;net&#34;</span>
+  <span class="s">&#34;os&#34;</span>
+  <span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">max</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">).</span><span class="nf">Lsh</span><span class="p">(</span><span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">128</span><span class="p">)</span>
+  <span class="nx">serialNumber</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Int</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Reader</span><span class="p">,</span> <span class="nx">max</span><span class="p">)</span>
+  <span class="nx">subject</span> <span class="o">:=</span> <span class="nx">pkix</span><span class="p">.</span><span class="nx">Name</span><span class="p">{</span>
+    <span class="nx">Organization</span><span class="p">:</span>       <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;Go Daily Lib&#34;</span><span class="p">},</span>
+    <span class="nx">OrganizationalUnit</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;TechBlog&#34;</span><span class="p">},</span>
+    <span class="nx">CommonName</span><span class="p">:</span>         <span class="s">&#34;go daily lib&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">template</span> <span class="o">:=</span> <span class="nx">x509</span><span class="p">.</span><span class="nx">Certificate</span><span class="p">{</span>
+    <span class="nx">SerialNumber</span><span class="p">:</span> <span class="nx">serialNumber</span><span class="p">,</span>
+    <span class="nx">Subject</span><span class="p">:</span>      <span class="nx">subject</span><span class="p">,</span>
+    <span class="nx">NotBefore</span><span class="p">:</span>    <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(),</span>
+    <span class="nx">NotAfter</span><span class="p">:</span>     <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Add</span><span class="p">(</span><span class="mi">365</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Hour</span><span class="p">),</span>
+    <span class="nx">KeyUsage</span><span class="p">:</span>     <span class="nx">x509</span><span class="p">.</span><span class="nx">KeyUsageKeyEncipherment</span> <span class="p">|</span> <span class="nx">x509</span><span class="p">.</span><span class="nx">KeyUsageDigitalSignature</span><span class="p">,</span>
+    <span class="nx">ExtKeyUsage</span><span class="p">:</span>  <span class="p">[]</span><span class="nx">x509</span><span class="p">.</span><span class="nx">ExtKeyUsage</span><span class="p">{</span><span class="nx">x509</span><span class="p">.</span><span class="nx">ExtKeyUsageServerAuth</span><span class="p">},</span>
+    <span class="nx">IPAddresses</span><span class="p">:</span>  <span class="p">[]</span><span class="nx">net</span><span class="p">.</span><span class="nx">IP</span><span class="p">{</span><span class="nx">net</span><span class="p">.</span><span class="nf">ParseIP</span><span class="p">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="p">)},</span>
+  <span class="p">}</span>
+
+  <span class="nx">pk</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">GenerateKey</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Reader</span><span class="p">,</span> <span class="mi">2048</span><span class="p">)</span>
+
+  <span class="nx">derBytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">x509</span><span class="p">.</span><span class="nf">CreateCertificate</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Reader</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">template</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">template</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pk</span><span class="p">.</span><span class="nx">PublicKey</span><span class="p">,</span> <span class="nx">pk</span><span class="p">)</span>
+  <span class="nx">certOut</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;server.pem&#34;</span><span class="p">)</span>
+  <span class="nx">pem</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">certOut</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pem</span><span class="p">.</span><span class="nx">Block</span><span class="p">{</span><span class="nx">Type</span><span class="p">:</span> <span class="s">&#34;CERTIFICATE&#34;</span><span class="p">,</span> <span class="nx">Bytes</span><span class="p">:</span> <span class="nx">derBytes</span><span class="p">})</span>
+  <span class="nx">certOut</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+
+  <span class="nx">keyOut</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;server.key&#34;</span><span class="p">)</span>
+  <span class="nx">pem</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">keyOut</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pem</span><span class="p">.</span><span class="nx">Block</span><span class="p">{</span><span class="nx">Type</span><span class="p">:</span> <span class="s">&#34;RSA PRIVATE KEY&#34;</span><span class="p">,</span> <span class="nx">Bytes</span><span class="p">:</span> <span class="nx">x509</span><span class="p">.</span><span class="nf">MarshalPKCS1PrivateKey</span><span class="p">(</span><span class="nx">pk</span><span class="p">)})</span>
+  <span class="nx">keyOut</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面代码生成了一个证书和私钥，有效期为 1 年。运行程序，得到两个文件<code>server.pem</code>和<code>server.key</code>。然后我们就可以编写使用<code>QUIC</code>协议的程序了。服务端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">cert</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">tls</span><span class="p">.</span><span class="nf">LoadX509KeyPair</span><span class="p">(</span><span class="s">&#34;server.pem&#34;</span><span class="p">,</span> <span class="s">&#34;server.key&#34;</span><span class="p">)</span>
+  <span class="nx">config</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">tls</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span><span class="nx">Certificates</span><span class="p">:</span> <span class="p">[]</span><span class="nx">tls</span><span class="p">.</span><span class="nx">Certificate</span><span class="p">{</span><span class="nx">cert</span><span class="p">}}</span>
+
+  <span class="nx">s</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">(</span><span class="nx">server</span><span class="p">.</span><span class="nf">WithTLSConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">))</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">),</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;quic&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:8972&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>实际上就是加载证书和密钥，然后在创建<code>Server</code>对象时作为选项传入。客户端改动：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">conf</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">tls</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+  <span class="nx">InsecureSkipVerify</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="nx">option</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">DefaultOption</span>
+<span class="nx">option</span><span class="p">.</span><span class="nx">TLSConfig</span> <span class="p">=</span> <span class="nx">conf</span>
+<span class="nx">d</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewPeer2PeerDiscovery</span><span class="p">(</span><span class="s">&#34;quic@&#34;</span><span class="o">+*</span><span class="nx">addr</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+<span class="nx">xclient</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewXClient</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Failtry</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">RandomSelect</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">option</span><span class="p">)</span>
+<span class="k">defer</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>客户端也需要配置 TLS。</p>
+
+<p>有一点需要注意，<code>rpcx</code>对<code>quic/kcp</code>这些协议的支持是通过<code>build tags</code>实现的。默认不会编译<code>quic/kcp</code>相关文件。如果要使用，必须自己手动指定<code>tags</code>。先启动服务端程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">$ go run -tags quic main.go</pre></td></tr></table>
+</div>
+</div>
+<p>然后切换到客户端程序目录，执行下面命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="o">-</span><span class="nx">tags</span> <span class="nx">quic</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>还有一点需要注意，在使用<code>tcp</code>和<code>http</code>（底层也是<code>tcp</code>）协议的时候，我们可以将地址简写为<code>:8972</code>，因为默认就是本地地址。但是<code>quic</code>不行，必须把地址写完整：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// 服务端
+</span><span class="c1"></span><span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;quic&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:8972&#34;</span><span class="p">)</span>
+<span class="c1">// 客户端
+</span><span class="c1"></span><span class="nx">addr</span> <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;addr&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:8972&#34;</span><span class="p">,</span> <span class="s">&#34;service address&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="注册函数">注册函数</h2>
+
+<p>上面的例子都是调用对象的方法，我们也可以调用函数。函数的类型与对象方法相比只是没有<strong>接收者</strong>。注册函数需要指定一个服务路径。服务端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Args</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">A</span><span class="p">,</span> <span class="nx">B</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Quotient</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Quo</span><span class="p">,</span> <span class="nx">Rem</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+
+<span class="kd">func</span> <span class="nf">Mul</span><span class="p">(</span><span class="nx">cxt</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">reply</span> <span class="o">*</span><span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="o">*</span><span class="nx">reply</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">*</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Div</span><span class="p">(</span><span class="nx">cxt</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">quo</span> <span class="o">*</span><span class="nx">Quotient</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;divide by 0&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">/</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">%</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">s</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterFunction</span><span class="p">(</span><span class="s">&#34;function&#34;</span><span class="p">,</span> <span class="nx">Mul</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterFunction</span><span class="p">(</span><span class="s">&#34;function&#34;</span><span class="p">,</span> <span class="nx">Div</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>只是注册方法由<code>RegisterName</code>变为了<code>RegisterFunction</code>，参数由一个对象变为一个函数。我们需要为注册的函数指定一个服务路径，客户端调用时会根据这个路径查找对应方法。客户端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">flag</span><span class="p">.</span><span class="nf">Parse</span><span class="p">()</span>
+
+  <span class="nx">d</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewPeer2PeerDiscovery</span><span class="p">(</span><span class="s">&#34;tcp@&#34;</span><span class="o">+*</span><span class="nx">addr</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+  <span class="nx">xclient</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewXClient</span><span class="p">(</span><span class="s">&#34;function&#34;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Failtry</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">RandomSelect</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">DefaultOption</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+
+  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="nx">A</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="nx">B</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
+
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;Mul&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;failed to call: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
+
+  <span class="nx">args</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">50</span><span class="p">,</span> <span class="mi">20</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">quo</span> <span class="nx">Quotient</span>
+  <span class="nx">err</span> <span class="p">=</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;Div&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">quo</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;failed to call: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="注册中心">注册中心</h2>
+
+<p><code>rpcx</code>支持多种注册中心：</p>
+
+<ul>
+<li>点对点：其实就是直连，没有注册中心；</li>
+<li>点对多：可以配置多个服务器；</li>
+<li><code>zookeeper</code>：常用的注册中心；</li>
+<li><code>Etcd</code>：Go 语言编写的注册中心；</li>
+<li>进程内调用：方便调试功能，在同一个进程内查找服务；</li>
+<li><code>Consul/mDNS</code>等。</li>
+</ul>
+
+<p>我们之前演示的都是<strong>点对点</strong>的连接，接下来我们介绍如何使用<code>zookeeper</code>作为注册中心。在<code>rpcx</code>中，注册中心是通过插件的方式集成的。使用<code>ZooKeeperRegisterPlugin</code>这个插件来集成<code>Zookeeper</code>。服务端代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Args</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">A</span><span class="p">,</span> <span class="nx">B</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Quotient</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Quo</span><span class="p">,</span> <span class="nx">Rem</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">addr</span>     <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;addr&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">,</span> <span class="s">&#34;service address&#34;</span><span class="p">)</span>
+  <span class="nx">zkAddr</span>   <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;zkAddr&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:2181&#34;</span><span class="p">,</span> <span class="s">&#34;zookeeper address&#34;</span><span class="p">)</span>
+  <span class="nx">basePath</span> <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;basePath&#34;</span><span class="p">,</span> <span class="s">&#34;/services/math&#34;</span><span class="p">,</span> <span class="s">&#34;service base path&#34;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Arith</span> <span class="kt">int</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Arith</span><span class="p">)</span> <span class="nf">Mul</span><span class="p">(</span><span class="nx">cxt</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">reply</span> <span class="o">*</span><span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Mul on&#34;</span><span class="p">,</span> <span class="o">*</span><span class="nx">addr</span><span class="p">)</span>
+  <span class="o">*</span><span class="nx">reply</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">*</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Arith</span><span class="p">)</span> <span class="nf">Div</span><span class="p">(</span><span class="nx">cxt</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">quo</span> <span class="o">*</span><span class="nx">Quotient</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Div on&#34;</span><span class="p">,</span> <span class="o">*</span><span class="nx">addr</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;divide by 0&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">/</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">%</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+  <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">flag</span><span class="p">.</span><span class="nf">Parse</span><span class="p">()</span>
+
+  <span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">serverplugin</span><span class="p">.</span><span class="nx">ZooKeeperRegisterPlugin</span><span class="p">{</span>
+    <span class="nx">ServiceAddress</span><span class="p">:</span>   <span class="s">&#34;tcp@&#34;</span> <span class="o">+</span> <span class="o">*</span><span class="nx">addr</span><span class="p">,</span>
+    <span class="nx">ZooKeeperServers</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="o">*</span><span class="nx">zkAddr</span><span class="p">},</span>
+    <span class="nx">BasePath</span><span class="p">:</span>         <span class="o">*</span><span class="nx">basePath</span><span class="p">,</span>
+    <span class="nx">Metrics</span><span class="p">:</span>          <span class="nx">metrics</span><span class="p">.</span><span class="nf">NewRegistry</span><span class="p">(),</span>
+    <span class="nx">UpdateInterval</span><span class="p">:</span>   <span class="nx">time</span><span class="p">.</span><span class="nx">Minute</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Start</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">s</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nx">Plugins</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+
+  <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">),</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+  <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="o">*</span><span class="nx">addr</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>在<code>ZooKeeperRegisterPlugin</code>中，我们指定了本服务地址，zookeeper 集群地址（可以是多个），起始路径等。服务器启动时自动向 zookeeper 注册本服务的信息，客户端可直接从 zookeeper 拉取可用的服务列表。</p>
+
+<p>首先启动 zookeeper 服务器，zookeeper 的安装与启动可以参考我的上一篇文章。分别在 3 个控制台中启动 3 个服务器，指定不同的端口（注意需要指定<code>-tags zookeeper</code>）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">// 控制台1
+$ go run -tags zookeeper main.go -addr 127.0.0.1:8971
+// 控制台2
+$ go run -tags zookeeper main.go -addr 127.0.0.1:8972
+// 控制台3
+$ go run -tags zookeeper main.go -addr 127.0.0.1:8973</code></pre></td></tr></table>
+</div>
+</div>
+<p>启动之后，我们观察 zookeeper 路径<code>/services/math</code>中的内容：</p>
+
+<p><img src="/img/in-post/godailylib/rpcx1.png#center" alt="" /></p>
+
+<p>非常棒，可用的服务地址不用我们手动维护了！</p>
+
+<p>接下来是客户端：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">zkAddr</span>   <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;zkAddr&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:2181&#34;</span><span class="p">,</span> <span class="s">&#34;zookeeper address&#34;</span><span class="p">)</span>
+  <span class="nx">basePath</span> <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;basePath&#34;</span><span class="p">,</span> <span class="s">&#34;/services/math&#34;</span><span class="p">,</span> <span class="s">&#34;service base path&#34;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">flag</span><span class="p">.</span><span class="nf">Parse</span><span class="p">()</span>
+
+  <span class="nx">d</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewZookeeperDiscovery</span><span class="p">(</span><span class="o">*</span><span class="nx">basePath</span><span class="p">,</span> <span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="o">*</span><span class="nx">zkAddr</span><span class="p">},</span> <span class="kc">nil</span><span class="p">)</span>
+  <span class="nx">xclient</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewXClient</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Failtry</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">RandomSelect</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">DefaultOption</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+
+  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="nx">A</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="nx">B</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
+
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;Mul&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;failed to call: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
+
+  <span class="nx">args</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">50</span><span class="p">,</span> <span class="mi">20</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">quo</span> <span class="nx">Quotient</span>
+  <span class="nx">err</span> <span class="p">=</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;Div&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">quo</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;failed to call: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们通过 zookeeper 读取可用的<code>Arith</code>服务列表，然后随机选择一个服务发送请求：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run -tags zookeeper main.go
+2020/05/26 23:03:40 Connected to 127.0.0.1:2181
+2020/05/26 23:03:40 authenticated: id=72057658440744975, timeout=10000
+2020/05/26 23:03:40 re-submitting `0` credentials after reconnect
+10 * 20 = 200
+50 * 20 = 2...10</code></pre></td></tr></table>
+</div>
+</div>
+<p>我们的客户端发送了两条请求。由于使用了<code>client.RandomSelect</code>策略，所以这两个请求随机发送到某个服务端。我在<code>Mul</code>和<code>Div</code>方法中增加了一个打印，可以观察一下各个控制台的输出！</p>
+
+<p>如果我们关闭了某个服务器，对应的服务地址会从 zookeeper 中移除。我关闭了服务器 1，zookeeper 服务列表变为：</p>
+
+<p><img src="/img/in-post/godailylib/rpcx2.png#center" alt="" /></p>
+
+<p>相比上一篇文章中需要手动维护 zookeeper 的内容，<code>rpcx</code>的自动注册和维护明显要方便太多了！</p>
+
+<h2 id="总结">总结</h2>
+
+<p><code>rpcx</code>是 Go 语言中首屈一指的 rpc 库，功能丰富，性能出众，文档丰富，已经被不少公司和个人采用。推荐深入学习！</p>
+
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+<li>rpcx GitHub：<a href="https://github.com/jordan-wright/rpcx">https://github.com/smallnest/rpcx</a></li>
+<li>rpcx 博客：<a href="https://blog.rpcx.io/">https://blog.rpcx.io/</a></li>
+<li>rpcx 官网：<a href="https://rpcx.io/">https://rpcx.io/</a></li>
+<li>rpcx 文档：<a href="https://doc.rpcx.io/">https://doc.rpcx.io/</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+
+<h2 id="我">我</h2>
+
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2020-05-21
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2020/05/10/godailylib/jsonrpc/">
+            <span class="next-text nav-default">Go 每日一库之 jsonrpc</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2020
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
