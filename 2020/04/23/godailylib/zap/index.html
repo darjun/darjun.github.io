@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/04/23/godailylib/zap/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-04-23T23:07:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 zap">
 <meta itemprop="description" content="简介 在很早之前的文章中，我们介绍过 Go 标准日志库log和结构化的日志库logrus。在热点函数中记录日志对日志库的执行性能有较高的要求，不能影">
-
-
-<meta itemprop="datePublished" content="2020-04-23T23:07:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-04-23T23:07:23&#43;00:00" />
+<meta itemprop="datePublished" content="2020-04-23T23:07:23+00:00" />
+<meta itemprop="dateModified" content="2020-04-23T23:07:23+00:00" />
 <meta itemprop="wordCount" content="4389">
 
 
@@ -384,55 +382,49 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#记录层级关系">记录层级关系</a></li>
-<li><a href="#定制-logger">定制<code>Logger</code></a></li>
-<li><a href="#选项">选项</a>
-<ul>
-<li><a href="#输出文件名和行号">输出文件名和行号</a></li>
-<li><a href="#输出调用堆栈">输出调用堆栈</a></li>
-</ul></li>
-<li><a href="#全局-logger">全局<code>Logger</code></a>
-<ul>
-<li><a href="#预设日志字段">预设日志字段</a></li>
-</ul></li>
-<li><a href="#与标准日志库搭配使用">与标准日志库搭配使用</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#记录层级关系">记录层级关系</a></li>
+    <li><a href="#定制logger">定制<code>Logger</code></a></li>
+    <li><a href="#选项">选项</a>
+      <ul>
+        <li><a href="#输出文件名和行号">输出文件名和行号</a></li>
+        <li><a href="#输出调用堆栈">输出调用堆栈</a></li>
+      </ul>
+    </li>
+    <li><a href="#全局logger">全局<code>Logger</code></a>
+      <ul>
+        <li><a href="#预设日志字段">预设日志字段</a></li>
+      </ul>
+    </li>
+    <li><a href="#与标准日志库搭配使用">与标准日志库搭配使用</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>在很早之前的文章中，我们介绍过 Go 标准日志库<a href="https://darjun.github.io/2020/02/07/godailylib/log/"><code>log</code></a>和结构化的日志库<a href="https://darjun.github.io/2020/02/07/godailylib/logrus/"><code>logrus</code></a>。在热点函数中记录日志对日志库的执行性能有较高的要求，不能影响正常逻辑的执行时间。<code>uber</code>开源的日志库<code>zap</code>，对性能和内存分配做了极致的优化。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="k">go</span><span class="p">.</span><span class="nx">uber</span><span class="p">.</span><span class="nx">org</span><span class="o">/</span><span class="nx">zap</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="k">go</span><span class="p">.</span><span class="nx">uber</span><span class="p">.</span><span class="nx">org</span><span class="o">/</span><span class="nx">zap</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后使用：</p>
+</div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -487,49 +479,41 @@ if (!doNotTrack) {
     <span class="s">&#34;backoff&#34;</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
   <span class="p">)</span>
   <span class="nx">sugar</span><span class="p">.</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;Failed to fetch URL: %s&#34;</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>zap</code>库的使用与其他的日志库非常相似。先创建一个<code>logger</code>，然后调用各个级别的方法记录日志（<code>Debug/Info/Error/Warn</code>）。<code>zap</code>提供了几个快速创建<code>logger</code>的方法，<code>zap.NewExample()</code>、<code>zap.NewDevelopment()</code>、<code>zap.NewProduction()</code>，还有高度定制化的创建方法<code>zap.New()</code>。创建前 3 个<code>logger</code>时，<code>zap</code>会使用一些预定义的设置，它们的使用场景也有所不同。<code>Example</code>适合用在测试代码中，<code>Development</code>在开发环境中使用，<code>Production</code>用在生成环境。</p>
-
+</div><p><code>zap</code>库的使用与其他的日志库非常相似。先创建一个<code>logger</code>，然后调用各个级别的方法记录日志（<code>Debug/Info/Error/Warn</code>）。<code>zap</code>提供了几个快速创建<code>logger</code>的方法，<code>zap.NewExample()</code>、<code>zap.NewDevelopment()</code>、<code>zap.NewProduction()</code>，还有高度定制化的创建方法<code>zap.New()</code>。创建前 3 个<code>logger</code>时，<code>zap</code>会使用一些预定义的设置，它们的使用场景也有所不同。<code>Example</code>适合用在测试代码中，<code>Development</code>在开发环境中使用，<code>Production</code>用在生成环境。</p>
 <p><code>zap</code>底层 API 可以设置缓存，所以一般使用<code>defer logger.Sync()</code>将缓存同步到文件中。</p>
-
 <p>由于<code>fmt.Printf</code>之类的方法大量使用<code>interface{}</code>和反射，会有不少性能损失，并且增加了内存分配的频次。<code>zap</code>为了提高性能、减少内存分配次数，没有使用反射，而且默认的<code>Logger</code>只支持强类型的、结构化的日志。必须使用<code>zap</code>提供的方法记录字段。<code>zap</code>为 Go 语言中所有的基本类型和其他常见类型都提供了方法。这些方法的名称也比较好记忆，<code>zap.Type</code>（<code>Type</code>为<code>bool/int/uint/float64/complex64/time.Time/time.Duration/error</code>等）就表示该类型的字段，<code>zap.Typep</code>以<code>p</code>结尾表示该类型指针的字段，<code>zap.Types</code>以<code>s</code>结尾表示该类型切片的字段。如：</p>
-
 <ul>
 <li><code>zap.Bool(key string, val bool) Field</code>：<code>bool</code>字段</li>
 <li><code>zap.Boolp(key string, val *bool) Field</code>：<code>bool</code>指针字段；</li>
 <li><code>zap.Bools(key string, val []bool) Field</code>：<code>bool</code>切片字段。</li>
 </ul>
-
 <p>当然也有一些特殊类型的字段：</p>
-
 <ul>
 <li><code>zap.Any(key string, value interface{}) Field</code>：任意类型的字段；</li>
 <li><code>zap.Binary(key string, val []byte) Field</code>：二进制串的字段。</li>
 </ul>
-
 <p>当然，每个字段都用方法包一层用起来比较繁琐。<code>zap</code>也提供了便捷的方法<code>SugarLogger</code>，可以使用<code>printf</code>格式符的方式。调用<code>logger.Sugar()</code>即可创建<code>SugaredLogger</code>。<code>SugaredLogger</code>的使用比<code>Logger</code>简单，只是性能比<code>Logger</code>低 50% 左右，可以用在非热点函数中。调用<code>SugarLogger</code>以<code>f</code>结尾的方法与<code>fmt.Printf</code>没什么区别，如例子中的<code>Infof</code>。同时<code>SugarLogger</code>还支持以<code>w</code>结尾的方法，这种方式不需要先创建字段对象，直接将字段名和值依次放在参数中即可，如例子中的<code>Infow</code>。</p>
-
 <p>默认情况下，<code>Example</code>输出的日志为 JSON 格式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;failed to fetch URL&#34;</span><span class="p">,</span><span class="s">&#34;url&#34;</span><span class="p">:</span><span class="s">&#34;http://example.org/api&#34;</span><span class="p">,</span><span class="s">&#34;attempt&#34;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s">&#34;backoff&#34;</span><span class="p">:</span><span class="s">&#34;1s&#34;</span><span class="p">}</span>
 <span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;failed to fetch URL&#34;</span><span class="p">,</span><span class="s">&#34;url&#34;</span><span class="p">:</span><span class="s">&#34;http://example.org/api&#34;</span><span class="p">,</span><span class="s">&#34;attempt&#34;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s">&#34;backoff&#34;</span><span class="p">:</span><span class="s">&#34;1s&#34;</span><span class="p">}</span>
-<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;Failed to fetch URL: http://example.org/api&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;Failed to fetch URL: http://example.org/api&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="记录层级关系">记录层级关系</h2>
-
+</div><h2 id="记录层级关系">记录层级关系</h2>
 <p>前面我们记录的日志都是一层结构，没有嵌套的层级。我们可以使用<code>zap.Namespace(key string) Field</code>构建一个<strong>命名空间</strong>，后续的<code>Field</code>都记录在此命名空间中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -560,24 +544,24 @@ if (!doNotTrack) {
     <span class="nx">zap</span><span class="p">.</span><span class="nf">Int</span><span class="p">(</span><span class="s">&#34;counter&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
   <span class="p">)</span>
   <span class="nx">logger2</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;tracked some metrics&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;tracked some metrics&#34;</span><span class="p">,</span><span class="s">&#34;metrics&#34;</span><span class="p">:{</span><span class="s">&#34;counter&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}</span>
-<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;tracked some metrices&#34;</span><span class="p">,</span><span class="s">&#34;metrics&#34;</span><span class="p">:{</span><span class="s">&#34;counter&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;tracked some metrices&#34;</span><span class="p">,</span><span class="s">&#34;metrics&#34;</span><span class="p">:{</span><span class="s">&#34;counter&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面我们演示了两种<code>Namespace</code>的用法，一种是直接作为字段传入<code>Debug/Info</code>等方法，一种是调用<code>With()</code>创建一个新的<code>Logger</code>，新的<code>Logger</code>记录日志时总是带上预设的字段。<code>With()</code>方法实际上是创建了一个新的<code>Logger</code>：</p>
+</div><p>上面我们演示了两种<code>Namespace</code>的用法，一种是直接作为字段传入<code>Debug/Info</code>等方法，一种是调用<code>With()</code>创建一个新的<code>Logger</code>，新的<code>Logger</code>记录日志时总是带上预设的字段。<code>With()</code>方法实际上是创建了一个新的<code>Logger</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -596,15 +580,14 @@ if (!doNotTrack) {
   <span class="nx">l</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">clone</span><span class="p">()</span>
   <span class="nx">l</span><span class="p">.</span><span class="nx">core</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">core</span><span class="p">.</span><span class="nf">With</span><span class="p">(</span><span class="nx">fields</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">l</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="定制-logger">定制<code>Logger</code></h2>
-
+</div><h2 id="定制logger">定制<code>Logger</code></h2>
 <p>调用<code>NexExample()/NewDevelopment()/NewProduction()</code>这 3 个方法，<code>zap</code>使用默认的配置。我们也可以手动调整，配置结构如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -623,21 +606,20 @@ if (!doNotTrack) {
   <span class="nx">OutputPaths</span> <span class="p">[]</span><span class="kt">string</span> <span class="s">`json:&#34;outputPaths&#34; yaml:&#34;outputPaths&#34;`</span>
   <span class="nx">ErrorOutputPaths</span> <span class="p">[]</span><span class="kt">string</span> <span class="s">`json:&#34;errorOutputPaths&#34; yaml:&#34;errorOutputPaths&#34;`</span>
   <span class="nx">InitialFields</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span> <span class="s">`json:&#34;initialFields&#34; yaml:&#34;initialFields&#34;`</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li><code>Level</code>：日志级别；</li>
 <li><code>Encoding</code>：输出的日志格式，默认为 JSON；</li>
 <li><code>OutputPaths</code>：可以配置多个输出路径，路径可以是文件路径和<code>stdout</code>（标准输出）；</li>
 <li><code>ErrorOutputPaths</code>：错误输出路径，也可以是多个；</li>
 <li><code>InitialFields</code>：每条日志中都会输出这些值。</li>
 </ul>
-
 <p>其中<code>EncoderConfig</code>为编码配置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -668,19 +650,18 @@ if (!doNotTrack) {
   <span class="nx">EncodeDuration</span> <span class="nx">DurationEncoder</span> <span class="s">`json:&#34;durationEncoder&#34; yaml:&#34;durationEncoder&#34;`</span>
   <span class="nx">EncodeCaller</span>   <span class="nx">CallerEncoder</span>   <span class="s">`json:&#34;callerEncoder&#34; yaml:&#34;callerEncoder&#34;`</span>
   <span class="nx">EncodeName</span> <span class="nx">NameEncoder</span> <span class="s">`json:&#34;nameEncoder&#34; yaml:&#34;nameEncoder&#34;`</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li><code>MessageKey</code>：日志中信息的键名，默认为<code>msg</code>；</li>
 <li><code>LevelKey</code>：日志中级别的键名，默认为<code>level</code>；</li>
 <li><code>EncodeLevel</code>：日志中级别的格式，默认为小写，如<code>debug/info</code>。</li>
 </ul>
-
 <p>调用<code>zap.Config</code>的<code>Build()</code>方法即可使用该配置对象创建一个<code>Logger</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -733,22 +714,22 @@ if (!doNotTrack) {
   <span class="k">defer</span> <span class="nx">logger</span><span class="p">.</span><span class="nf">Sync</span><span class="p">()</span>
 
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;server start work successfully!&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面创建一个输出到标准输出<code>stdout</code>和文件<code>server.log</code>的<code>Logger</code>。观察输出：</p>
+</div><p>上面创建一个输出到标准输出<code>stdout</code>和文件<code>server.log</code>的<code>Logger</code>。观察输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;server start work successfully!&#34;</span><span class="p">,</span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;server start work successfully!&#34;</span><span class="p">,</span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用<code>NewDevelopment()</code>创建的<code>Logger</code>使用的是如下的配置：</p>
+</div><p>使用<code>NewDevelopment()</code>创建的<code>Logger</code>使用的是如下的配置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -805,23 +786,18 @@ if (!doNotTrack) {
     <span class="nx">EncodeDuration</span><span class="p">:</span> <span class="nx">zapcore</span><span class="p">.</span><span class="nx">StringDurationEncoder</span><span class="p">,</span>
     <span class="nx">EncodeCaller</span><span class="p">:</span>   <span class="nx">zapcore</span><span class="p">.</span><span class="nx">ShortCallerEncoder</span><span class="p">,</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>NewProduction()</code>的配置可自行查看。</p>
-
+</div><p><code>NewProduction()</code>的配置可自行查看。</p>
 <h2 id="选项">选项</h2>
-
 <p><code>NewExample()/NewDevelopment()/NewProduction()</code>这 3 个函数可以传入若干类型为<code>zap.Option</code>的选项，从而定制<code>Logger</code>的行为。又一次见到了<strong>选项模式</strong>！！</p>
-
 <p><code>zap</code>提供了丰富的选项供我们选择。</p>
-
 <h3 id="输出文件名和行号">输出文件名和行号</h3>
-
 <p>调用<code>zap.AddCaller()</code>返回的选项设置输出文件名和行号。但是有一个前提，必须设置配置对象<code>Config</code>中的<code>CallerKey</code>字段。也因此<code>NewExample()</code>不能输出这个信息（它的<code>Config</code>没有设置<code>CallerKey</code>）。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -834,24 +810,23 @@ if (!doNotTrack) {
   <span class="k">defer</span> <span class="nx">logger</span><span class="p">.</span><span class="nf">Sync</span><span class="p">()</span>
 
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;ts&#34;</span><span class="p">:</span><span class="mf">1587740198.9508286</span><span class="p">,</span><span class="s">&#34;caller&#34;</span><span class="p">:</span><span class="s">&#34;caller/main.go:9&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;ts&#34;</span><span class="p">:</span><span class="mf">1587740198.9508286</span><span class="p">,</span><span class="s">&#34;caller&#34;</span><span class="p">:</span><span class="s">&#34;caller/main.go:9&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>Info()</code>方法在<code>main.go</code>的第 9 行被调用。<code>AddCaller()</code>与<code>zap.WithCaller(true)</code>等价。</p>
-
+</div><p><code>Info()</code>方法在<code>main.go</code>的第 9 行被调用。<code>AddCaller()</code>与<code>zap.WithCaller(true)</code>等价。</p>
 <p>有时我们稍微封装了一下记录日志的方法，但是我们希望输出的文件名和行号是调用封装函数的位置。这时可以使用<code>zap.AddCallerSkip(skip int)</code>向上跳 1 层：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -876,26 +851,24 @@ if (!doNotTrack) {
   <span class="nx">zap</span><span class="p">.</span><span class="nf">ReplaceGlobals</span><span class="p">(</span><span class="nx">logger</span><span class="p">)</span>
 
   <span class="nf">Output</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;ts&#34;</span><span class="p">:</span><span class="mf">1587740501.5592482</span><span class="p">,</span><span class="s">&#34;caller&#34;</span><span class="p">:</span><span class="s">&#34;skip/main.go:15&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;ts&#34;</span><span class="p">:</span><span class="mf">1587740501.5592482</span><span class="p">,</span><span class="s">&#34;caller&#34;</span><span class="p">:</span><span class="s">&#34;skip/main.go:15&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出在<code>main</code>函数中调用<code>Output()</code>的位置。如果不指定<code>zap.AddCallerSkip(1)</code>，将输出<code>&quot;caller&quot;:&quot;skip/main.go:6&quot;</code>，这是在<code>Output()</code>函数中调用<code>zap.Info()</code>的位置。因为这个<code>Output()</code>函数可能在很多地方被调用，所以这个位置参考意义并不大。试试看！</p>
-
+</div><p>输出在<code>main</code>函数中调用<code>Output()</code>的位置。如果不指定<code>zap.AddCallerSkip(1)</code>，将输出<code>&quot;caller&quot;:&quot;skip/main.go:6&quot;</code>，这是在<code>Output()</code>函数中调用<code>zap.Info()</code>的位置。因为这个<code>Output()</code>函数可能在很多地方被调用，所以这个位置参考意义并不大。试试看！</p>
 <h3 id="输出调用堆栈">输出调用堆栈</h3>
-
 <p>有时候在某个函数处理中遇到了异常情况，因为这个函数可能在很多地方被调用。如果我们能输出此次调用的堆栈，那么分析起来就会很方便。我们可以使用<code>zap.AddStackTrace(lvl zapcore.LevelEnabler)</code>达成这个目的。该函数指定<code>lvl</code>和之上的级别都需要输出调用堆栈：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -928,22 +901,22 @@ if (!doNotTrack) {
   <span class="nx">zap</span><span class="p">.</span><span class="nf">ReplaceGlobals</span><span class="p">(</span><span class="nx">logger</span><span class="p">)</span>
 
   <span class="nf">f1</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>将<code>zapcore.WarnLevel</code>传入<code>AddStacktrace()</code>，之后<code>Warn()/Error()</code>等级别的日志会输出堆栈，<code>Debug()/Info()</code>这些级别不会。运行结果：</p>
+</div><p>将<code>zapcore.WarnLevel</code>传入<code>AddStacktrace()</code>，之后<code>Warn()/Error()</code>等级别的日志会输出堆栈，<code>Debug()/Info()</code>这些级别不会。运行结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;warn&#34;</span><span class="p">,</span><span class="s">&#34;ts&#34;</span><span class="p">:</span><span class="mf">1587740883.4965692</span><span class="p">,</span><span class="s">&#34;caller&#34;</span><span class="p">:</span><span class="s">&#34;stacktrace/main.go:13&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">,</span><span class="s">&#34;stacktrace&#34;</span><span class="p">:</span><span class="s">&#34;main.f2\n\td:/code/golang/src/github.com/darjun/go-daily-lib/zap/option/stacktrace/main.go:13\nmain.f1\n\td:/code/golang/src/github.com/darjun/go-daily-lib/zap/option/stacktrace/main.go:9\nmain.main\n\td:/code/golang/src/github.com/darjun/go-daily-lib/zap/option/stacktrace/main.go:22\nruntime.main\n\tC:/Go/src/runtime/proc.go:203&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;warn&#34;</span><span class="p">,</span><span class="s">&#34;ts&#34;</span><span class="p">:</span><span class="mf">1587740883.4965692</span><span class="p">,</span><span class="s">&#34;caller&#34;</span><span class="p">:</span><span class="s">&#34;stacktrace/main.go:13&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">,</span><span class="s">&#34;stacktrace&#34;</span><span class="p">:</span><span class="s">&#34;main.f2\n\td:/code/golang/src/github.com/darjun/go-daily-lib/zap/option/stacktrace/main.go:13\nmain.f1\n\td:/code/golang/src/github.com/darjun/go-daily-lib/zap/option/stacktrace/main.go:9\nmain.main\n\td:/code/golang/src/github.com/darjun/go-daily-lib/zap/option/stacktrace/main.go:22\nruntime.main\n\tC:/Go/src/runtime/proc.go:203&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>把<code>stacktrace</code>单独拉出来：</p>
+</div><p>把<code>stacktrace</code>单独拉出来：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -960,17 +933,15 @@ if (!doNotTrack) {
     <span class="nx">main</span><span class="p">.</span><span class="nx">main</span>
     <span class="nx">d</span><span class="p">:</span><span class="o">/</span><span class="nx">code</span><span class="o">/</span><span class="nx">golang</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">zap</span><span class="o">/</span><span class="nx">option</span><span class="o">/</span><span class="nx">stacktrace</span><span class="o">/</span><span class="nx">main</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">22</span>
       <span class="nx">runtime</span><span class="p">.</span><span class="nx">main</span>
-      <span class="nx">C</span><span class="p">:</span><span class="o">/</span><span class="nx">Go</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">runtime</span><span class="o">/</span><span class="nx">proc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">203</span></code></pre></td></tr></table>
+      <span class="nx">C</span><span class="p">:</span><span class="o">/</span><span class="nx">Go</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">runtime</span><span class="o">/</span><span class="nx">proc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">203</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>很清楚地看到调用路径。</p>
-
-<h2 id="全局-logger">全局<code>Logger</code></h2>
-
+</div><p>很清楚地看到调用路径。</p>
+<h2 id="全局logger">全局<code>Logger</code></h2>
 <p>为了方便使用，<code>zap</code>提供了两个全局的<code>Logger</code>，一个是<code>*zap.Logger</code>，可调用<code>zap.L()</code>获得；另一个是<code>*zap.SugaredLogger</code>，可调用<code>zap.S()</code>获得。需要注意的是，全局的<code>Logger</code>默认并不会记录日志！它是一个无实际效果的<code>Logger</code>。看源码:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -983,13 +954,13 @@ if (!doNotTrack) {
   <span class="nx">_globalMu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
   <span class="nx">_globalL</span>  <span class="p">=</span> <span class="nf">NewNop</span><span class="p">()</span>
   <span class="nx">_globalS</span>  <span class="p">=</span> <span class="nx">_globalL</span><span class="p">.</span><span class="nf">Sugar</span><span class="p">()</span>
-<span class="p">)</span></code></pre></td></tr></table>
+<span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们可以使用<code>ReplaceGlobals(logger *Logger) func()</code>将<code>logger</code>设置为全局的<code>Logger</code>，该函数返回一个无参函数，用于恢复全局<code>Logger</code>设置：</p>
+</div><p>我们可以使用<code>ReplaceGlobals(logger *Logger) func()</code>将<code>logger</code>设置为全局的<code>Logger</code>，该函数返回一个无参函数，用于恢复全局<code>Logger</code>设置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1012,28 +983,26 @@ if (!doNotTrack) {
   <span class="nx">zap</span><span class="p">.</span><span class="nf">ReplaceGlobals</span><span class="p">(</span><span class="nx">logger</span><span class="p">)</span>
   <span class="nx">zap</span><span class="p">.</span><span class="nf">L</span><span class="p">().</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;global Logger after&#34;</span><span class="p">)</span>
   <span class="nx">zap</span><span class="p">.</span><span class="nf">S</span><span class="p">().</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;global SugaredLogger after&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;global Logger after&#34;</span><span class="p">}</span>
-<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;global SugaredLogger after&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;global SugaredLogger after&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看到在调用<code>ReplaceGlobals</code>之前记录的日志并没有输出。</p>
-
+</div><p>可以看到在调用<code>ReplaceGlobals</code>之前记录的日志并没有输出。</p>
 <h3 id="预设日志字段">预设日志字段</h3>
-
 <p>如果每条日志都要记录一些共用的字段，那么使用<code>zap.Fields(fs ...Field)</code>创建的选项。例如在服务器日志中记录可能都需要记录<code>serverId</code>和<code>serverName</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1050,24 +1019,23 @@ if (!doNotTrack) {
   <span class="p">))</span>
 
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">,</span><span class="s">&#34;serverId&#34;</span><span class="p">:</span><span class="mi">90</span><span class="p">,</span><span class="s">&#34;serverName&#34;</span><span class="p">:</span><span class="s">&#34;awesome web&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">,</span><span class="s">&#34;serverId&#34;</span><span class="p">:</span><span class="mi">90</span><span class="p">,</span><span class="s">&#34;serverName&#34;</span><span class="p">:</span><span class="s">&#34;awesome web&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="与标准日志库搭配使用">与标准日志库搭配使用</h2>
-
+</div><h2 id="与标准日志库搭配使用">与标准日志库搭配使用</h2>
 <p>如果项目一开始使用的是标准日志库<code>log</code>，后面想转为<code>zap</code>。这时不必修改每一个文件。我们可以调用<code>zap.NewStdLog(l *Logger) *log.Logger</code>返回一个标准的<code>log.Logger</code>，内部实际上写入的还是我们之前创建的<code>zap.Logger</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1082,24 +1050,23 @@ if (!doNotTrack) {
 
   <span class="nx">std</span> <span class="o">:=</span> <span class="nx">zap</span><span class="p">.</span><span class="nf">NewStdLog</span><span class="p">(</span><span class="nx">logger</span><span class="p">)</span>
   <span class="nx">std</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="s">&#34;standard logger wrapper&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;standard logger wrapper&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;standard logger wrapper&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>很方便不是吗？我们还可以使用<code>NewStdLogAt(l *logger, level zapcore.Level) (*log.Logger, error)</code>让标准接口以<code>level</code>级别写入内部的<code>*zap.Logger</code>。</p>
-
+</div><p>很方便不是吗？我们还可以使用<code>NewStdLogAt(l *logger, level zapcore.Level) (*log.Logger, error)</code>让标准接口以<code>level</code>级别写入内部的<code>*zap.Logger</code>。</p>
 <p>如果我们只是想在一段代码内使用标准日志库<code>log</code>，其它地方还是使用<code>zap.Logger</code>。可以调用<code>RedirectStdLog(l *Logger) func()</code>。它会返回一个无参函数恢复设置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1120,42 +1087,33 @@ if (!doNotTrack) {
   <span class="nf">undo</span><span class="p">()</span>
 
   <span class="nx">log</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="s">&#34;restored standard library&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>看前后输出变化：</p>
+</div><p>看前后输出变化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;redirected standard library&#34;</span><span class="p">}</span>
-<span class="mi">2020</span><span class="o">/</span><span class="mo">04</span><span class="o">/</span><span class="mi">24</span> <span class="mi">22</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">58</span> <span class="nx">restored</span> <span class="nx">standard</span> <span class="nx">library</span></code></pre></td></tr></table>
+<span class="mi">2020</span><span class="o">/</span><span class="mo">04</span><span class="o">/</span><span class="mi">24</span> <span class="mi">22</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">58</span> <span class="nx">restored</span> <span class="nx">standard</span> <span class="nx">library</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>当然<code>RedirectStdLog</code>也有一个对应的<code>RedirectStdLogAt</code>以特定的级别调用内部的<code>*zap.Logger</code>方法。</p>
-
+</div><p>当然<code>RedirectStdLog</code>也有一个对应的<code>RedirectStdLogAt</code>以特定的级别调用内部的<code>*zap.Logger</code>方法。</p>
 <h2 id="总结">总结</h2>
-
 <p><code>zap</code>用在日志性能和内存分配比较关键的地方。本文仅介绍了<code>zap</code>库的基本使用，子包<code>zapcore</code>中有更底层的接口，可以定制丰富多样的<code>Logger</code>。</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>zap GitHub：<a href="https://github.com/jordan-wright/zap">https://github.com/jordan-wright/zap</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1357,7 +1315,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

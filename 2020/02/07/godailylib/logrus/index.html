@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/07/godailylib/logrus/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-02-07T20:34:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 logrus">
 <meta itemprop="description" content="简介 前一篇文章介绍了 Go 标准库中的日志库 log。最后我们也提到，log库只提供了三组接口，功能过于简单了。 今天，我们来介绍一个日志库中的“明星">
-
-
-<meta itemprop="datePublished" content="2020-02-07T20:34:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-02-07T20:34:23&#43;00:00" />
+<meta itemprop="datePublished" content="2020-02-07T20:34:23+00:00" />
+<meta itemprop="dateModified" content="2020-02-07T20:34:23+00:00" />
 <meta itemprop="wordCount" content="3547">
 
 
@@ -384,55 +382,48 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#定制">定制</a>
-<ul>
-<li><a href="#输出文件名">输出文件名</a></li>
-<li><a href="#添加字段">添加字段</a></li>
-<li><a href="#重定向输出">重定向输出</a></li>
-<li><a href="#自定义">自定义</a></li>
-<li><a href="#日志格式">日志格式</a></li>
-<li><a href="#第三方格式">第三方格式</a></li>
-<li><a href="#设置钩子">设置钩子</a></li>
-</ul></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#定制">定制</a>
+      <ul>
+        <li><a href="#输出文件名">输出文件名</a></li>
+        <li><a href="#添加字段">添加字段</a></li>
+        <li><a href="#重定向输出">重定向输出</a></li>
+        <li><a href="#自定义">自定义</a></li>
+        <li><a href="#日志格式">日志格式</a></li>
+        <li><a href="#第三方格式">第三方格式</a></li>
+        <li><a href="#设置钩子">设置钩子</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p><a href="https://darjun.github.io/2020/02/07/godailylib/log/">前一篇文章</a>介绍了 Go 标准库中的日志库 <code>log</code>。最后我们也提到，<code>log</code>库只提供了三组接口，功能过于简单了。
 今天，我们来介绍一个日志库中的“明星库”——<code>logrus</code>。本文编写之时（2020.02.07），<a href="https://github.com/sirupsen/logrus">logrus</a> 在 GitHub 上 star 数已达到 13.8k。
 <code>logrus</code>完全兼容标准的<code>log</code>库，还支持文本、JSON 两种日志输出格式。很多知名的开源项目都使用了这个库，如大名鼎鼎的 docker。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>第三方库需要先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go get github.com/sirupsen/logrus</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/sirupsen/logrus
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后使用：</p>
+</div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -467,11 +458,10 @@ if (!doNotTrack) {
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;error msg&#34;</span><span class="p">)</span>
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;fatal msg&#34;</span><span class="p">)</span>
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Panic</span><span class="p">(</span><span class="s">&#34;panic msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>logrus</code>的使用非常简单，与标准库<code>log</code>类似。<code>logrus</code>支持更多的日志级别：</p>
-
+</div><p><code>logrus</code>的使用非常简单，与标准库<code>log</code>类似。<code>logrus</code>支持更多的日志级别：</p>
 <ul>
 <li><code>Panic</code>：记录日志，然后<code>panic</code>。</li>
 <li><code>Fatal</code>：致命错误，出现错误时程序无法正常运转。输出日志后，程序退出；</li>
@@ -481,14 +471,12 @@ if (!doNotTrack) {
 <li><code>Debug</code>：一般程序中输出的调试信息；</li>
 <li><code>Trace</code>：很细粒度的信息，一般用不到；</li>
 </ul>
-
 <p>日志级别从上向下依次增加，<code>Trace</code>最大，<code>Panic</code>最小。<code>logrus</code>有一个日志级别，高于这个级别的日志不会输出。
 默认的级别为<code>InfoLevel</code>。所以为了能看到<code>Trace</code>和<code>Debug</code>日志，我们在<code>main</code>函数第一行设置日志级别为<code>TraceLevel</code>。</p>
-
 <p>运行程序，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -496,36 +484,31 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go run main.go
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go run main.go
 time=&#34;2020-02-07T21:22:42+08:00&#34; level=trace msg=&#34;trace msg&#34;
 time=&#34;2020-02-07T21:22:42+08:00&#34; level=debug msg=&#34;debug msg&#34;
 time=&#34;2020-02-07T21:22:42+08:00&#34; level=info msg=&#34;info msg&#34;
 time=&#34;2020-02-07T21:22:42+08:00&#34; level=info msg=&#34;warn msg&#34;
 time=&#34;2020-02-07T21:22:42+08:00&#34; level=error msg=&#34;error msg&#34;
 time=&#34;2020-02-07T21:22:42+08:00&#34; level=fatal msg=&#34;fatal msg&#34;
-exit status 1</pre></td></tr></table>
+exit status 1
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>由于<code>logrus.Fatal</code>会导致程序退出，下面的<code>logrus.Panic</code>不会执行到。</p>
-
+</div><p>由于<code>logrus.Fatal</code>会导致程序退出，下面的<code>logrus.Panic</code>不会执行到。</p>
 <p>另外，我们观察到输出中有三个关键信息，<code>time</code>、<code>level</code>和<code>msg</code>：</p>
-
 <ul>
 <li><code>time</code>：输出日志的时间；</li>
 <li><code>level</code>：日志级别；</li>
 <li><code>msg</code>：日志信息。</li>
 </ul>
-
 <h2 id="定制">定制</h2>
-
 <h3 id="输出文件名">输出文件名</h3>
-
 <p>调用<code>logrus.SetReportCaller(true)</code>设置在输出日志中添加文件名和方法信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -548,38 +531,37 @@ exit status 1</pre></td></tr></table>
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">SetReportCaller</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
 
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出多了两个字段<code>file</code>为调用<code>logrus</code>相关方法的文件名，<code>method</code>为方法名：</p>
+</div><p>输出多了两个字段<code>file</code>为调用<code>logrus</code>相关方法的文件名，<code>method</code>为方法名：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go run main.go
-time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=main.main file=&#34;D:/code/golang/src/github.com/darjun/go-daily-lib/logrus/caller/main.go:10&#34;</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go run main.go
+time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=main.main file=&#34;D:/code/golang/src/github.com/darjun/go-daily-lib/logrus/caller/main.go:10&#34;
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="添加字段">添加字段</h3>
-
+</div><h3 id="添加字段">添加字段</h3>
 <p>有时候需要在输出中添加一些字段，可以通过调用<code>logrus.WithField</code>和<code>logrus.WithFields</code>实现。
 <code>logrus.WithFields</code>接受一个<code>logrus.Fields</code>类型的参数，其底层实际上为<code>map[string]interface{}</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// github.com/sirupsen/logrus/logrus.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Fields</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span></code></pre></td></tr></table>
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Fields</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>下面程序在输出中添加两个字段<code>name</code>和<code>age</code>：</p>
+</div><p>下面程序在输出中添加两个字段<code>name</code>和<code>age</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -604,13 +586,13 @@ time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=
     <span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
     <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
   <span class="p">}).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果在一个函数中的所有日志都需要添加某些字段，可以使用<code>WithFields</code>的返回值。例如在 Web 请求的处理器中，日志都要加上<code>user_id</code>和<code>ip</code>字段：</p>
+</div><p>如果在一个函数中的所有日志都需要添加某些字段，可以使用<code>WithFields</code>的返回值。例如在 Web 请求的处理器中，日志都要加上<code>user_id</code>和<code>ip</code>字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -641,20 +623,18 @@ time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=
 
   <span class="nx">requestLogger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
   <span class="nx">requestLogger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;error msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>实际上，<code>WithFields</code>返回一个<code>logrus.Entry</code>类型的值，它将<code>logrus.Logger</code>和设置的<code>logrus.Fields</code>保存下来。
+</div><p>实际上，<code>WithFields</code>返回一个<code>logrus.Entry</code>类型的值，它将<code>logrus.Logger</code>和设置的<code>logrus.Fields</code>保存下来。
 调用<code>Entry</code>相关方法输出日志时，保存下来的<code>logrus.Fields</code>也会随之输出。</p>
-
 <h3 id="重定向输出">重定向输出</h3>
-
 <p>默认情况下，日志输出到<code>io.Stderr</code>。可以调用<code>logrus.SetOutput</code>传入一个<code>io.Writer</code>参数。后续调用相关方法日志将写到<code>io.Writer</code>中。
 现在，我们就能像上篇文章介绍<a href="https://darjun.github.io/2020/02/07/godailylib/log/">log</a>时一样，可以搞点事情了。传入一个<code>io.MultiWriter</code>，
 同时将日志写到<code>bytes.Buffer</code>、标准输出和文件中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -699,24 +679,20 @@ time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=
 
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">SetOutput</span><span class="p">(</span><span class="nx">io</span><span class="p">.</span><span class="nf">MultiWriter</span><span class="p">(</span><span class="nx">writer1</span><span class="p">,</span> <span class="nx">writer2</span><span class="p">,</span> <span class="nx">writer3</span><span class="p">))</span>
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="自定义">自定义</h3>
-
+</div><h3 id="自定义">自定义</h3>
 <p><strong>实际上，考虑到易用性，库一般会使用默认值创建一个对象，包最外层的方法一般都是操作这个默认对象。</strong></p>
-
 <p>我们之前好几篇文章都提到过这点：</p>
-
 <ul>
 <li><a href="https://darjun.github.io/2020/01/10/godailylib/flag/">Go 每日一库之 flag</a>：<code>flag</code>标准库中的<code>CommandLine</code>对象；</li>
 <li><a href="https://darjun.github.io/2020/02/07/godailylib/log/">Go 每日一库之 log</a>：<code>log</code>标准库中的<code>std</code>对象。</li>
 </ul>
-
 <p>这个技巧应用在很多库的开发中，<code>logrus</code>也是如此：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -765,15 +741,14 @@ time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=
 
 <span class="kd">func</span> <span class="nf">SetLevel</span><span class="p">(</span><span class="nx">level</span> <span class="nx">Level</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">std</span><span class="p">.</span><span class="nf">SetLevel</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>首先，使用默认配置定义一个<code>Logger</code>对象<code>std</code>，<code>SetOutput/SetFormatter/SetReportCaller/SetLevel</code>这些方法都是调用<code>std</code>对象的对应方法！</p>
-
+</div><p>首先，使用默认配置定义一个<code>Logger</code>对象<code>std</code>，<code>SetOutput/SetFormatter/SetReportCaller/SetLevel</code>这些方法都是调用<code>std</code>对象的对应方法！</p>
 <p>我们当然也可以创建自己的<code>Logger</code>对象，使用方式与直接调用<code>logrus</code>的方法类似：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -798,15 +773,14 @@ time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=
   <span class="nx">log</span><span class="p">.</span><span class="nf">SetFormatter</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">logrus</span><span class="p">.</span><span class="nx">JSONFormatter</span><span class="p">{})</span>
 
   <span class="nx">log</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="日志格式">日志格式</h3>
-
+</div><h3 id="日志格式">日志格式</h3>
 <p><code>logrus</code>支持两种日志格式，文本和 JSON，默认为文本格式。可以通过<code>logrus.SetFormatter</code>设置日志格式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -843,13 +817,13 @@ time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;error msg&#34;</span><span class="p">)</span>
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;fatal msg&#34;</span><span class="p">)</span>
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Panic</span><span class="p">(</span><span class="s">&#34;panic msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>程序输出 JSON 格式的日志：</p>
+</div><p>程序输出 JSON 格式的日志：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -857,35 +831,33 @@ time=&#34;2020-02-07T21:46:03+08:00&#34; level=info msg=&#34;info msg&#34; func=
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go run main.go 
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go run main.go 
 {&#34;level&#34;:&#34;trace&#34;,&#34;msg&#34;:&#34;trace msg&#34;,&#34;time&#34;:&#34;2020-02-07T21:40:04+08:00&#34;}
 {&#34;level&#34;:&#34;debug&#34;,&#34;msg&#34;:&#34;debug msg&#34;,&#34;time&#34;:&#34;2020-02-07T21:40:04+08:00&#34;}
 {&#34;level&#34;:&#34;info&#34;,&#34;msg&#34;:&#34;info msg&#34;,&#34;time&#34;:&#34;2020-02-07T21:40:04+08:00&#34;}
 {&#34;level&#34;:&#34;info&#34;,&#34;msg&#34;:&#34;warn msg&#34;,&#34;time&#34;:&#34;2020-02-07T21:40:04+08:00&#34;}
 {&#34;level&#34;:&#34;error&#34;,&#34;msg&#34;:&#34;error msg&#34;,&#34;time&#34;:&#34;2020-02-07T21:40:04+08:00&#34;}
 {&#34;level&#34;:&#34;fatal&#34;,&#34;msg&#34;:&#34;fatal msg&#34;,&#34;time&#34;:&#34;2020-02-07T21:40:04+08:00&#34;}
-exit status 1</pre></td></tr></table>
+exit status 1
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="第三方格式">第三方格式</h3>
-
+</div><h3 id="第三方格式">第三方格式</h3>
 <p>除了内置的<code>TextFormatter</code>和<code>JSONFormatter</code>，还有不少第三方格式支持。我们这里介绍一个<a href="https://github.com/antonfisher/nested-logrus-formatter">nested-logrus-formatter</a>。</p>
-
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go get github.com/antonfisher/nested-logrus-formatter</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/antonfisher/nested-logrus-formatter
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后使用：</p>
+</div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -916,22 +888,22 @@ exit status 1</pre></td></tr></table>
   <span class="p">})</span>
 
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>程序输出：</p>
+</div><p>程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">Feb  8 15:22:59.077 [INFO] info msg</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Feb  8 15:22:59.077 [INFO] info msg
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>nested</code>格式提供了多个字段用来定制行为：</p>
+</div><p><code>nested</code>格式提供了多个字段用来定制行为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -952,17 +924,17 @@ exit status 1</pre></td></tr></table>
   <span class="nx">NoFieldsColors</span>  <span class="kt">bool</span>    
   <span class="nx">ShowFullLevel</span>   <span class="kt">bool</span>    
   <span class="nx">TrimMessages</span>    <span class="kt">bool</span>    
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>默认，<code>logrus</code>输出日志中字段是<code>key=value</code>这样的形式。使用<code>nested</code>格式，我们可以通过设置<code>HideKeys</code>为<code>true</code>隐藏键，只输出值；</li>
 <li>默认，<code>logrus</code>是按键的字母序输出字段，可以设置<code>FieldsOrder</code>定义输出字段顺序；</li>
-
-<li><p>通过设置<code>TimestampFormat</code>设置日期格式。</p>
+<li>通过设置<code>TimestampFormat</code>设置日期格式。</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -988,52 +960,49 @@ exit status 1</pre></td></tr></table>
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
-<span class="s">&#34;time&#34;</span>
+  <span class="s">&#34;time&#34;</span>
 
-<span class="nx">nested</span> <span class="s">&#34;github.com/antonfisher/nested-logrus-formatter&#34;</span>
-<span class="s">&#34;github.com/sirupsen/logrus&#34;</span>
+  <span class="nx">nested</span> <span class="s">&#34;github.com/antonfisher/nested-logrus-formatter&#34;</span>
+  <span class="s">&#34;github.com/sirupsen/logrus&#34;</span>
 <span class="p">)</span>
 
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-<span class="nx">logrus</span><span class="p">.</span><span class="nf">SetFormatter</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">nested</span><span class="p">.</span><span class="nx">Formatter</span><span class="p">{</span>
-<span class="c1">// HideKeys:        true,
-</span><span class="c1"></span><span class="nx">TimestampFormat</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">RFC3339</span><span class="p">,</span>
-<span class="nx">FieldsOrder</span><span class="p">:</span>     <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;age&#34;</span><span class="p">},</span>
-<span class="p">})</span>
+  <span class="nx">logrus</span><span class="p">.</span><span class="nf">SetFormatter</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">nested</span><span class="p">.</span><span class="nx">Formatter</span><span class="p">{</span>
+    <span class="c1">// HideKeys:        true,
+</span><span class="c1"></span>    <span class="nx">TimestampFormat</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">RFC3339</span><span class="p">,</span>
+    <span class="nx">FieldsOrder</span><span class="p">:</span>     <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;age&#34;</span><span class="p">},</span>
+  <span class="p">})</span>
 
-<span class="nx">logrus</span><span class="p">.</span><span class="nf">WithFields</span><span class="p">(</span><span class="nx">logrus</span><span class="p">.</span><span class="nx">Fields</span><span class="p">{</span>
-<span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
-<span class="s">&#34;age&#34;</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
-<span class="p">}).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+  <span class="nx">logrus</span><span class="p">.</span><span class="nf">WithFields</span><span class="p">(</span><span class="nx">logrus</span><span class="p">.</span><span class="nx">Fields</span><span class="p">{</span>
+    <span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
+  <span class="p">}).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div></li>
-</ul>
-
-<p>如果不隐藏键，程序输出：</p>
+</div><p>如果不隐藏键，程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ 2020-02-08T15:40:07+08:00 [INFO] [name:dj] [age:18] info msg</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ 2020-02-08T15:40:07+08:00 [INFO] [name:dj] [age:18] info msg
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>隐藏键，程序输出：</p>
+</div><p>隐藏键，程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ 2020-02-08T15:41:58+08:00 [INFO] [dj] [18] info msg</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ 2020-02-08T15:41:58+08:00 [INFO] [dj] [18] info msg
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意到，我们将时间格式设置成<code>time.RFC3339</code>，即<code>2006-01-02T15:04:05Z07:00</code>这种形式。</p>
-
+</div><p>注意到，我们将时间格式设置成<code>time.RFC3339</code>，即<code>2006-01-02T15:04:05Z07:00</code>这种形式。</p>
 <p><strong>通过实现接口<code>logrus.Formatter</code>可以实现自己的格式。</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1042,18 +1011,16 @@ exit status 1</pre></td></tr></table>
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// github.com/sirupsen/logrus/formatter.go
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Formatter</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Format</span><span class="p">(</span><span class="o">*</span><span class="nx">Entry</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="设置钩子">设置钩子</h3>
-
+</div><h3 id="设置钩子">设置钩子</h3>
 <p>还可以为<code>logrus</code>设置钩子，每条日志输出前都会执行钩子的特定方法。所以，我们可以添加输出字段、根据级别将日志输出到不同的目的地。
 <code>logrus</code>也内置了一个<code>syslog</code>的钩子，将日志输出到<code>syslog</code>中。这里我们实现一个钩子，在输出的日志中增加一个<code>app=awesome-web</code>字段。</p>
-
 <p>钩子需要实现<code>logrus.Hook</code>接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1064,13 +1031,13 @@ exit status 1</pre></td></tr></table>
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Hook</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Levels</span><span class="p">()</span> <span class="p">[]</span><span class="nx">Level</span>
   <span class="nf">Fire</span><span class="p">(</span><span class="o">*</span><span class="nx">Entry</span><span class="p">)</span> <span class="kt">error</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>Levels()</code>方法返回感兴趣的日志级别，输出其他日志时不会触发钩子。<code>Fire</code>是日志输出前调用的钩子方法。</p>
+</div><p><code>Levels()</code>方法返回感兴趣的日志级别，输出其他日志时不会触发钩子。<code>Fire</code>是日志输出前调用的钩子方法。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1121,41 +1088,38 @@ exit status 1</pre></td></tr></table>
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">AddHook</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span>
 
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;info msg&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只需要在<code>Fire</code>方法实现中，为<code>entry.Data</code>添加字段就会输出到日志中。</p>
-
+</div><p>只需要在<code>Fire</code>方法实现中，为<code>entry.Data</code>添加字段就会输出到日志中。</p>
 <p>程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ time=&#34;2020-02-08T15:51:52+08:00&#34; level=info msg=&#34;info msg&#34; app=awesome-web</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ time=&#34;2020-02-08T15:51:52+08:00&#34; level=info msg=&#34;info msg&#34; app=awesome-web
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>logrus</code>的第三方 Hook 很多，我们可以使用一些 Hook 将日志发送到 redis/mongodb 等存储中：</p>
-
+</div><p><code>logrus</code>的第三方 Hook 很多，我们可以使用一些 Hook 将日志发送到 redis/mongodb 等存储中：</p>
 <ul>
 <li><a href="https://github.com/weekface/mgorus">mgorus</a>：将日志发送到 mongodb；</li>
 <li><a href="https://github.com/rogierlommers/logrus-redis-hook">logrus-redis-hook</a>：将日志发送到 redis；</li>
 <li><a href="https://github.com/vladoatanasov/logrus_amqp">logrus-amqp</a>：将日志发送到 ActiveMQ。</li>
 </ul>
-
 <p>这里我们演示一个 redis，感兴趣自行验证其他的。先安装<code>logrus-redis-hook</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go get github.com/rogierlommers/logrus-redis-hook</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/rogierlommers/logrus-redis-hook
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后编写程序：</p>
+</div><p>然后编写程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1234,15 +1198,14 @@ exit status 1</pre></td></tr></table>
 
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">SetOutput</span><span class="p">(</span><span class="nx">ioutil</span><span class="p">.</span><span class="nx">Discard</span><span class="p">)</span>
   <span class="nx">logrus</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;This will only be sent to Redis&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>为了程序能正常工作，我们还需要安装<code>redis</code>。</p>
-
+</div><p>为了程序能正常工作，我们还需要安装<code>redis</code>。</p>
 <p>windows 上直接使用<a href="https://chocolatey.org/">choco</a>安装 redis：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1262,9 +1225,9 @@ exit status 1</pre></td></tr></table>
 </span><span class="lnt">18
 </span><span class="lnt">19
 </span><span class="lnt">20
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><span class="nx">PS</span> <span class="nx">C</span><span class="p">:</span><span class="err">\</span><span class="nx">Users</span><span class="err">\</span><span class="nx">Administrator</span><span class="p">&gt;</span> <span class="nx">choco</span> <span class="nx">install</span> <span class="nx">redis</span><span class="o">-</span><span class="mi">64</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">PS</span> <span class="nx">C</span><span class="p">:</span><span class="err">\</span><span class="nx">Users</span><span class="err">\</span><span class="nx">Administrator</span><span class="p">&gt;</span> <span class="nx">choco</span> <span class="nx">install</span> <span class="nx">redis</span><span class="o">-</span><span class="mi">64</span>
 <span class="nx">Chocolatey</span> <span class="nx">v0</span><span class="mf">.10.15</span>
 <span class="nx">Installing</span> <span class="nx">the</span> <span class="nx">following</span> <span class="nx">packages</span><span class="p">:</span>
 <span class="nx">redis</span><span class="o">-</span><span class="mi">64</span>
@@ -1283,37 +1246,25 @@ exit status 1</pre></td></tr></table>
   <span class="k">default</span> <span class="nx">install</span> <span class="nx">location</span> <span class="k">if</span> <span class="nx">installer</span><span class="p">.</span>
 
 <span class="nx">Chocolatey</span> <span class="nx">installed</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1</span> <span class="nx">packages</span><span class="p">.</span>
- <span class="nx">See</span> <span class="nx">the</span> <span class="nx">log</span> <span class="k">for</span> <span class="nf">details</span> <span class="p">(</span><span class="nx">C</span><span class="p">:</span><span class="err">\</span><span class="nx">ProgramData</span><span class="err">\</span><span class="nx">chocolatey</span><span class="err">\</span><span class="nx">logs</span><span class="err">\</span><span class="nx">chocolatey</span><span class="p">.</span><span class="nx">log</span><span class="p">).</span></pre></td></tr></table>
+ <span class="nx">See</span> <span class="nx">the</span> <span class="nx">log</span> <span class="k">for</span> <span class="nf">details</span> <span class="p">(</span><span class="nx">C</span><span class="p">:</span><span class="err">\</span><span class="nx">ProgramData</span><span class="err">\</span><span class="nx">chocolatey</span><span class="err">\</span><span class="nx">logs</span><span class="err">\</span><span class="nx">chocolatey</span><span class="p">.</span><span class="nx">log</span><span class="p">).</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>直接输入<code>redis-server</code>，启动服务器：</p>
-
-<p><img src="/img/in-post/godailylib/logrus1.png" alt="" /></p>
-
+</div><p>直接输入<code>redis-server</code>，启动服务器：</p>
+<p><img src="/img/in-post/godailylib/logrus1.png" alt=""></p>
 <p>运行程序后，我们使用<code>redis-cli</code>查看：</p>
-
-<p><img src="/img/in-post/godailylib/logrus2.png" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/logrus2.png" alt=""></p>
 <p>我们看到<code>mykey</code>是一个<code>list</code>，每过来一条日志，就在<code>list</code>后新增一项。</p>
-
 <h2 id="总结">总结</h2>
-
 <p>本文介绍了<code>logrus</code>的基本用法。<code>logrus</code>的可扩展性非常棒，可以引入第三方格式和 Hook 增强功能。在社区也比较受欢迎。</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://github.com/sirupsen/logrus">logrus</a> GitHub 仓库</li>
 <li><a href="https://github.com/sirupsen/logrus/wiki/Hooks">Hooks</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1515,7 +1466,7 @@ exit status 1</pre></td></tr></table>
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

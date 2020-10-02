@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/03/13/godailylib/copier/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-03-13T09:40:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 copier">
 <meta itemprop="description" content="简介 上一篇文章介绍了mergo库的使用，mergo是用来给结构体或map赋值的。mergo有一个明显的不足——它只能处理相同类型的结构！如果">
-
-
-<meta itemprop="datePublished" content="2020-03-13T09:40:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-03-13T09:40:23&#43;00:00" />
+<meta itemprop="datePublished" content="2020-03-13T09:40:23+00:00" />
+<meta itemprop="dateModified" content="2020-03-13T09:40:23+00:00" />
 <meta itemprop="wordCount" content="1829">
 
 
@@ -384,64 +382,55 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a>
-<ul>
-<li><a href="#高级特性">高级特性</a></li>
-</ul></li>
-<li><a href="#方法赋值">方法赋值</a></li>
-<li><a href="#调用目标方法">调用目标方法</a>
-<ul>
-<li><a href="#切片赋值">切片赋值</a></li>
-<li><a href="#将结构赋值到切片">将结构赋值到切片</a></li>
-<li><a href="#汇总">汇总</a></li>
-</ul></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a>
+      <ul>
+        <li><a href="#高级特性">高级特性</a></li>
+      </ul>
+    </li>
+    <li><a href="#方法赋值">方法赋值</a></li>
+    <li><a href="#调用目标方法">调用目标方法</a>
+      <ul>
+        <li><a href="#切片赋值">切片赋值</a></li>
+        <li><a href="#将结构赋值到切片">将结构赋值到切片</a></li>
+        <li><a href="#汇总">汇总</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p><a href="https://darjun.github.io/2020/03/11/godailylib/mergo">上一篇文章</a>介绍了<code>mergo</code>库的使用，<code>mergo</code>是用来给结构体或<code>map</code>赋值的。<code>mergo</code>有一个明显的不足——它只能处理相同类型的结构！如果类型不同，即使字段名和类型完全相同，<code>mergo</code>也无能为力。今天我们要介绍的<code>copier</code>库就能处理不同类型之间的赋值。除此之外，<code>copier</code>还能：</p>
-
 <ul>
 <li>调用同名方法为字段赋值；</li>
 <li>以源对象字段为参数调用目标对象的方法，从而为目标对象赋值（当然也可以做其它的任何事情）；</li>
 <li>将切片赋值给切片（可以是不同类型哦）；</li>
 <li>将结构体追加到切片中。</li>
 </ul>
-
 <p>感谢<a href="https://github.com/thinkgos">@thinkgos</a>推荐。</p>
-
 <p>顺带一提，作者是国人<a href="https://github.com/jinzhu">jinzhu</a>大佬，如果你想找一个 Go 语言的 ORM 库，<a href="https://github.com/jinzhu/gorm">gorm</a>你值得拥有！</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">jinzhu</span><span class="o">/</span><span class="nx">copier</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">jinzhu</span><span class="o">/</span><span class="nx">copier</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后使用：</p>
+</div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -494,19 +483,16 @@ if (!doNotTrack) {
 
   <span class="nx">copier</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">employee</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%#v\n&#34;</span><span class="p">,</span> <span class="nx">employee</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>很好理解，就是将<code>user</code>对象中的字段赋值到<code>employee</code>的同名字段中。如果目标对象中没有同名的字段，则该字段被忽略。</p>
-
+</div><p>很好理解，就是将<code>user</code>对象中的字段赋值到<code>employee</code>的同名字段中。如果目标对象中没有同名的字段，则该字段被忽略。</p>
 <h3 id="高级特性">高级特性</h3>
-
 <h2 id="方法赋值">方法赋值</h2>
-
 <p>目标对象中的一些字段，源对象中没有，但是源对象有同名的方法。这时<code>Copy</code>会调用这个方法，将返回值赋值给目标对象中的字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -551,17 +537,15 @@ if (!doNotTrack) {
 
   <span class="nx">copier</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">employee</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%#v\n&#34;</span><span class="p">,</span> <span class="nx">employee</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们给<code>User</code>添加一个<code>DoubleAge</code>方法。<code>Employee</code>结构有字段<code>DoubleAge</code>，<code>User</code>中没有，但是<code>User</code>有一个同名的方法，这时<code>Copy</code>调用<code>user</code>的<code>DoubleAge</code>方法为<code>employee</code>的<code>DoubleAge</code>赋值，得到 36。</p>
-
+</div><p>我们给<code>User</code>添加一个<code>DoubleAge</code>方法。<code>Employee</code>结构有字段<code>DoubleAge</code>，<code>User</code>中没有，但是<code>User</code>有一个同名的方法，这时<code>Copy</code>调用<code>user</code>的<code>DoubleAge</code>方法为<code>employee</code>的<code>DoubleAge</code>赋值，得到 36。</p>
 <h2 id="调用目标方法">调用目标方法</h2>
-
 <p>有时候源对象中的某个字段没有出现在目标对象中，但是目标对象有一个同名的方法，方法接受一个同类型的参数，这时<code>Copy</code>会以源对象的这个字段作为参数调用目标对象的该方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -608,17 +592,15 @@ if (!doNotTrack) {
 
   <span class="nx">copier</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">employee</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%#v\n&#34;</span><span class="p">,</span> <span class="nx">employee</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们给<code>Employee</code>添加了一个<code>Role</code>方法，<code>User</code>的字段<code>Role</code>没有出现在<code>Employee</code>中，但是<code>Employee</code>有一个同名方法。<code>Copy</code>函数内部会以<code>user</code>对象的<code>Role</code>字段为参数调用<code>employee</code>的<code>Role</code>方法。最终，我们的<code>employee</code>对象的<code>SuperRole</code>值变为<code>SuperAdmin</code>。实际上，这个方法中可以执行任何操作，不一定是赋值。</p>
-
+</div><p>我们给<code>Employee</code>添加了一个<code>Role</code>方法，<code>User</code>的字段<code>Role</code>没有出现在<code>Employee</code>中，但是<code>Employee</code>有一个同名方法。<code>Copy</code>函数内部会以<code>user</code>对象的<code>Role</code>字段为参数调用<code>employee</code>的<code>Role</code>方法。最终，我们的<code>employee</code>对象的<code>SuperRole</code>值变为<code>SuperAdmin</code>。实际上，这个方法中可以执行任何操作，不一定是赋值。</p>
 <h3 id="切片赋值">切片赋值</h3>
-
 <p>使用一个切片来为另一个切片赋值。如果类型相同，那好办，直接<code>append</code>就行。如果类型不同呢？<code>copier</code>就派上大用场了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -661,17 +643,15 @@ if (!doNotTrack) {
 
   <span class="nx">copier</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">employees</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%#v\n&#34;</span><span class="p">,</span> <span class="nx">employees</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这个实际上就是将源切片中每个元素分别赋值到目标切片中。</p>
-
+</div><p>这个实际上就是将源切片中每个元素分别赋值到目标切片中。</p>
 <h3 id="将结构赋值到切片">将结构赋值到切片</h3>
-
 <p>这个不难，实际上就是根据源对象生成一个和目标切片类型相符合的对象，然后<code>append</code>到目标切片中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -708,17 +688,15 @@ if (!doNotTrack) {
 
   <span class="nx">copier</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">employees</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%#v\n&#34;</span><span class="p">,</span> <span class="nx">employees</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码中，<code>Copy</code>先通过<code>user</code>生成一个<code>Employee</code>对象，然后<code>append</code>到切片<code>employees</code>中。</p>
-
+</div><p>上面代码中，<code>Copy</code>先通过<code>user</code>生成一个<code>Employee</code>对象，然后<code>append</code>到切片<code>employees</code>中。</p>
 <h3 id="汇总">汇总</h3>
-
 <p>最后将所有的特性汇总在一个例子中，其实就是<code>Copier</code>的 GitHub 仓库首页的例子：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -803,31 +781,22 @@ if (!doNotTrack) {
 </span><span class="c1"></span>
   <span class="nx">copier</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">employees</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%#v\n&#34;</span><span class="p">,</span> <span class="nx">employees</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面例子中，我故意把<code>employees = []Employee{}</code>这一行注释掉，最后输出的<code>employees</code>是 3 个元素，能更清楚的看出切片到切片是<code>append</code>的，目标切片原来的元素还是保留的。</p>
-
+</div><p>上面例子中，我故意把<code>employees = []Employee{}</code>这一行注释掉，最后输出的<code>employees</code>是 3 个元素，能更清楚的看出切片到切片是<code>append</code>的，目标切片原来的元素还是保留的。</p>
 <h2 id="总结">总结</h2>
-
 <p><code>copier</code>库的代码量很小，用了不到 200 行的代码就实现了如此实用的一个功能，非常值得一看！</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>copier GitHub：<a href="https://github.com/jinzhu/copier">https://github.com/jinzhu/copier</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1029,7 +998,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

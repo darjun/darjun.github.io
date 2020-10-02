@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2019/12/05/goweb/structure/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,11 +69,9 @@
 <meta property="article:modified_time" content="2019-12-05T21:35:01+00:00" />
 <meta itemprop="name" content="Go Web 编程之 程序结构">
 <meta itemprop="description" content="概述 一个典型的 Go Web 程序结构如下，摘自《Go Web 编程》： 客户端发送请求； 服务器中的多路复用器收到请求； 多路复用器根据请求的 URL 找到注册的处理器，将">
-
-
-<meta itemprop="datePublished" content="2019-12-05T21:35:01&#43;00:00" />
-<meta itemprop="dateModified" content="2019-12-05T21:35:01&#43;00:00" />
-<meta itemprop="wordCount" content="4008">
+<meta itemprop="datePublished" content="2019-12-05T21:35:01+00:00" />
+<meta itemprop="dateModified" content="2019-12-05T21:35:01+00:00" />
+<meta itemprop="wordCount" content="4006">
 
 
 
@@ -363,7 +361,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 4008 字 </span>
+        <span class="more-meta"> 约 4006 字 </span>
           <span class="more-meta"> 预计阅读 8 分钟 </span>
 
         
@@ -384,36 +382,29 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#多路复用器">多路复用器</a>
-<ul>
-<li><a href="#默认多路复用器">默认多路复用器</a></li>
-<li><a href="#创建多路复用器">创建多路复用器</a></li>
-</ul></li>
-<li><a href="#处理器和处理器函数">处理器和处理器函数</a></li>
-<li><a href="#url-匹配">URL 匹配</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考资料">参考资料</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#多路复用器">多路复用器</a>
+      <ul>
+        <li><a href="#默认多路复用器">默认多路复用器</a></li>
+        <li><a href="#创建多路复用器">创建多路复用器</a></li>
+      </ul>
+    </li>
+    <li><a href="#处理器和处理器函数">处理器和处理器函数</a></li>
+    <li><a href="#url-匹配">URL 匹配</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="概述">概述</h2>
-
+      <h2 id="概述">概述</h2>
 <p>一个典型的 Go Web 程序结构如下，摘自《Go Web 编程》：</p>
-
-<p><img src="/img/in-post/goweb/structure1.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/structure1.png#center" alt=""></p>
 <ul>
 <li>客户端发送请求；</li>
 <li>服务器中的多路复用器收到请求；</li>
@@ -423,11 +414,10 @@ if (!doNotTrack) {
 <li>最后将数据通过响应返回给客户端；</li>
 <li>客户端拿到数据，执行对应的操作，如渲染出来呈现给用户。</li>
 </ul>
-
-<p>本文介绍如何创建多路复用器，如何注册处理器，最后再简单介绍一下 URL 匹配。我们以上一篇文章中的&rdquo;Hello World&rdquo;程序作为基础。</p>
+<p>本文介绍如何创建多路复用器，如何注册处理器，最后再简单介绍一下 URL 匹配。我们以上一篇文章中的&quot;Hello World&quot;程序作为基础。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -464,17 +454,15 @@ if (!doNotTrack) {
     <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
         <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="多路复用器">多路复用器</h2>
-
+</div><h2 id="多路复用器">多路复用器</h2>
 <h3 id="默认多路复用器">默认多路复用器</h3>
-
 <p>net/http 包为了方便我们使用，内置了一个默认的多路复用器<code>DefaultServeMux</code>。定义如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -487,22 +475,20 @@ if (!doNotTrack) {
 <span class="c1">// DefaultServeMux is the default ServeMux used by Serve.
 </span><span class="c1"></span><span class="kd">var</span> <span class="nx">DefaultServeMux</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">defaultServeMux</span>
 
-<span class="kd">var</span> <span class="nx">defaultServeMux</span> <span class="nx">ServeMux</span></code></pre></td></tr></table>
+<span class="kd">var</span> <span class="nx">defaultServeMux</span> <span class="nx">ServeMux</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这里给大家介绍一下 Go 标准库代码的组织方式，便于大家对照。</p>
-
+</div><p>这里给大家介绍一下 Go 标准库代码的组织方式，便于大家对照。</p>
 <ul>
 <li>Windows上，Go 语言的默认安装目录为<code>C:\Go</code>，即<code>GOROOT</code>；</li>
 <li><code>GOROOT</code>下有一个 src 目录，标准库的代码都在这个目录中；</li>
 <li>每个包有一个单独的目录，例如 fmt 包在<code>src/fmt</code>目录中；</li>
 <li>子包在其父包的子目录中，例如 net/http 包在<code>src/net/http</code>目录中。</li>
 </ul>
-
 <p>net/http 包中很多方法都在内部调用<code>DefaultServeMux</code>的对应方法，如<code>HandleFunc</code>。我们知道，<code>HandleFunc</code>是为指定的 URL 注册一个处理器（准确来说，<code>hello</code>是处理器函数，见下文）。其内部实现如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -511,15 +497,14 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/http/server.go
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">HandleFunc</span><span class="p">(</span><span class="nx">pattern</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">handler</span> <span class="kd">func</span><span class="p">(</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="o">*</span><span class="nx">Request</span><span class="p">))</span> <span class="p">{</span>
 	<span class="nx">DefaultServeMux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="nx">handler</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>实际上，<code>http.HandleFunc</code>方法是将处理器注册到<code>DefaultServeMux</code>中的。</p>
-
+</div><p>实际上，<code>http.HandleFunc</code>方法是将处理器注册到<code>DefaultServeMux</code>中的。</p>
 <p>另外，我们使用 &ldquo;:8080&rdquo; 和 <code>nil</code> 作为参数调用<code>http.ListenAndServe</code>时，会创建一个默认的服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -530,13 +515,13 @@ if (!doNotTrack) {
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">ListenAndServe</span><span class="p">(</span><span class="nx">addr</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">handler</span> <span class="nx">Handler</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Server</span><span class="p">{</span><span class="nx">Addr</span><span class="p">:</span> <span class="nx">addr</span><span class="p">,</span> <span class="nx">Handler</span><span class="p">:</span> <span class="nx">handler</span><span class="p">}</span>
     <span class="k">return</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这个服务器默认使用<code>DefaultServeMux</code>来处理器请求：</p>
+</div><p>这个服务器默认使用<code>DefaultServeMux</code>来处理器请求：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -559,22 +544,18 @@ if (!doNotTrack) {
 		<span class="nx">handler</span> <span class="p">=</span> <span class="nx">DefaultServeMux</span>
 	<span class="p">}</span>
 	<span class="nx">handler</span><span class="p">.</span><span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">rw</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>服务器收到的每个请求会调用对应多路复用器（即<code>ServeMux</code>）的<code>ServeHTTP</code>方法。在<code>ServeMux</code>的<code>ServeHTTP</code>方法中，根据 URL 查找我们注册的处理器，然后将请求交由它处理。</p>
-
+</div><p>服务器收到的每个请求会调用对应多路复用器（即<code>ServeMux</code>）的<code>ServeHTTP</code>方法。在<code>ServeMux</code>的<code>ServeHTTP</code>方法中，根据 URL 查找我们注册的处理器，然后将请求交由它处理。</p>
 <p>虽然默认的多路复用器使用起来很方便，但是在生产环境中不建议使用。由于<code>DefaultServeMux</code>是一个全局变量，所有代码，<strong>包括第三方代码</strong>都可以修改它。
 有些第三方代码会在<code>DefaultServeMux</code>注册一些处理器，这可能与我们注册的处理器冲突。</p>
-
 <p>比较推荐的做法是自己创建多路复用器。</p>
-
 <h3 id="创建多路复用器">创建多路复用器</h3>
-
 <p>创建多路复用器也比较简单，直接调用<code>http.NewServeMux</code>方法即可。然后，在新创建的多路复用器上注册处理器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -625,13 +606,13 @@ if (!doNotTrack) {
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码的功能与 &ldquo;Hello World&rdquo; 程序相同。<strong>这里我们还自己创建了服务器对象</strong>。通过指定服务器的参数，我们可以创建定制化的服务器。</p>
+</div><p>上面代码的功能与 &ldquo;Hello World&rdquo; 程序相同。<strong>这里我们还自己创建了服务器对象</strong>。通过指定服务器的参数，我们可以创建定制化的服务器。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -644,17 +625,15 @@ if (!doNotTrack) {
 	<span class="nx">Handler</span><span class="p">:</span>        <span class="nx">mux</span><span class="p">,</span>
 	<span class="nx">ReadTimeout</span><span class="p">:</span>    <span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
 	<span class="nx">WriteTimeout</span><span class="p">:</span>   <span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在上面代码，我们创建了一个读超时和写超时均为 1s 的服务器。</p>
-
+</div><p>在上面代码，我们创建了一个读超时和写超时均为 1s 的服务器。</p>
 <h2 id="处理器和处理器函数">处理器和处理器函数</h2>
-
 <p>上文中提到，服务器收到请求后，会根据其 URL 将请求交给相应的处理器处理。处理器是实现了<code>Handler</code>接口的结构，<code>Handler</code>接口定义在 net/http 包中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -663,13 +642,13 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/http/server.go
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Handler</span> <span class="kd">interface</span> <span class="p">{</span>
     <span class="kd">func</span> <span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">w</span> <span class="nx">Response</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们可以定义一个实现该接口的结构，注册这个结构类型的对象到多路复用器中：</p>
+</div><p>我们可以定义一个实现该接口的结构，注册这个结构类型的对象到多路复用器中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -730,18 +709,16 @@ if (!doNotTrack) {
     <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
         <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>与前面的代码有所不同，上段代码中，定义了一个实现<code>Handler</code>接口的结构<code>GreetingHandler</code>。然后，创建该结构的两个对象，分别将它注册到多路复用器的<code>/hello</code>和<code>/world</code>路径上。注意，这里注册使用的是<code>Handle</code>方法，注意与<code>HandleFunc</code>方法对比。</p>
-
+</div><p>与前面的代码有所不同，上段代码中，定义了一个实现<code>Handler</code>接口的结构<code>GreetingHandler</code>。然后，创建该结构的两个对象，分别将它注册到多路复用器的<code>/hello</code>和<code>/world</code>路径上。注意，这里注册使用的是<code>Handle</code>方法，注意与<code>HandleFunc</code>方法对比。</p>
 <p>启动服务器之后，在浏览器的地址栏中输入<code>localhost:8080/chinese</code>，浏览器中将显示<code>你好</code>，输入<code>localhost:8080/english</code>将显示<code>Hello</code>。</p>
-
 <p>虽然，自定义处理器这种方式比较灵活，强大，但是需要定义一个新的结构，实现<code>ServeHTTP</code>方法，还是比较繁琐的。为了方便使用，net/http 包提供了以函数的方式注册处理器，即使用<code>HandleFunc</code>注册。函数必须满足签名：<code>func (w http.ResponseWriter, r *http.Request)</code>。
 我们称这个函数为处理器函数。我们的 &ldquo;Hello World&rdquo; 程序中使用的就是这种方式。<code>HandleFunc</code>方法内部，会将传入的处理器函数转换为<code>HandlerFunc</code>类型。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -756,13 +733,13 @@ if (!doNotTrack) {
 		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;http: nil handler&#34;</span><span class="p">)</span>
 	<span class="p">}</span>
 	<span class="nx">mux</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="nf">HandlerFunc</span><span class="p">(</span><span class="nx">handler</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>HandlerFunc</code>是底层类型为<code>func (w ResponseWriter, r *Request)</code>的新类型，它可以自定义其方法。由于<code>HandlerFunc</code>类型实现了<code>Handler</code>接口，所以它也是一个处理器类型，最终使用<code>Handle</code>注册。</p>
+</div><p><code>HandlerFunc</code>是底层类型为<code>func (w ResponseWriter, r *Request)</code>的新类型，它可以自定义其方法。由于<code>HandlerFunc</code>类型实现了<code>Handler</code>接口，所以它也是一个处理器类型，最终使用<code>Handle</code>注册。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -775,39 +752,31 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="nx">HandlerFunc</span><span class="p">)</span> <span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">w</span> <span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
     <span class="nf">f</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意，这几个接口和方法名很容易混淆，这里再强调一下：</p>
-
+</div><p>注意，这几个接口和方法名很容易混淆，这里再强调一下：</p>
 <ul>
 <li><code>Handler</code>：处理器接口，定义在 net/http 包中。实现该接口的类型，其对象可以注册到多路复用器中；</li>
 <li><code>Handle</code>：注册处理器的方法；</li>
 <li><code>HandleFunc</code>：注册处理器函数的方法；</li>
 <li><code>HandlerFunc</code>：底层类型为<code>func (w ResponseWriter, r *Request)</code>的新类型，实现了<code>Handler</code>接口。它连接了<strong>处理器函数</strong>与<strong>处理器</strong>。</li>
 </ul>
-
 <h2 id="url-匹配">URL 匹配</h2>
-
 <p>一般的 Web 服务器有非常多的 URL 绑定，不同的 URL 对应不同的处理器。但是服务器是怎么决定使用哪个处理器的呢？例如，我们现在绑定了 3 个 URL，<code>/</code>和<code>/hello</code>和<code>/hello/world</code>。</p>
-
 <p>显然，如果请求的 URL 为<code>/</code>，则调用<code>/</code>对应的处理器。如果请求的 URL 为<code>/hello</code>，则调用<code>/hello</code>对应的处理器。如果请求的 URL 为<code>/hello/world</code>，则调用<code>/hello/world</code>对应的处理器。
 但是，如果请求的是<code>/hello/others</code>，那么使用哪一个处理器呢？ 匹配遵循以下规则：</p>
-
 <ul>
 <li>首先，精确匹配。即查找是否有<code>/hello/others</code>对应的处理器。如果有，则查找结束。如果没有，执行下一步；</li>
 <li>将路径中最后一个部分去掉，再次查找。即查找<code>/hello/</code>对应的处理器。如果有，则查找结束。如果没有，继续执行这一步。即查找<code>/</code>对应的处理器。</li>
 </ul>
-
 <p>这里有一个注意点，<strong>如果注册的 URL 不是以<code>/</code>结尾的，那么它只能精确匹配请求的 URL</strong>。反之，即使请求的 URL 只有<strong>前缀</strong>与被绑定的 URL 相同，<code>ServeMux</code>也认为它们是匹配的。</p>
-
 <p>这也是为什么上面步骤进行到<code>/hello/</code>时，不能匹配<code>/hello</code>的原因。因为<code>/hello</code>不以<code>/</code>结尾，必须要精确匹配。
 如果，我们绑定的 URL 为<code>/hello/</code>，那么当服务器找不到与<code>/hello/others</code>完全匹配的处理器时，就会退而求其次，开始寻找能够与<code>/hello/</code>匹配的处理器。</p>
-
 <p>看下面的代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -878,56 +847,41 @@ if (!doNotTrack) {
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>浏览器请求<code>localhost:8080/</code>将返回<code>&quot;This is the index page&quot;</code>，因为<code>/</code>精确匹配；</li>
 </ul>
-
-<p><img src="/img/in-post/goweb/structure2.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/structure2.png#center" alt=""></p>
 <ul>
 <li>浏览器请求<code>localhost:8080/hello</code>将返回<code>&quot;This is the hello page&quot;</code>，因为<code>/hello</code>精确匹配；</li>
 </ul>
-
-<p><img src="/img/in-post/goweb/structure3.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/structure3.png#center" alt=""></p>
 <ul>
 <li>浏览器请求<code>localhost:8080/hello/</code>将返回<code>&quot;This is the index page&quot;</code>。<strong>注意这里不是<code>hello</code>，因为绑定的<code>/hello</code>需要精确匹配，而请求的<code>/hello/</code>不能与之精确匹配。故而向上查找到<code>/</code></strong>；</li>
 </ul>
-
-<p><img src="/img/in-post/goweb/structure4.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/structure4.png#center" alt=""></p>
 <ul>
 <li>浏览器请求<code>localhost:8080/hello/world</code>将返回<code>&quot;This is the world page&quot;</code>，因为<code>/hello/world</code>精确匹配；</li>
 </ul>
-
-<p><img src="/img/in-post/goweb/structure5.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/structure5.png#center" alt=""></p>
 <ul>
 <li>浏览器请求<code>localhost:8080/hello/world/</code>将返回<code>&quot;This is the index page&quot;</code>，<strong>查找步骤为<code>/hello/world/</code>（不能与<code>/hello/world</code>精确匹配）-&gt; <code>/hello/</code>（不能与<code>/hello/</code>精确匹配）-&gt; <code>/</code></strong>；</li>
 </ul>
-
-<p><img src="/img/in-post/goweb/structure7.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/structure7.png#center" alt=""></p>
 <ul>
 <li>浏览器请求<code>localhost:8080/hello/other</code>将返回<code>&quot;This is the index page&quot;</code>，<strong>查找步骤为<code>/hello/others</code> -&gt; <code>/hello/</code>（不能与<code>/hello</code>精确匹配）-&gt; <code>/</code></strong>；</li>
 </ul>
-
-<p><img src="/img/in-post/goweb/structure6.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/structure6.png#center" alt=""></p>
 <p>如果注册时，将<code>/hello</code>改为<code>/hello/</code>，那么请求<code>localhost:8080/hello/</code>和<code>localhost:8080/hello/world/</code>都将返回<code>&quot;This is the hello page&quot;</code>。自己试试吧！</p>
-
 <p>思考：
 使用<code>/hello/</code>注册处理器时，<code>localhost:8080/hello/</code>返回什么？</p>
-
 <h2 id="总结">总结</h2>
-
 <p>本文介绍了 Go Web 程序的基本结构。Go Web 的基本形式如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1000,24 +954,18 @@ if (!doNotTrack) {
     <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
         <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后续文章中大部分程序只是在此基础上增加处理器或处理器函数并注册到相应的 URL 中而已。处理器和处理器函数可以只使用一种或两者都使用。注意，为了方便，命名中我都加上了<code>Handler</code>。</p>
-
+</div><p>后续文章中大部分程序只是在此基础上增加处理器或处理器函数并注册到相应的 URL 中而已。处理器和处理器函数可以只使用一种或两者都使用。注意，为了方便，命名中我都加上了<code>Handler</code>。</p>
 <h2 id="参考资料">参考资料</h2>
-
 <ol>
 <li><a href="https://book.douban.com/subject/27204133/">Go Web 编程</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1219,7 +1167,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

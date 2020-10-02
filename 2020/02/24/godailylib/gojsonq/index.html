@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/24/godailylib/gojsonq/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.0995afa14b62cd93e93cfc066b646c4c17a3eddca0e9d52a1d9dcf5d90aaacd3.css" integrity="sha256-CZWvoUtizZPpPPwGa2RsTBej7dyg6dUqHZ3PXZCqrNM=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
 
 
 
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-02-24T14:31:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 gojsonq">
 <meta itemprop="description" content="简介 在日常工作中，每一名开发者，不管是前端还是后端，都经常使用 JSON。JSON 是一个很简单的数据交换格式。相比于 XML，它灵活、轻巧、使用">
-
-
-<meta itemprop="datePublished" content="2020-02-24T14:31:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-02-24T14:31:23&#43;00:00" />
+<meta itemprop="datePublished" content="2020-02-24T14:31:23+00:00" />
+<meta itemprop="dateModified" content="2020-02-24T14:31:23+00:00" />
 <meta itemprop="wordCount" content="2748">
 
 
@@ -384,52 +382,45 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#数据源">数据源</a></li>
-<li><a href="#高级查询">高级查询</a>
-<ul>
-<li><a href="#字段映射">字段映射</a></li>
-<li><a href="#条件查询">条件查询</a></li>
-<li><a href="#指定偏移和返回条目数">指定偏移和返回条目数</a></li>
-<li><a href="#聚合统计">聚合统计</a></li>
-</ul></li>
-<li><a href="#其他格式">其他格式</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#数据源">数据源</a></li>
+    <li><a href="#高级查询">高级查询</a>
+      <ul>
+        <li><a href="#字段映射">字段映射</a></li>
+        <li><a href="#条件查询">条件查询</a></li>
+        <li><a href="#指定偏移和返回条目数">指定偏移和返回条目数</a></li>
+        <li><a href="#聚合统计">聚合统计</a></li>
+      </ul>
+    </li>
+    <li><a href="#其他格式">其他格式</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>在日常工作中，每一名开发者，不管是前端还是后端，都经常使用 JSON。JSON 是一个很简单的数据交换格式。相比于 XML，它灵活、轻巧、使用方便。JSON 也是<a href="http://www.ruanyifeng.com/blog/2014/05/restful_api.html">RESTful API</a>推荐的格式。有时，我们只想读取 JSON 中的某一些字段。如果自己手动解析、一层一层读取，这就变得异常繁琐了。特别是在嵌套层次很深的情况下。今天我们介绍<a href="https://github.com/thedevsaddam/gojsonq"><code>gojsonq</code></a>。它可以帮助我们很方便的操作 JSON。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/thedevsaddam/gojsonq</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/thedevsaddam/gojsonq
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后使用：</p>
+</div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -490,37 +481,31 @@ if (!doNotTrack) {
 
   <span class="nx">hobby</span> <span class="o">:=</span> <span class="nx">gq</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;user.hobbies.[0]&#34;</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">hobby</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>操作非常简单：</p>
-
+</div><p>操作非常简单：</p>
 <ul>
 <li>首先调用<code>gojsonq.New()</code>创建一个<code>JSONQ</code>的对象；</li>
 <li>然后就可以使用该类型的方法来查询属性了。</li>
 </ul>
-
 <p>上面代码我们直接读取位于最内层的<code>district</code>值和<code>hobbies</code>数组的第一个元素！层与层之间用<code>.</code>隔开，如果是数组，则在属性字段后通过<code>.[index]</code>读取下标为<code>index</code>的元素。这种方式可以实现很灵活的读取。</p>
-
 <p>注意到一个细节：在查询之后，我们手动调用了一次<code>Reset()</code>方法。因为<code>JSONQ</code>对象在调用<code>Find</code>方法时，内部会记录当前的节点，下一个查询会从上次查找的节点开始。也就是说如果我们注释掉<code>jq.Reset()</code>，第二个<code>Find()</code>方法实际上查找的是<code>user.address.district.user.hobbies.[0]</code>，自然就返回<code>nil</code>了。除此之外，<code>gojsonq</code>也提供了另外一种方式。如果你想要保存当前查询的一些状态信息，可以调用<code>JSONQ</code>的<code>Copy</code>方法返回一个初始状态下的对象，它们会共用底层的 JSON 字符串和解析后的对象。上面的<code>gq.Reset()</code>可以由下面这行代码代替：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">gpCopy</span> <span class="o">:=</span> <span class="nx">gp</span><span class="p">.</span><span class="nf">Copy</span><span class="p">()</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">gpCopy</span> <span class="o">:=</span> <span class="nx">gp</span><span class="p">.</span><span class="nf">Copy</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后面就可以使用<code>gpCopy</code>查询<code>hobbies</code>了。</p>
-
+</div><p>后面就可以使用<code>gpCopy</code>查询<code>hobbies</code>了。</p>
 <p>这个算是<code>gojsonq</code>库的一个特点，但也是初学者带来了很多困扰，需要特别注意。实际上，<code>JSONQ</code>提供的很多方法会改变当前节点，稍后部分我们会更清楚的看到。</p>
-
 <h2 id="数据源">数据源</h2>
-
 <p>除了从字符串中加载，<code>jsonq</code>还允许从文件和<code>io.Reader</code>中读取内容。分别使用<code>JSONQ</code>对象的<code>File</code>和<code>Reader</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -531,13 +516,13 @@ if (!doNotTrack) {
   <span class="nx">gq</span> <span class="o">:=</span> <span class="nx">gojsonq</span><span class="p">.</span><span class="nf">New</span><span class="p">().</span><span class="nf">File</span><span class="p">(</span><span class="s">&#34;./data.json&#34;</span><span class="p">)</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gq</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;items.[1].price&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>和下面程序的效果是一样的：</p>
+</div><p>和下面程序的效果是一样的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -558,13 +543,13 @@ if (!doNotTrack) {
   <span class="nx">gq</span> <span class="o">:=</span> <span class="nx">gojsonq</span><span class="p">.</span><span class="nf">New</span><span class="p">().</span><span class="nf">Reader</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gq</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;items.[1].price&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>为了后面演示方便，我构造了一个<code>data.json</code>文件：</p>
+</div><p>为了后面演示方便，我构造了一个<code>data.json</code>文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-json" data-lang="json"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -639,19 +624,16 @@ if (!doNotTrack) {
       <span class="nt">&#34;price&#34;</span><span class="p">:</span> <span class="mi">12000</span>
     <span class="p">}</span>
   <span class="p">]</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="高级查询">高级查询</h2>
-
+</div><h2 id="高级查询">高级查询</h2>
 <p><code>gojsonq</code>的独特之处在于，它可以像 SQL 一样进行条件查询，可以选择返回哪些字段，可以做一些聚合统计。</p>
-
 <h3 id="字段映射">字段映射</h3>
-
 <p>有时候，我们只关心对象中的几个字段，这时候就可以使用<code>Select</code>指定返回哪些字段，其余字段不返回：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -662,13 +644,13 @@ if (!doNotTrack) {
   <span class="nx">r</span> <span class="o">:=</span> <span class="nx">gojsonq</span><span class="p">.</span><span class="nf">New</span><span class="p">().</span><span class="nf">File</span><span class="p">(</span><span class="s">&#34;./data.json&#34;</span><span class="p">).</span><span class="nf">From</span><span class="p">(</span><span class="s">&#34;items&#34;</span><span class="p">).</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">()</span>
   <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">MarshalIndent</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;  &#34;</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只会输出<code>id</code>和<code>name</code>字段：</p>
+</div><p>只会输出<code>id</code>和<code>name</code>字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -715,17 +697,15 @@ if (!doNotTrack) {
     <span class="s2">&#34;id&#34;</span>: null,
     <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;Invalid Item&#34;</span>
   }
-]</code></pre></td></tr></table>
+]
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>为了显示更直观一点，我这里用<code>json.MarshalIndent()</code>对输出做了一些美化。</p>
-
+</div><p>为了显示更直观一点，我这里用<code>json.MarshalIndent()</code>对输出做了一些美化。</p>
 <p>是不是和 SQL 有点像<code>Select id,name From items</code>&hellip;</p>
-
 <p>这里介绍一下<code>From</code>方法，这个方法的作用是将当前节点移动到指定位置。上面也说过当前节点的位置是记下来的。例如，上面的代码中我们先将当前节点移动到<code>items</code>，后面的查询和聚合操作都是针对这个数组。实际上<code>Find</code>方法内部就调用了<code>From</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -756,23 +736,18 @@ if (!doNotTrack) {
   <span class="c1">// ============= 注意这一行，记住当前节点位置
 </span><span class="c1"></span>  <span class="nx">j</span><span class="p">.</span><span class="nx">jsonContent</span> <span class="p">=</span> <span class="nx">v</span>
   <span class="k">return</span> <span class="nx">j</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>最后必须要调用<code>Get()</code>，它组合所有条件后执行这个查询，返回结果。</p>
-
+</div><p>最后必须要调用<code>Get()</code>，它组合所有条件后执行这个查询，返回结果。</p>
 <h3 id="条件查询">条件查询</h3>
-
 <p>有了<code>Select</code>和<code>From</code>，怎么能没有<code>Where</code>呢？<code>gojsonq</code>提供的<code>Where</code>方法非常多，我们大概看几个就行了。</p>
-
 <p>首先是，<code>Where(key, op, val)</code>，这个是通用的<code>Where</code>条件，表示<code>key</code>和<code>val</code>是否满足<code>op</code>关系。<code>op</code>内置的就有将近 20 种，还支持自定义。例如<code>=</code>表示相等，<code>!=</code>表示不等，<code>startsWith</code>表示<code>val</code>是否是<code>key</code>字段的前缀等等等等；</p>
-
 <p>其他很多条件都是<code>Where</code>的特例，例如<code>WhereIn(key, val)</code>就等价于<code>Where(key, &quot;in&quot;, val)</code>，<code>WhereStartsWith(key, val)</code>就等价于<code>Where(key, &quot;startsWith&quot;, val)</code>。</p>
-
 <p>默认情况下，<code>Where</code>的条件都是<code>And</code>连接的，我们可以通过<code>OrWhere</code>让其以<code>Or</code>连接：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -799,17 +774,15 @@ if (!doNotTrack) {
   <span class="nx">r</span> <span class="p">=</span> <span class="nx">gq</span><span class="p">.</span><span class="nf">From</span><span class="p">(</span><span class="s">&#34;items&#34;</span><span class="p">).</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;count&#34;</span><span class="p">).</span>
     <span class="nf">Where</span><span class="p">(</span><span class="s">&#34;count&#34;</span><span class="p">,</span> <span class="s">&#34;&gt;&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;price&#34;</span><span class="p">,</span> <span class="s">&#34;&lt;&#34;</span><span class="p">,</span> <span class="mi">100</span><span class="p">).</span><span class="nf">Get</span><span class="p">()</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面第一个查询，查找<code>id</code>为 1 <strong>或</strong> 2 的记录。第二个查询，查找<code>count</code>大于 1 <strong>且</strong> <code>price</code>小于 100 的记录。</p>
-
+</div><p>上面第一个查询，查找<code>id</code>为 1 <strong>或</strong> 2 的记录。第二个查询，查找<code>count</code>大于 1 <strong>且</strong> <code>price</code>小于 100 的记录。</p>
 <h3 id="指定偏移和返回条目数">指定偏移和返回条目数</h3>
-
 <p>有时我们想要分页显示，第一次查询时返回前 3 条内容，第二次查询时返回接下来的 3 条记录。我们可以使用<code>JSONQ</code>对象的<code>Offset</code>和<code>Limit</code>方法来指定偏移和返回的条目数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -832,28 +805,27 @@ if (!doNotTrack) {
 
   <span class="nx">r2</span> <span class="o">:=</span> <span class="nx">gq</span><span class="p">.</span><span class="nf">From</span><span class="p">(</span><span class="s">&#34;items&#34;</span><span class="p">).</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">).</span><span class="nf">Offset</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nf">Limit</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nf">Get</span><span class="p">()</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Second Page:&#34;</span><span class="p">,</span> <span class="nx">r2</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>来看看运行结果：</p>
+</div><p>来看看运行结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
 First Page: [map[id:1 name:Apple] map[id:2 name:Notebook] map[id:3 name:Pencil]]
-Second Page: [map[id:4 name:Camera] map[id:<span class="p">&lt;</span>nil<span class="p">&gt;</span> name:Invalid Item]]</code></pre></td></tr></table>
+Second Page: [map[id:4 name:Camera] map[id:<span class="p">&lt;</span>nil<span class="p">&gt;</span> name:Invalid Item]]
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="聚合统计">聚合统计</h3>
-
+</div><h3 id="聚合统计">聚合统计</h3>
 <p>我们还能可以对一些字段做简单的统计，计算和、平均数、最大、最小值等：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -870,17 +842,15 @@ Second Page: [map[id:4 name:Camera] map[id:<span class="p">&lt;</span>nil<span c
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Min Price:&#34;</span><span class="p">,</span> <span class="nx">gq</span><span class="p">.</span><span class="nf">Min</span><span class="p">(</span><span class="s">&#34;price&#34;</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Max Price:&#34;</span><span class="p">,</span> <span class="nx">gq</span><span class="p">.</span><span class="nf">Max</span><span class="p">(</span><span class="s">&#34;price&#34;</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Avg Price:&#34;</span><span class="p">,</span> <span class="nx">gq</span><span class="p">.</span><span class="nf">Avg</span><span class="p">(</span><span class="s">&#34;price&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面统计商品的总数量、最低价格、最高价格和平均价格。</p>
-
+</div><p>上面统计商品的总数量、最低价格、最高价格和平均价格。</p>
 <p><strong>聚合统计类的方法都不会修改当前节点的指向，所以<code>JSONQ</code>对象可以重复使用！</strong></p>
-
 <p>还可以对数据进行分组和排序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -895,15 +865,14 @@ Second Page: [map[id:4 name:Camera] map[id:<span class="p">&lt;</span>nil<span c
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gq</span><span class="p">.</span><span class="nf">From</span><span class="p">(</span><span class="s">&#34;items&#34;</span><span class="p">).</span><span class="nf">GroupBy</span><span class="p">(</span><span class="s">&#34;price&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">())</span>
   <span class="nx">gq</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">gq</span><span class="p">.</span><span class="nf">From</span><span class="p">(</span><span class="s">&#34;items&#34;</span><span class="p">).</span><span class="nf">SortBy</span><span class="p">(</span><span class="s">&#34;price&#34;</span><span class="p">,</span> <span class="s">&#34;desc&#34;</span><span class="p">).</span><span class="nf">Get</span><span class="p">())</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="其他格式">其他格式</h2>
-
+</div><h2 id="其他格式">其他格式</h2>
 <p>默认情况下，<code>gojsonq</code>使用 JSON 格式解析数据。我们也可以设置其他格式解析器让<code>gojsonq</code>可以处理其他格式的数据：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -936,22 +905,22 @@ Second Page: [map[id:4 name:Camera] map[id:<span class="p">&lt;</span>nil<span c
     <span class="k">return</span> <span class="nx">err</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Unmarshal</span><span class="p">(</span><span class="nx">bb</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">v</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码用到了<code>yaml</code>库，需要额外安装：</p>
+</div><p>上面代码用到了<code>yaml</code>库，需要额外安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/ghodss/yaml</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/ghodss/yaml
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>解析器只要实现<code>gojsonq.Decoder</code>接口，都可以作为设置到<code>gojsonq</code>中，这样就可以实现任何格式的处理：</p>
+</div><p>解析器只要实现<code>gojsonq.Decoder</code>接口，都可以作为设置到<code>gojsonq</code>中，这样就可以实现任何格式的处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -960,29 +929,21 @@ Second Page: [map[id:4 name:Camera] map[id:<span class="p">&lt;</span>nil<span c
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/thedevsaddam/gojsonq/decoder.go
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Decoder</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Decode</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">v</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="总结">总结</h2>
-
+</div><h2 id="总结">总结</h2>
 <p><code>gojsonq</code>还有一些高级特性，例如自定义<code>Where</code>的操作类型，取第一个、最后一个、第 N 个值等。感兴趣可自行研究~</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>gojsonq GitHub：<a href="https://github.com/thedevsaddam/gojsonq">https://github.com/thedevsaddam/gojsonq</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1184,7 +1145,7 @@ Second Page: [map[id:4 name:Camera] map[id:<span class="p">&lt;</span>nil<span c
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 
