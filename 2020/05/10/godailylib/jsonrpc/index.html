@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/05/10/godailylib/jsonrpc/" />
@@ -69,11 +69,9 @@
 <meta property="article:modified_time" content="2020-05-10T19:30:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 jsonrpc">
 <meta itemprop="description" content="简介 在上一篇文章中我们介绍了 Go 标准库net/rpc的用法。在默认情况下，rpc库内部使用gob格式传输数据。我们仿造gob的编解码器实现了一">
-
-
-<meta itemprop="datePublished" content="2020-05-10T19:30:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-10T19:30:23&#43;00:00" />
-<meta itemprop="wordCount" content="3149">
+<meta itemprop="datePublished" content="2020-05-10T19:30:23+00:00" />
+<meta itemprop="dateModified" content="2020-05-10T19:30:23+00:00" />
+<meta itemprop="wordCount" content="3152">
 
 
 
@@ -363,7 +361,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 3149 字 </span>
+        <span class="more-meta"> 约 3152 字 </span>
           <span class="more-meta"> 预计阅读 7 分钟 </span>
 
         
@@ -384,38 +382,29 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#json-rpc-标准">JSON-RPC 标准</a></li>
-<li><a href="#使用-zookeeper-实现简单的负载均衡">使用 zookeeper 实现简单的负载均衡</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#json-rpc-标准">JSON-RPC 标准</a></li>
+    <li><a href="#使用-zookeeper-实现简单的负载均衡">使用 zookeeper 实现简单的负载均衡</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>在<a href="https://darjun.github.io/2020/05/08/godailylib/rpc">上一篇文章</a>中我们介绍了 Go 标准库<code>net/rpc</code>的用法。在默认情况下，<code>rpc</code>库内部使用<code>gob</code>格式传输数据。我们仿造<code>gob</code>的编解码器实现了一个<code>json</code>格式的。实际上标准库<code>net/rpc/jsonrcp</code>中已有实现。本文是对上一篇文章的补充。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>标准库无需安装。</p>
-
 <p>首先是服务端，使用<code>net/rpc/jsonrpc</code>之后，我们就不用自己去编写<code>json</code>的编解码器了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -494,13 +483,13 @@ if (!doNotTrack) {
     <span class="c1">// 注意这一行
 </span><span class="c1"></span>    <span class="k">go</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">ServeCodec</span><span class="p">(</span><span class="nx">jsonrpc</span><span class="p">.</span><span class="nf">NewServerCodec</span><span class="p">(</span><span class="nx">conn</span><span class="p">))</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>直接调用<code>jsonrpc.NewServerCodec(conn)</code>创建一个服务端的<code>codec</code>。客户端也是类似的：</p>
+</div><p>直接调用<code>jsonrpc.NewServerCodec(conn)</code>创建一个服务端的<code>codec</code>。客户端也是类似的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -535,33 +524,33 @@ if (!doNotTrack) {
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>先运行服务端程序：</p>
+</div><p>先运行服务端程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后在一个新的控制台中运行客户端程序：</p>
+</div><p>然后在一个新的控制台中运行客户端程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">client</span><span class="p">.</span><span class="k">go</span>
-<span class="nx">Multiply</span><span class="p">:</span> <span class="mi">7</span><span class="o">*</span><span class="mi">8</span><span class="p">=</span><span class="mi">56</span></code></pre></td></tr></table>
+<span class="nx">Multiply</span><span class="p">:</span> <span class="mi">7</span><span class="o">*</span><span class="mi">8</span><span class="p">=</span><span class="mi">56</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>下面这段代码基本上每个使用<code>jsonrpc</code>的程序都要编写：</p>
+</div><p>下面这段代码基本上每个使用<code>jsonrpc</code>的程序都要编写：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -574,13 +563,13 @@ if (!doNotTrack) {
   <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dial error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">client</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">NewClientWithCodec</span><span class="p">(</span><span class="nx">jsonrpc</span><span class="p">.</span><span class="nf">NewClientCodec</span><span class="p">(</span><span class="nx">conn</span><span class="p">))</span></code></pre></td></tr></table>
+<span class="nx">client</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">NewClientWithCodec</span><span class="p">(</span><span class="nx">jsonrpc</span><span class="p">.</span><span class="nf">NewClientCodec</span><span class="p">(</span><span class="nx">conn</span><span class="p">))</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因此<code>jsonrpc</code>为了方便直接提供了一个<code>Dial</code>方法。使用<code>Dial</code>简化上面的客户端程序：</p>
+</div><p>因此<code>jsonrpc</code>为了方便直接提供了一个<code>Dial</code>方法。使用<code>Dial</code>简化上面的客户端程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -609,50 +598,41 @@ if (!doNotTrack) {
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>效果是一样的。</p>
-
+</div><p>效果是一样的。</p>
 <h2 id="json-rpc-标准">JSON-RPC 标准</h2>
-
 <p>JSON-RPC 1.0 标准在 2005 年发布，经过数年演化，于 2010 年发布了 2.0 版本。JSON-RPC 标准的内容可在<a href="https://www.jsonrpc.org/specification">https://www.jsonrpc.org/specification</a>查看。Go 标准库<code>net/rpc/jsonrpc</code>实现了 1.0 版本。关于 2.0 版本的实现可以在<code>pkg.go.dev</code>上搜索<code>json-rpc+2.0</code>。本文以 1.0 版本为基础进行介绍。</p>
-
 <p>JSON-RPC 传输的是单一的对象，序列化为 JSON 格式。请求对象包含以下 3 个属性：</p>
-
 <ul>
 <li><code>method</code>：请求调用的方法；</li>
 <li><code>params</code>：一个数组表示传给方法的各个参数；</li>
 <li><code>id</code>：请求 ID。ID 可以是任何类型，在收到响应时根据这个属性判断对应哪个请求。</li>
 </ul>
-
 <p>响应对象包含以下 3 个属性：</p>
-
 <ul>
 <li><code>result</code>：方法返回的对象，如果<code>error</code>非空时，该属性必须为<code>null</code>；</li>
 <li><code>error</code>：表示调用是否出错；</li>
 <li><code>id</code>：对应请求的 ID。</li>
 </ul>
-
 <p>另外标准还定义了一种通知类型，除了<code>id</code>属性为<code>null</code>之外，通知对象的属性与请求对象完全一样。</p>
-
 <p>调用<code>client.Call(&quot;echo&quot;, &quot;Hello JSON-RPC&quot;, &amp;reply)</code>时：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">请求</span><span class="err">：</span><span class="p">{</span> <span class="s">&#34;method&#34;</span><span class="p">:</span> <span class="s">&#34;echo&#34;</span><span class="p">,</span> <span class="s">&#34;params&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#34;Hello JSON-RPC&#34;</span><span class="p">],</span> <span class="s">&#34;id&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-<span class="nx">响应</span><span class="err">：</span><span class="p">{</span> <span class="s">&#34;result&#34;</span><span class="p">:</span> <span class="s">&#34;Hello JSON-RPC&#34;</span><span class="p">,</span> <span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">null</span><span class="p">,</span> <span class="s">&#34;id&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span></code></pre></td></tr></table>
+<span class="nx">响应</span><span class="err">：</span><span class="p">{</span> <span class="s">&#34;result&#34;</span><span class="p">:</span> <span class="s">&#34;Hello JSON-RPC&#34;</span><span class="p">,</span> <span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">null</span><span class="p">,</span> <span class="s">&#34;id&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="使用-zookeeper-实现简单的负载均衡">使用 zookeeper 实现简单的负载均衡</h2>
-
+</div><h2 id="使用-zookeeper-实现简单的负载均衡">使用 zookeeper 实现简单的负载均衡</h2>
 <p>下面我们使用<code>zookeeper</code>实现一个简单的<strong>客户端</strong>侧的负载均衡。<code>zookeeper</code>中记录所有的可提供服务的服务器，客户端每次请求时都随机挑选一个。<strong>我们的示例中，请求必须是无状态的</strong>。首先，我们改造一下服务端程序，将监听地址提取出来，通过<code>flag</code>指定：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -751,28 +731,26 @@ if (!doNotTrack) {
 
     <span class="k">go</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">ServeCodec</span><span class="p">(</span><span class="nx">jsonrpc</span><span class="p">.</span><span class="nf">NewServerCodec</span><span class="p">(</span><span class="nx">conn</span><span class="p">))</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>关于有哪些服务器可用，我们存储在<code>zookeeper</code>中。</p>
-
+</div><p>关于有哪些服务器可用，我们存储在<code>zookeeper</code>中。</p>
 <p>首先要启动一个<code>zookeeper</code>的程序。在 Apache Zookeeper 官网可以下载能直接运行的 Windows 程序。下载之后解压，将<code>conf</code>文件夹中的样板配置<code>zoo_sample.cfg</code>复制一份，文件名改为<code>zoo.cfg</code>。在编辑器中打开<code>zoo.cfg</code>，将<code>dataDir</code>改为一个已存在的目录，或创建一个新目录。我在<code>bin</code>同级目录中创建了一个<code>data</code>目录，然后设置<code>dataDir=../data</code>。切换到<code>bin</code>目录下执行<code>zkServer.bat</code>，<code>zookeeper</code>程序就运行起来了。使用<code>zkClient.bat</code>连接上这个<code>zookeeper</code>，增加一个节点，设置数据：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">create</span> <span class="o">/</span><span class="nx">rpcserver</span>
-<span class="err">$</span> <span class="nx">set</span> <span class="o">/</span><span class="nx">rpcserver</span> <span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">1111</span><span class="p">,</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">1112</span><span class="p">,</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">1113</span></code></pre></td></tr></table>
+<span class="err">$</span> <span class="nx">set</span> <span class="o">/</span><span class="nx">rpcserver</span> <span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">1111</span><span class="p">,</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">1112</span><span class="p">,</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">1113</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们用<code>,</code>分隔多个服务器地址。</p>
-
+</div><p>我们用<code>,</code>分隔多个服务器地址。</p>
 <p>准备工作完成后，接下来就开始编写客户端代码了。我们实现一个代理类，负责监听<code>zookeeper</code>的数据变化，根据<code>zookeeper</code>中新的地址创建到服务器的连接，删除老的连接，将调用请求随机转发到一个服务器处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -801,22 +779,22 @@ if (!doNotTrack) {
     <span class="nx">zookeeper</span><span class="p">:</span> <span class="nx">addr</span><span class="p">,</span>
     <span class="nx">clients</span><span class="p">:</span>   <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Client</span><span class="p">),</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这里我们使用了<code>go-zookeeper</code>这个库，需要额外安装：</p>
+</div><p>这里我们使用了<code>go-zookeeper</code>这个库，需要额外安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/samuel/go-zookeeper/zk</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/samuel/go-zookeeper/zk
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>程序启动时，代理对象从<code>zookeeper</code>中获取服务端地址，创建连接：</p>
+</div><p>程序启动时，代理对象从<code>zookeeper</code>中获取服务端地址，创建连接：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -915,13 +893,13 @@ if (!doNotTrack) {
       <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;delete addr&#34;</span><span class="p">,</span> <span class="nx">addr</span><span class="p">)</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>同时，需要监听<code>zookeeper</code>中的数据变化，当新增或删除某个服务端地址时，<code>Proxy</code>要及时更新连接：</p>
+</div><p>同时，需要监听<code>zookeeper</code>中的数据变化，当新增或删除某个服务端地址时，<code>Proxy</code>要及时更新连接：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -954,13 +932,13 @@ if (!doNotTrack) {
       <span class="p">}</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>客户端主体程序使用<code>Proxy</code>结构非常方便：</p>
+</div><p>客户端主体程序使用<code>Proxy</code>结构非常方便：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1055,13 +1033,13 @@ if (!doNotTrack) {
     <span class="nx">p</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>创建一个代理对象，在一个新的 goroutine 中监听<code>zookeeper</code>事件。然后通过<code>Proxy</code>的<code>Call</code>调用远程服务端的方法：</p>
+</div><p>创建一个代理对象，在一个新的 goroutine 中监听<code>zookeeper</code>事件。然后通过<code>Proxy</code>的<code>Call</code>调用远程服务端的方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1100,91 +1078,85 @@ if (!doNotTrack) {
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;use&#34;</span><span class="p">,</span> <span class="nx">addr</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>首先我们要启动 3 个服务端程序，分别监听端口 1111、1112、1113，需要 3 个控制台：</p>
-
+</div><p>首先我们要启动 3 个服务端程序，分别监听端口 1111、1112、1113，需要 3 个控制台：</p>
 <p>控制台 1：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> <span class="o">-</span><span class="nx">addr</span> <span class="p">:</span><span class="mi">1111</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>控制台 2：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> <span class="o">-</span><span class="nx">addr</span> <span class="p">:</span><span class="mi">1112</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>控制台 3：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> <span class="o">-</span><span class="nx">addr</span> <span class="p">:</span><span class="mi">1113</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>客户端在一个新的控制台启动，指定<code>zookeeper</code>地址：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="p">.</span> <span class="o">-</span><span class="nx">addr</span><span class="p">=</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">2181</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>在输出中，我们可以看到是怎么随机挑选服务器的。</p>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> <span class="o">-</span><span class="nx">addr</span> <span class="p">:</span><span class="mi">1111</span>
 
+</code></pre></td></tr></table>
+</div>
+</div><p>控制台 2：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> <span class="o">-</span><span class="nx">addr</span> <span class="p">:</span><span class="mi">1112</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>控制台 3：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> <span class="o">-</span><span class="nx">addr</span> <span class="p">:</span><span class="mi">1113</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>客户端在一个新的控制台启动，指定<code>zookeeper</code>地址：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="p">.</span> <span class="o">-</span><span class="nx">addr</span><span class="p">=</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">2181</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在输出中，我们可以看到是怎么随机挑选服务器的。</p>
 <p>我们可以尝试在客户端程序运行的过程中，将某个服务器地址从<code>zookeeper</code>中删除。我特意在程序中加了一个 1 分钟的延迟。在<code>sleep</code>过程中，通过<code>zkClient.cmd</code>将<code>127.0.0.1:1113</code>这个地址从<code>zookeeper</code>中删除：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ set /rpcserver 127.0.0.1:1111,127.0.0.1:1112</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ set /rpcserver 127.0.0.1:1111,127.0.0.1:1112
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>控制台输出:</p>
+</div><p>控制台输出:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ 2020/05/10 23:47:47 delete addr 127.0.0.1:1113</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ 2020/05/10 23:47:47 delete addr 127.0.0.1:1113
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>并且后续的请求不会再发到<code>127.0.0.1:1113</code>这个服务器了。</p>
-
+</div><p>并且后续的请求不会再发到<code>127.0.0.1:1113</code>这个服务器了。</p>
 <p>其实，在实际的项目中，<code>Proxy</code>一般是一个独立的服务器，而不是放在客户端侧。上面示例这样处理只是为了方便。</p>
-
 <h2 id="总结">总结</h2>
-
 <p>RPC 底层可以使用各种协议传输数据，JSON/XML/Protobuf 都可以。对 rpc 感兴趣的建议看看<code>rpcx</code>这个库，<a href="https://github.com/smallnest/rpcx">https://github.com/smallnest/rpcx</a>。非常强大！</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>jsonrpc GitHub：<a href="https://golang.org/pkg/net/rpc/jsonrpc/">https://golang.org/pkg/net/rpc/jsonrpc/</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1386,7 +1358,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

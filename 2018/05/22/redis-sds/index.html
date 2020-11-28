@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/05/22/redis-sds/" />
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2018-05-22T10:48:00+00:00" />
 <meta itemprop="name" content="Redis源码阅读-字符串">
 <meta itemprop="description" content="目录： 1.概述 2.实现 3.操作 3.1.创建 3.2.销毁 3.3.查询基本信息 3.4.修改 3.5.扩容 3.6.拼接 3.7.拆分 3.8.映射 3.9">
-
-
-<meta itemprop="datePublished" content="2018-05-22T10:48:00&#43;00:00" />
-<meta itemprop="dateModified" content="2018-05-22T10:48:00&#43;00:00" />
+<meta itemprop="datePublished" content="2018-05-22T10:48:00+00:00" />
+<meta itemprop="dateModified" content="2018-05-22T10:48:00+00:00" />
 <meta itemprop="wordCount" content="4463">
 
 
@@ -384,147 +382,82 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#目录">目录：</a>
-<ul>
-<li><a href="#span-id-概述-1-概述-span"><span id="概述">1.概述</span></a></li>
-<li><a href="#span-id-实现-实现-span"><span id="实现">实现</span></a></li>
-<li><a href="#span-id-操作-3-操作-span"><span id="操作">3.操作</span></a>
-<ul>
-<li><a href="#span-id-创建-3-1-创建-span"><span id="创建">3.1.创建</span></a>
-<ul>
-<li><a href="#以-const-void-和-size-t-指定一块内存">以<code>const void *</code>和<code>size_t</code>指定一块内存</a></li>
-<li><a href="#以-const-char-类型的参数">以<code>const char *</code>类型的参数</a></li>
-<li><a href="#不带参数创建空-sds">不带参数创建空<code>sds</code></a></li>
-<li><a href="#从已有的-sds-复制">从已有的<code>sds</code>复制</a></li>
-<li><a href="#以-long-long-类型的参数">以<code>long long</code>类型的参数</a></li>
-</ul></li>
-<li><a href="#span-id-销毁-3-2-销毁-span"><span id="销毁">3.2.销毁</span></a></li>
-<li><a href="#span-id-查询基本信息-3-3-查询基本信息-span"><span id="查询基本信息">3.3.查询基本信息</span></a>
-<ul>
-<li><a href="#获取字符串长度">获取字符串长度</a></li>
-<li><a href="#获取空闲空间">获取空闲空间</a></li>
-<li><a href="#占用内存大小">占用内存大小</a></li>
-</ul></li>
-<li><a href="#span-id-修改-3-4-修改-span"><span id="修改">3.4.修改</span></a>
-<ul>
-<li><a href="#更新长度">更新长度</a></li>
-<li><a href="#清空-sds">清空<code>sds</code></a></li>
-<li><a href="#释放空闲空间">释放空闲空间</a></li>
-<li><a href="#增加-减少字符串长度">增加/减少字符串长度</a></li>
-<li><a href="#转换为小写">转换为小写</a></li>
-<li><a href="#转换为大写">转换为大写</a></li>
-<li><a href="#以-const-void-和-size-t-指定的内存覆盖">以<code>const void *</code>和<code>size_t</code>指定的内存覆盖</a></li>
-<li><a href="#以-const-char-指定内容覆盖">以<code>const char *</code>指定内容覆盖</a></li>
-<li><a href="#移除首尾指定字符">移除首尾指定字符</a></li>
-<li><a href="#保留指定范围">保留指定范围</a></li>
-</ul></li>
-<li><a href="#span-id-扩容-3-5-扩容-span"><span id="扩容">3.5.扩容</span></a>
-<ul>
-<li><a href="#sdsmakeroomfor"><code>sdsMakeRoomFor</code></a></li>
-<li><a href="#sdsgrowzero"><code>sdsgrowzero</code></a></li>
-</ul></li>
-<li><a href="#span-id-拼接-3-6-拼接-span"><span id="拼接">3.6.拼接</span></a>
-<ul>
-<li><a href="#以-const-void-和-size-t-指定一块内存-1">以<code>const void *</code>和<code>size_t</code>指定一块内存</a></li>
-<li><a href="#以-const-char-类型的参数-1">以<code>const char *</code>类型的参数</a></li>
-<li><a href="#拼接已有-sds-对象">拼接已有<code>sds</code>对象</a></li>
-<li><a href="#以-const-char-和-va-list-指定的可变参数">以<code>const char *</code>和<code>va_list</code>指定的可变参数</a></li>
-<li><a href="#以-const-char-和-指定的可变参数">以<code>const char *</code>和<code>...</code>指定的可变参数</a></li>
-<li><a href="#以-const-char-和-指定的可变参数-redis自己实现的">以<code>const char *</code>和<code>...</code>指定的可变参数（redis自己实现的）</a></li>
-</ul></li>
-<li><a href="#span-id-拆分-3-7-拆分-span"><span id="拆分">3.7.拆分</span></a></li>
-<li><a href="#span-id-连接-3-8-连接-span"><span id="连接">3.8.连接</span></a></li>
-<li><a href="#span-id-映射-3-9-映射-span"><span id="映射">3.9.映射</span></a></li>
-<li><a href="#span-id-比较-3-10-比较-span"><span id="比较">3.10.比较</span></a></li>
-</ul></li>
-<li><a href="#span-id-总结-4-总结-span"><span id="总结">4.总结</span></a></li>
-</ul></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#目录">目录：</a>
+      <ul>
+        <li><a href="#span-id概述1概述span"><!-- raw HTML omitted -->1.概述<!-- raw HTML omitted --></a></li>
+        <li><a href="#span-id实现实现span"><!-- raw HTML omitted -->实现<!-- raw HTML omitted --></a></li>
+        <li><a href="#span-id操作3操作span"><!-- raw HTML omitted -->3.操作<!-- raw HTML omitted --></a></li>
+        <li><a href="#span-id总结4总结span"><!-- raw HTML omitted -->4.总结<!-- raw HTML omitted --></a></li>
+      </ul>
+    </li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="目录">目录：</h2>
-
+      <h2 id="目录">目录：</h2>
 <ul>
-<li><a href="#概述">1.概述</a></li>
-<li><a href="#实现">2.实现</a></li>
-<li><a href="#操作">3.操作</a>
-
+<li><a href="#%E6%A6%82%E8%BF%B0">1.概述</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0">2.实现</a></li>
+<li><a href="#%E6%93%8D%E4%BD%9C">3.操作</a>
 <ul>
-<li><a href="#创建">3.1.创建</a></li>
-<li><a href="#销毁">3.2.销毁</a></li>
-<li><a href="#查询基本信息">3.3.查询基本信息</a></li>
-<li><a href="#修改">3.4.修改</a></li>
-<li><a href="#扩容">3.5.扩容</a></li>
-<li><a href="#拼接">3.6.拼接</a></li>
-<li><a href="#拆分">3.7.拆分</a></li>
-<li><a href="#映射">3.8.映射</a></li>
-<li><a href="#连接">3.9.连接</a></li>
-</ul></li>
-<li><a href="#总结">4.总结</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA">3.1.创建</a></li>
+<li><a href="#%E9%94%80%E6%AF%81">3.2.销毁</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF">3.3.查询基本信息</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9">3.4.修改</a></li>
+<li><a href="#%E6%89%A9%E5%AE%B9">3.5.扩容</a></li>
+<li><a href="#%E6%8B%BC%E6%8E%A5">3.6.拼接</a></li>
+<li><a href="#%E6%8B%86%E5%88%86">3.7.拆分</a></li>
+<li><a href="#%E6%98%A0%E5%B0%84">3.8.映射</a></li>
+<li><a href="#%E8%BF%9E%E6%8E%A5">3.9.连接</a></li>
 </ul>
-
-<h3 id="span-id-概述-1-概述-span"><span id="概述">1.概述</span></h3>
-
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">4.总结</a></li>
+</ul>
+<h3 id="span-id概述1概述span"><!-- raw HTML omitted -->1.概述<!-- raw HTML omitted --></h3>
 <p>字符串是一个无处不在的数据结构，C语言的原生字符串在一些些操作的性能和易用性上都有所欠缺，且非二进制安全。Redis中实现了一个简单易用的、高效的、二进制安全的字符串<code>sds</code>。</p>
-
-<h3 id="span-id-实现-实现-span"><span id="实现">实现</span></h3>
-
+<h3 id="span-id实现实现span"><!-- raw HTML omitted -->实现<!-- raw HTML omitted --></h3>
 <p>所在文件：<code>sds.h</code>和<code>sds.c</code>。</p>
-
 <p><code>sds</code>只是<code>char *</code>的<code>typedef</code>定义而已：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">typedef char *sds;</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef char *sds;
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>每个<code>sds</code>有个头部<code>sdshdr</code>，头部存放字符串长度，空闲空间大小，实际字符串指针。</p>
+</div><p>每个<code>sds</code>有个头部<code>sdshdr</code>，头部存放字符串长度，空闲空间大小，实际字符串指针。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">struct sdshdr {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct sdshdr {
     unsigned int len;
     unsigned int free;
     char buf[];
-};</pre></td></tr></table>
+};
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>sds</code>实际指向的是<code>buf</code>的地址，而且在每个字符串末尾会自动添加一个<code>\0</code>，所以可以用在所有<code>c str</code>的场合。需要<code>sds</code>的长度等信息时，通过向前偏移找到<code>sdshdr</code>提取信息。字符串扩容时会分配超出实际大小的空间，多余空间通过<code>free</code>记录。这样可以降低后面字符串的空间分配频次，提升效率。注意：<code>\0</code>没有算入<code>len</code>和<code>free</code>。</p>
-
-<p><img src="/img/in-post/redis-sds/sds-structure.png" alt="sds结构" /></p>
-
-<h3 id="span-id-操作-3-操作-span"><span id="操作">3.操作</span></h3>
-
+</div><p><code>sds</code>实际指向的是<code>buf</code>的地址，而且在每个字符串末尾会自动添加一个<code>\0</code>，所以可以用在所有<code>c str</code>的场合。需要<code>sds</code>的长度等信息时，通过向前偏移找到<code>sdshdr</code>提取信息。字符串扩容时会分配超出实际大小的空间，多余空间通过<code>free</code>记录。这样可以降低后面字符串的空间分配频次，提升效率。注意：<code>\0</code>没有算入<code>len</code>和<code>free</code>。</p>
+<p><img src="/img/in-post/redis-sds/sds-structure.png" alt="sds结构"></p>
+<h3 id="span-id操作3操作span"><!-- raw HTML omitted -->3.操作<!-- raw HTML omitted --></h3>
 <p><code>sds</code>会根据需要动态扩容，所以大部分修改<code>sds</code>的操作函数的返回值类型都是<code>sds</code>。</p>
-
-<h4 id="span-id-创建-3-1-创建-span"><span id="创建">3.1.创建</span></h4>
-
+<h4 id="span-id创建31创建span"><!-- raw HTML omitted -->3.1.创建<!-- raw HTML omitted --></h4>
 <p>可以以下几种方式创建<code>sds</code>：</p>
-
-<h5 id="以-const-void-和-size-t-指定一块内存">以<code>const void *</code>和<code>size_t</code>指定一块内存</h5>
-
+<h5 id="以const-void-和size_t指定一块内存">以<code>const void *</code>和<code>size_t</code>指定一块内存</h5>
 <p><code>sdsnewlen</code>通过<code>init</code>和<code>initlen</code>创建一个<code>sds</code>。如果<code>init</code>为<code>NULL</code>，字符串内容以0填充。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -546,9 +479,9 @@ if (!doNotTrack) {
 </span><span class="lnt">20
 </span><span class="lnt">21
 </span><span class="lnt">22
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsnewlen(const void *init, size_t initlen) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsnewlen(const void *init, size_t initlen) {
     struct sdshdr *sh;
 
     // 如果init不为NULL，通过init内容创建
@@ -569,177 +502,165 @@ if (!doNotTrack) {
     // 添加末尾的\0
     sh-&gt;buf[initlen] = &#39;\0&#39;;
     return (char*)sh-&gt;buf;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="以-const-char-类型的参数">以<code>const char *</code>类型的参数</h5>
-
+</div><h5 id="以const-char-类型的参数">以<code>const char *</code>类型的参数</h5>
 <p><code>sdsnew</code>通过<code>init</code>创建<code>sds</code>，长度通过<code>strlen</code>获取。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsnew(const char *init) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsnew(const char *init) {
     // 获取长度，转给sdsnewlen处理
     size_t initlen = (init == NULL) ? 0 : strlen(init);
     return sdsnewlen(init, initlen);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="不带参数创建空-sds">不带参数创建空<code>sds</code></h5>
-
+</div><h5 id="不带参数创建空sds">不带参数创建空<code>sds</code></h5>
 <p><code>sdsempty</code>创建一个空的<code>sds</code>字符串。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsempty(void) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsempty(void) {
     // 调用sdsnewlen创建
     return sdsnewlen(&#34;&#34;, 0);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="从已有的-sds-复制">从已有的<code>sds</code>复制</h5>
-
+</div><h5 id="从已有的sds复制">从已有的<code>sds</code>复制</h5>
 <p><code>sdsdup</code>复制一份<code>sds</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsdup(const sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsdup(const sds s) {
     // 以s的内容重新创建一个sds
     return sdsnewlen(s, sdslen(s));
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="以-long-long-类型的参数">以<code>long long</code>类型的参数</h5>
-
+</div><h5 id="以long-long类型的参数">以<code>long long</code>类型的参数</h5>
 <p><code>sdsfromlonglong</code>通过一个<code>long long</code>类型的值构造一个<code>sds</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsfromlonglong(long long value) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsfromlonglong(long long value) {
     char buf[SDS_LLSTR_SIZE];
     // sdsll2str将value转为字符串存在buf中，返回长度
     int len = sdsll2str(buf,value);
 
     return sdsnewlen(buf, len);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-销毁-3-2-销毁-span"><span id="销毁">3.2.销毁</span></h4>
-
+</div><h4 id="span-id销毁32销毁span"><!-- raw HTML omitted -->3.2.销毁<!-- raw HTML omitted --></h4>
 <p><code>sdsfree</code>释放<code>sds</code>分配的空间。不能直接调用<code>zfree</code>，因为指针前面还有头部信息。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void sdsfree(sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void sdsfree(sds s) {
     if (s == NULL) return;
     // 需要偏移到头部free
     zfree(s-sizeof(struct sdshdr));
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-查询基本信息-3-3-查询基本信息-span"><span id="查询基本信息">3.3.查询基本信息</span></h4>
-
+</div><h4 id="span-id查询基本信息33查询基本信息span"><!-- raw HTML omitted -->3.3.查询基本信息<!-- raw HTML omitted --></h4>
 <h5 id="获取字符串长度">获取字符串长度</h5>
-
 <p>调用<code>sdslen</code>获取实际长度（因为可能存入二进制<code>\0</code>，不能使用<code>strlen</code>获取）。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">static inline size_t sdslen(const sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">static inline size_t sdslen(const sds s) {
     // 向前偏移找到sdshdr
     struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));
     // 取出长度
     return sh-&gt;len;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="获取空闲空间">获取空闲空间</h5>
-
+</div><h5 id="获取空闲空间">获取空闲空间</h5>
 <p>调用<code>sdsavail</code>获取空闲空间。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">static inline size_t sdsavail(const sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">static inline size_t sdsavail(const sds s) {
     // 向前偏移找到sdshdr
     struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));
     // 取出空闲空间
     return sh-&gt;free;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="占用内存大小">占用内存大小</h5>
-
+</div><h5 id="占用内存大小">占用内存大小</h5>
 <p>调用<code>sdsAllocSize</code>获取<code>sds</code>分配的空间大小，包括头部，字符串长度，字符串末尾的<code>\0</code>，空闲空间长度。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">size_t sdsAllocSize(sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">size_t sdsAllocSize(sds s) {
     struct sdshdr *sh = (void*) (s-sizeof(struct sdshdr));
 
     return sizeof(*sh)+sh-&gt;len+sh-&gt;free+1;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-修改-3-4-修改-span"><span id="修改">3.4.修改</span></h4>
-
+</div><h4 id="span-id修改34修改span"><!-- raw HTML omitted -->3.4.修改<!-- raw HTML omitted --></h4>
 <p><code>sds</code>提供多种修改字符串修改操作。</p>
-
 <h5 id="更新长度">更新长度</h5>
-
 <p>调用<code>sdsupdatelen</code>根据<code>buf</code>指向内容更新长度，以<code>\0</code>结尾。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -748,9 +669,9 @@ if (!doNotTrack) {
 </span><span class="lnt">7
 </span><span class="lnt">8
 </span><span class="lnt">9
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void sdsupdatelen(sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void sdsupdatelen(sds s) {
     // 向前偏移获取sdshdr
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     // 通过strlen获取长度
@@ -758,32 +679,30 @@ if (!doNotTrack) {
     // 更新长度和空闲大小
     sh-&gt;free += (sh-&gt;len-reallen);
     sh-&gt;len = reallen;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这个方法主要用在手动修改<code>sds</code>内容时，更新<code>sdshdr</code>信息。</p>
+</div><p>这个方法主要用在手动修改<code>sds</code>内容时，更新<code>sdshdr</code>信息。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">s = sdsnew(&#34;foobar&#34;);
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">s = sdsnew(&#34;foobar&#34;);
 s[2] = &#39;\0&#39;;
 sdsupdatelen(s);
-printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
+printf(&#34;%d\n&#34;, sdslen(s)); // 输出2
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面例子中，如果没有调用<code>sdsupdatelen</code>，输出结果将会是6。</p>
-
-<h5 id="清空-sds">清空<code>sds</code></h5>
-
+</div><p>上面例子中，如果没有调用<code>sdsupdatelen</code>，输出结果将会是6。</p>
+<h5 id="清空sds">清空<code>sds</code></h5>
 <p>调用<code>sdsclear</code>清空<code>sds</code>的内容。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -791,24 +710,23 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void sdsclear(sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void sdsclear(sds s) {
     // 向前偏移找到sdshdr
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     // 更新len和free，并将第一个字符设置为&#39;\0&#39;
     sh-&gt;free += sh-&gt;len;
     sh-&gt;len = 0;
     sh-&gt;buf[0] = &#39;\0&#39;;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="释放空闲空间">释放空闲空间</h5>
-
+</div><h5 id="释放空闲空间">释放空闲空间</h5>
 <p><code>sdsRemoveFreeSpace</code>释放<code>sds</code>中空闲的空间。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -817,9 +735,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">7
 </span><span class="lnt">8
 </span><span class="lnt">9
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsRemoveFreeSpace(sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsRemoveFreeSpace(sds s) {
     struct sdshdr *sh;
 
     sh = (void*) (s-(sizeof(struct sdshdr)));
@@ -827,15 +745,14 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
     sh = zrealloc(sh, sizeof(struct sdshdr)+sh-&gt;len+1);
     sh-&gt;free = 0;
     return sh-&gt;buf;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="增加-减少字符串长度">增加/减少字符串长度</h5>
-
+</div><h5 id="增加减少字符串长度">增加/减少字符串长度</h5>
 <p>调用<code>sdsIncrLen</code>增加或减少字符串长度。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -849,9 +766,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">12
 </span><span class="lnt">13
 </span><span class="lnt">14
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void sdsIncrLen(sds s, int incr) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void sdsIncrLen(sds s, int incr) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
 
     if (incr &gt;= 0)
@@ -864,53 +781,50 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
     sh-&gt;free -= incr;
     // 设置新的字符串末尾的\0
     s[sh-&gt;len] = &#39;\0&#39;;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="转换为小写">转换为小写</h5>
-
+</div><h5 id="转换为小写">转换为小写</h5>
 <p><code>sdstolower</code>将<code>sds</code>中字符转为小写形式。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void sdstolower(sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void sdstolower(sds s) {
     int len = sdslen(s), j;
 
     for (j = 0; j &lt; len; j++) s[j] = tolower(s[j]);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="转换为大写">转换为大写</h5>
-
+</div><h5 id="转换为大写">转换为大写</h5>
 <p><code>sdstoupper</code>将<code>sds</code>中字符转为大写形式。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void sdstoupper(sds s) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void sdstoupper(sds s) {
     int len = sdslen(s), j;
 
     for (j = 0; j &lt; len; j++) s[j] = toupper(s[j]);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="以-const-void-和-size-t-指定的内存覆盖">以<code>const void *</code>和<code>size_t</code>指定的内存覆盖</h5>
-
+</div><h5 id="以const-void-和size_t指定的内存覆盖">以<code>const void *</code>和<code>size_t</code>指定的内存覆盖</h5>
 <p><code>sdscpylen</code>将以<code>t</code>和<code>len</code>指向的内存copy到<code>sds</code>中，覆盖现有内容。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -928,9 +842,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdscpylen(sds s, const void *t, size_t len) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdscpylen(sds s, const void *t, size_t len) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     size_t totlen = sh-&gt;free+sh-&gt;len;
 
@@ -947,30 +861,28 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
     sh-&gt;len = len;
     sh-&gt;free = totlen -  len;
     return s;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="以-const-char-指定内容覆盖">以<code>const char *</code>指定内容覆盖</h5>
-
+</div><h5 id="以const-char-指定内容覆盖">以<code>const char *</code>指定内容覆盖</h5>
 <p><code>sdscpy</code>将<code>t</code>的内容copy到<code>sds</code>中，覆盖现有内容。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdscpy(sds s, const char *t) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdscpy(sds s, const char *t) {
     return sdscpylen(s, t, strlen(t));
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="移除首尾指定字符">移除首尾指定字符</h5>
-
+</div><h5 id="移除首尾指定字符">移除首尾指定字符</h5>
 <p><code>sdstrim</code>从<code>sds</code>左右删除<code>cset</code>中指定的字符。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -989,9 +901,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">17
 </span><span class="lnt">18
 </span><span class="lnt">19
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdstrim(sds s, const char *cset) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdstrim(sds s, const char *cset) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     char *start, *end, *sp, *ep;
     size_t len;
@@ -1009,15 +921,14 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
     sh-&gt;free = sh-&gt;free+(sh-&gt;len-len);
     sh-&gt;len = len;
     return s;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="保留指定范围">保留指定范围</h5>
-
+</div><h5 id="保留指定范围">保留指定范围</h5>
 <p><code>sdsrange</code>只保留<code>sds</code>中起始位置<code>start</code>，结束位置<code>end</code>之间的字符。位置可以为负数，表示从尾部开始计算。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1048,9 +959,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">29
 </span><span class="lnt">30
 </span><span class="lnt">31
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void sdsrange(sds s, int start, int end) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void sdsrange(sds s, int start, int end) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     size_t newlen, len = sdslen(s);
 
@@ -1080,19 +991,16 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
     sh-&gt;buf[newlen] = 0;
     sh-&gt;free = sh-&gt;free+(sh-&gt;len-newlen);
     sh-&gt;len = newlen;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-扩容-3-5-扩容-span"><span id="扩容">3.5.扩容</span></h4>
-
+</div><h4 id="span-id扩容35扩容span"><!-- raw HTML omitted -->3.5.扩容<!-- raw HTML omitted --></h4>
 <p><code>sds</code>可以动态扩容。当<code>sds</code>空闲空间不足以容纳操作所需时，会调用以下函数扩容：</p>
-
 <h5 id="sdsmakeroomfor"><code>sdsMakeRoomFor</code></h5>
-
 <p>分配空间，使<code>sds</code>中可以多容纳额外的<code>addlen</code>个字符。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1114,9 +1022,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">20
 </span><span class="lnt">21
 </span><span class="lnt">22
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsMakeRoomFor(sds s, size_t addlen) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsMakeRoomFor(sds s, size_t addlen) {
     struct sdshdr *sh, *newsh;
     size_t free = sdsavail(s);
     size_t len, newlen;
@@ -1137,15 +1045,14 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 
     newsh-&gt;free = newlen - len;
     return newsh-&gt;buf;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="sdsgrowzero"><code>sdsgrowzero</code></h5>
-
+</div><h5 id="sdsgrowzero"><code>sdsgrowzero</code></h5>
 <p>增加字符串长度，以0填充增加的部分。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1161,9 +1068,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">14
 </span><span class="lnt">15
 </span><span class="lnt">16
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsgrowzero(sds s, size_t len) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsgrowzero(sds s, size_t len) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     size_t totlen, curlen = sh-&gt;len;
 
@@ -1178,17 +1085,15 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
     sh-&gt;len = len;
     sh-&gt;free = totlen-sh-&gt;len;
     // 因为memset将所有的都设置为0了，不用特地设置sh-&gt;buf[sh-&gt;len] = &#39;\0&#39;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-拼接-3-6-拼接-span"><span id="拼接">3.6.拼接</span></h4>
-
-<h5 id="以-const-void-和-size-t-指定一块内存-1">以<code>const void *</code>和<code>size_t</code>指定一块内存</h5>
-
+</div><h4 id="span-id拼接36拼接span"><!-- raw HTML omitted -->3.6.拼接<!-- raw HTML omitted --></h4>
+<h5 id="以const-void-和size_t指定一块内存-1">以<code>const void *</code>和<code>size_t</code>指定一块内存</h5>
 <p><code>sdscatlen</code>将由<code>t</code>和<code>len</code>指定的内容拼接到现有字符串的后面。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1205,9 +1110,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">15
 </span><span class="lnt">16
 </span><span class="lnt">17
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdscatlen(sds s, const void *t, size_t len) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdscatlen(sds s, const void *t, size_t len) {
     struct sdshdr *sh;
     size_t curlen = sdslen(s);
 
@@ -1223,45 +1128,42 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
     // 设置\0
     s[curlen+len] = &#39;\0&#39;;
     return s;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="以-const-char-类型的参数-1">以<code>const char *</code>类型的参数</h5>
-
+</div><h5 id="以const-char-类型的参数-1">以<code>const char *</code>类型的参数</h5>
 <p><code>sdscat</code>将<code>t</code>拼接到现有字符串的后面。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdscat(sds s, const char *t) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdscat(sds s, const char *t) {
     return sdscatlen(s, t, strlen(t));
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="拼接已有-sds-对象">拼接已有<code>sds</code>对象</h5>
-
+</div><h5 id="拼接已有sds对象">拼接已有<code>sds</code>对象</h5>
 <p>将已有的一个<code>sds</code>拼接到另一个<code>sds</code>的后面。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdscatsds(sds s, const sds t) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdscatsds(sds s, const sds t) {
     return sdscatlen(s, t, sdslen(t));
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="以-const-char-和-va-list-指定的可变参数">以<code>const char *</code>和<code>va_list</code>指定的可变参数</h5>
-
+</div><h5 id="以const-char-和va_list指定的可变参数">以<code>const char *</code>和<code>va_list</code>指定的可变参数</h5>
 <p><code>sdscatvprintf</code>将格式<code>fmt</code>和<code>ap</code>指定的可变参数拼接到<code>sds</code>的后面。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1294,9 +1196,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">31
 </span><span class="lnt">32
 </span><span class="lnt">33
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdscatvprintf(sds s, const char *fmt, va_list ap) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdscatvprintf(sds s, const char *fmt, va_list ap) {
     va_list cpy;
     char staticbuf[1024], *buf = staticbuf, *t;
     size_t buflen = strlen(fmt) * 2;
@@ -1328,15 +1230,14 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
     t = sdscat(s, buf);
     if (buf != staticbuf) zfree(buf);
     return t;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="以-const-char-和-指定的可变参数">以<code>const char *</code>和<code>...</code>指定的可变参数</h5>
-
+</div><h5 id="以const-char-和指定的可变参数">以<code>const char *</code>和<code>...</code>指定的可变参数</h5>
 <p><code>sdscatprintf</code>通过格式<code>fmt</code>将可变参数拼接到<code>sds</code>的后面。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1344,58 +1245,57 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdscatprintf(sds s, const char *fmt, ...) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdscatprintf(sds s, const char *fmt, ...) {
     va_list ap;
     char *t;
     va_start(ap, fmt);
     t = sdscatvprintf(s,fmt,ap);
     va_end(ap);
     return t;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="以-const-char-和-指定的可变参数-redis自己实现的">以<code>const char *</code>和<code>...</code>指定的可变参数（redis自己实现的）</h5>
-
+</div><h5 id="以const-char-和指定的可变参数redis自己实现的">以<code>const char *</code>和<code>...</code>指定的可变参数（redis自己实现的）</h5>
 <p><code>sdscatfmt</code>与<code>sdscatprintf</code>功能类似，但是速度更快，只支持部分格式操作符。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">%s - C字符串
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">%s - C字符串
 %S - sds字符串
 %i - 有符号整数
 %I - 64位有符号整数
 %u - 无符号整数
 %U - 64位无符号整数
-%% - %</pre></td></tr></table>
+%% - %
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdscatfmt(sds s, char const *fmt, ...) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdscatfmt(sds s, char const *fmt, ...) {
     // ...
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-拆分-3-7-拆分-span"><span id="拆分">3.7.拆分</span></h4>
-
+</div><h4 id="span-id拆分37拆分span"><!-- raw HTML omitted -->3.7.拆分<!-- raw HTML omitted --></h4>
 <p><code>sdssplitlen</code>以<code>sep</code>和<code>seplen</code>分隔字符串<code>s</code>，根据得到的每个子字符串创建sds数组并返回。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1442,9 +1342,9 @@ printf(&#34;%d\n&#34;, sdslen(s)); // 输出2</pre></td></tr></table>
 </span><span class="lnt">45
 </span><span class="lnt">46
 </span><span class="lnt">47
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds *sdssplitlen(const char *s, int len, const char *sep, int seplen, int *count) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds *sdssplitlen(const char *s, int len, const char *sep, int seplen, int *count) {
     int elements = 0, slots = 5, start = 0, j;
     sds *tokens;
 
@@ -1490,34 +1390,33 @@ cleanup:
         zfree(tokens);
         return NULL;
     }
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>sdssplitlen</code>返回的<code>sds</code>数组需要调用<code>sdsfreesplitres</code>释放：</p>
+</div><p><code>sdssplitlen</code>返回的<code>sds</code>数组需要调用<code>sdsfreesplitres</code>释放：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">void sdsfreesplitres(sds *tokens, int count) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void sdsfreesplitres(sds *tokens, int count) {
     if (!tokens) return;
     while(count--)
         sdsfree(tokens[count]);
     zfree(tokens);
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-连接-3-8-连接-span"><span id="连接">3.8.连接</span></h4>
-
+</div><h4 id="span-id连接38连接span"><!-- raw HTML omitted -->3.8.连接<!-- raw HTML omitted --></h4>
 <p><code>sdsjoin</code>将字符串数组拼接成以<code>sep</code>分隔的一个<code>sds</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1529,9 +1428,9 @@ cleanup:
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsjoin(char **argv, int argc, char *sep) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsjoin(char **argv, int argc, char *sep) {
     sds join = sdsempty();
     int j ;
 
@@ -1542,15 +1441,14 @@ cleanup:
         if (j != argc-1) join = sdscat(join,sep);
     }
     return join;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-映射-3-9-映射-span"><span id="映射">3.9.映射</span></h4>
-
+</div><h4 id="span-id映射39映射span"><!-- raw HTML omitted -->3.9.映射<!-- raw HTML omitted --></h4>
 <p><code>sdsmapchars</code>将<code>sds</code>在<code>from</code>中的字符转为<code>to</code>中的对应字符。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1563,9 +1461,9 @@ cleanup:
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">sds sdsmapchars(sds s, const char *from, const char *to, size_t setlen) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">sds sdsmapchars(sds s, const char *from, const char *to, size_t setlen) {
     size_t j, i, l = sdslen(s);
 
     for (j = 0; j &lt; l; j++) {
@@ -1577,15 +1475,14 @@ cleanup:
         }
     }
     return s;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="span-id-比较-3-10-比较-span"><span id="比较">3.10.比较</span></h4>
-
+</div><h4 id="span-id比较310比较span"><!-- raw HTML omitted -->3.10.比较<!-- raw HTML omitted --></h4>
 <p><code>sdscmp</code>使用<code>memcmp</code>比较两个<code>sds</code>内容。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1599,9 +1496,9 @@ cleanup:
 </span><span class="lnt">12
 </span><span class="lnt">13
 </span><span class="lnt">14
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">int sdscmp(const sds s1, const sds s2) {
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">int sdscmp(const sds s1, const sds s2) {
     size_t l1, l2, minlen;
     int cmp;
 
@@ -1614,11 +1511,10 @@ cleanup:
     cmp = memcmp(s1,s2,minlen);
     if (cmp == 0) return l1-l2;
     return cmp;
-}</pre></td></tr></table>
+}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="span-id-总结-4-总结-span"><span id="总结">4.总结</span></h3>
-
+</div><h3 id="span-id总结4总结span"><!-- raw HTML omitted -->4.总结<!-- raw HTML omitted --></h3>
 <p>原生的C语言字符串有这样或那样的问题，例如获取长度性能不高，二进制不安全等，所以很多第三方库都是自己实现字符串结构。</p>
 
     </div>
@@ -1822,7 +1718,7 @@ cleanup:
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

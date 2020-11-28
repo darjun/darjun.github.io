@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/10/11/godailylib/rxgo/" />
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-10-11T20:52:26+00:00" />
 <meta itemprop="name" content="Go 每日一库之 rxgo">
 <meta itemprop="description" content="简介 ReactiveX，简称为 Rx，是一个异步编程的 API。与 callback（回调）、promise（JS 提供这种方式）和 deferred">
-
-
-<meta itemprop="datePublished" content="2020-10-11T20:52:26&#43;00:00" />
-<meta itemprop="dateModified" content="2020-10-11T20:52:26&#43;00:00" />
+<meta itemprop="datePublished" content="2020-10-11T20:52:26+00:00" />
+<meta itemprop="dateModified" content="2020-10-11T20:52:26+00:00" />
 <meta itemprop="wordCount" content="7028">
 
 
@@ -384,90 +382,82 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#创建-observable">创建 Observable</a>
-<ul>
-<li><a href="#create"><code>Create</code></a></li>
-<li><a href="#fromchannel"><code>FromChannel</code></a></li>
-<li><a href="#interval"><code>Interval</code></a></li>
-<li><a href="#range"><code>Range</code></a></li>
-<li><a href="#repeat"><code>Repeat</code></a></li>
-<li><a href="#start"><code>Start</code></a></li>
-<li><a href="#observable-分类">Observable 分类</a></li>
-<li><a href="#可连接的-observable">可连接的 <strong>Observable</strong></a></li>
-</ul></li>
-<li><a href="#转换-observable">转换 <strong>Observable</strong></a>
-<ul>
-<li><a href="#map"><code>Map</code></a></li>
-<li><a href="#marshal"><code>Marshal</code></a></li>
-<li><a href="#unmarshal"><code>Unmarshal</code></a></li>
-<li><a href="#buffer"><code>Buffer</code></a></li>
-<li><a href="#groupby"><code>GroupBy</code></a></li>
-<li><a href="#并行操作">并行操作</a></li>
-</ul></li>
-<li><a href="#过滤-observable">过滤 <strong>Observable</strong></a>
-<ul>
-<li><a href="#filter"><code>Filter</code></a></li>
-<li><a href="#elementat"><code>ElementAt</code></a></li>
-<li><a href="#debounce"><code>Debounce</code></a></li>
-<li><a href="#distinct"><code>Distinct</code></a></li>
-<li><a href="#skip"><code>Skip</code></a></li>
-<li><a href="#take"><code>Take</code></a></li>
-</ul></li>
-<li><a href="#选项">选项</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#创建-observable">创建 Observable</a>
+      <ul>
+        <li><a href="#create"><code>Create</code></a></li>
+        <li><a href="#fromchannel"><code>FromChannel</code></a></li>
+        <li><a href="#interval"><code>Interval</code></a></li>
+        <li><a href="#range"><code>Range</code></a></li>
+        <li><a href="#repeat"><code>Repeat</code></a></li>
+        <li><a href="#start"><code>Start</code></a></li>
+        <li><a href="#observable-分类">Observable 分类</a></li>
+        <li><a href="#可连接的-observable">可连接的 <strong>Observable</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#转换-observable">转换 <strong>Observable</strong></a>
+      <ul>
+        <li><a href="#map"><code>Map</code></a></li>
+        <li><a href="#marshal"><code>Marshal</code></a></li>
+        <li><a href="#unmarshal"><code>Unmarshal</code></a></li>
+        <li><a href="#buffer"><code>Buffer</code></a></li>
+        <li><a href="#groupby"><code>GroupBy</code></a></li>
+        <li><a href="#并行操作">并行操作</a></li>
+      </ul>
+    </li>
+    <li><a href="#过滤-observable">过滤 <strong>Observable</strong></a>
+      <ul>
+        <li><a href="#filter"><code>Filter</code></a></li>
+        <li><a href="#elementat"><code>ElementAt</code></a></li>
+        <li><a href="#debounce"><code>Debounce</code></a></li>
+        <li><a href="#distinct"><code>Distinct</code></a></li>
+        <li><a href="#skip"><code>Skip</code></a></li>
+        <li><a href="#take"><code>Take</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#选项">选项</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p><a href="http://reactivex.io/#">ReactiveX</a>，简称为 Rx，是一个异步编程的 API。与 <strong>callback</strong>（回调）、<strong>promise</strong>（JS 提供这种方式）和 <strong>deferred</strong>（Python 的 twisted 网络编程库就是使用这种方式）这些异步编程方式有所不同，Rx 是基于事件流的。这里的事件可以是系统中产生或变化的任何东西，在代码中我们一般用对象表示。在 Rx 中，事件流被称为 <strong>Observable</strong>（可观察的）。事件流需要被 <strong>Observer</strong>（观察者）处理才有意义。想象一下，我们日常作为一个 <strong>Observer</strong>，一个重要的工作就是观察 BUG 的事件流。每次发现一个 BUG，我们都需要去解决它。</p>
-
 <p>Rx 仅仅只是一个 API 规范的定义。Rx 有多种编程语言实现，<code>RxJava/RxJS/Rx.NET/RxClojure/RxSwift</code>。RxGo 是 Rx 的 Go 语言实现。借助于 Go 语言简洁的语法和强大的并发支持（goroutine、channel），Rx 与 Go 语言的结合非常完美。</p>
-
 <p><strong>pipelines</strong> (官方博客：<a href="https://blog.golang.org/pipelines">https://blog.golang.org/pipelines</a>)是 Go 基础的并发编程模型。其中包含，fan-in——多个 goroutine 产生数据，一个goroutine 处理数据，fan-out——一个 goroutine 产生数据，多个 goroutine 处理数据，fan-inout——多个 goroutine 产生数据，多个 goroutine 处理数据。它们都是通过 channel 连接。RxGo 的实现就是基于 <strong>pipelines</strong> 的理念，并且提供了方便易用的包装和强大的扩展。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>本文代码使用 Go Modules。</p>
-
 <p>创建目录并初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir rxgo <span class="p">&amp;&amp;</span> <span class="k">cd</span> rxgo
-$ go mod init github.com/darjun/go-daily-lib/rxgo</code></pre></td></tr></table>
+$ go mod init github.com/darjun/go-daily-lib/rxgo
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>安装<code>rxgo</code>库：</p>
+</div><p>安装<code>rxgo</code>库：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/reactivex/rxgo/v2</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/reactivex/rxgo/v2
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>编码：</p>
+</div><p>编码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -498,35 +488,28 @@ $ go mod init github.com/darjun/go-daily-lib/rxgo</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">ch</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用 RxGo 的一般流程如下：</p>
-
+</div><p>使用 RxGo 的一般流程如下：</p>
 <ul>
 <li>使用相关的 <strong>Operator</strong> 创建 <strong>Observable</strong>，<strong>Operator</strong> 就是用来创建 <strong>Observable</strong> 的。这些术语都比较难贴切地翻译，而且英文也很好懂，就不强行翻译了；</li>
 <li>中间各个阶段可以使用过滤操作筛选出我们想要的数据，使用转换操作对数据进行转换；</li>
 <li>调用 <strong>Observable</strong> 的<code>Observe()</code>方法，该方法返回一个<code>&lt;- chan rxgo.Item</code>。然后<code>for range</code>遍历即可。</li>
 </ul>
-
 <p>GitHub 上一张图很形象地描绘了这个过程：</p>
-
-<p><img src="/img/in-post/godailylib/rxgo1.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/rxgo1.png#center" alt=""></p>
 <ul>
 <li>首先使用<code>Just</code>创建一个仅有若干固定数据的 <strong>Observable</strong>；</li>
 <li>使用<code>Map()</code>方法执行转换（将圆形转为方形）；</li>
 <li>使用<code>Filter()</code>方法执行过滤（过滤掉黄色的方形）。</li>
 </ul>
-
 <p>看懂了这张图片，就能了解 RxGo 工作的基本流程了。</p>
-
 <p>上面是简单的示例，没有过滤、转换操作的使用。</p>
-
 <p>运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -539,15 +522,14 @@ $ go mod init github.com/darjun/go-daily-lib/rxgo</code></pre></td></tr></table>
 2
 3
 4
-5</code></pre></td></tr></table>
+5
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>关于上面的示例，需要注意：</p>
-
+</div><p>关于上面的示例，需要注意：</p>
 <p><code>Just</code>使用柯里化（currying）让它可以在第一个参数中接受多个数据，在第二个参数中接受多个选项定制行为。柯里化是函数化编程的思想，简单来说就是通过在函数中返回函数，以此来减少每个函数的参数个数。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -562,13 +544,13 @@ $ go mod init github.com/darjun/go-daily-lib/rxgo</code></pre></td></tr></table>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Prinlnt</span><span class="p">(</span><span class="nf">add</span><span class="p">(</span><span class="mi">5</span><span class="p">)(</span><span class="mi">10</span><span class="p">))</span> <span class="o">//</span> <span class="mi">15</span></code></pre></td></tr></table>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Prinlnt</span><span class="p">(</span><span class="nf">add</span><span class="p">(</span><span class="mi">5</span><span class="p">)(</span><span class="mi">10</span><span class="p">))</span> <span class="c1">// 15
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>由于 Go 不支持多个可变参数，<code>Just</code>通过柯里化迂回地实现了这个功能：</p>
+</div><p>由于 Go 不支持多个可变参数，<code>Just</code>通过柯里化迂回地实现了这个功能：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -585,13 +567,13 @@ $ go mod init github.com/darjun/go-daily-lib/rxgo</code></pre></td></tr></table>
       <span class="nx">iterable</span><span class="p">:</span> <span class="nf">newJustIterable</span><span class="p">(</span><span class="nx">items</span><span class="o">...</span><span class="p">)(</span><span class="nx">opts</span><span class="o">...</span><span class="p">),</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>实际上<code>rxgo.Item</code>还可以包含错误。所以在使用时，我们应该做一层判断：</p>
+</div><p>实际上<code>rxgo.Item</code>还可以包含错误。所以在使用时，我们应该做一层判断：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -614,13 +596,13 @@ $ go mod init github.com/darjun/go-daily-lib/rxgo</code></pre></td></tr></table>
       <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行：</p>
+</div><p>运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -635,23 +617,20 @@ $ go mod init github.com/darjun/go-daily-lib/rxgo</code></pre></td></tr></table>
 <span class="kt">error</span><span class="p">:</span> <span class="nx">unknown</span>
 <span class="mi">3</span>
 <span class="mi">4</span>
-<span class="mi">5</span></code></pre></td></tr></table>
+<span class="mi">5</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们使用<code>item.Error()</code>检查是否出现错误。然后使用<code>item.V</code>访问数据，<code>item.E</code>访问错误。</p>
-
+</div><p>我们使用<code>item.Error()</code>检查是否出现错误。然后使用<code>item.V</code>访问数据，<code>item.E</code>访问错误。</p>
 <p>除了使用<code>for range</code>之外，我们还可以调用 <strong>Observable</strong> 的<code>ForEach()</code>方法来实现遍历。<code>ForEach()</code>接受 3 个回调函数：</p>
-
 <ul>
 <li><code>NextFunc</code>：类型为<code>func (v interface {})</code>，处理数据；</li>
 <li><code>ErrFunc</code>：类型为<code>func (err error)</code>，处理错误；</li>
 <li><code>CompletedFunc</code>：类型为<code>func ()</code>，<strong>Observable</strong> 完成时调用。</li>
 </ul>
-
 <p>有点<code>Promise</code>那味了。使用<code>ForEach()</code>，可以将上面的示例改写为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -672,13 +651,13 @@ $ go mod init github.com/darjun/go-daily-lib/rxgo</code></pre></td></tr></table>
   <span class="p">},</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;completed&#34;</span><span class="p">)</span>
   <span class="p">})</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行：</p>
+</div><p>运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -693,21 +672,17 @@ received: 2
 received: 3
 received: 4
 received: 5
-completed</code></pre></td></tr></table>
+completed
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>ForEach()</code>实际上是异步执行的，它返回一个接收通知的 channel。当 <strong>Observable</strong> 数据发送完毕时，该 channel 会关闭。所以如果要等待<code>ForEach()</code>执行完成，我们需要使用<code>&lt;-</code>。上面的示例中如果去掉<code>&lt;-</code>，可能就没有输出了，因为主 goroutine 结束了，整个程序就退出了。</p>
-
+</div><p><code>ForEach()</code>实际上是异步执行的，它返回一个接收通知的 channel。当 <strong>Observable</strong> 数据发送完毕时，该 channel 会关闭。所以如果要等待<code>ForEach()</code>执行完成，我们需要使用<code>&lt;-</code>。上面的示例中如果去掉<code>&lt;-</code>，可能就没有输出了，因为主 goroutine 结束了，整个程序就退出了。</p>
 <h2 id="创建-observable">创建 Observable</h2>
-
 <p>上面使用最简单的方式创建 <strong>Observable</strong>：直接调用<code>Just()</code>方法传入一系列数据。下面再介绍几种创建 <strong>Observable</strong> 的方式。</p>
-
 <h3 id="create"><code>Create</code></h3>
-
 <p>传入一个<code>[]rxgo.Producer</code>的切片，其中<code>rxgo.Producer</code>的类型为<code>func(ctx context.Context, next chan&lt;- Item)</code>。我们可以在代码中调用<code>rxgo.Of(value)</code>生成数据，<code>rxgo.Error(err)</code>生成错误，然后发送到<code>next</code>通道中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -746,13 +721,13 @@ completed</code></pre></td></tr></table>
       <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>当然，分成两个<code>rxgo.Producer</code>也是一样的效果：</p>
+</div><p>当然，分成两个<code>rxgo.Producer</code>也是一样的效果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -771,15 +746,14 @@ completed</code></pre></td></tr></table>
   <span class="p">},</span> <span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">next</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">rxgo</span><span class="p">.</span><span class="nx">Item</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">next</span> <span class="o">&lt;-</span> <span class="nx">rxgo</span><span class="p">.</span><span class="nf">Of</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
   <span class="nx">next</span> <span class="o">&lt;-</span> <span class="nx">rxgo</span><span class="p">.</span><span class="nf">Of</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="p">}})</span></code></pre></td></tr></table>
+<span class="p">}})</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="fromchannel"><code>FromChannel</code></h3>
-
+</div><h3 id="fromchannel"><code>FromChannel</code></h3>
 <p><code>FromChannel</code>可以直接从一个已存在的<code>&lt;-chan rxgo.Item</code>对象中创建 <strong>Observable</strong>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -808,19 +782,16 @@ completed</code></pre></td></tr></table>
 	<span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
 	<span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意：</p>
-
+</div><p>注意：</p>
 <p>通道需要手动调用<code>close()</code>关闭，上面<code>Create()</code>方法内部<code>rxgo</code>自动帮我们执行了这个步骤。</p>
-
 <h3 id="interval"><code>Interval</code></h3>
-
 <p><code>Interval</code>以传入的时间间隔生成一个无穷的数字序列，从 0 开始：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -833,15 +804,14 @@ completed</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面的程序启动后，第 5s 输出 0，第 10s 输出 1，&hellip;，而且不会停止。</p>
-
+</div><p>上面的程序启动后，第 5s 输出 0，第 10s 输出 1，&hellip;，而且不会停止。</p>
 <p>我们可以用<code>time.Ticker</code>实现相同的功能：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -860,15 +830,14 @@ completed</code></pre></td></tr></table>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">count</span><span class="p">)</span>
     <span class="nx">count</span><span class="o">++</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="range"><code>Range</code></h3>
-
+</div><h3 id="range"><code>Range</code></h3>
 <p><code>Range</code>可以生成一个范围内的数字：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -881,17 +850,15 @@ completed</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码依次输出 0，1，2，3。</p>
-
+</div><p>上面代码依次输出 0，1，2，3。</p>
 <h3 id="repeat"><code>Repeat</code></h3>
-
 <p>在已存在的 <strong>Observable</strong> 对象上调用<code>Repeat</code>，可以实现每隔指定时间，重复一次该序列，一共重复指定次数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -908,28 +875,26 @@ completed</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行上面的代码，立即输出 1，2，3，然后等待 1s，又输出一次 1，2，3，然后又等待 1s，最后又输出一次 1，2，3。</p>
-
+</div><p>运行上面的代码，立即输出 1，2，3，然后等待 1s，又输出一次 1，2，3，然后又等待 1s，最后又输出一次 1，2，3。</p>
 <h3 id="start"><code>Start</code></h3>
-
 <p>可以给<code>Start</code>方法传入<code>[]rxgo.Supplier</code>作为参数，它可以包含任意数量的<code>rxgo.Supplier</code>类型。<code>rxgo.Supplier</code>的底层类型为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// rxgo/types.go
-</span><span class="c1"></span><span class="kd">var</span> <span class="nx">Supplier</span> <span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="nx">rxgo</span><span class="p">.</span><span class="nx">Item</span></code></pre></td></tr></table>
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">Supplier</span> <span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="nx">rxgo</span><span class="p">.</span><span class="nx">Item</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>Observable</strong> 内部会依次调用这些<code>rxgo.Supplier</code>生成<code>rxgo.Item</code>：</p>
+</div><p><strong>Observable</strong> 内部会依次调用这些<code>rxgo.Supplier</code>生成<code>rxgo.Item</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -966,17 +931,15 @@ completed</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="observable-分类">Observable 分类</h3>
-
+</div><h3 id="observable-分类">Observable 分类</h3>
 <p>根据数据在何处生成，<strong>Observable</strong> 被分为 <strong>Hot</strong> 和 <strong>Cold</strong> 两种类型（类比热启动和冷启动）。数据在其它地方生成的被成为 <strong>Hot Observable</strong>。相反，在 <strong>Observable</strong> 内部生成数据的就是 <strong>Cold Observable</strong>。</p>
-
 <p>使用上面介绍的方法创建的实际上都是 <strong>Hot Observable</strong>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1015,15 +978,14 @@ completed</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面创建的是 <strong>Hot Observable</strong>。但是有个问题，第一次<code>Observe()</code>消耗了所有的数据，第二个就没有数据输出了。</p>
-
+</div><p>上面创建的是 <strong>Hot Observable</strong>。但是有个问题，第一次<code>Observe()</code>消耗了所有的数据，第二个就没有数据输出了。</p>
 <p>而 <strong>Cold Observable</strong> 就不会有这个问题，因为它创建的流是独立于每个观察者的。即每次调用<code>Observe()</code>都创建一个新的 channel。我们使用<code>Defer()</code>方法创建 <strong>Cold Observable</strong>，它的参数与<code>Create()</code>方法一样。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1054,13 +1016,13 @@ completed</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1075,17 +1037,15 @@ completed</code></pre></td></tr></table>
 2
 0
 1
-2</code></pre></td></tr></table>
+2
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="可连接的-observable">可连接的 <strong>Observable</strong></h3>
-
+</div><h3 id="可连接的-observable">可连接的 <strong>Observable</strong></h3>
 <p>可连接的（Connectable）<strong>Observable</strong> 对普通的 <strong>Observable</strong> 进行了一层组装。调用它的<code>Observe()</code>方法时并不会立刻产生数据。使用它，我们可以等所有的观察者都准备就绪了（即调用了<code>Observe()</code>方法）之后，再调用其<code>Connect()</code>方法开始生成数据。我们通过两个示例比较使用普通的 <strong>Observable</strong> 和可连接的 <strong>Observable</strong> 有何不同。</p>
-
 <p>普通的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1134,13 +1094,13 @@ completed</code></pre></td></tr></table>
   <span class="p">})</span>
 
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上例中我们使用<code>DoOnNext()</code>方法来注册观察者。由于<code>DoOnNext()</code>方法是异步执行的，所以为了等待结果输出，在最后增加了一行<code>time.Sleep</code>。运行：</p>
+</div><p>上例中我们使用<code>DoOnNext()</code>方法来注册观察者。由于<code>DoOnNext()</code>方法是异步执行的，所以为了等待结果输出，在最后增加了一行<code>time.Sleep</code>。运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1151,15 +1111,14 @@ completed</code></pre></td></tr></table>
 First observer: 1
 First observer: 2
 First observer: 3
-before subscribe second observer</code></pre></td></tr></table>
+before subscribe second observer
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>由输出可以看出，注册第一个观察者之后就开始产生数据了。</p>
-
+</div><p>由输出可以看出，注册第一个观察者之后就开始产生数据了。</p>
 <p>我们通过在创建 <strong>Observable</strong> 的方法中指定<code>rxgo.WithPublishStrategy()</code>选项就可以创建可连接的 <strong>Observable</strong>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1210,13 +1169,13 @@ before subscribe second observer</code></pre></td></tr></table>
 
   <span class="nx">observable</span><span class="p">.</span><span class="nf">Connect</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行输出：</p>
+</div><p>运行输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1233,21 +1192,17 @@ First observer: 1
 First observer: 2
 First observer: 3
 Second observer: 2
-Second observer: 3</code></pre></td></tr></table>
+Second observer: 3
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面是等两个观察者都注册之后，并且手动调用了 Observable 的<code>Connect()</code>方法才产生数据。而且可连接的 <strong>Observable</strong> 有一个特性：<strong>它是冷启动的！！！</strong>，即每个观察者都会收到一份相同的拷贝。</p>
-
+</div><p>上面是等两个观察者都注册之后，并且手动调用了 Observable 的<code>Connect()</code>方法才产生数据。而且可连接的 <strong>Observable</strong> 有一个特性：<strong>它是冷启动的！！！</strong>，即每个观察者都会收到一份相同的拷贝。</p>
 <h2 id="转换-observable">转换 <strong>Observable</strong></h2>
-
 <p>rxgo 提供了很多转换函数，可以修改经过它的<code>rxgo.Item</code>，然后再发送给下一个阶段。</p>
-
 <h3 id="map"><code>Map</code></h3>
-
 <p><code>Map()</code>方法简单修改它收到的<code>rxgo.Item</code>然后发送到下一个阶段（转换或过滤）。<code>Map()</code>接受一个类型为<code>func (context.Context, interface{}) (interface{}, error)</code>的函数。第二个参数就是<code>rxgo.Item</code>中的数据，返回转换后的数据。如果出错，则返回错误。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1274,13 +1229,13 @@ Second observer: 3</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上例中每个数字经过两个<code>Map</code>，第一个<code>Map</code>执行<code>2 * i + 1</code>，第二个<code>Map</code>执行<code>3 * i + 2</code>。即对于每个数字来说，最终进行的变换为<code>3 * (2 * i + 1) + 2</code>。运行：</p>
+</div><p>上例中每个数字经过两个<code>Map</code>，第一个<code>Map</code>执行<code>2 * i + 1</code>，第二个<code>Map</code>执行<code>3 * i + 2</code>。即对于每个数字来说，最终进行的变换为<code>3 * (2 * i + 1) + 2</code>。运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1289,15 +1244,14 @@ Second observer: 3</code></pre></td></tr></table>
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
 11
 17
-23</code></pre></td></tr></table>
+23
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="marshal"><code>Marshal</code></h3>
-
+</div><h3 id="marshal"><code>Marshal</code></h3>
 <p><code>Marshal</code>对经过它的数据进行一次<code>Marshal</code>。这个<code>Marshal</code>可以是<code>json.Marshal/proto.Marshal</code>，甚至我们自己写的<code>Marshal</code>函数。它接受一个类型为<code>func(interface{}) ([]byte, error)</code>的函数用于对数据进行处理。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1344,17 +1298,15 @@ Second observer: 3</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">.([]</span><span class="kt">byte</span><span class="p">)))</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>由于<code>Marshal</code>操作返回的是<code>[]byte</code>类型，我们需要进行类型转换之后再输出。</p>
-
+</div><p>由于<code>Marshal</code>操作返回的是<code>[]byte</code>类型，我们需要进行类型转换之后再输出。</p>
 <h3 id="unmarshal"><code>Unmarshal</code></h3>
-
 <p>既然有<code>Marshal</code>，也就有它的相反操作<code>Unmarshal</code>。<code>Unmarshal</code>用于将一个<code>[]byte</code>类型转换为相应的结构体或其他类型。与<code>Marshal</code>不同，<code>Unmarshal</code>需要知道转换的目标类型，所以需要提供一个函数用于生成该类型的对象。然后将<code>[]byte</code>数据<code>Unmarshal</code>到该对象中。<code>Unmarshal</code>接受两个参数，参数一是类型为<code>func([]byte, interface{}) error</code>的函数，参数二是<code>func () interface{}</code>用于生成实际类型的对象。我们拿上面的例子中生成的 JSON 字符串作为数据，将它们重新<code>Unmarshal</code>为<code>User</code>对象：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1397,36 +1349,33 @@ Second observer: 3</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>由于<code>Unmarshaller</code>接受<code>[]byte</code>类型的参数，我们在<code>Unmarshal</code>之前加了一个<code>Map</code>用于将<code>string</code>转为<code>[]byte</code>。运行：</p>
+</div><p>由于<code>Unmarshaller</code>接受<code>[]byte</code>类型的参数，我们在<code>Unmarshal</code>之前加了一个<code>Map</code>用于将<code>string</code>转为<code>[]byte</code>。运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
 <span class="p">&amp;</span>{dj 18}
-<span class="p">&amp;</span>{jw 20}</code></pre></td></tr></table>
+<span class="p">&amp;</span>{jw 20}
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="buffer"><code>Buffer</code></h3>
-
+</div><h3 id="buffer"><code>Buffer</code></h3>
 <p><code>Buffer</code>按照一定的规则收集接收到的数据，然后一次性发送出去（作为切片），而不是收到一个发送一个。有 3 种类型的<code>Buffer</code>：</p>
-
 <ul>
 <li><code>BufferWithCount(n)</code>：每收到<code>n</code>个数据发送一次，最后一次可能少于<code>n</code>个；</li>
 <li><code>BufferWithTime(n)</code>：发送在一个时间间隔<code>n</code>内收到的数据；</li>
 <li><code>BufferWithTimeOrCount(d, n)</code>：收到<code>n</code>个数据，或经过<code>d</code>时间间隔，发送当前收到的数据。</li>
 </ul>
-
 <p><code>BufferWithCount</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1445,28 +1394,27 @@ Second observer: 3</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行：</p>
+</div><p>运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
 [1 2 3]
-[4]</code></pre></td></tr></table>
+[4]
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意，最后一组只有一个。</p>
-
+</div><p>注意，最后一组只有一个。</p>
 <p><code>BufferWithTime</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1501,13 +1449,13 @@ Second observer: 3</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>每 3s 发送一次：</p>
+</div><p>每 3s 发送一次：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1518,13 +1466,13 @@ Second observer: 3</code></pre></td></tr></table>
 [0 1 2]
 [3 4 5]
 [6 7 8]
-...</code></pre></td></tr></table>
+...
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>BufferWithTimeOrCount</code>：</p>
+</div><p><code>BufferWithTimeOrCount</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1559,13 +1507,13 @@ Second observer: 3</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面 3s 可以收集 3 个数据，但是设置了收集 2 个就发送。所以，运行输出为：</p>
+</div><p>上面 3s 可以收集 3 个数据，但是设置了收集 2 个就发送。所以，运行输出为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1576,15 +1524,14 @@ Second observer: 3</code></pre></td></tr></table>
 [0 1]
 [2 3]
 [4 5]
-...</code></pre></td></tr></table>
+...
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="groupby"><code>GroupBy</code></h3>
-
+</div><h3 id="groupby"><code>GroupBy</code></h3>
 <p><code>GroupBy</code>根据传入一个 <strong>Hash</strong> 函数，为每个不同的结果分别创建新的 <strong>Observable</strong>。换句话说，<code>GroupBy</code>生成一个数据类型为 <strong>Observable</strong> 的 <strong>Observable</strong>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1613,13 +1560,13 @@ Second observer: 3</code></pre></td></tr></table>
       <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;item: %v\n&#34;</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面根据每个数模 3 的余数将整个流分为 3 组。运行：</p>
+</div><p>上面根据每个数模 3 的余数将整个流分为 3 组。运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1650,17 +1597,15 @@ item: 10
 New observable:
 item: 2
 item: 5
-item: 8</code></pre></td></tr></table>
+item: 8
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意<code>rxgo.WithBufferedChannel(10)</code>的使用，由于我们的数字是连续生成的，依次为 0-&gt;1-&gt;2-&gt;&hellip;-&gt;9-&gt;10。而 <strong>Observable</strong> 默认是惰性的，即由<code>Observe()</code>驱动。内层的<code>Observe()</code>在返回一个 0 之后就等待下一个数，但是下一个数 1 不在此 <strong>Observable</strong> 中。所以会陷入死锁。使用<code>rxgo.WithBufferedChannel(10)</code>，设置它们之间的连接 channel 缓冲区大小为 10，这样即使我们未取出 channel 里面的数字，上游还是能发送数字进来。</p>
-
+</div><p>注意<code>rxgo.WithBufferedChannel(10)</code>的使用，由于我们的数字是连续生成的，依次为 0-&gt;1-&gt;2-&gt;&hellip;-&gt;9-&gt;10。而 <strong>Observable</strong> 默认是惰性的，即由<code>Observe()</code>驱动。内层的<code>Observe()</code>在返回一个 0 之后就等待下一个数，但是下一个数 1 不在此 <strong>Observable</strong> 中。所以会陷入死锁。使用<code>rxgo.WithBufferedChannel(10)</code>，设置它们之间的连接 channel 缓冲区大小为 10，这样即使我们未取出 channel 里面的数字，上游还是能发送数字进来。</p>
 <h3 id="并行操作">并行操作</h3>
-
 <p>默认情况下，这些转换操作都是串行的，即只有一个 goroutine 负责执行转换函数。我们也可以使用<code>rxgo.WithPool(n)</code>选项设置运行<code>n</code>个 goroutine，或者<code>rxgo.WitCPUPool()</code>选项设置运行与逻辑 CPU 数量相等的 goroutine。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1685,21 +1630,17 @@ item: 8</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>由于是并行，所以<strong>输出顺序就不确定了</strong>。为了让不确定性更明显一点，我在代码中加了一行<code>time.Sleep</code>。</p>
-
+</div><p>由于是并行，所以<strong>输出顺序就不确定了</strong>。为了让不确定性更明显一点，我在代码中加了一行<code>time.Sleep</code>。</p>
 <h2 id="过滤-observable">过滤 <strong>Observable</strong></h2>
-
 <p><strong>Observable</strong> 中发送过来的数据并不一定都是我们需要的，我们要把不想要的过滤掉。</p>
-
 <h3 id="filter"><code>Filter</code></h3>
-
 <p><code>Filter()</code>接受一个类型为<code>func (i interface{}) bool</code>的参数，通过的数据使用这个函数断言，返回<code>true</code>的将发送给下一个阶段。否则，丢弃。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1722,13 +1663,13 @@ item: 8</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面过滤掉奇数，最后只剩下偶数：</p>
+</div><p>上面过滤掉奇数，最后只剩下偶数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1741,15 +1682,14 @@ item: 8</code></pre></td></tr></table>
 4
 6
 8
-10</code></pre></td></tr></table>
+10
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="elementat"><code>ElementAt</code></h3>
-
+</div><h3 id="elementat"><code>ElementAt</code></h3>
 <p><code>ElementAt()</code>只发送指定索引的数据，如<code>ElementAt(2)</code>只发送索引为 2 的数据，即第 3 个数据。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1764,17 +1704,15 @@ item: 8</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码输出 2。</p>
-
+</div><p>上面代码输出 2。</p>
 <h3 id="debounce"><code>Debounce</code></h3>
-
 <p><code>Debounce()</code>比较有意思，它收到数据后还会等待指定的时间间隔，后续间隔内没有收到其他数据才会发送刚开始的数据。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1809,17 +1747,15 @@ item: 8</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面示例，先收到 1，然后 2s 内没收到数据，所以发送 1。接着收到了数据 2，由于马上又收到了 3，所以 2 不会发送。收到 3 之后 2s 内没有收到数据，发送了 3。所以最后输出为 1，3。</p>
-
+</div><p>上面示例，先收到 1，然后 2s 内没收到数据，所以发送 1。接着收到了数据 2，由于马上又收到了 3，所以 2 不会发送。收到 3 之后 2s 内没有收到数据，发送了 3。所以最后输出为 1，3。</p>
 <h3 id="distinct"><code>Distinct</code></h3>
-
 <p><code>Distinct()</code>会记录它发送的所有数据，它不会发送重复的数据。由于数据格式多样，<code>Distinct()</code>要求我们提供一个函数，根据原数据返回一个唯一标识码（有点类似哈希值）。基于这个标识码去重。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1838,17 +1774,15 @@ item: 8</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>依次输出 1，2，3，4，没有重复。</p>
-
+</div><p>依次输出 1，2，3，4，没有重复。</p>
 <h3 id="skip"><code>Skip</code></h3>
-
 <p><code>Skip</code>可以跳过前若干个数据。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1861,15 +1795,14 @@ item: 8</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="take"><code>Take</code></h3>
-
+</div><h3 id="take"><code>Take</code></h3>
 <p><code>Take</code>只取前若干个数据。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1882,41 +1815,29 @@ item: 8</code></pre></td></tr></table>
   <span class="k">for</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">observable</span><span class="p">.</span><span class="nf">Observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="选项">选项</h2>
-
+</div><h2 id="选项">选项</h2>
 <p>rxgo 提供的大部分方法的最后一个参数是一个可变长的选项类型。这是 Go 中特有的、经典的选项设计模式。我们前面已经使用了：</p>
-
 <ul>
 <li><code>rxgo.WithBufferedChannel(10)</code>：设置 channel 的缓存大小；</li>
 <li><code>rxgo.WithPool(n)/rxgo.WithCpuPool()</code>：使用多个 goroutine 执行转换操作；</li>
 <li><code>rxgo.WithPublishStrategy()</code>：使用发布策略，即创建可连接的 <strong>Observable</strong>。</li>
 </ul>
-
 <p>除此之外，rxgo 还提供了很多其他选项。留待大家自行探索了。</p>
-
 <h2 id="总结">总结</h2>
-
 <p>rxgo 让基于 <strong>pipelines</strong> 的并发编程变得更容易！</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>rxgo GitHub：<a href="https://github.com/jordan-wright/rxgo">https://github.com/jordan-wright/rxgo</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -2105,7 +2026,7 @@ item: 8</code></pre></td></tr></table>
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

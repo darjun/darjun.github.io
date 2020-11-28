@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/01/15/godailylib/go-ini/" />
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-01-15T22:33:05+00:00" />
 <meta itemprop="name" content="Go 每日一库之 go-ini">
 <meta itemprop="description" content="简介 ini 是 Windows 上常用的配置文件格式。MySQL 的 Windows 版就是使用 ini 格式存储配置的。 go-ini是 Go 语言中用于操作 ini 文件的第三方库。 本文介绍go-in">
-
-
-<meta itemprop="datePublished" content="2020-01-15T22:33:05&#43;00:00" />
-<meta itemprop="dateModified" content="2020-01-15T22:33:05&#43;00:00" />
+<meta itemprop="datePublished" content="2020-01-15T22:33:05+00:00" />
+<meta itemprop="dateModified" content="2020-01-15T22:33:05+00:00" />
 <meta itemprop="wordCount" content="2973">
 
 
@@ -384,63 +382,55 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#must-便捷方法"><code>Must*</code>便捷方法</a></li>
-<li><a href="#分区操作">分区操作</a>
-<ul>
-<li><a href="#获取信息">获取信息</a></li>
-<li><a href="#父子分区">父子分区</a></li>
-</ul></li>
-<li><a href="#保存配置">保存配置</a></li>
-<li><a href="#分区与结构体字段映射">分区与结构体字段映射</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#must便捷方法"><code>Must*</code>便捷方法</a></li>
+    <li><a href="#分区操作">分区操作</a>
+      <ul>
+        <li><a href="#获取信息">获取信息</a></li>
+        <li><a href="#父子分区">父子分区</a></li>
+      </ul>
+    </li>
+    <li><a href="#保存配置">保存配置</a></li>
+    <li><a href="#分区与结构体字段映射">分区与结构体字段映射</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>ini 是 Windows 上常用的配置文件格式。MySQL 的 Windows 版就是使用 ini 格式存储配置的。
 <a href="https://github.com/go-ini/ini">go-ini</a>是 Go 语言中用于操作 ini 文件的第三方库。</p>
-
 <p>本文介绍<code>go-ini</code>库的使用。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>go-ini 是第三方库，使用前需要安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go get gopkg.in/ini.v1</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get gopkg.in/ini.v1
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>也可以使用 GitHub 上的仓库：</p>
+</div><p>也可以使用 GitHub 上的仓库：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go get github.com/go-ini/ini</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/go-ini/ini
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>首先，创建一个<code>my.ini</code>配置文件：</p>
+</div><p>首先，创建一个<code>my.ini</code>配置文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -455,9 +445,9 @@ if (!doNotTrack) {
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">app_name = awesome web
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">app_name = awesome web
 
 # possible values: DEBUG, INFO, WARNING, ERROR, FATAL
 log_level = DEBUG
@@ -471,13 +461,13 @@ database = awesome
 
 [redis]
 ip = 127.0.0.1
-port = 6381</pre></td></tr></table>
+port = 6381
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用 go-ini 库读取：</p>
+</div><p>使用 go-ini 库读取：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -548,25 +538,22 @@ port = 6381</pre></td></tr></table>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Redis Port:&#34;</span><span class="p">,</span> <span class="nx">redisPort</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在 ini 文件中，每个键值对占用一行，中间使用<code>=</code>隔开。以<code>#</code>开头的内容为注释。ini 文件是以分区（section）组织的。
+</div><p>在 ini 文件中，每个键值对占用一行，中间使用<code>=</code>隔开。以<code>#</code>开头的内容为注释。ini 文件是以分区（section）组织的。
 分区以<code>[name]</code>开始，在下一个分区前结束。所有分区前的内容属于默认分区，如<code>my.ini</code>文件中的<code>app_name</code>和<code>log_level</code>。</p>
-
 <p>使用<code>go-ini</code>读取配置文件的步骤如下：</p>
-
 <ul>
 <li>首先调用<code>ini.Load</code>加载文件，得到配置对象<code>cfg</code>；</li>
 <li>然后以分区名调用配置对象的<code>Section</code>方法得到对应的分区对象<code>section</code>，默认分区的名字为<code>&quot;&quot;</code>，也可以使用<code>ini.DefaultSection</code>；</li>
 <li>以键名调用分区对象的<code>Key</code>方法得到对应的配置项<code>key</code>对象；</li>
 <li>由于文件中读取出来的都是字符串，<code>key</code>对象需根据类型调用对应的方法返回具体类型的值使用，如上面的<code>String</code>、<code>MustInt</code>方法。</li>
 </ul>
-
 <p>运行以下程序，得到输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -575,9 +562,9 @@ port = 6381</pre></td></tr></table>
 </span><span class="lnt">7
 </span><span class="lnt">8
 </span><span class="lnt">9
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">App Name: awesome web
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">App Name: awesome web
 Log Level: DEBUG
 MySQL IP: 127.0.0.1
 MySQL Port: 3306
@@ -585,28 +572,26 @@ MySQL User: dj
 MySQL Password: 123456
 MySQL Database: awesome
 Redis IP: 127.0.0.1
-Redis Port: 6381</pre></td></tr></table>
+Redis Port: 6381
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>配置文件中存储的都是字符串，所以类型为字符串的配置项不会出现类型转换失败的，故<code>String()</code>方法只返回一个值。
+</div><p>配置文件中存储的都是字符串，所以类型为字符串的配置项不会出现类型转换失败的，故<code>String()</code>方法只返回一个值。
 但如果类型为<code>Int/Uint/Float64</code>这些时，转换可能失败。所以<code>Int()/Uint()/Float64()</code>返回一个值和一个错误。</p>
-
 <p>要留意这种不一致！如果我们将配置中 redis 端口改成非法的数字 x6381，那么运行程序将报错：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">2020/01/14 22:43:13 strconv.ParseInt: parsing &#34;x6381&#34;: invalid syntax</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">2020/01/14 22:43:13 strconv.ParseInt: parsing &#34;x6381&#34;: invalid syntax
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="must-便捷方法"><code>Must*</code>便捷方法</h2>
-
+</div><h2 id="must便捷方法"><code>Must*</code>便捷方法</h2>
 <p>如果每次取值都需要进行错误判断，那么代码写起来会非常繁琐。为此，<code>go-ini</code>也提供对应的<code>MustType</code>（Type 为<code>Init/Uint/Float64</code>等）方法，这个方法只返回一个值。
 同时它接受可变参数，如果类型无法转换，取参数中第一个值返回，并且该参数设置为这个配置的值，下次调用返回这个值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -669,26 +654,26 @@ Redis Port: 6381</pre></td></tr></table>
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;after must, get redis port:&#34;</span><span class="p">,</span> <span class="nx">redisPort</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>配置文件还是 redis 端口为非数字 x6381 时的状态，运行程序：</p>
+</div><p>配置文件还是 redis 端口为非数字 x6381 时的状态，运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">before must, get redis port error: strconv.ParseInt: parsing &#34;x6381&#34;: invalid syntax
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">before must, get redis port error: strconv.ParseInt: parsing &#34;x6381&#34;: invalid syntax
 redis Port: 6381
-after must, get redis port: 6381</pre></td></tr></table>
+after must, get redis port: 6381
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们看到第一次调用<code>Int</code>返回错误，以 6381 为参数调用<code>MustInt</code>之后，再次调用<code>Int</code>，成功返回 6381。<code>MustInt</code>源码也比较简单：</p>
+</div><p>我们看到第一次调用<code>Int</code>返回错误，以 6381 为参数调用<code>MustInt</code>之后，再次调用<code>Int</code>，成功返回 6381。<code>MustInt</code>源码也比较简单：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -707,17 +692,15 @@ after must, get redis port: 6381</pre></td></tr></table>
     <span class="k">return</span> <span class="nx">defaultVal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">val</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="分区操作">分区操作</h2>
-
+</div><h2 id="分区操作">分区操作</h2>
 <h3 id="获取信息">获取信息</h3>
-
 <p>在加载配置之后，可以通过<code>Sections</code>方法获取所有分区，<code>SectionStrings()</code>方法获取所有分区名。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -728,22 +711,22 @@ after must, get redis port: 6381</pre></td></tr></table>
 <span class="nx">names</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">SectionStrings</span><span class="p">()</span>
 
 <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;sections: &#34;</span><span class="p">,</span> <span class="nx">sections</span><span class="p">)</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;names: &#34;</span><span class="p">,</span> <span class="nx">names</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;names: &#34;</span><span class="p">,</span> <span class="nx">names</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行输出 3 个分区：</p>
+</div><p>运行输出 3 个分区：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">[DEFAULT mysql redis]</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[DEFAULT mysql redis]
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>调用<code>Section(name)</code>获取名为<code>name</code>的分区，如果该分区不存在，则自动创建一个分区返回：</p>
+</div><p>调用<code>Section(name)</code>获取名为<code>name</code>的分区，如果该分区不存在，则自动创建一个分区返回：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -752,33 +735,32 @@ after must, get redis port: 6381</pre></td></tr></table>
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">newSection</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;new&#34;</span><span class="p">)</span>
 
 <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;new section: &#34;</span><span class="p">,</span> <span class="nx">newSection</span><span class="p">)</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;names: &#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">SectionStrings</span><span class="p">())</span></code></pre></td></tr></table>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;names: &#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">SectionStrings</span><span class="p">())</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>创建之后调用<code>SectionStrings</code>方法，新分区也会返回：</p>
+</div><p>创建之后调用<code>SectionStrings</code>方法，新分区也会返回：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">names:  [DEFAULT mysql redis new]</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">names:  [DEFAULT mysql redis new]
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>也可以手动创建一个新分区，如果分区已存在，则返回错误：</p>
+</div><p>也可以手动创建一个新分区，如果分区已存在，则返回错误：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">err := cfg.NewSection(&#34;new&#34;)</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">err := cfg.NewSection(&#34;new&#34;)
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="父子分区">父子分区</h3>
-
+</div><h3 id="父子分区">父子分区</h3>
 <p>在配置文件中，可以使用占位符<code>%(name)s</code>表示用之前已定义的键<code>name</code>的值来替换，这里的<code>s</code>表示值为字符串类型：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-parent_child.ini" data-lang="parent_child.ini"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -795,17 +777,16 @@ after must, get redis port: 6381</pre></td></tr></table>
 <span class="k">[package]</span>
 <span class="na">CLONE_URL</span> <span class="o">=</span> <span class="s">https://%(IMPORT_PATH)s</span>
 
-<span class="k">[package.sub]</span></code></pre></td></tr></table>
+<span class="k">[package.sub]</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面在默认分区中设置<code>IMPORT_PATH</code>的值时，使用了前面定义的<code>NAME</code>和<code>VERSION</code>。
+</div><p>上面在默认分区中设置<code>IMPORT_PATH</code>的值时，使用了前面定义的<code>NAME</code>和<code>VERSION</code>。
 在<code>package</code>分区中设置<code>CLONE_URL</code>的值时，使用了默认分区中定义的<code>IMPORT_PATH</code>。</p>
-
 <p>我们还可以在分区名中使用<code>.</code>表示两个或多个分区之间的父子关系，例如<code>package.sub</code>的父分区为<code>package</code>，<code>package</code>的父分区为默认分区。
 如果某个键在子分区中不存在，则会在它的父分区中再次查找，直到没有父分区为止：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -820,43 +801,41 @@ after must, get redis port: 6381</pre></td></tr></table>
   <span class="k">return</span>
 <span class="p">}</span>
 
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Clone url from package.sub:&#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;package.sub&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;CLONE_URL&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">())</span></code></pre></td></tr></table>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Clone url from package.sub:&#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;package.sub&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;CLONE_URL&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">())</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行程序输出：</p>
+</div><p>运行程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">Clone url from package.sub: https://gopkg.in/ini.v1</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Clone url from package.sub: https://gopkg.in/ini.v1
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>子分区中<code>package.sub</code>中没有键<code>CLONE_URL</code>，返回了父分区<code>package</code>中的值。</p>
-
+</div><p>子分区中<code>package.sub</code>中没有键<code>CLONE_URL</code>，返回了父分区<code>package</code>中的值。</p>
 <h2 id="保存配置">保存配置</h2>
-
 <p>有时候，我们需要将生成的配置写到文件中。例如在写工具的时候。保存有两种类型的接口，一种直接保存到文件，另一种写入到<code>io.Writer</code>中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">err = cfg.SaveTo(&#34;my.ini&#34;)
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">err = cfg.SaveTo(&#34;my.ini&#34;)
 err = cfg.SaveToIndent(&#34;my.ini&#34;, &#34;\t&#34;)
 
 cfg.WriteTo(writer)
-cfg.WriteToIndent(writer, &#34;\t&#34;)</pre></td></tr></table>
+cfg.WriteToIndent(writer, &#34;\t&#34;)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>下面我们通过程序生成前面使用的配置文件<code>my.ini</code>并保存：</p>
+</div><p>下面我们通过程序生成前面使用的配置文件<code>my.ini</code>并保存：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -955,15 +934,14 @@ cfg.WriteToIndent(writer, &#34;\t&#34;)</pre></td></tr></table>
   <span class="nx">cfg</span><span class="p">.</span><span class="nf">WriteTo</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">()</span>
   <span class="nx">cfg</span><span class="p">.</span><span class="nf">WriteToIndent</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="s">&#34;\t&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行程序，生成两个文件<code>my.ini</code>和<code>my-pretty.ini</code>，同时控制台输出文件内容。</p>
-
+</div><p>运行程序，生成两个文件<code>my.ini</code>和<code>my-pretty.ini</code>，同时控制台输出文件内容。</p>
 <p><code>my.ini</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -976,9 +954,9 @@ cfg.WriteToIndent(writer, &#34;\t&#34;)</pre></td></tr></table>
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">app_name  = awesome web
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">app_name  = awesome web
 log_level = DEBUG
 
 [mysql]
@@ -990,13 +968,13 @@ database = awesome
 
 [redis]
 ip   = 127.0.0.1
-port = 6381</pre></td></tr></table>
+port = 6381
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>my-pretty.ini</code>：</p>
+</div><p><code>my-pretty.ini</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1009,9 +987,9 @@ port = 6381</pre></td></tr></table>
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">app_name  = awesome web
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">app_name  = awesome web
 log_level = DEBUG
 
 [mysql]
@@ -1023,17 +1001,15 @@ log_level = DEBUG
 
 [redis]
 	ip   = 127.0.0.1
-	port = 6381</pre></td></tr></table>
+	port = 6381
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>*Indent</code>方法会对子分区下的键增加缩进，看起来美观一点。</p>
-
+</div><p><code>*Indent</code>方法会对子分区下的键增加缩进，看起来美观一点。</p>
 <h2 id="分区与结构体字段映射">分区与结构体字段映射</h2>
-
 <p>定义结构变量，加载完配置文件后，调用<code>MapTo</code>将配置项赋值到结构变量的对应字段中。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1114,37 +1090,36 @@ log_level = DEBUG
   <span class="nx">cfg</span><span class="p">.</span><span class="nf">MapTo</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">c</span><span class="p">)</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>MapTo</code>内部使用了反射，<strong>所以结构体字段必须都是导出的</strong>。如果键名与字段名不相同，那么需要在结构标签中指定对应的键名。
+</div><p><code>MapTo</code>内部使用了反射，<strong>所以结构体字段必须都是导出的</strong>。如果键名与字段名不相同，那么需要在结构标签中指定对应的键名。
 这一点与 Go 标准库<code>encoding/json</code>和<code>encoding/xml</code>不同。标准库<code>json/xml</code>解析时可以将键名<code>app_name</code>对应到字段名<code>AppName</code>。
 或许这是<code>go-ini</code>库可以优化的点？</p>
-
 <p>先加载，再映射有点繁琐，直接使用<code>ini.MapTo</code>将两步合并：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">err</span> <span class="p">=</span> <span class="nx">ini</span><span class="p">.</span><span class="nf">MapTo</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">c</span><span class="p">,</span> <span class="s">&#34;my.ini&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">err</span> <span class="p">=</span> <span class="nx">ini</span><span class="p">.</span><span class="nf">MapTo</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">c</span><span class="p">,</span> <span class="s">&#34;my.ini&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>也可以只映射一个分区：</p>
+</div><p>也可以只映射一个分区：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">mysqlCfg</span> <span class="o">:=</span> <span class="nx">MySQLConfig</span><span class="p">{}</span>
-<span class="nx">err</span> <span class="p">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">MapTo</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">mysqlCfg</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">err</span> <span class="p">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">MapTo</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">mysqlCfg</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>还可以通过结构体生成配置：</p>
+</div><p>还可以通过结构体生成配置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1203,29 +1178,22 @@ log_level = DEBUG
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;SaveTo failed: &#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
   <span class="k">return</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="总结">总结</h2>
-
+</div><h2 id="总结">总结</h2>
 <p>本文介绍了<code>go-ini</code>库的基本用法和一些有趣的特性。示例代码已上传<a href="https://github.com/darjun/go-daily-lib/tree/master/go-ini">GitHub</a>。
 其实<code>go-ini</code>还有很多高级特性。<a href="https://ini.unknwon.io/">官方文档</a>非常详细，推荐去看，而且有中文哟~
 作者<a href="https://github.com/unknwon">无闻</a>，相信做 Go 开发的都不陌生。</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://github.com/go-ini/ini">go-ini</a> GitHub 仓库</li>
 <li><a href="https://ini.unknwon.io/">go-ini</a> 官方文档</li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1427,7 +1395,7 @@ log_level = DEBUG
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

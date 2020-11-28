@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/04/24/godailylib/zerolog/" />
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-04-24T23:57:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 zerolog">
 <meta itemprop="description" content="简介 每个编程语言都有很多日志库，因为记录日志在每个项目中都是必须的。前面我们介绍了标准日志库log、好用的logrus和上一篇文章中介绍的由">
-
-
-<meta itemprop="datePublished" content="2020-04-24T23:57:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-04-24T23:57:23&#43;00:00" />
+<meta itemprop="datePublished" content="2020-04-24T23:57:23+00:00" />
+<meta itemprop="dateModified" content="2020-04-24T23:57:23+00:00" />
 <meta itemprop="wordCount" content="2609">
 
 
@@ -384,65 +382,61 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#字段">字段</a>
-<ul>
-<li><a href="#嵌套">嵌套</a></li>
-</ul></li>
-<li><a href="#全局-logger">全局<code>Logger</code></a>
-<ul>
-<li><a href="#设置日志级别">设置日志级别</a></li>
-<li><a href="#不输出级别和信息">不输出级别和信息</a></li>
-</ul></li>
-<li><a href="#创建-logger">创建<code>Logger</code></a>
-<ul>
-<li><a href="#子-logger">子<code>Logger</code></a></li>
-</ul></li>
-<li><a href="#设置">设置</a>
-<ul>
-<li><a href="#美化输出">美化输出</a></li>
-<li><a href="#设置自动添加的字段名">设置自动添加的字段名</a></li>
-</ul></li>
-<li><a href="#输出文件名和行号">输出文件名和行号</a></li>
-<li><a href="#日志采样">日志采样</a></li>
-<li><a href="#钩子">钩子</a></li>
-<li><a href="#性能">性能</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#字段">字段</a>
+      <ul>
+        <li><a href="#嵌套">嵌套</a></li>
+      </ul>
+    </li>
+    <li><a href="#全局logger">全局<code>Logger</code></a>
+      <ul>
+        <li><a href="#设置日志级别">设置日志级别</a></li>
+        <li><a href="#不输出级别和信息">不输出级别和信息</a></li>
+      </ul>
+    </li>
+    <li><a href="#创建logger">创建<code>Logger</code></a>
+      <ul>
+        <li><a href="#子logger">子<code>Logger</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#设置">设置</a>
+      <ul>
+        <li><a href="#美化输出">美化输出</a></li>
+        <li><a href="#设置自动添加的字段名">设置自动添加的字段名</a></li>
+      </ul>
+    </li>
+    <li><a href="#输出文件名和行号">输出文件名和行号</a></li>
+    <li><a href="#日志采样">日志采样</a></li>
+    <li><a href="#钩子">钩子</a></li>
+    <li><a href="#性能">性能</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>每个编程语言都有很多日志库，因为记录日志在每个项目中都是必须的。前面我们介绍了标准日志库<a href="https://darjun.github.io/2020/02/07/godailylib/log/"><code>log</code></a>、好用的<a href="https://darjun.github.io/2020/02/07/godailylib/logrus/"><code>logrus</code></a>和上一篇文章中介绍的由 uber 开源的高性能日志库<a href="https://darjun.github.io/2020/04/23/godailylib/zap"><code>zap</code></a>。<code>zerolog</code>相比<code>zap</code>更进了一步，它的 API 设计非常注重开发体验和性能。<code>zerolog</code>只专注于记录 JSON 格式的日志，号称 0 内存分配！</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">rs</span><span class="o">/</span><span class="nx">zerolog</span><span class="o">/</span><span class="nx">log</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">rs</span><span class="o">/</span><span class="nx">zerolog</span><span class="o">/</span><span class="nx">log</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后使用：</p>
+</div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -457,24 +451,23 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>常规使用与标准库<code>log</code>非常相似，只不过输出的是 JSON 格式的日志：</p>
+</div><p>常规使用与标准库<code>log</code>非常相似，只不过输出的是 JSON 格式的日志：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T13:43:08+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T13:43:08+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="字段">字段</h2>
-
+</div><h2 id="字段">字段</h2>
 <p>我们可以在日志中添加额外的字段信息，有助于调试和问题追踪。与<code>zap</code>一样，<code>zerolog</code>也区分字段类型，不同的是<code>zerolog</code>采用<strong>链式调用</strong>的方式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -495,26 +488,25 @@ if (!doNotTrack) {
   <span class="nx">log</span><span class="p">.</span><span class="nf">Debug</span><span class="p">().</span>
     <span class="nf">Str</span><span class="p">(</span><span class="s">&#34;Name&#34;</span><span class="p">,</span> <span class="s">&#34;Tom&#34;</span><span class="p">).</span>
     <span class="nf">Send</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>调用<code>Msg()</code>或<code>Send()</code>之后，日志会被输出：</p>
+</div><p>调用<code>Msg()</code>或<code>Send()</code>之后，日志会被输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;Scale&#34;</span><span class="p">:</span><span class="s">&#34;833 cents&#34;</span><span class="p">,</span><span class="s">&#34;Interval&#34;</span><span class="p">:</span><span class="mf">833.09</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T13:55:44+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;Fibonacci is everywhere&#34;</span><span class="p">}</span>
-<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;Name&#34;</span><span class="p">:</span><span class="s">&#34;Tom&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T13:55:44+08:00&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;Name&#34;</span><span class="p">:</span><span class="s">&#34;Tom&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T13:55:44+08:00&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="嵌套">嵌套</h3>
-
+</div><h3 id="嵌套">嵌套</h3>
 <p>记录的字段可以任意嵌套，这通过<code>Dict()</code>来实现：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -529,28 +521,25 @@ if (!doNotTrack) {
       <span class="nf">Str</span><span class="p">(</span><span class="s">&#34;bar&#34;</span><span class="p">,</span> <span class="s">&#34;baz&#34;</span><span class="p">).</span>
       <span class="nf">Int</span><span class="p">(</span><span class="s">&#34;n&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="p">).</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出中<code>dict</code>字段为嵌套结构：</p>
+</div><p>输出中<code>dict</code>字段为嵌套结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;dict&#34;</span><span class="p">:{</span><span class="s">&#34;bar&#34;</span><span class="p">:</span><span class="s">&#34;baz&#34;</span><span class="p">,</span><span class="s">&#34;n&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:34:51+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;dict&#34;</span><span class="p">:{</span><span class="s">&#34;bar&#34;</span><span class="p">:</span><span class="s">&#34;baz&#34;</span><span class="p">,</span><span class="s">&#34;n&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:34:51+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="全局-logger">全局<code>Logger</code></h2>
-
+</div><h2 id="全局logger">全局<code>Logger</code></h2>
 <p>上面我们使用<code>log.Debug()</code>、<code>log.Info()</code>调用的是全局的<code>Logger</code>。全局的<code>Logger</code>使用比较简单，不需要额外创建。</p>
-
 <h3 id="设置日志级别">设置日志级别</h3>
-
 <p>每个日志库都有日志级别的概念，而且划分基本上都差不多。<code>zerolog</code>有<code>panic/fatal/error/warn/info/debug/trace</code>这几种级别。我们可以调用<code>SetGlobalLevel()</code>设置全局<code>Logger</code>的日志级别。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -585,37 +574,37 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">e</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">Debug</span><span class="p">();</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Enabled</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">e</span><span class="p">.</span><span class="nf">Str</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">,</span> <span class="s">&#34;bar&#34;</span><span class="p">).</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;some debug message&#34;</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在上面代码中，我们根据传入的命令行选项设置日志级别是<code>Debug</code>还是<code>Info</code>。如果日志级别为<code>Info</code>，<code>Debug</code>的日志是不会输出的。也可以调用<code>Enabled()</code>方法来判断日志是否需要输出，需要时再调用相应方法输出，节省了添加字段和日志信息的开销：</p>
+</div><p>在上面代码中，我们根据传入的命令行选项设置日志级别是<code>Debug</code>还是<code>Info</code>。如果日志级别为<code>Info</code>，<code>Debug</code>的日志是不会输出的。也可以调用<code>Enabled()</code>方法来判断日志是否需要输出，需要时再调用相应方法输出，节省了添加字段和日志信息的开销：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">if</span> <span class="nx">e</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">Debug</span><span class="p">();</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Enabled</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">e</span><span class="p">.</span><span class="nf">Str</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">,</span> <span class="s">&#34;bar&#34;</span><span class="p">).</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;some debug message&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>先不加命令行参数运行，默认为<code>Info</code>级别，<code>Debug</code>日志不会输出：</p>
+</div><p>先不加命令行参数运行，默认为<code>Info</code>级别，<code>Debug</code>日志不会输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
-<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:13:34+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;This message appears when log level set to debug or info&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:13:34+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;This message appears when log level set to debug or info&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>加上<code>-debug</code>选项，<code>Debug</code>和<code>Info</code>日志都输出了：</p>
+</div><p>加上<code>-debug</code>选项，<code>Debug</code>和<code>Info</code>日志都输出了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -626,15 +615,14 @@ if (!doNotTrack) {
 <span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:18:19+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;This message appears only when log level set to debug&#34;</span><span class="p">}</span>
 <span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:18:19+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;This message appears when log level set to debug or info&#34;</span><span class="p">}</span>
 <span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;foo&#34;</span><span class="p">:</span><span class="s">&#34;bar&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:18:19+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;some debug 
-</span><span class="s">message&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+</span><span class="s">message&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="不输出级别和信息">不输出级别和信息</h3>
-
+</div><h3 id="不输出级别和信息">不输出级别和信息</h3>
 <p>有时候我们不想输出日志级别（即<code>level</code>字段），这时可以使用<code>log.Log()</code>方法。有时，我们没有日志信息可输出，这时传一个空字符串给<code>Msg()</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -645,24 +633,23 @@ if (!doNotTrack) {
   <span class="nx">log</span><span class="p">.</span><span class="nf">Log</span><span class="p">().</span>
     <span class="nf">Str</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">,</span> <span class="s">&#34;bar&#34;</span><span class="p">).</span>
     <span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行：</p>
+</div><p>运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;foo&#34;</span><span class="p">:</span><span class="s">&#34;bar&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:19:48+08:00&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;foo&#34;</span><span class="p">:</span><span class="s">&#34;bar&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:19:48+08:00&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="创建-logger">创建<code>Logger</code></h2>
-
+</div><h2 id="创建logger">创建<code>Logger</code></h2>
 <p>上面我们使用的都是全局的<code>Logger</code>，这种方式有一个明显的缺点：如果在某个地方修改了设置，将影响全局的日志记录。为了消除这种影响，我们需要创建新的<code>Logger</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -671,17 +658,15 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">zerolog</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">)</span>
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">().</span><span class="nf">Str</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">,</span> <span class="s">&#34;bar&#34;</span><span class="p">).</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>调用<code>zerlog.New()</code>传入一个<code>io.Writer</code>作为日志写入器即可。</p>
-
-<h3 id="子-logger">子<code>Logger</code></h3>
-
+</div><p>调用<code>zerlog.New()</code>传入一个<code>io.Writer</code>作为日志写入器即可。</p>
+<h3 id="子logger">子<code>Logger</code></h3>
 <p>基于当前的<code>Logger</code>可以创建一个子<code>Logger</code>，子<code>Logger</code>可以在父<code>Logger</code>上附加一些额外的字段。调用<code>logger.With()</code>创建一个上下文，然后为它添加字段，最后调用<code>Logger()</code>返回一个新的<code>Logger</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -696,21 +681,17 @@ if (!doNotTrack) {
     <span class="nf">Str</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">,</span> <span class="s">&#34;bar&#34;</span><span class="p">).</span>
     <span class="nf">Logger</span><span class="p">()</span>
   <span class="nx">sublogger</span><span class="p">.</span><span class="nf">Info</span><span class="p">().</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>sublogger</code>会额外输出<code>&quot;foo&quot;: &quot;bar&quot;</code>这个字段。</p>
-
+</div><p><code>sublogger</code>会额外输出<code>&quot;foo&quot;: &quot;bar&quot;</code>这个字段。</p>
 <h2 id="设置">设置</h2>
-
 <p><code>zerolog</code>提供了多种选项定制输入日志的行为。</p>
-
 <h3 id="美化输出">美化输出</h3>
-
 <p><code>zerolog</code>提供了一个<code>ConsoleWriter</code>可输出便于我们阅读的，带颜色的日志。调用<code>zerolog.Output()</code>来启用<code>ConsoleWriter</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -719,17 +700,15 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">Output</span><span class="p">(</span><span class="nx">zerolog</span><span class="p">.</span><span class="nx">ConsoleWriter</span><span class="p">{</span><span class="nx">Out</span><span class="p">:</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">})</span>
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">().</span><span class="nf">Str</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">,</span> <span class="s">&#34;bar&#34;</span><span class="p">).</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
-
-<p><img src="/img/in-post/godailylib/zerolog1.png#center" alt="" /></p>
-
+</div><p>输出：</p>
+<p><img src="/img/in-post/godailylib/zerolog1.png#center" alt=""></p>
 <p>我们还能进一步对<code>ConsoleWriter</code>进行配置，定制输出的级别、信息、字段名、字段值的格式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -766,21 +745,17 @@ if (!doNotTrack) {
 
   <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">Output</span><span class="p">(</span><span class="nx">output</span><span class="p">).</span><span class="nf">With</span><span class="p">().</span><span class="nf">Timestamp</span><span class="p">().</span><span class="nf">Logger</span><span class="p">()</span>
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">().</span><span class="nf">Str</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">,</span> <span class="s">&#34;bar&#34;</span><span class="p">).</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>实际上就是对级别、信息、字段名和字段值设置钩子，输出前经过钩子函数转换一次：</p>
-
-<p><img src="/img/in-post/godailylib/zerolog2.png#center" alt="" /></p>
-
+</div><p>实际上就是对级别、信息、字段名和字段值设置钩子，输出前经过钩子函数转换一次：</p>
+<p><img src="/img/in-post/godailylib/zerolog2.png#center" alt=""></p>
 <p><strong><code>ConsoleWriter</code>的性能不够理想，建议只在开发环境中使用！</strong></p>
-
 <h3 id="设置自动添加的字段名">设置自动添加的字段名</h3>
-
 <p>输出的日志中级别默认的字段名为<code>level</code>，信息默认为<code>message</code>，时间默认为<code>time</code>。可以通过<code>zerolog</code>中<code>LevelFieldName/MessageFieldName/TimestampFieldName</code>来设置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -797,26 +772,24 @@ if (!doNotTrack) {
 
   <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">zerolog</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">).</span><span class="nf">With</span><span class="p">().</span><span class="nf">Timestamp</span><span class="p">().</span><span class="nf">Logger</span><span class="p">()</span>
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">().</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;l&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;t&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:53:08+08:00&#34;</span><span class="p">,</span><span class="s">&#34;m&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;l&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;t&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T14:53:08+08:00&#34;</span><span class="p">,</span><span class="s">&#34;m&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>注意，这个设置是全局的！！！</strong></p>
-
+</div><p><strong>注意，这个设置是全局的！！！</strong></p>
 <h2 id="输出文件名和行号">输出文件名和行号</h2>
-
 <p>有时我们需要输出文件名和行号，以便能很快定位代码位置，方便找出问题。这可以通过在创建子<code>Logger</code>时带入<code>Caller()</code>选项完成：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -825,24 +798,23 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">zerolog</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">).</span><span class="nf">With</span><span class="p">().</span><span class="nf">Caller</span><span class="p">().</span><span class="nf">Logger</span><span class="p">()</span>
   <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">().</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;caller&#34;</span><span class="p">:</span><span class="s">&#34;d:/code/golang/src/github.com/darjun/go-daily-lib/zerolog/setting/file-line/main.go:11&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;caller&#34;</span><span class="p">:</span><span class="s">&#34;d:/code/golang/src/github.com/darjun/go-daily-lib/zerolog/setting/file-line/main.go:11&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;hello world&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="日志采样">日志采样</h2>
-
+</div><h2 id="日志采样">日志采样</h2>
 <p>有时候日志太多了反而对我们排查问题造成干扰，<code>zerolog</code>支持日志采样的功能，可以每隔多少条日志输出一次，其他日志丢弃：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -857,24 +829,24 @@ if (!doNotTrack) {
   <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">20</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
     <span class="nx">sampled</span><span class="p">.</span><span class="nf">Info</span><span class="p">().</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;will be logged every 10 message&#34;</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>结果只输出两条：</p>
+</div><p>结果只输出两条：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T15:01:02+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;will be logged every 10 message&#34;</span><span class="p">}</span>
-<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T15:01:02+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;will be logged every 10 message&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T15:01:02+08:00&#34;</span><span class="p">,</span><span class="s">&#34;message&#34;</span><span class="p">:</span><span class="s">&#34;will be logged every 10 message&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>还有更高级的设置：</p>
+</div><p>还有更高级的设置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -897,17 +869,15 @@ if (!doNotTrack) {
   <span class="p">})</span>
 
   <span class="nx">sampled</span><span class="p">.</span><span class="nf">Debug</span><span class="p">().</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码只采样<code>Debug</code>日志，在 1s 内最多输出 5 条日志，超过 5条 时，每隔 100 条输出一条。</p>
-
+</div><p>上面代码只采样<code>Debug</code>日志，在 1s 内最多输出 5 条日志，超过 5条 时，每隔 100 条输出一条。</p>
 <h2 id="钩子">钩子</h2>
-
 <p><code>zerolog</code>支持钩子，我们可以针对不同的日志级别添加一些额外的字段或进行其他的操作：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -934,42 +904,32 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">hooked</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">Hook</span><span class="p">(</span><span class="nx">AddFieldHook</span><span class="p">{})</span>
   <span class="nx">hooked</span><span class="p">.</span><span class="nf">Debug</span><span class="p">().</span><span class="nf">Msg</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果是<code>Debug</code>级别，额外输出<code>&quot;name&quot;:&quot;dj&quot;</code>字段：</p>
+</div><p>如果是<code>Debug</code>级别，额外输出<code>&quot;name&quot;:&quot;dj&quot;</code>字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T15:09:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;debug&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-04-25T15:09:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="性能">性能</h2>
-
+</div><h2 id="性能">性能</h2>
 <p>关于性能，GitHub 上有一份详细的性能测试，与<code>logrus/zap</code>等日志库的比较。感兴趣可以去看看：<a href="https://github.com/rs/zerolog#benchmarks">https://github.com/rs/zerolog#benchmarks</a>。<code>zerolog</code>的性能比<code>zap</code>还要优秀！</p>
-
 <h2 id="总结">总结</h2>
-
 <p>正是因为有很多人不满足于现状，才带来了技术的进步和丰富多彩的开源世界！</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>zerolog GitHub：<a href="https://github.com/rs/zerolog">https://github.com/rs/zerolog</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1171,7 +1131,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

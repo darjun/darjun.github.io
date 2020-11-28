@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/04/22/godailylib/go-app/" />
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-04-22T21:30:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 go-app">
 <meta itemprop="description" content="简介 go-app是一个使用 Go &#43; WebAssembly 技术编写渐进式 Web 应用的库。WebAssembly 是一种可以运行在现代浏览器中的新式代码。近两年来，WebAs">
-
-
-<meta itemprop="datePublished" content="2020-04-22T21:30:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-04-22T21:30:23&#43;00:00" />
+<meta itemprop="datePublished" content="2020-04-22T21:30:23+00:00" />
+<meta itemprop="dateModified" content="2020-04-22T21:30:23+00:00" />
 <meta itemprop="wordCount" content="4038">
 
 
@@ -384,72 +382,65 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#简单原理">简单原理</a></li>
-<li><a href="#组件">组件</a>
-<ul>
-<li><a href="#事件处理">事件处理</a></li>
-<li><a href="#嵌套组件">嵌套组件</a></li>
-<li><a href="#生命周期">生命周期</a></li>
-</ul></li>
-<li><a href="#编写-html">编写 HTML</a>
-<ul>
-<li><a href="#原生元素">原生元素</a></li>
-<li><a href="#条件">条件</a></li>
-<li><a href="#range"><code>Range</code></a></li>
-<li><a href="#上下文菜单">上下文菜单</a></li>
-</ul></li>
-<li><a href="#app-handler"><code>app.Handler</code></a></li>
-<li><a href="#本文代码">本文代码</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#简单原理">简单原理</a></li>
+    <li><a href="#组件">组件</a>
+      <ul>
+        <li><a href="#事件处理">事件处理</a></li>
+        <li><a href="#嵌套组件">嵌套组件</a></li>
+        <li><a href="#生命周期">生命周期</a></li>
+      </ul>
+    </li>
+    <li><a href="#编写-html">编写 HTML</a>
+      <ul>
+        <li><a href="#原生元素">原生元素</a></li>
+        <li><a href="#条件">条件</a></li>
+        <li><a href="#range"><code>Range</code></a></li>
+        <li><a href="#上下文菜单">上下文菜单</a></li>
+      </ul>
+    </li>
+    <li><a href="#apphandler"><code>app.Handler</code></a></li>
+    <li><a href="#本文代码">本文代码</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p><a href="https://github.com/maxence-charriere/go-app"><code>go-app</code></a>是一个使用 Go + WebAssembly 技术编写<strong>渐进式 Web 应用</strong>的库。WebAssembly 是一种可以运行在现代浏览器中的新式代码。近两年来，WebAssembly 技术取得了较大的发展。我们现在已经可以使用 C/C++/Rust/Go 等高级语言编写 WebAssembly 代码。本来就来介绍<code>go-app</code>这个可以方便地使用 Go 语言来编写 WebAssembly 代码的库。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p><code>go-app</code>对 Go 语言版本有较高的要求（<strong>Go 1.14+</strong>），而且必须使用<code>Go module</code>。先创建一个目录并初始化<code>Go Module</code>（Win10 + Git Bash）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">mkdir</span> <span class="k">go</span><span class="o">-</span><span class="nx">app</span> <span class="o">&amp;&amp;</span> <span class="nx">cd</span> <span class="k">go</span><span class="o">-</span><span class="nx">app</span>
-<span class="err">$</span> <span class="k">go</span> <span class="nx">mod</span> <span class="nx">init</span></code></pre></td></tr></table>
+<span class="err">$</span> <span class="k">go</span> <span class="nx">mod</span> <span class="nx">init</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后下载安装<code>go-app</code>包：</p>
+</div><p>然后下载安装<code>go-app</code>包：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">u</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">maxence</span><span class="o">-</span><span class="nx">charriere</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">app</span><span class="o">/</span><span class="nx">v6</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">u</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">maxence</span><span class="o">-</span><span class="nx">charriere</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">app</span><span class="o">/</span><span class="nx">v6</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>至于<code>Go module</code>的详细使用，去看煎鱼大佬的<a href="https://juejin.im/post/5e57537cf265da57584da62b">Go Modules 终极入门</a>。</p>
-
+</div><p>至于<code>Go module</code>的详细使用，去看煎鱼大佬的<a href="https://juejin.im/post/5e57537cf265da57584da62b">Go Modules 终极入门</a>。</p>
 <p>首先，我们要编写 WebAssembly 程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -526,28 +517,25 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">Greeting</span><span class="p">{})</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在<code>go-app</code>中使用<strong>组件</strong>来划分功能模块，每个组件结构中必须内嵌<code>app.Compo</code>。组件要实现<code>Render()</code>方法，在需要显示该组件时会调用此方法返回显示的页面。<code>go-app</code>使用<strong>声明式语法</strong>，完全使用 Go 就可以编写 HTML 页面，上面绘制 HTML 的部分比较好理解。上面代码中还实现了一个输入框的功能，并为它添加了一个监听器。每当输入框内容有修改，<code>OnInputChange</code>方法就会调用，<code>g.Update()</code>会使该组件重新渲染显示。</p>
-
+</div><p>在<code>go-app</code>中使用<strong>组件</strong>来划分功能模块，每个组件结构中必须内嵌<code>app.Compo</code>。组件要实现<code>Render()</code>方法，在需要显示该组件时会调用此方法返回显示的页面。<code>go-app</code>使用<strong>声明式语法</strong>，完全使用 Go 就可以编写 HTML 页面，上面绘制 HTML 的部分比较好理解。上面代码中还实现了一个输入框的功能，并为它添加了一个监听器。每当输入框内容有修改，<code>OnInputChange</code>方法就会调用，<code>g.Update()</code>会使该组件重新渲染显示。</p>
 <p>最后将该组件挂载到路径<code>/</code>上。</p>
-
 <p>编写 WebAssembly 程序之后，需要使用交叉编译的方式将它编译为<code>.wasm</code>文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">GOARCH</span><span class="p">=</span><span class="nx">wasm</span> <span class="nx">GOOS</span><span class="p">=</span><span class="nx">js</span> <span class="k">go</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">GOARCH</span><span class="p">=</span><span class="nx">wasm</span> <span class="nx">GOOS</span><span class="p">=</span><span class="nx">js</span> <span class="k">go</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果编译出现错误，使用<code>go version</code>命令检查 Go 是否是 1.14 或更新的版本。</p>
-
+</div><p>如果编译出现错误，使用<code>go version</code>命令检查 Go 是否是 1.14 或更新的版本。</p>
 <p>接下来，我们需要编写一个 Go Web 程序使用这个<code>app.wasm</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -586,42 +574,32 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>go-app</code>提供了一个<code>app.Handler</code>结构，它会自动查找同目录下的<code>app.wasm</code>（这也是为什么将目标文件设置为<code>app.wasm</code>的原因）。然后我们将前面编译生成的<code>app.wasm</code>放到同一目录下，执行该程序：</p>
+</div><p><code>go-app</code>提供了一个<code>app.Handler</code>结构，它会自动查找同目录下的<code>app.wasm</code>（这也是为什么将目标文件设置为<code>app.wasm</code>的原因）。然后我们将前面编译生成的<code>app.wasm</code>放到同一目录下，执行该程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>默认显示<code>&quot;Hello World&quot;</code>：</p>
-
-<p><img src="/img/in-post/godailylib/go-app1.png#center" alt="" /></p>
-
+</div><p>默认显示<code>&quot;Hello World&quot;</code>：</p>
+<p><img src="/img/in-post/godailylib/go-app1.png#center" alt=""></p>
 <p>在输入框中输入内容之后，显示会随之变化：</p>
-
-<p><img src="/img/in-post/godailylib/go-app2.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/go-app2.png#center" alt=""></p>
 <p>可以看到，<code>go-app</code>为我们设置了一些基本的样式，网页图标等。</p>
-
 <h2 id="简单原理">简单原理</h2>
-
 <p>GitHub 上这张图很好地说明了 HTTP 请求的执行流程：</p>
-
-<p><img src="/img/in-post/godailylib/go-app3.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/go-app3.png#center" alt=""></p>
 <p>用户请求先到<code>app.Handler</code>层，它会去<code>app.wasm</code>中执行相关的路由逻辑、去磁盘上查找静态文件。响应经由<code>app.Handler</code>中转返回给用户。用户就看到了<code>app.wasm</code>渲染的页面。实际上，在本文中我们只需要编写一个 Go Web 程序，每次编写新的 WebAssembly 之后，将新编译生成的 app.wasm 文件拷贝到 Go Web 目录下重新运行程序即可。注意，<strong>如果页面未能及时刷新，可能是缓存导致的，可尝试清理浏览器缓存</strong>。</p>
-
 <h2 id="组件">组件</h2>
-
 <p>自定义一个组件很简单，只需要将<code>app.Compo</code>内嵌到结构中即可。实现<code>Render()</code>方法可定义组件的外观，实际上<code>app.Compo</code>有一个默认的外观，我们可以这样来查看：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -630,19 +608,16 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/app&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">app</span><span class="p">.</span><span class="nx">Compo</span><span class="p">{})</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>编译生成<code>app.wasm</code>之后，一开始的 Go Web 程序不需要修改，直接运行，打开浏览器查看：</p>
-
-<p><img src="/img/in-post/godailylib/go-app5.png#center" alt="" /></p>
-
+</div><p>编译生成<code>app.wasm</code>之后，一开始的 Go Web 程序不需要修改，直接运行，打开浏览器查看：</p>
+<p><img src="/img/in-post/godailylib/go-app5.png#center" alt=""></p>
 <h3 id="事件处理">事件处理</h3>
-
 <p>在<strong>快速开始</strong>中，我们还介绍了如何使用事件。使用声明式语法<code>app.Input().OnChange(handler)</code>即可监听内容变化。事件处理函数必须为<code>func (src app.Value, e app.Event)</code>类型，<code>app.Value</code>是触发对象，<code>app.Event</code>是事件的内容。通过<code>app.Value</code>我们可以得到输入框内容、选择框的选项等信息，通过<code>app.Event</code>可以得到事件的信息，是鼠标事件、键盘事件还是其它事件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -723,23 +698,18 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ShowSelect</span><span class="p">{})</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码显示一个选择框，当选项改变时上面显示的文字会做相应的改变。初始时：</p>
-
-<p><img src="/img/in-post/godailylib/go-app6.png#center" alt="" /></p>
-
+</div><p>上面代码显示一个选择框，当选项改变时上面显示的文字会做相应的改变。初始时：</p>
+<p><img src="/img/in-post/godailylib/go-app6.png#center" alt=""></p>
 <p>选择后：</p>
-
-<p><img src="/img/in-post/godailylib/go-app7.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/go-app7.png#center" alt=""></p>
 <h3 id="嵌套组件">嵌套组件</h3>
-
 <p>组件可以嵌套使用，即在一个组件中使用另一个组件。渲染时将内部的组件表现为外部组件的一部分：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -788,27 +758,22 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">Greeting</span><span class="p">{})</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码在组件<code>Greeting</code>中内嵌了一个<code>Name</code>组件，运行显示：</p>
-
-<p><img src="/img/in-post/godailylib/go-app8.png#center" alt="" /></p>
-
+</div><p>上面代码在组件<code>Greeting</code>中内嵌了一个<code>Name</code>组件，运行显示：</p>
+<p><img src="/img/in-post/godailylib/go-app8.png#center" alt=""></p>
 <h3 id="生命周期">生命周期</h3>
-
 <p><code>go-app</code>提供了组件的 3 个生命周期的钩子函数：</p>
-
 <ul>
 <li><code>OnMount</code>：当组件插入到 DOM 时调用；</li>
 <li><code>OnNav</code>：当一个组件所在页面被加载、刷新时调用；</li>
 <li><code>OnDismount</code>：当一个组件从页面中移除时调用。</li>
 </ul>
-
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -861,26 +826,25 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">Foo</span><span class="p">{})</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>编译运行，在浏览器中打开页面，打开<strong>浏览器控制台</strong>观察输出：</p>
+</div><p>编译运行，在浏览器中打开页面，打开<strong>浏览器控制台</strong>观察输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">component</span> <span class="nx">mounted</span>
-<span class="nx">component</span> <span class="nx">navigated</span><span class="p">:</span> <span class="nx">http</span><span class="p">:</span><span class="o">//</span><span class="nx">localhost</span><span class="p">:</span><span class="mi">8080</span><span class="o">/</span></code></pre></td></tr></table>
+<span class="nx">component</span> <span class="nx">navigated</span><span class="p">:</span> <span class="nx">http</span><span class="p">:</span><span class="c1">//localhost:8080/
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="编写-html">编写 HTML</h2>
-
+</div><h2 id="编写-html">编写 HTML</h2>
 <p>在前面的例子中我们已经看到了如何使用<strong>声明式语法</strong>编写 HTML 页面。<code>go-app</code>为所有标准的 HTML 元素都提供了相关的类型。创建这些对象的方法名也比较好记，就是元素名的首字母大写。如<code>app.Div()</code>创建一个<code>div</code>元素，<code>app.P()</code>创建一个<code>p</code>元素，<code>app.H1()</code>创建一个<code>h1</code>元素等等。在<code>go-app</code>中，这些结构都是暴露出对应的接口供开发者使用的，如<code>div</code>对应<code>HTMLDiv</code>接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -901,30 +865,26 @@ if (!doNotTrack) {
   <span class="nf">OnClick</span><span class="p">(</span><span class="nx">h</span> <span class="nx">EventHandler</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
   <span class="nf">OnKeyPress</span><span class="p">(</span><span class="nx">h</span> <span class="nx">EventHandler</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
   <span class="nf">OnMouseOver</span><span class="p">(</span><span class="nx">h</span> <span class="nx">EventHandler</span><span class="p">)</span> <span class="nx">HTMLDiv</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看到每个方法都返回该<code>HTMLDiv</code>自身，所以支持<strong>链式调用</strong>。调用这些方法可以设置元素的各方面属性：</p>
-
+</div><p>可以看到每个方法都返回该<code>HTMLDiv</code>自身，所以支持<strong>链式调用</strong>。调用这些方法可以设置元素的各方面属性：</p>
 <ul>
 <li><code>Class</code>：添加 CSS Class；</li>
 <li><code>ID</code>：设置 ID 属性；</li>
 <li><code>Style</code>：设置内置样式；</li>
 <li><code>Body</code>：设置元素内容，可以随意嵌套。<code>div</code>中包含<code>h1</code>和<code>p</code>，<code>p</code>中包含<code>img</code>等；</li>
 </ul>
-
 <p>和设置事件监听：</p>
-
 <ul>
 <li><code>OnClick</code>：点击事件；</li>
 <li><code>OnKeyPress</code>：按键事件；</li>
 <li><code>OnMouseOver</code>：鼠标移过事件。</li>
 </ul>
-
 <p>例如下面代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -943,13 +903,13 @@ if (!doNotTrack) {
     <span class="nf">Class</span><span class="p">(</span><span class="s">&#34;content&#34;</span><span class="p">).</span><span class="nf">Body</span><span class="p">(</span>
       <span class="nx">app</span><span class="p">.</span><span class="nf">Text</span><span class="p">(</span><span class="s">&#34;something interesting&#34;</span><span class="p">),</span>
     <span class="p">),</span>
-<span class="p">)</span></code></pre></td></tr></table>
+<span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>相当于 HTML 代码：</p>
+</div><p>相当于 HTML 代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -962,15 +922,14 @@ if (!doNotTrack) {
   <span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;id&#34;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;content&#34;</span><span class="p">&gt;</span>
     something interesting
   <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="原生元素">原生元素</h3>
-
+</div><h3 id="原生元素">原生元素</h3>
 <p>我们可以在<code>app.Raw()</code>中直接写 HTML 代码，<code>app.Raw()</code>会生成对应的<code>app.UI</code>返回：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -981,21 +940,17 @@ if (!doNotTrack) {
 </span><span class="s">&lt;svg width=&#34;100&#34; height=&#34;100&#34;&gt;
 </span><span class="s">    &lt;circle cx=&#34;50&#34; cy=&#34;50&#34; r=&#34;40&#34; stroke=&#34;green&#34; stroke-width=&#34;4&#34; fill=&#34;yellow&#34; /&gt;
 </span><span class="s">&lt;/svg&gt;
-</span><span class="s">`</span><span class="p">)</span></code></pre></td></tr></table>
+</span><span class="s">`</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>但是这种写法是不安全的，因为没有检查 HTML 的结构。</p>
-
+</div><p>但是这种写法是不安全的，因为没有检查 HTML 的结构。</p>
 <h3 id="条件">条件</h3>
-
 <p>我们在最开始的例子中就已经用到了条件语句，条件语句对应 3 个方法：<code>If()/ElseIf()/Else()</code>。</p>
-
 <p><code>If</code>和<code>ElseIf</code>接收两个参数，第一个参数为<code>bool</code>值。如果为<code>true</code>，则显示第二个参数（类型为<code>app.UI</code>），否则不显示。</p>
-
 <p><code>Else</code>必须在<code>If</code>或<code>ElseIf</code>后使用，如果前面的条件都不满足，则显示传入<code>Else</code>方法的<code>app.UI</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1084,23 +1039,18 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ScoreUI</span><span class="p">{})</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面我们根据输入的分数显示对应的文字，<code>90</code>及以上显示绿色的<code>Good!</code>，<code>60-90</code>之间显示橙色的<code>Pass!</code>，小于<code>60</code>显示红色的<code>Fail!</code>。下面是运行结果：</p>
-
-<p><img src="/img/in-post/godailylib/go-app10.png#center" alt="" /></p>
-
-<p><img src="/img/in-post/godailylib/go-app11.png#center" alt="" /></p>
-
-<p><img src="/img/in-post/godailylib/go-app12.png#center" alt="" /></p>
-
+</div><p>上面我们根据输入的分数显示对应的文字，<code>90</code>及以上显示绿色的<code>Good!</code>，<code>60-90</code>之间显示橙色的<code>Pass!</code>，小于<code>60</code>显示红色的<code>Fail!</code>。下面是运行结果：</p>
+<p><img src="/img/in-post/godailylib/go-app10.png#center" alt=""></p>
+<p><img src="/img/in-post/godailylib/go-app11.png#center" alt=""></p>
+<p><img src="/img/in-post/godailylib/go-app12.png#center" alt=""></p>
 <h3 id="range"><code>Range</code></h3>
-
 <p>假设我们要编写一个 HTML 列表，当前有一个字符串的切片。如果一个个写就太繁琐了，而且不够灵活，且容易出错。这时就可以使用<code>Range()</code>方法了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1141,21 +1091,17 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">RangeUI</span><span class="p">{})</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>Range()</code>可以对切片或<code>map</code>中每一项生成一个<code>app.UI</code>，然后平铺在某个元素的<code>Body()</code>方法中。</p>
-
+</div><p><code>Range()</code>可以对切片或<code>map</code>中每一项生成一个<code>app.UI</code>，然后平铺在某个元素的<code>Body()</code>方法中。</p>
 <p>运行结果：</p>
-
-<p><img src="/img/in-post/godailylib/go-app13.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/go-app13.png#center" alt=""></p>
 <h3 id="上下文菜单">上下文菜单</h3>
-
 <p>在<code>go-app</code>中，我们可以很方便的自定义右键弹出的菜单，并且为菜单项编写响应：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1222,21 +1168,17 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Route</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ContextMenuUI</span><span class="p">{})</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们在<code>OnContextMenu</code>中调用了<code>event.PreventDefault()</code>阻止默认菜单的弹出。看运行结果：</p>
-
-<p><img src="/img/in-post/godailylib/go-app14.png#center" alt="" /></p>
-
+</div><p>我们在<code>OnContextMenu</code>中调用了<code>event.PreventDefault()</code>阻止默认菜单的弹出。看运行结果：</p>
+<p><img src="/img/in-post/godailylib/go-app14.png#center" alt=""></p>
 <p>点击菜单项，观察控制台输出~</p>
-
-<h2 id="app-handler"><code>app.Handler</code></h2>
-
+<h2 id="apphandler"><code>app.Handler</code></h2>
 <p>上面我们都是使用<code>go-app</code>内置的<code>app.Handler</code>处理客户端的请求。我们只设置了简单的两个属性<code>Author</code>和<code>Title</code>。<code>app.Handler</code>还有其它很多字段可以定制：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1279,19 +1221,18 @@ if (!doNotTrack) {
 
   <span class="nx">UseMinimalDefaultStyles</span> <span class="kt">bool</span>
   <span class="nx">Version</span> <span class="kt">string</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li><code>Icon</code>：设置应用图标；</li>
 <li><code>Styles</code>：CSS 样式文件；</li>
 <li><code>Scripts</code>：JS 脚本文件。</li>
 </ul>
-
 <p>CSS 和 JS 文件必须在<code>app.Handler</code>中声明。下面是一个示例<code>app.Handler</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1330,60 +1271,51 @@ if (!doNotTrack) {
     <span class="s">&#34;/web/luck.css&#34;</span><span class="p">,</span>
   <span class="p">},</span>
   <span class="nx">Version</span><span class="p">:</span> <span class="s">&#34;wIKiverSiON&#34;</span><span class="p">,</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="本文代码">本文代码</h2>
-
+</div><h2 id="本文代码">本文代码</h2>
 <p>本文中 WebAssembly 代码都在各自的目录中。Go Web 演示代码在 web 目录中。先进入某个目录，使用下面的命令编译：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">GOARCH</span><span class="p">=</span><span class="nx">wasm</span> <span class="nx">GOOS</span><span class="p">=</span><span class="nx">js</span> <span class="k">go</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">GOARCH</span><span class="p">=</span><span class="nx">wasm</span> <span class="nx">GOOS</span><span class="p">=</span><span class="nx">js</span> <span class="k">go</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后将生成的<code>app.wasm</code>拷贝到<code>web</code>目录：</p>
+</div><p>然后将生成的<code>app.wasm</code>拷贝到<code>web</code>目录：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">cp</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span> <span class="p">..</span><span class="o">/</span><span class="nx">web</span><span class="o">/</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">cp</span> <span class="nx">app</span><span class="p">.</span><span class="nx">wasm</span> <span class="p">..</span><span class="o">/</span><span class="nx">web</span><span class="o">/</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>切换到 web 目录，启动服务器：</p>
+</div><p>切换到 web 目录，启动服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">cd</span> <span class="p">..</span><span class="o">/</span><span class="nx">web</span><span class="o">/</span>
-<span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+<span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="总结">总结</h2>
-
+</div><h2 id="总结">总结</h2>
 <p>本文介绍如何使用<code>go-app</code>编写基于 WebAssembly 的 Web 应用程序。可能有人会觉得，<code>go-app</code>编写 HTML 的方式有点繁琐。但是我们可以写一个转换程序将普通的 HTML 代码转为<code>go-app</code>代码，感兴趣可以自己实现一下。WebAssembly 技术非常值得关注一波~</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>go-app GitHub：<a href="https://github.com/maxence-charriere/go-app">https://github.com/maxence-charriere/go-app</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1585,7 +1517,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

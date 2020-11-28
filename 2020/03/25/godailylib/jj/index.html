@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/03/25/godailylib/jj/" />
@@ -69,11 +69,9 @@
 <meta property="article:modified_time" content="2020-03-25T22:52:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 jj">
 <meta itemprop="description" content="简介 在前面两篇文章中，我们分别介绍了快速读取 JSON 值的库gjson和快速设置 JSON 值的库sjson。今天我们介绍它们的作者tidwall的一个基于g">
-
-
-<meta itemprop="datePublished" content="2020-03-25T22:52:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-03-25T22:52:23&#43;00:00" />
-<meta itemprop="wordCount" content="2171">
+<meta itemprop="datePublished" content="2020-03-25T22:52:23+00:00" />
+<meta itemprop="dateModified" content="2020-03-25T22:52:23+00:00" />
+<meta itemprop="wordCount" content="2172">
 
 
 
@@ -363,7 +361,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 2171 字 </span>
+        <span class="more-meta"> 约 2172 字 </span>
           <span class="more-meta"> 预计阅读 5 分钟 </span>
 
         
@@ -384,52 +382,42 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#读取和设置">读取和设置</a></li>
-<li><a href="#文件">文件</a></li>
-<li><a href="#格式化">格式化</a></li>
-<li><a href="#性能">性能</a></li>
-<li><a href="#用途">用途</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#读取和设置">读取和设置</a></li>
+    <li><a href="#文件">文件</a></li>
+    <li><a href="#格式化">格式化</a></li>
+    <li><a href="#性能">性能</a></li>
+    <li><a href="#用途">用途</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>在前面两篇文章中，我们分别介绍了快速读取 JSON 值的库<code>gjson</code>和快速设置 JSON 值的库<code>sjson</code>。今天我们介绍它们的作者<a href="https://github.com/tidwall">tidwall</a>的一个基于<code>gjson</code>和<code>sjson</code>的非常实用的命令行工具<a href="https://github.com/tidwall/jj"><code>jj</code></a>。它是使用 Go 编写的快速读取和设置 JSON 值的命令行程序。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>Mac 上可以直接使用<code>brew install tidwall/jj/jj</code>安装。其他系统可以通过下载编译好的可执行程序，下载地址为<a href="https://github.com/tidwall/jj/releases">https://github.com/tidwall/jj/releases</a>。</p>
-
 <p>我选择使用<code>go get</code>安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">tidwall</span><span class="o">/</span><span class="nx">jj</span><span class="o">/</span><span class="nx">cmd</span><span class="o">/</span><span class="nx">jj</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">tidwall</span><span class="o">/</span><span class="nx">jj</span><span class="o">/</span><span class="nx">cmd</span><span class="o">/</span><span class="nx">jj</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面命令执行完成之后，编译生成的<code>jj</code>程序会放在<code>$GOPATH/bin</code>目录中，我习惯把<code>$GOPATH/bin</code>加入系统可执行目录<code>$PATH</code>中，故可以直接使用。</p>
-
+</div><p>上面命令执行完成之后，编译生成的<code>jj</code>程序会放在<code>$GOPATH/bin</code>目录中，我习惯把<code>$GOPATH/bin</code>加入系统可执行目录<code>$PATH</code>中，故可以直接使用。</p>
 <p>简单的读取和设置（我的环境为 Win10 + Git Bash）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -440,69 +428,67 @@ if (!doNotTrack) {
 <span class="nx">dj</span>
 
 <span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">dajun</span> <span class="nx">name</span><span class="p">.</span><span class="nx">last</span>
-<span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dajun&#34;</span><span class="p">}}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dajun&#34;</span><span class="p">}}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>通过<strong>键路径</strong>来指定读取/设置的位置，上面第一个命令读取字段<code>name.last</code>，返回<code>dj</code>。</p>
-
+</div><p>通过<strong>键路径</strong>来指定读取/设置的位置，上面第一个命令读取字段<code>name.last</code>，返回<code>dj</code>。</p>
 <p><code>-v</code>选项指定设置的值。第二个命令将字段<code>name.last</code>设置为<code>dajun</code>，输出设置之后的 JSON 串。键路径在前两篇文章中有详细的介绍，不熟悉的可以回去看一下。</p>
-
 <h2 id="读取和设置">读取和设置</h2>
-
 <p>实际上读取和设置的语法和形式与我们前面介绍<code>gjson</code>和<code>sjson</code>提到的基本一样，只不过是在命令行上完成的而已。</p>
-
 <p>读取不存在的字段，返回<code>null</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">name</span><span class="p">.</span><span class="nx">middle</span>
-<span class="nx">null</span></code></pre></td></tr></table>
+<span class="nx">null</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>读取一个对象类型的字段，返回该对象的 JSON 表示：</p>
+</div><p>读取一个对象类型的字段，返回该对象的 JSON 表示：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">name</span>
-<span class="p">{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;first&#34;</span><span class="p">:</span><span class="s">&#34;li&#34;</span><span class="p">,</span><span class="s">&#34;last&#34;</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用索引（从 0 开始）读取数组的元素，非法的索引将返回空：</p>
+</div><p>使用索引（从 0 开始）读取数组的元素，非法的索引将返回空：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
+</span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">fruits</span><span class="mf">.1</span>
 <span class="nx">orange</span>
 
-<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">fruits</span><span class="mf">.3</span></code></pre></td></tr></table>
+<span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="nx">fruits</span><span class="mf">.3</span>
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用索引设置数组的元素，下面命令将数组<code>fruits</code>的第二个元素设置为<code>pear</code>：</p>
+</div><p>使用索引设置数组的元素，下面命令将数组<code>fruits</code>的第二个元素设置为<code>pear</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">pear</span> <span class="nx">fruits</span><span class="mf">.1</span>
-<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;pear&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;pear&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用<code>-1</code>或数组长度作为索引，可以在数组后添加一个元素。如果索引超过了数组长度，则会多一定数量的<code>null</code>：</p>
+</div><p>使用<code>-1</code>或数组长度作为索引，可以在数组后添加一个元素。如果索引超过了数组长度，则会多一定数量的<code>null</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -519,13 +505,13 @@ if (!doNotTrack) {
 <span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">,</span><span class="s">&#34;grape&#34;</span><span class="p">]}</span>
 
 <span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">v</span> <span class="nx">watermelon</span> <span class="nx">fruits</span><span class="mf">.5</span>
-<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">,</span><span class="nx">null</span><span class="p">,</span><span class="nx">null</span><span class="p">,</span><span class="s">&#34;watermelon&#34;</span><span class="p">]}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">,</span><span class="nx">null</span><span class="p">,</span><span class="nx">null</span><span class="p">,</span><span class="s">&#34;watermelon&#34;</span><span class="p">]}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用选项<code>-D</code>删除指定键路径上的元素，如果对应元素不存在，则无效果：</p>
+</div><p>使用选项<code>-D</code>删除指定键路径上的元素，如果对应元素不存在，则无效果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -542,46 +528,43 @@ if (!doNotTrack) {
 <span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">]}</span>
 
 <span class="err">$</span> <span class="nx">echo</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span><span class="err">&#39;</span> <span class="p">|</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">D</span> <span class="nx">fruits</span><span class="mf">.5</span>
-<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>第 1 个命令删除字段<code>age</code>；第 2 个命令删除数组<code>fruits</code>的第 2 个元素；第 3 个命令删除数组<code>fruits</code>的第 5 个元素，由于数组长度只有 3，故无效果。</p>
-
+</div><p>第 1 个命令删除字段<code>age</code>；第 2 个命令删除数组<code>fruits</code>的第 2 个元素；第 3 个命令删除数组<code>fruits</code>的第 5 个元素，由于数组长度只有 3，故无效果。</p>
 <h2 id="文件">文件</h2>
-
 <p><code>jj</code>支持从文件中读取 JSON 串和将结果写到文件中。使用选项<code>-i</code>指定输入文件，选项<code>-o</code>指定输出文件。下面将从文件<code>fruits.txt</code>中读取 JSON 串，取数组的第 2 个元素，写到<code>out.txt</code>中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">fruits</span><span class="p">.</span><span class="nx">txt</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">out</span><span class="p">.</span><span class="nx">txt</span> <span class="nx">fruits</span><span class="mf">.1</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">fruits</span><span class="p">.</span><span class="nx">txt</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">out</span><span class="p">.</span><span class="nx">txt</span> <span class="nx">fruits</span><span class="mf">.1</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>fruits.txt</code>的文件内容如下：</p>
+</div><p><code>fruits.txt</code>的文件内容如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;fruits&#34;</span><span class="p">:[</span><span class="s">&#34;apple&#34;</span><span class="p">,</span><span class="s">&#34;orange&#34;</span><span class="p">,</span><span class="s">&#34;banana&#34;</span><span class="p">]}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>执行命令，输出文件的内容为：</p>
+</div><p>执行命令，输出文件的内容为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">orange</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">orange</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="格式化">格式化</h2>
-
+</div><h2 id="格式化">格式化</h2>
 <p><code>jj</code>支持将输出的 JSON 串进行一定的格式化。选项<code>-u</code>移除所有的空白符，节省存储空间。选项<code>-p</code>美化格式，便于阅读。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -598,19 +581,16 @@ if (!doNotTrack) {
 <span class="p">{</span>
   <span class="s">&#34;first&#34;</span><span class="p">:</span> <span class="s">&#34;li&#34;</span><span class="p">,</span>
   <span class="s">&#34;last&#34;</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="性能">性能</h2>
-
+</div><h2 id="性能">性能</h2>
 <p>与另一个 JSON 的命令行工具<a href="https://stedolan.github.io/jq/"><code>jq</code></a>相比，<code>jj</code>是其性能的 10 倍以上。因为<code>jj</code>不会验证 JSON 串的有效性，并且它只关心键路径指定的值，一旦该值处理完成就停止。这里有性能对比：<a href="https://github.com/tidwall/jj#performance">https://github.com/tidwall/jj#performance</a></p>
-
 <h2 id="用途">用途</h2>
-
 <p><code>jj</code>一个很方便的用途在于日志处理，当前很多日志库都支持 JSON 的格式，例如前面我们介绍的<code>logrus</code>。我们可以使用<code>jj</code>在这些日志中找到相应的信息。我们先用<code>logrus</code>生成 20 条玩家登陆和下线的日志：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -643,13 +623,13 @@ if (!doNotTrack) {
       <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="nx">i</span><span class="p">,</span>
     <span class="p">}).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;logoff&#34;</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>生成日志存储在<code>log.txt</code>文件中：</p>
+</div><p>生成日志存储在<code>log.txt</code>文件中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -690,48 +670,47 @@ if (!doNotTrack) {
 <span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">9</span><span class="p">}</span>
 <span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">9</span><span class="p">}</span>
 <span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span>
-<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span></code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;level&#34;</span><span class="p">:</span><span class="s">&#34;info&#34;</span><span class="p">,</span><span class="s">&#34;msg&#34;</span><span class="p">:</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;time&#34;</span><span class="p">:</span><span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span><span class="s">&#34;userid&#34;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>由于每一行都是一个单独的 JSON 串，我们可以使用<code>jj</code>支持的 JSON 行特性，使用<code>..</code>路径标识这些行。<code>..</code>使得<code>jj</code>将这些行看成数组的元素。我们可以读取这些数组元素。</p>
-
+</div><p>由于每一行都是一个单独的 JSON 串，我们可以使用<code>jj</code>支持的 JSON 行特性，使用<code>..</code>路径标识这些行。<code>..</code>使得<code>jj</code>将这些行看成数组的元素。我们可以读取这些数组元素。</p>
 <p>获取数组长度，返回 20：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#</span>
-<span class="mi">20</span></code></pre></td></tr></table>
+<span class="mi">20</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只读取每一行中的<code>userid</code>信息：</p>
+</div><p>只读取每一行中的<code>userid</code>信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#</span><span class="p">.</span><span class="nx">userid</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span></code></pre></td></tr></table>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只读取每一行中的<code>msg</code>信息：</p>
+</div><p>只读取每一行中的<code>msg</code>信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">jj</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">log</span><span class="p">.</span><span class="nx">txt</span> <span class="p">..</span><span class="err">#</span><span class="p">.</span><span class="nx">msg</span>
-<span class="p">[</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">]</span></code></pre></td></tr></table>
+<span class="p">[</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">,</span><span class="s">&#34;login&#34;</span><span class="p">,</span><span class="s">&#34;logoff&#34;</span><span class="p">]</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>更复杂一点的，如果我们要查看所有<code>userid=1</code>的日志：</p>
+</div><p>更复杂一点的，如果我们要查看所有<code>userid=1</code>的日志：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -762,15 +741,14 @@ if (!doNotTrack) {
     <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
     <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">1</span>
   <span class="p">}</span>
-<span class="p">]</span></code></pre></td></tr></table>
+<span class="p">]</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面的命令注意两点，<code>(</code>和<code>)</code>是 shell 中的特殊字符，需要<code>\</code>转义。命令中我们使用<code>-p</code>选项使结果更易读。</p>
-
+</div><p>上面的命令注意两点，<code>(</code>和<code>)</code>是 shell 中的特殊字符，需要<code>\</code>转义。命令中我们使用<code>-p</code>选项使结果更易读。</p>
 <p>如果我们只需要查找第一条符合条件的日志，则可以去掉最右侧的<code>#</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -785,13 +763,13 @@ if (!doNotTrack) {
   <span class="s">&#34;msg&#34;</span><span class="p">:</span> <span class="s">&#34;login&#34;</span><span class="p">,</span>
   <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
   <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">1</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果要查看所有的登录信息：</p>
+</div><p>如果要查看所有的登录信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -918,29 +896,21 @@ if (!doNotTrack) {
     <span class="s">&#34;time&#34;</span><span class="p">:</span> <span class="s">&#34;2020-03-26T23:36:04+08:00&#34;</span><span class="p">,</span>
     <span class="s">&#34;userid&#34;</span><span class="p">:</span> <span class="mi">10</span>
   <span class="p">}</span>
-<span class="p">]</span></code></pre></td></tr></table>
+<span class="p">]</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="总结">总结</h2>
-
+</div><h2 id="总结">总结</h2>
 <p><code>jj</code>是一个非常使用的 JSON 命令行工具，性能超赞。执行<code>jj -h</code>去看看其他选项吧。</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>jj GitHub：<a href="https://github.com/tidwall/jj">https://github.com/tidwall/jj</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1142,7 +1112,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

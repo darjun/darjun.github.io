@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/01/13/goweb/fileserver/" />
@@ -69,11 +69,9 @@
 <meta property="article:modified_time" content="2020-01-13T06:15:36+00:00" />
 <meta itemprop="name" content="Go Web 编程之 静态文件">
 <meta itemprop="description" content="概述 在 Web 开发中，需要处理很多静态资源文件，如 css/js 和图片文件等。本文将介绍在 Go 语言中如何处理文件请求。 接下来，我们将介绍两种处理文件请求的方式：">
-
-
-<meta itemprop="datePublished" content="2020-01-13T06:15:36&#43;00:00" />
-<meta itemprop="dateModified" content="2020-01-13T06:15:36&#43;00:00" />
-<meta itemprop="wordCount" content="3676">
+<meta itemprop="datePublished" content="2020-01-13T06:15:36+00:00" />
+<meta itemprop="dateModified" content="2020-01-13T06:15:36+00:00" />
+<meta itemprop="wordCount" content="3677">
 
 
 
@@ -363,7 +361,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 3676 字 </span>
+        <span class="more-meta"> 约 3677 字 </span>
           <span class="more-meta"> 预计阅读 8 分钟 </span>
 
         
@@ -384,38 +382,30 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#原始方式">原始方式</a></li>
-<li><a href="#http-fileserver"><code>http.FileServer</code></a></li>
-<li><a href="#http-servecontent"><code>http.ServeContent</code></a></li>
-<li><a href="#使用场景">使用场景</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#原始方式">原始方式</a></li>
+    <li><a href="#httpfileserver"><code>http.FileServer</code></a></li>
+    <li><a href="#httpservecontent"><code>http.ServeContent</code></a></li>
+    <li><a href="#使用场景">使用场景</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="概述">概述</h2>
-
+      <h2 id="概述">概述</h2>
 <p>在 Web 开发中，需要处理很多静态资源文件，如 css/js 和图片文件等。本文将介绍在 Go 语言中如何处理文件请求。
 接下来，我们将介绍两种处理文件请求的方式：原始方式和<code>http.FileServer</code>方法。</p>
-
 <h2 id="原始方式">原始方式</h2>
-
 <p>原始方式比较简单粗暴，直接读取文件，然后返回给客户端。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -440,19 +430,17 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面我们创建了一个文件处理器，将它挂载到路径<code>/static/</code>上。一般地，静态文件的路径有一个共同的前缀，以便与其它路径区分。如这里的<code>/static/</code>，还有一些常用的，例如<code>/public/</code>等。
+</div><p>上面我们创建了一个文件处理器，将它挂载到路径<code>/static/</code>上。一般地，静态文件的路径有一个共同的前缀，以便与其它路径区分。如这里的<code>/static/</code>，还有一些常用的，例如<code>/public/</code>等。
 代码的其它部分与<a href="https://darjun.github.io/2019/12/05/goweb/structure/#%E6%80%BB%E7%BB%93">程序模板</a>没什么不同，这里就不赘述了。</p>
-
 <p>另外需要注意的是，这里的注册路径<code>/static/</code>最后的<code>/</code>不能省略。我们在前面的文章<a href="https://darjun.github.io/2019/12/05/goweb/structure/">程序结构</a>中介绍过，如果请求的路径没有精确匹配的处理，会逐步去掉路径最后部分再次查找。
 静态文件的请求路径一般为<code>/static/hello.html</code>这种形式。没有精确匹配的路径，继而查找<code>/static/</code>，这个路径与<code>/static</code>是不能匹配的。</p>
-
 <p>接下来，我们看看文件处理器的实现：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -525,14 +513,14 @@ if (!doNotTrack) {
 
   <span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Length&#34;</span><span class="p">,</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatInt</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nf">Size</span><span class="p">(),</span> <span class="mi">10</span><span class="p">))</span>
   <span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>首先我们读出请求路径，再加上相对可执行文件的路径。一般地，<code>static</code>目录与可执行文件在同一个目录下。然后打开该路径，查看信息。
+</div><p>首先我们读出请求路径，再加上相对可执行文件的路径。一般地，<code>static</code>目录与可执行文件在同一个目录下。然后打开该路径，查看信息。
 如果该路径表示的是一个文件，那么根据文件的后缀设置<code>Content-Type</code>，读取文件的内容并返回。代码中简单列举了几个后缀对应的<code>Content-Type</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -547,13 +535,13 @@ if (!doNotTrack) {
   <span class="s">&#34;.js&#34;</span><span class="p">:</span> <span class="s">&#34;application/javascript&#34;</span><span class="p">,</span>
   <span class="s">&#34;.xml&#34;</span><span class="p">:</span> <span class="s">&#34;text/xml; charset=utf-8&#34;</span><span class="p">,</span>
   <span class="s">&#34;.jpg&#34;</span><span class="p">:</span>  <span class="s">&#34;image/jpeg&#34;</span><span class="p">,</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果该路径表示的是一个目录，那么返回目录下所有文件与目录的列表：</p>
+</div><p>如果该路径表示的是一个目录，那么返回目录下所有文件与目录的列表：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -594,15 +582,14 @@ if (!doNotTrack) {
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;&lt;a href=\&#34;%s\&#34;&gt;%s&lt;/a&gt;\n&#34;</span><span class="p">,</span> <span class="nx">url</span><span class="p">.</span><span class="nf">String</span><span class="p">(),</span> <span class="nx">name</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;&lt;/pre&gt;\n&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面的函数先读取目录下第一层的文件和目录，然后按照名字排序。最后拼装成包含超链接的 HTML 返回。用户可以点击超链接访问对应的文件或目录。</p>
-
+</div><p>上面的函数先读取目录下第一层的文件和目录，然后按照名字排序。最后拼装成包含超链接的 HTML 返回。用户可以点击超链接访问对应的文件或目录。</p>
 <p>如何上述过程中出现错误，我们使用<code>toHTTPError</code>函数将错误转成对应的响应码，然后通过<code>Error</code>回复给客户端。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -629,13 +616,13 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="nf">Error</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">code</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">w</span><span class="p">.</span><span class="nf">WriteHeader</span><span class="p">(</span><span class="nx">code</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>同级目录下<code>static</code>目录内容：</p>
+</div><p>同级目录下<code>static</code>目录内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -644,9 +631,9 @@ if (!doNotTrack) {
 </span><span class="lnt">7
 </span><span class="lnt">8
 </span><span class="lnt">9
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">static
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">static
 ├── folder
 │   ├── file1.txt
 │   └── file2.txt
@@ -654,26 +641,24 @@ if (!doNotTrack) {
 ├── hello.css
 ├── hello.html
 ├── hello.js
-└── hello.txt</pre></td></tr></table>
+└── hello.txt
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行程序看看效果：</p>
+</div><p>运行程序看看效果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go run main.go</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go run main.go
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>打开浏览器，请求<code>localhost:8080/static/hello.html</code>：</p>
-
-<p><img src="/img/in-post/goweb/static1.png#center" alt="" /></p>
-
+</div><p>打开浏览器，请求<code>localhost:8080/static/hello.html</code>：</p>
+<p><img src="/img/in-post/goweb/static1.png#center" alt=""></p>
 <p>可以看到页面<code>hello.html</code>已经呈现了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -704,13 +689,13 @@ if (!doNotTrack) {
   <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;greeting&#34;</span><span class="p">&gt;</span>Hello World!<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;/static/hello.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></td></tr></table>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>html 使用的 css 和 js 文件也是通过<code>/static/</code>路径请求的，两个文件都比较简单：</p>
+</div><p>html 使用的 css 和 js 文件也是通过<code>/static/</code>路径请求的，两个文件都比较简单：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-css" data-lang="css"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -723,65 +708,56 @@ if (!doNotTrack) {
   <span class="k">font-size</span><span class="p">:</span> <span class="mi">15</span><span class="kt">px</span><span class="p">;</span>
   <span class="k">font-style</span><span class="p">:</span> <span class="kc">italic</span><span class="p">;</span>
   <span class="k">font-weight</span><span class="p">:</span> <span class="kc">bold</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;Hello World!&#34;</span><span class="p">)</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>&ldquo;Hello World!&ldquo;字体显示为 css 设置的样式，通过观察控制台也能看到 js 打印的信息。</p>
-
+</div><p>&ldquo;Hello World!&ldquo;字体显示为 css 设置的样式，通过观察控制台也能看到 js 打印的信息。</p>
 <p>再来看看文件目录浏览，在浏览器中请求<code>localhost:8080/static/</code>：</p>
-
-<p><img src="/img/in-post/goweb/static2.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/static2.png#center" alt=""></p>
 <p>可以依次点击列表中的文件查看其内容。</p>
-
 <p>点击<code>hello.css</code>：
-<img src="/img/in-post/goweb/static3.png#center" alt="" /></p>
-
+<img src="/img/in-post/goweb/static3.png#center" alt=""></p>
 <p>点击<code>hello.js</code>：
-<img src="/img/in-post/goweb/static4.png#center" alt="" /></p>
-
+<img src="/img/in-post/goweb/static4.png#center" alt=""></p>
 <p>依次点击<code>folder</code>和<code>file1.txt</code>：</p>
-
-<p><img src="/img/in-post/goweb/static5.png#center" alt="" /></p>
-
-<p><img src="/img/in-post/goweb/static6.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/goweb/static5.png#center" alt=""></p>
+<p><img src="/img/in-post/goweb/static6.png#center" alt=""></p>
 <p>静态文件的请求路径也会输出到运行服务器的控制台中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span><span class="lnt">7
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go run main.go 
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go run main.go 
 ./static/
 ./static/hello.css
 ./static/hello.js
 ./static/folder/
-./static/folder/file1.txt</pre></td></tr></table>
+./static/folder/file1.txt
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>原始方式的实现有一个缺点，实现逻辑复杂。上面的代码尽管我们已经忽略很多情况的处理了，代码量还是不小。自己编写很繁琐，而且容易产生 BUG。
+</div><p>原始方式的实现有一个缺点，实现逻辑复杂。上面的代码尽管我们已经忽略很多情况的处理了，代码量还是不小。自己编写很繁琐，而且容易产生 BUG。
 静态文件服务的逻辑其实比较一致，应该通过库的形式来提供。为此，Go 语言提供了<code>http.FileServer</code>方法。</p>
-
-<h2 id="http-fileserver"><code>http.FileServer</code></h2>
-
+<h2 id="httpfileserver"><code>http.FileServer</code></h2>
 <p>先来看看如何使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -824,15 +800,14 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面的代码使用<code>http.Server</code>方法，几行代码就实现了与原始方式相同的效果，是不是很简单？这就是使用库的好处！</p>
-
+</div><p>上面的代码使用<code>http.Server</code>方法，几行代码就实现了与原始方式相同的效果，是不是很简单？这就是使用库的好处！</p>
 <p><code>http.FileServer</code>接受一个<code>http.FileSystem</code>接口类型的变量：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -841,30 +816,28 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/http/fs.go
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">FileSystem</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Open</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">File</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>传入<code>http.Dir</code>类型变量，注意<code>http.Dir</code>是一个类型，其底层类型为<code>string</code>，并不是方法。因而<code>http.Dir(&quot;&quot;)</code>只是一个类型转换，而非方法调用：</p>
+</div><p>传入<code>http.Dir</code>类型变量，注意<code>http.Dir</code>是一个类型，其底层类型为<code>string</code>，并不是方法。因而<code>http.Dir(&quot;&quot;)</code>只是一个类型转换，而非方法调用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/http/fs.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Dir</span> <span class="kt">string</span></code></pre></td></tr></table>
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Dir</span> <span class="kt">string</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>http.Dir</code>表示文件的起始路径，空即为当前路径。调用<code>Open</code>方法时，传入的参数需要在前面拼接上该起始路径得到实际文件路径。</p>
-
+</div><p><code>http.Dir</code>表示文件的起始路径，空即为当前路径。调用<code>Open</code>方法时，传入的参数需要在前面拼接上该起始路径得到实际文件路径。</p>
 <p><code>http.FileServer</code>的返回值类型是<code>http.Handler</code>，所以需要使用<code>Handle</code>方法注册处理器。<code>http.FileServer</code>将收到的请求路径传给<code>http.Dir</code>的<code>Open</code>方法打开对应的文件或目录进行处理。
 在上面的程序中，如果请求路径为<code>/static/hello.html</code>，那么拼接<code>http.Dir</code>的起始路径<code>.</code>，最终会读取路径为<code>./static/hello.html</code>的文件。</p>
-
 <p>有时候，我们想要处理器的注册路径和<code>http.Dir</code>的起始路径不相同。有些工具在打包时会将静态文件输出到<code>public</code>目录中。
 这时需要使用<code>http.StripPrefix</code>方法，该方法会将请求路径中特定的前缀去掉，然后再进行处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -907,16 +880,15 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这时，请求<code>localhost:8080/static/hello.html</code>将会返回<code>./public/hello.html</code>文件。
+</div><p>这时，请求<code>localhost:8080/static/hello.html</code>将会返回<code>./public/hello.html</code>文件。
 路径<code>/static/index.html</code>经过处理器<code>http.StripPrefix</code>去掉了前缀<code>/static</code>得到<code>/index.html</code>，然后又加上了<code>http.Dir</code>的起始目录<code>./public</code>得到文件最终路径<code>./public/hello.html</code>。</p>
-
 <p>除此之外，<code>http.FileServer</code>还会根据请求文件的后缀推断内容类型，更全面：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -951,19 +923,16 @@ if (!doNotTrack) {
   <span class="s">&#34;.wasm&#34;</span><span class="p">:</span> <span class="s">&#34;application/wasm&#34;</span><span class="p">,</span>
   <span class="s">&#34;.webp&#34;</span><span class="p">:</span> <span class="s">&#34;image/webp&#34;</span><span class="p">,</span>
   <span class="s">&#34;.xml&#34;</span><span class="p">:</span>  <span class="s">&#34;text/xml; charset=utf-8&#34;</span><span class="p">,</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果文件后缀无法推断，<code>http.FileServer</code>将读取文件的前 512 个字节，根据内容来推断内容类型。感兴趣可以看一下源码<code>src/net/http/sniff.go</code>。</p>
-
-<h2 id="http-servecontent"><code>http.ServeContent</code></h2>
-
+</div><p>如果文件后缀无法推断，<code>http.FileServer</code>将读取文件的前 512 个字节，根据内容来推断内容类型。感兴趣可以看一下源码<code>src/net/http/sniff.go</code>。</p>
+<h2 id="httpservecontent"><code>http.ServeContent</code></h2>
 <p>除了直接使用<code>http.FileServer</code>之外，<code>net/http</code>库还暴露了<code>ServeContent</code>方法。这个方法可以用在处理器需要返回一个文件内容的时候，非常易用。</p>
-
 <p>例如下面的程序，根据 URL 中的<code>file</code>参数返回对应的文件内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1086,20 +1055,17 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>http.ServeContent</code>除了接受参数<code>http.ResponseWriter</code>和<code>http.Request</code>，还需要文件名<code>name</code>，修改时间<code>modTime</code>和<code>io.ReadSeeker</code>接口类型的参数。</p>
-
+</div><p><code>http.ServeContent</code>除了接受参数<code>http.ResponseWriter</code>和<code>http.Request</code>，还需要文件名<code>name</code>，修改时间<code>modTime</code>和<code>io.ReadSeeker</code>接口类型的参数。</p>
 <p><code>modTime</code>参数是为了设置响应的<code>Last-Modified</code>首部。如果请求中携带了<code>If-Modified-Since</code>首部，<code>ServeContent</code>方法会根据<code>modTime</code>判断是否需要发送内容。
 如果需要发送内容，<code>ServeContent</code>方法从<code>io.ReadSeeker</code>接口重读取内容。<code>*os.File</code>实现了接口<code>io.ReadSeeker</code>。</p>
-
 <h2 id="使用场景">使用场景</h2>
-
 <p>Web 开发中的静态资源都可以使用<code>http.FileServer</code>来处理。除此之外，<code>http.FileServer</code>还可以用于实现一个简单的文件服务器，浏览或下载文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1164,38 +1130,30 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在上面的代码中，我们构建了一个简单的文件服务器。编译之后，将想浏览的目录作为参数传给命令行选项，就可以浏览和下载该目录下的文件了：</p>
+</div><p>在上面的代码中，我们构建了一个简单的文件服务器。编译之后，将想浏览的目录作为参数传给命令行选项，就可以浏览和下载该目录下的文件了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ ./main.exe -sd D:/code/golang</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ ./main.exe -sd D:/code/golang
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以将端口也作为命令行选项，这样做出一个通用的文件服务器，编译之后就可以在其它机器上使用了😀。</p>
-
+</div><p>可以将端口也作为命令行选项，这样做出一个通用的文件服务器，编译之后就可以在其它机器上使用了😀。</p>
 <h2 id="总结">总结</h2>
-
 <p>本文介绍了如何处理静态文件，依次介绍了原始方式、<code>http.FileServer</code>和<code>http.ServeContent</code>。最后使用<code>http.FileServer</code>实现了一个简单的文件服务器，可供日常使用。</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://book.douban.com/subject/27204133/">Go Web 编程</a></li>
 <li><a href="https://golang.org/pkg/net/http/">net/http</a>文档</li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1397,7 +1355,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

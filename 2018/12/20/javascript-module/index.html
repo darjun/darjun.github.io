@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/12/20/javascript-module/" />
@@ -69,11 +69,9 @@
 <meta property="article:modified_time" content="2018-12-20T12:10:08+00:00" />
 <meta itemprop="name" content="深入理解Javascript之Module">
 <meta itemprop="description" content="什么是模块 模块（module）是什么呢？ 模块是为了软件封装，复用。当今开源运动盛行，我们可以很方便地使用别人编写好的模块，而不用自己从头开始">
-
-
-<meta itemprop="datePublished" content="2018-12-20T12:10:08&#43;00:00" />
-<meta itemprop="dateModified" content="2018-12-20T12:10:08&#43;00:00" />
-<meta itemprop="wordCount" content="3776">
+<meta itemprop="datePublished" content="2018-12-20T12:10:08+00:00" />
+<meta itemprop="dateModified" content="2018-12-20T12:10:08+00:00" />
+<meta itemprop="wordCount" content="3780">
 
 
 
@@ -363,7 +361,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/javascript/"> JavaScript </a>
             
           </div>
-        <span class="more-meta"> 约 3776 字 </span>
+        <span class="more-meta"> 约 3780 字 </span>
           <span class="more-meta"> 预计阅读 8 分钟 </span>
 
         
@@ -384,65 +382,46 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#span-id-模块-什么是模块-span"><span id="模块">什么是模块</span></a></li>
-<li><a href="#span-id-commonjs-2-commonjs模块-span"><span id="CommonJS">2.CommonJS模块</span></a>
-<ul>
-<li><a href="#基本用法">基本用法</a></li>
-<li><a href="#模块类别">模块类别</a></li>
-<li><a href="#定义模块">定义模块</a></li>
-<li><a href="#模块导出详解">模块导出详解</a></li>
-</ul></li>
-<li><a href="#span-id-es6-3-es模块-span"><span id="ES6">3.ES模块</span></a>
-<ul>
-<li><a href="#基本使用">基本使用</a></li>
-<li><a href="#es6-模块特性">ES6 模块特性</a>
-<ul>
-<li><a href="#静态加载">静态加载</a></li>
-<li><a href="#别名">别名</a></li>
-<li><a href="#default导出">default导出</a></li>
-<li><a href="#整体加载">整体加载</a></li>
-<li><a href="#node-中使用-es6-模块">Node 中使用 ES6 模块</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#span-id-总结-4-总结-span"><span id="总结">4.总结</span></a></li>
-<li><a href="#span-id-参考链接-5-参考链接-span"><span id="参考链接">5.参考链接</span></a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#span-id模块什么是模块span"><!-- raw HTML omitted -->什么是模块<!-- raw HTML omitted --></a></li>
+    <li><a href="#span-idcommonjs2commonjs模块span"><!-- raw HTML omitted -->2.CommonJS模块<!-- raw HTML omitted --></a>
+      <ul>
+        <li><a href="#基本用法">基本用法</a></li>
+        <li><a href="#模块类别">模块类别</a></li>
+        <li><a href="#定义模块">定义模块</a></li>
+        <li><a href="#模块导出详解">模块导出详解</a></li>
+      </ul>
+    </li>
+    <li><a href="#span-ides63es模块span"><!-- raw HTML omitted -->3.ES模块<!-- raw HTML omitted --></a>
+      <ul>
+        <li><a href="#基本使用">基本使用</a></li>
+        <li><a href="#es6-模块特性">ES6 模块特性</a></li>
+      </ul>
+    </li>
+    <li><a href="#span-id总结4总结span"><!-- raw HTML omitted -->4.总结<!-- raw HTML omitted --></a></li>
+    <li><a href="#span-id参考链接5参考链接span"><!-- raw HTML omitted -->5.参考链接<!-- raw HTML omitted --></a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="span-id-模块-什么是模块-span"><span id="模块">什么是模块</span></h2>
-
+      <h2 id="span-id模块什么是模块span"><!-- raw HTML omitted -->什么是模块<!-- raw HTML omitted --></h2>
 <p>模块（module）是什么呢？
 模块是为了软件封装，复用。当今开源运动盛行，我们可以很方便地使用别人编写好的模块，而不用自己从头开始编写。在程序设计中，我们一直强调避免重复造轮子（Don&rsquo;t Repeat Yourself，DRY）。</p>
-
 <p>想象一下，没有模块的日子，第三库基本都是导出一个全局变量供开发者使用。例如<code>jQuery</code>的<code>$</code>，<code>lodash</code>的<code>_</code>。这些库已经尽量避免了全局变量冲突，只使用几个全局变量。但是还是不能避免有冲突，<code>jQuery</code>还提供了<code>noConflict</code>。更遑论我们自己编写的代码。</p>
-
 <p>最初，Javascript 中是没有模块的概念的。这可能与一开始 Javascript 的定位有关。Javascript 最初只是希望给网页增加动态元素，定位是简单易用的脚本。
 但是，随着网页端功能越来越丰富，程序越来越庞大，软件变得越来越难以维护。特别是随着 NodeJs 的兴起，Javascript 语言进入服务端编程领域。在编写大型复杂的程序，模块更是必须品。</p>
-
 <p>模块只是一个抽象概念，要想在实际编程中使用还需要规范。如果没有规范，我用这种写法，你用那种写法，岂不是乱了套。</p>
-
 <p>目前，模块的规范主要有3中，<a href="https://requirejs.org/docs/commonjs.html">CommonJS模块</a>、<a href="https://github.com/amdjs/amdjs-api/wiki/AMD">AMD模块</a>和ES6模块。本文着重讲解 CommonJS 模块（以 Node 实现为代表）和ES6模块。</p>
-
-<h2 id="span-id-commonjs-2-commonjs模块-span"><span id="CommonJS">2.CommonJS模块</span></h2>
-
+<h2 id="span-idcommonjs2commonjs模块span"><!-- raw HTML omitted -->2.CommonJS模块<!-- raw HTML omitted --></h2>
 <p>CommonJS 其实是一个通用的 Javascript 语言规范，并不仅仅是模块的规范。Node 中的模块遵循 CommonJS 规范。</p>
-
 <h3 id="基本用法">基本用法</h3>
-
 <p>Node 中提供了一个<code>require</code>方法用来加载模块。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -464,16 +443,13 @@ if (!doNotTrack) {
 <span class="p">});</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>导入模块之后就可以使用模块中定义的接口了，如上例中的<code>readFile</code>。</p>
-
+</div><p>导入模块之后就可以使用模块中定义的接口了，如上例中的<code>readFile</code>。</p>
 <h3 id="模块类别">模块类别</h3>
-
 <p>在 Node 中大体上有3种模块，普通模块、核心模块和第三方模块。
 普通模块是我们自己编写的模块，核心模块是 Node 提供的模块。上面我们使用的<code>fs</code>就是核心模块。普通模块与核心模块的导入方式稍微有些区别。导入普通模块时，需要在<code>require</code>的参数中指定相对路径。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
@@ -481,27 +457,25 @@ if (!doNotTrack) {
 <span class="nx">myModule</span><span class="p">.</span><span class="nx">func1</span><span class="p">();</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>模块<code>myModule</code>的后缀<code>.js</code>后缀可以省略。</p>
-
+</div><p>模块<code>myModule</code>的后缀<code>.js</code>后缀可以省略。</p>
 <p>Node 将核心模块编译进了引擎。导入核心模块只需要指定模块名，Node 引擎直接查找核心模块字典。</p>
-
 <p>第三方模块的导入也是指定模块名，但是模块的查找方式有所不同。</p>
-
 <ul>
-<li><p>首先，在项目目录下的<code>node_modules</code>目录中查找。</p></li>
-
-<li><p>如果没有找到，接着去项目目录的父目录中查找。</p></li>
-
-<li><p>直到找到加载该模块，或者到根目录还未找到返回失败。</p></li>
+<li>
+<p>首先，在项目目录下的<code>node_modules</code>目录中查找。</p>
+</li>
+<li>
+<p>如果没有找到，接着去项目目录的父目录中查找。</p>
+</li>
+<li>
+<p>直到找到加载该模块，或者到根目录还未找到返回失败。</p>
+</li>
 </ul>
-
 <h3 id="定义模块">定义模块</h3>
-
 <p>在我们日常的编程中，经常需要将一些功能封装在一个模块中，方便自己或他人使用。在 Node 中定义模块的语法很简单。模块单独在一个文件中，文件中可以使用<code>exports</code>导出接口或变量。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -515,11 +489,10 @@ if (!doNotTrack) {
 <span class="nx">exports</span><span class="p">.</span><span class="nx">addTwoNumber</span> <span class="o">=</span> <span class="nx">addTwoNumber</span><span class="p">;</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>假设该模块在文件<code>myMath.js</code>中。在同一目录下，我们可以这样来使用：</p>
+</div><p>假设该模块在文件<code>myMath.js</code>中。在同一目录下，我们可以这样来使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
@@ -529,32 +502,30 @@ if (!doNotTrack) {
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">myMath</span><span class="p">.</span><span class="nx">addTwoNumber</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">));</span> <span class="c1">// 30
 </span></code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="模块导出详解">模块导出详解</h3>
-
+</div><h3 id="模块导出详解">模块导出详解</h3>
 <p>函数具体是怎么导出的呢？除了<code>exports</code>，我们经常看到的<code>module.exports</code>，<code>__dirname</code>，<code>__filename</code>是从哪里来的？
 在执行<code>require</code>函数的时候，其实 Node 额外做了一些处理。</p>
-
 <ul>
-<li><p>首先，将模块所在文件内容读出来。然后将这些内容包裹在一个函数中：</p>
+<li>首先，将模块所在文件内容读出来。然后将这些内容包裹在一个函数中：</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">_doRequire</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">__filename</span><span class="p">,</span> <span class="nx">__dirname</span><span class="p">)</span> <span class="p">{</span>
-<span class="c1">// 模块文件内容
+    <span class="c1">// 模块文件内容
 </span><span class="c1"></span><span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div></li>
-
-<li><p>接下来，Node 引擎构造一个空的模块对象，给这个对象一个空的<code>exports</code>属性，然后推算出<code>__filename</code>（当前导入的这个模块的全路径文件名）和<code>__dirname</code>（模块文件所在路径）：</p>
+</div><ul>
+<li>接下来，Node 引擎构造一个空的模块对象，给这个对象一个空的<code>exports</code>属性，然后推算出<code>__filename</code>（当前导入的这个模块的全路径文件名）和<code>__dirname</code>（模块文件所在路径）：</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -566,28 +537,25 @@ if (!doNotTrack) {
 </span><span class="c1">// __dirname = ...
 </span></code></pre></td></tr></table>
 </div>
-</div></li>
-
-<li><p>然后，调用第一步构造的那个函数，传入参数：</p>
+</div><ul>
+<li>然后，调用第一步构造的那个函数，传入参数：</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">_doRequire</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">__filename</span><span class="p">,</span> <span class="nx">__dirname</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div></li>
-
-<li><p>最后<code>require</code>返回的是<code>module.exports</code>的值。</p></li>
+</div><ul>
+<li>最后<code>require</code>返回的是<code>module.exports</code>的值。</li>
 </ul>
-
 <p>按照上面的过程，我们可以很清楚地理解模块的导出过程。并且也能很快地判断一些写法是否有问题：</p>
-
 <p><strong>错误写法：</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -605,13 +573,11 @@ if (!doNotTrack) {
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>这种写法为什么不对？<code>exports</code>实际上初始时是<code>module.exports</code>的一个引用。给<code>exports</code>赋一个新值后，<code>module.exports</code>并没有改变，还是指向空对象。最后返回的对象是<code>module.exports</code>，没有<code>addTwoNumber</code>接口。</p>
-
+</div><p>这种写法为什么不对？<code>exports</code>实际上初始时是<code>module.exports</code>的一个引用。给<code>exports</code>赋一个新值后，<code>module.exports</code>并没有改变，还是指向空对象。最后返回的对象是<code>module.exports</code>，没有<code>addTwoNumber</code>接口。</p>
 <p><strong>正确写法：</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -643,16 +609,13 @@ if (!doNotTrack) {
 <span class="p">};</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p><code>exports</code>和<code>module.exports</code>开始指向的是同一个对象。写法一通过<code>exports</code>设置属性，同样对<code>module.exports</code>也可见。写法二通过<code>module.exports</code>设置属性也可以导出。
+</div><p><code>exports</code>和<code>module.exports</code>开始指向的是同一个对象。写法一通过<code>exports</code>设置属性，同样对<code>module.exports</code>也可见。写法二通过<code>module.exports</code>设置属性也可以导出。
 写法三直接设置<code>module.exports</code>就更不用说了。</p>
-
 <p>建议在程序开发中，坚持一种写法。<strong>个人觉得写法三显示设置相对较容易理解。</strong></p>
-
-<p><strong>有一点需要注意：不是只有对象可以导出，函数、类等值也可以。</strong>例如下面就导出了一个函数：</p>
+<p>**有一点需要注意：不是只有对象可以导出，函数、类等值也可以。**例如下面就导出了一个函数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -666,17 +629,13 @@ if (!doNotTrack) {
 <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">addTwoNumber</span><span class="p">;</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="span-id-es6-3-es模块-span"><span id="ES6">3.ES模块</span></h2>
-
+</div><h2 id="span-ides63es模块span"><!-- raw HTML omitted -->3.ES模块<!-- raw HTML omitted --></h2>
 <p>ES6 在标准层面为 Javascript 引入了一套简单的模块系统。ES6 模块完全可以取代 CommonJS 和 AMD 规范。当前热门的开源框架 React 和 Vue 都已经使用了 ES6 模块来开发。</p>
-
 <h3 id="基本使用">基本使用</h3>
-
 <p>ES6 模块使用<code>export</code>导出接口，<code>import from</code>导入需要使用的接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -712,7 +671,7 @@ if (!doNotTrack) {
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -724,23 +683,16 @@ if (!doNotTrack) {
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">addTwoNumber</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">));</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>在<code>myMath.js</code>中通过<code>export</code>导出一个变量<code>pi</code>和一个函数<code>addTwoNumber</code>。上例中演示了两种导出方式。一种是一个个导出，对每一个需要导出的接口都应用一次<code>export</code>。第二种是在文件中某处集中导出。当然，也可以混合使用这两种方式。<strong>推荐使用第二种导出方式，因为能在一处比较清楚的看出模块导出了哪些接口。</strong></p>
-
+</div><p>在<code>myMath.js</code>中通过<code>export</code>导出一个变量<code>pi</code>和一个函数<code>addTwoNumber</code>。上例中演示了两种导出方式。一种是一个个导出，对每一个需要导出的接口都应用一次<code>export</code>。第二种是在文件中某处集中导出。当然，也可以混合使用这两种方式。<strong>推荐使用第二种导出方式，因为能在一处比较清楚的看出模块导出了哪些接口。</strong></p>
 <h3 id="es6-模块特性">ES6 模块特性</h3>
-
 <p>ES6 模块有一些需要了解和注意的特性。</p>
-
 <h4 id="静态加载">静态加载</h4>
-
 <p>ES6 模块一个非常重要的特性是“静态加载”，导入的接口是只读的，不能修改。NodeJS 中的模块，是动态加载的。</p>
-
 <p><strong>静态加载就是“编译”时就已经确定了模块导出，可以做到高效率，并且便于做静态代码分析。同时，静态加载也限制了模块的加载只能在文件中所有语句之前，并且导入语法中不能含有动态的语法结构（例如变量、if语句等）。</strong></p>
-
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -782,11 +734,10 @@ if (!doNotTrack) {
 <span class="nx">funcA</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>导出的接口与模块中定义的变量或函数必须是一一对应的</strong>。而且模块内相应的值修改了，外部也能感知到。看下面代码：</p>
+</div><p><strong>导出的接口与模块中定义的变量或函数必须是一一对应的</strong>。而且模块内相应的值修改了，外部也能感知到。看下面代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -818,7 +769,7 @@ if (!doNotTrack) {
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -830,13 +781,11 @@ if (!doNotTrack) {
 <span class="c1">// 2s后foo变为&#34;baz&#34;，外部能感知到
 </span></code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="别名">别名</h4>
-
+</div><h4 id="别名">别名</h4>
 <p>在导出模块时，可以为接口指定一个别名。这样，后续可以修改内部接口而保持导出接口不变。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -864,11 +813,10 @@ if (!doNotTrack) {
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>上面我们导出以别名<code>func1</code>导出函数<code>funcA</code>，以别名<code>func2</code>和<code>myFunc</code>导出函数<code>funcB</code>。<code>func2</code>和<code>myFunc</code>都是指向同一个函数<code>funcB</code>的。下面看看使用这个模块：</p>
+</div><p>上面我们导出以别名<code>func1</code>导出函数<code>funcA</code>，以别名<code>func2</code>和<code>myFunc</code>导出函数<code>funcB</code>。<code>func2</code>和<code>myFunc</code>都是指向同一个函数<code>funcB</code>的。下面看看使用这个模块：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
@@ -876,11 +824,10 @@ if (!doNotTrack) {
 </span><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">func1</span><span class="p">,</span> <span class="nx">func2</span><span class="p">,</span> <span class="nx">myFunc</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>同样的，导入模块时也可以指定别名：</strong></p>
+</div><p><strong>同样的，导入模块时也可以指定别名：</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
@@ -888,13 +835,11 @@ if (!doNotTrack) {
 </span><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">func1</span> <span class="nx">as</span> <span class="nx">func</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="default导出">default导出</h4>
-
+</div><h4 id="default导出">default导出</h4>
 <p>上面介绍的模块导入必须知道接口名字。有时候，用户学习一个模块时希望能够快速上手，不想去看文档（怎么会有这个懒的人🤣）。ES6 提供了default导出。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -918,11 +863,10 @@ if (!doNotTrack) {
 <span class="kr">export</span> <span class="p">{</span> <span class="nx">f</span> <span class="nx">as</span> <span class="k">default</span> <span class="p">};</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>在外部导入的时候，不能有花括号：</p>
+</div><p>在外部导入的时候，不能有花括号：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
@@ -932,11 +876,10 @@ if (!doNotTrack) {
 <span class="nx">func</span><span class="p">();</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>也可以两种方式，同时使用：</p>
+</div><p>也可以两种方式，同时使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -966,7 +909,7 @@ if (!doNotTrack) {
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
@@ -974,13 +917,11 @@ if (!doNotTrack) {
 </span><span class="c1"></span><span class="kr">import</span> <span class="nx">foo</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bar</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./myModule&#39;</span><span class="p">;</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="整体加载">整体加载</h4>
-
+</div><h4 id="整体加载">整体加载</h4>
 <p>ES6 还允许一种整体加载的方式导入模块。通过使用<code>import *</code>可以导入模块中导出的所有接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1002,7 +943,7 @@ if (!doNotTrack) {
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1016,11 +957,10 @@ if (!doNotTrack) {
 <span class="nx">m</span><span class="p">.</span><span class="nx">funcB</span><span class="p">();</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>整体加载所在的那个对象（<code>m</code>），应该是可以静态分析的，所以不允许运行时改变。所以，下面的写法都是不允许的：</p>
+</div><p>整体加载所在的那个对象（<code>m</code>），应该是可以静态分析的，所以不允许运行时改变。所以，下面的写法都是不允许的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1036,13 +976,11 @@ if (!doNotTrack) {
 <span class="nx">m</span><span class="p">.</span><span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="node-中使用-es6-模块">Node 中使用 ES6 模块</h4>
-
+</div><h4 id="node-中使用-es6-模块">Node 中使用 ES6 模块</h4>
 <p>Node 由于已经有 CommonJS 的模块规范了，与 ES6 模块不兼容。为了使用 ES6 模块，Node 要求 ES6 模块采用<code>.mjs</code>后缀名，而且文件中只能使用<code>import</code>和<code>export</code>，不能使用<code>require</code>。而且该功能还在试验阶段，Node v8.5.0以上版本，指定<code>--experimental-modules</code>参数才能使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1062,7 +1000,7 @@ if (!doNotTrack) {
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1074,30 +1012,24 @@ if (!doNotTrack) {
 <span class="nx">incCounter</span><span class="p">();</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>使用下面命令行运行程序：</p>
+</div><p>使用下面命令行运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">$</span> <span class="nx">node</span> <span class="o">--</span><span class="nx">experimental</span><span class="o">-</span><span class="nx">modules</span> <span class="nx">main</span><span class="p">.</span><span class="nx">mjs</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="span-id-总结-4-总结-span"><span id="总结">4.总结</span></h2>
-
+</div><h2 id="span-id总结4总结span"><!-- raw HTML omitted -->4.总结<!-- raw HTML omitted --></h2>
 <p>随着 Javascript 在大型项目中占用举足轻重的位置，模块的使用称为必然。Node 中使用 CommonJS 规范。ES6 中定义了简单易用高效的模块规范。ES6 规范化是个必然的趋势，所以在掌握当前 CommonJS 规范的前提下，学习 ES6 模块势在必行。</p>
-
-<h2 id="span-id-参考链接-5-参考链接-span"><span id="参考链接">5.参考链接</span></h2>
-
+<h2 id="span-id参考链接5参考链接span"><!-- raw HTML omitted -->5.参考链接<!-- raw HTML omitted --></h2>
 <ol>
 <li><a href="http://www.ruanyifeng.com/blog/2012/10/javascript_module.html">Javascript模块化编程（一）</a></li>
 <li><a href="http://www.ruanyifeng.com/blog/2012/10/asynchronous_module_definition.html">Javascript模块化编程（二）</a></li>
 <li><a href="http://www.ruanyifeng.com/blog/2012/11/require_js.html">Javascript模块化编程（三）</a></li>
 <li><a href="http://es6.ruanyifeng.com/#docs/module">ES6 Module</a></li>
 </ol>
-
 <p>关于我：
 <a href="https://darjun.github.io">个人主页</a> <a href="https://www.jianshu.com/u/0aca4aa367c8">简书</a> <a href="https://juejin.im/user/5be15200e51d4505466ce2f4">掘金</a></p>
 
@@ -1302,7 +1234,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

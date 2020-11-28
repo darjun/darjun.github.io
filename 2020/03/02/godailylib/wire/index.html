@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/03/02/godailylib/wire/" />
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-03-02T15:11:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 wire">
 <meta itemprop="description" content="简介 之前的一篇文章Go 每日一库之 dig介绍了 uber 开源的依赖注入框架dig。读了这篇文章后，@overtalk推荐了 Google 开源的wire工具。所以就">
-
-
-<meta itemprop="datePublished" content="2020-03-02T15:11:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-03-02T15:11:23&#43;00:00" />
+<meta itemprop="datePublished" content="2020-03-02T15:11:23+00:00" />
+<meta itemprop="dateModified" content="2020-03-02T15:11:23+00:00" />
 <meta itemprop="wordCount" content="4669">
 
 
@@ -384,61 +382,51 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#基础概念">基础概念</a></li>
-<li><a href="#参数">参数</a></li>
-<li><a href="#错误">错误</a></li>
-<li><a href="#高级特性">高级特性</a>
-<ul>
-<li><a href="#providerset">ProviderSet</a></li>
-<li><a href="#结构构造器">结构构造器</a></li>
-<li><a href="#绑定值">绑定值</a></li>
-<li><a href="#结构字段作为构造器">结构字段作为构造器</a></li>
-<li><a href="#清理函数">清理函数</a></li>
-</ul></li>
-<li><a href="#一些细节">一些细节</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#基础概念">基础概念</a></li>
+    <li><a href="#参数">参数</a></li>
+    <li><a href="#错误">错误</a></li>
+    <li><a href="#高级特性">高级特性</a>
+      <ul>
+        <li><a href="#providerset">ProviderSet</a></li>
+        <li><a href="#结构构造器">结构构造器</a></li>
+        <li><a href="#绑定值">绑定值</a></li>
+        <li><a href="#结构字段作为构造器">结构字段作为构造器</a></li>
+        <li><a href="#清理函数">清理函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#一些细节">一些细节</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>之前的一篇文章<a href="https://darjun.github.io/2020/02/22/godailylib/dig/">Go 每日一库之 dig</a>介绍了 uber 开源的依赖注入框架<code>dig</code>。读了这篇文章后，<a href="https://github.com/overtalk">@overtalk</a>推荐了 Google 开源的<code>wire</code>工具。所以就有了今天这篇文章，感谢推荐👍</p>
-
 <p><a href="https://github.com/google/wire"><code>wire</code></a>是 Google 开源的一个依赖注入工具。它是一个代码生成器，并不是一个框架。我们只需要在一个特殊的<code>go</code>文件中告诉<code>wire</code>类型之间的依赖关系，它会自动帮我们生成代码，帮助我们创建指定类型的对象，并组装它的依赖。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>先安装工具：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">google</span><span class="o">/</span><span class="nx">wire</span><span class="o">/</span><span class="nx">cmd</span><span class="o">/</span><span class="nx">wire</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">google</span><span class="o">/</span><span class="nx">wire</span><span class="o">/</span><span class="nx">cmd</span><span class="o">/</span><span class="nx">wire</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面的命令会在<code>$GOPATH/bin</code>中生成一个可执行程序<code>wire</code>，这就是代码生成器。我个人习惯把<code>$GOPATH/bin</code>加入系统环境变量<code>$PATH</code>中，所以可直接在命令行中执行<code>wire</code>命令。</p>
-
+</div><p>上面的命令会在<code>$GOPATH/bin</code>中生成一个可执行程序<code>wire</code>，这就是代码生成器。我个人习惯把<code>$GOPATH/bin</code>加入系统环境变量<code>$PATH</code>中，所以可直接在命令行中执行<code>wire</code>命令。</p>
 <p>下面我们在一个例子中看看如何使用<code>wire</code>。</p>
-
 <p>现在，我们来到一个黑暗的世界，这个世界中有一个邪恶的怪兽。我们用下面的结构表示，同时编写一个创建方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -453,13 +441,13 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="nf">NewMonster</span><span class="p">()</span> <span class="nx">Monster</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">Monster</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;kitty&#34;</span><span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>有怪兽肯定就有勇士，结构如下，同样地它也有创建方法：</p>
+</div><p>有怪兽肯定就有勇士，结构如下，同样地它也有创建方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -474,13 +462,13 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="nf">NewPlayer</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Player</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">Player</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>终于有一天，勇士完成了他的使命，战胜了怪兽：</p>
+</div><p>终于有一天，勇士完成了他的使命，战胜了怪兽：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -505,13 +493,13 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">Mission</span><span class="p">)</span> <span class="nf">Start</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s defeats %s, world peace!\n&#34;</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">Player</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">Monster</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这可能是某个游戏里面的场景哈，我们看如何将上面的结构组装起来放在一个应用程序中：</p>
+</div><p>这可能是某个游戏里面的场景哈，我们看如何将上面的结构组装起来放在一个应用程序中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -526,15 +514,14 @@ if (!doNotTrack) {
   <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
 
   <span class="nx">mission</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>代码量少，结构不复杂的情况下，上面的实现方式确实没什么问题。但是项目庞大到一定程度，结构之间的关系变得非常复杂的时候，这种手动创建每个依赖，然后将它们组装起来的方式就会变得异常繁琐，并且容易出错。这个时候勇士<code>wire</code>出现了！</p>
-
+</div><p>代码量少，结构不复杂的情况下，上面的实现方式确实没什么问题。但是项目庞大到一定程度，结构之间的关系变得非常复杂的时候，这种手动创建每个依赖，然后将它们组装起来的方式就会变得异常繁琐，并且容易出错。这个时候勇士<code>wire</code>出现了！</p>
 <p><code>wire</code>的要求很简单，新建一个<code>wire.go</code>文件（文件名可以随意），创建我们的初始化函数。比如，我们要创建并初始化一个<code>Mission</code>对象，我们就可以这样：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -555,28 +542,27 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
   <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewMission</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">Mission</span><span class="p">{}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>首先这个函数的返回值就是我们需要创建的对象类型，<code>wire</code>只需要知道类型，<code>return</code>后返回什么不重要。然后在函数中，我们调用<code>wire.Build()</code>将创建<code>Mission</code>所依赖的类型的构造器传进去。例如，需要调用<code>NewMission()</code>创建<code>Mission</code>类型，<code>NewMission()</code>接受两个参数一个<code>Monster</code>类型，一个<code>Player</code>类型。<code>Monster</code>类型对象需要调用<code>NewMonster()</code>创建，<code>Player</code>类型对象需要调用<code>NewPlayer()</code>创建。所以<code>NewMonster()</code>和<code>NewPlayer()</code>我们也需要传给<code>wire</code>。</p>
-
+</div><p>首先这个函数的返回值就是我们需要创建的对象类型，<code>wire</code>只需要知道类型，<code>return</code>后返回什么不重要。然后在函数中，我们调用<code>wire.Build()</code>将创建<code>Mission</code>所依赖的类型的构造器传进去。例如，需要调用<code>NewMission()</code>创建<code>Mission</code>类型，<code>NewMission()</code>接受两个参数一个<code>Monster</code>类型，一个<code>Player</code>类型。<code>Monster</code>类型对象需要调用<code>NewMonster()</code>创建，<code>Player</code>类型对象需要调用<code>NewPlayer()</code>创建。所以<code>NewMonster()</code>和<code>NewPlayer()</code>我们也需要传给<code>wire</code>。</p>
 <p>文件编写完成之后，执行<code>wire</code>命令：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">wire</span>
 <span class="nx">wire</span><span class="p">:</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">wire</span><span class="o">/</span><span class="nx">get</span><span class="o">-</span><span class="nx">started</span><span class="o">/</span><span class="nx">after</span><span class="p">:</span> \
-<span class="nx">wrote</span> <span class="nx">D</span><span class="p">:</span><span class="err">\</span><span class="nx">code</span><span class="err">\</span><span class="nx">golang</span><span class="err">\</span><span class="nx">src</span><span class="err">\</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="err">\</span><span class="nx">darjun</span><span class="err">\</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="err">\</span><span class="nx">wire</span><span class="err">\</span><span class="nx">get</span><span class="o">-</span><span class="nx">started</span><span class="err">\</span><span class="nx">after</span><span class="err">\</span><span class="nx">wire_gen</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+<span class="nx">wrote</span> <span class="nx">D</span><span class="p">:</span><span class="err">\</span><span class="nx">code</span><span class="err">\</span><span class="nx">golang</span><span class="err">\</span><span class="nx">src</span><span class="err">\</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="err">\</span><span class="nx">darjun</span><span class="err">\</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="err">\</span><span class="nx">wire</span><span class="err">\</span><span class="nx">get</span><span class="o">-</span><span class="nx">started</span><span class="err">\</span><span class="nx">after</span><span class="err">\</span><span class="nx">wire_gen</span><span class="p">.</span><span class="k">go</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们看看生成的<code>wire_gen.go</code>文件：</p>
+</div><p>我们看看生成的<code>wire_gen.go</code>文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -607,13 +593,13 @@ if (!doNotTrack) {
   <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">()</span>
   <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">mission</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这个<code>InitMission()</code>函数是不是和我们在<code>main.go</code>中编写的代码一毛一样！接下来，我们可以直接在<code>main.go</code>调用<code>InitMission()</code>：</p>
+</div><p>这个<code>InitMission()</code>函数是不是和我们在<code>main.go</code>中编写的代码一毛一样！接下来，我们可以直接在<code>main.go</code>调用<code>InitMission()</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -624,38 +610,32 @@ if (!doNotTrack) {
   <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">InitMission</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">)</span>
 
   <span class="nx">mission</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>细心的童鞋可能发现了，<code>wire.go</code>和<code>wire_gen.go</code>文件头部位置都有一个<code>+build</code>，不过一个后面是<code>wireinject</code>，另一个是<code>!wireinject</code>。<code>+build</code>其实是 Go 语言的一个特性。类似 C/C++ 的条件编译，在执行<code>go build</code>时可传入一些选项，根据这个选项决定某些文件是否编译。<code>wire</code>工具只会处理有<code>wireinject</code>的文件，所以我们的<code>wire.go</code>文件要加上这个。生成的<code>wire_gen.go</code>是给我们来使用的，<code>wire</code>不需要处理，故有<code>!wireinject</code>。</p>
-
+</div><p>细心的童鞋可能发现了，<code>wire.go</code>和<code>wire_gen.go</code>文件头部位置都有一个<code>+build</code>，不过一个后面是<code>wireinject</code>，另一个是<code>!wireinject</code>。<code>+build</code>其实是 Go 语言的一个特性。类似 C/C++ 的条件编译，在执行<code>go build</code>时可传入一些选项，根据这个选项决定某些文件是否编译。<code>wire</code>工具只会处理有<code>wireinject</code>的文件，所以我们的<code>wire.go</code>文件要加上这个。生成的<code>wire_gen.go</code>是给我们来使用的，<code>wire</code>不需要处理，故有<code>!wireinject</code>。</p>
 <p>由于现在是两个文件，我们不能用<code>go run main.go</code>运行程序，可以用<code>go run .</code>运行。运行结果与之前的例子一模一样！</p>
-
 <p>注意，如果你运行时，出现了<code>InitMission</code>重定义，那么检查一下你的<code>//+build wireinject</code>与<code>package main</code>这两行之间是否有空行，这个空行必须要有！见<a href="https://github.com/google/wire/issues/117">https://github.com/google/wire/issues/117</a>。中招的默默在心里打个 1 好嘛😂</p>
-
 <h2 id="基础概念">基础概念</h2>
-
 <p><code>wire</code>有两个基础概念，<code>Provider</code>（构造器）和<code>Injector</code>（注入器）。<code>Provider</code>实际上就是创建函数，大家意会一下。我们上面<code>InitMission</code>就是<code>Injector</code>。每个注入器实际上就是一个对象的创建和初始化函数。在这个函数中，我们只需要告诉<code>wire</code>要创建什么类型的对象，这个类型的依赖，<code>wire</code>工具会为我们生成一个函数完成对象的创建和初始化工作。</p>
-
 <h2 id="参数">参数</h2>
-
 <p>同样细心的你应该发现了，我们上面编写的<code>InitMission()</code>函数带有一个<code>string</code>类型的参数。并且在生成的<code>InitMission()</code>函数中，这个参数传给了<code>NewPlayer()</code>。<code>NewPlayer()</code>需要<code>string</code>类型的参数，而参数类型就是<code>string</code>。所以生成的<code>InitMission()</code>函数中，这个参数就被传给了<code>NewPlayer()</code>。如果我们让<code>NewMonster()</code>也接受一个<code>string</code>参数呢？</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Monster</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">Monster</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>那么生成的<code>InitMission()</code>函数中<code>NewPlayer()</code>和<code>NewMonster()</code>都会得到这个参数：</p>
+</div><p>那么生成的<code>InitMission()</code>函数中<code>NewPlayer()</code>和<code>NewMonster()</code>都会得到这个参数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -668,13 +648,13 @@ if (!doNotTrack) {
   <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
   <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">mission</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>实际上，<code>wire</code>在生成代码时，构造器需要的参数（或者叫依赖）会从参数中查找或通过其它构造器生成。决定选择哪个参数或构造器完全根据类型。如果参数或构造器生成的对象有类型相同的情况，运行<code>wire</code>工具时会报错。如果我们想要定制创建行为，就需要为不同类型创建不同的参数结构：</p>
+</div><p>实际上，<code>wire</code>在生成代码时，构造器需要的参数（或者叫依赖）会从参数中查找或通过其它构造器生成。决定选择哪个参数或构造器完全根据类型。如果参数或构造器生成的对象有类型相同的情况，运行<code>wire</code>工具时会报错。如果我们想要定制创建行为，就需要为不同类型创建不同的参数结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -717,13 +697,13 @@ if (!doNotTrack) {
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">p</span> <span class="nx">PlayerParam</span><span class="p">,</span> <span class="nx">m</span> <span class="nx">MonsterParam</span><span class="p">)</span> <span class="nx">Mission</span> <span class="p">{</span>
   <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewMission</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">Mission</span><span class="p">{}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>生成的代码如下：</p>
+</div><p>生成的代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -736,17 +716,15 @@ if (!doNotTrack) {
   <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
   <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">mission</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在参数比较复杂的时候，建议将参数放在一个结构中。</p>
-
+</div><p>在参数比较复杂的时候，建议将参数放在一个结构中。</p>
 <h2 id="错误">错误</h2>
-
 <p>不是所有的构造操作都能成功，没准勇士出山前就死于小人之手：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -759,13 +737,13 @@ if (!doNotTrack) {
     <span class="k">return</span> <span class="nx">Player</span><span class="p">{},</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;player dead&#34;</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">Player</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">name</span><span class="p">},</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们使创建<strong>随机失败</strong>，修改注入器<code>InitMission()</code>的签名，增加<code>error</code>返回值：</p>
+</div><p>我们使创建<strong>随机失败</strong>，修改注入器<code>InitMission()</code>的签名，增加<code>error</code>返回值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -774,13 +752,13 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Mission</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewMission</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">Mission</span><span class="p">{},</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>生成的代码，会将<code>NewPlayer()</code>返回的错误，作为<code>InitMission()</code>的返回值：</p>
+</div><p>生成的代码，会将<code>NewPlayer()</code>返回的错误，作为<code>InitMission()</code>的返回值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -799,21 +777,17 @@ if (!doNotTrack) {
   <span class="nx">monster</span> <span class="o">:=</span> <span class="nf">NewMonster</span><span class="p">()</span>
   <span class="nx">mission</span> <span class="o">:=</span> <span class="nf">NewMission</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">monster</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">mission</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>wire</code>遵循<strong>fail-fast</strong>的原则，错误必须被处理。如果我们的注入器不返回错误，但构造器返回错误，<code>wire</code>工具会报错！</p>
-
+</div><p><code>wire</code>遵循<strong>fail-fast</strong>的原则，错误必须被处理。如果我们的注入器不返回错误，但构造器返回错误，<code>wire</code>工具会报错！</p>
 <h2 id="高级特性">高级特性</h2>
-
 <p>下面简单介绍一下<code>wire</code>的高级特性。</p>
-
 <h3 id="providerset">ProviderSet</h3>
-
 <p>有时候可能多个类型有相同的依赖，我们每次都将相同的构造器传给<code>wire.Build()</code>不仅繁琐，而且不易维护，一个依赖修改了，所有传入<code>wire.Build()</code>的地方都要修改。为此，<code>wire</code>提供了一个<code>ProviderSet</code>（构造器集合），可以将多个构造器打包成一个集合，后续只需要使用这个集合即可。假设，我们有关勇士和怪兽的故事有两个结局：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -864,13 +838,13 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">EndingB</span><span class="p">)</span> <span class="nf">Appear</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s defeats %s, but become monster, world darker!\n&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Player</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Monster</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>编写两个注入器：</p>
+</div><p>编写两个注入器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -889,22 +863,22 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">InitEndingB</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
   <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewEndingB</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们观察到两次调用<code>wire.Build()</code>都需要传入<code>NewMonster</code>和<code>NewPlayer</code>。两个还好，如果很多的话写起来就麻烦了，而且修改也不容易。这种情况下，我们可以先定义一个<code>ProviderSet</code>：</p>
+</div><p>我们观察到两次调用<code>wire.Build()</code>都需要传入<code>NewMonster</code>和<code>NewPlayer</code>。两个还好，如果很多的话写起来就麻烦了，而且修改也不容易。这种情况下，我们可以先定义一个<code>ProviderSet</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">monsterPlayerSet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">)</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">monsterPlayerSet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后续直接使用这个<code>set</code>：</p>
+</div><p>后续直接使用这个<code>set</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -923,17 +897,15 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">InitEndingB</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
   <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">NewEndingB</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>而后如果要添加或删除某个构造器，直接修改<code>set</code>的定义处即可。</p>
-
+</div><p>而后如果要添加或删除某个构造器，直接修改<code>set</code>的定义处即可。</p>
 <h3 id="结构构造器">结构构造器</h3>
-
 <p>因为我们的<code>EndingA</code>和<code>EndingB</code>的字段只有<code>Player</code>和<code>Monster</code>，我们就不需要显式为它们提供构造器，可以直接使用<code>wire</code>提供的<strong>结构构造器</strong>（Struct Provider）。结构构造器创建某个类型的结构，然后用参数或调用其它构造器填充它的字段。例如上面的例子，我们去掉<code>NewEndingA()</code>和<code>NewEndingB()</code>，然后为它们提供结构构造器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -962,24 +934,24 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">InitEndingB</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
   <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">endingBSet</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>结构构造器使用<code>wire.Struct</code>注入，第一个参数固定为<code>new(结构名)</code>，后面可接任意多个参数，表示需要为该结构的哪些字段注入值。上面我们需要注入<code>Player</code>和<code>Monster</code>两个字段。或者我们也可以使用通配符<code>*</code>表示注入所有字段：</p>
+</div><p>结构构造器使用<code>wire.Struct</code>注入，第一个参数固定为<code>new(结构名)</code>，后面可接任意多个参数，表示需要为该结构的哪些字段注入值。上面我们需要注入<code>Player</code>和<code>Monster</code>两个字段。或者我们也可以使用通配符<code>*</code>表示注入所有字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">endingASet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Struct</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">EndingA</span><span class="p">),</span> <span class="s">&#34;*&#34;</span><span class="p">))</span>
-<span class="kd">var</span> <span class="nx">endingBSet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Struct</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">EndingB</span><span class="p">),</span> <span class="s">&#34;*&#34;</span><span class="p">))</span></code></pre></td></tr></table>
+<span class="kd">var</span> <span class="nx">endingBSet</span> <span class="p">=</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">NewSet</span><span class="p">(</span><span class="nx">monsterPlayerSet</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Struct</span><span class="p">(</span><span class="nb">new</span><span class="p">(</span><span class="nx">EndingB</span><span class="p">),</span> <span class="s">&#34;*&#34;</span><span class="p">))</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>wire</code>为我们生成正确的代码，非常棒：</p>
+</div><p><code>wire</code>为我们生成正确的代码，非常棒：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -998,15 +970,14 @@ if (!doNotTrack) {
     <span class="nx">Monster</span><span class="p">:</span> <span class="nx">monster</span><span class="p">,</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">endingA</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="绑定值">绑定值</h3>
-
+</div><h3 id="绑定值">绑定值</h3>
 <p>有时候，我们需要为某个类型绑定一个值，而不想依赖构造器每次都创建一个新的值。有些类型天生就是单例，例如配置，数据库对象（<code>sql.DB</code>）。这时我们可以使用<code>wire.Value</code>绑定值，使用<code>wire.InterfaceValue</code>绑定接口。例如，我们的怪兽一直是一个<code>Kitty</code>，我们就不用每次都去创建它了，直接绑定这个值就 ok 了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1029,13 +1000,13 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">InitEndingB</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">EndingB</span> <span class="p">{</span>
   <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">wire</span><span class="p">.</span><span class="nf">Value</span><span class="p">(</span><span class="nx">kitty</span><span class="p">),</span> <span class="nx">NewEndingB</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">EndingB</span><span class="p">{}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意一点，这个值每次使用时都会拷贝，需要确保拷贝无副作用：</p>
+</div><p>注意一点，这个值每次使用时都会拷贝，需要确保拷贝无副作用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1058,15 +1029,14 @@ if (!doNotTrack) {
 
 <span class="kd">var</span> <span class="p">(</span>
   <span class="nx">_wireMonsterValue</span> <span class="p">=</span> <span class="nx">kitty</span>
-<span class="p">)</span></code></pre></td></tr></table>
+<span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="结构字段作为构造器">结构字段作为构造器</h3>
-
+</div><h3 id="结构字段作为构造器">结构字段作为构造器</h3>
 <p>有时候我们编写一个构造器，只是简单的返回某个结构的一个字段，这时可以使用<code>wire.FieldsOf</code>简化操作。现在我们直接创建了<code>Mission</code>结构，如果想获得<code>Monster</code>和<code>Player</code>类型的对象，就可以对<code>Mission</code>使用<code>wire.FieldsOf</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1109,17 +1079,15 @@ if (!doNotTrack) {
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">p</span> <span class="o">:=</span> <span class="nf">InitPlayer</span><span class="p">()</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>同样的，第一个参数为<code>new(结构名)</code>，后面跟多个参数表示将哪些字段作为构造器，<code>*</code>表示全部。</p>
-
+</div><p>同样的，第一个参数为<code>new(结构名)</code>，后面跟多个参数表示将哪些字段作为构造器，<code>*</code>表示全部。</p>
 <h3 id="清理函数">清理函数</h3>
-
 <p>构造器可以提供一个清理函数，如果后续的构造器返回失败，前面构造器返回的清理函数都会调用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1170,33 +1138,23 @@ if (!doNotTrack) {
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">InitMission</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Mission</span><span class="p">,</span> <span class="kd">func</span><span class="p">(),</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">wire</span><span class="p">.</span><span class="nf">Build</span><span class="p">(</span><span class="nx">NewMonster</span><span class="p">,</span> <span class="nx">NewPlayer</span><span class="p">,</span> <span class="nx">NewMission</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">Mission</span><span class="p">{},</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="一些细节">一些细节</h2>
-
+</div><h2 id="一些细节">一些细节</h2>
 <p>首先，我们调用<code>wire</code>生成<code>wire_gen.go</code>之后，如果<code>wire.go</code>文件有修改，只需要执行<code>go generate</code>即可。<code>go generate</code>很方便，我之前一篇文章写过<code>generate</code>，感兴趣可以看看<a href="https://darjun.github.io/2019/08/21/golang-generate/">深入理解Go之generate</a>。</p>
-
 <h2 id="总结">总结</h2>
-
 <p><code>wire</code>是随着<code>go-cloud</code>的示例<a href="https://github.com/google/go-cloud/tree/master/samples/guestbook"><code>guestbook</code></a>一起发布的，可以阅读<code>guestbook</code>看看它是怎么使用<code>wire</code>的。与<code>dig</code>不同，<code>wire</code>只是生成代码，不使用<code>reflect</code>库，性能方面是不用担心的。因为它生成的代码与你自己写的基本是一样的。如果生成的代码有性能问题，自己写大概率也会有😂。</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>wire GitHub：<a href="https://github.com/google/wire">https://github.com/google/wire</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1398,7 +1356,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

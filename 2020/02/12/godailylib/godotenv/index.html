@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/12/godailylib/godotenv/" />
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-02-12T20:45:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 godotenv">
 <meta itemprop="description" content="简介 twelve-factor应用提倡将配置存储在环境变量中。任何从开发环境切换到生产环境时需要修改的东西都从代码抽取到环境变量里。 但是在实">
-
-
-<meta itemprop="datePublished" content="2020-02-12T20:45:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-02-12T20:45:23&#43;00:00" />
+<meta itemprop="datePublished" content="2020-02-12T20:45:23+00:00" />
+<meta itemprop="dateModified" content="2020-02-12T20:45:23+00:00" />
 <meta itemprop="wordCount" content="2739">
 
 
@@ -384,58 +382,51 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#高级特性">高级特性</a>
-<ul>
-<li><a href="#自动加载">自动加载</a></li>
-<li><a href="#加载自定义文件">加载自定义文件</a></li>
-<li><a href="#注释">注释</a></li>
-<li><a href="#yaml">YAML</a></li>
-<li><a href="#不存入环境变量">不存入环境变量</a></li>
-<li><a href="#数据源">数据源</a></li>
-<li><a href="#生成-env-文件">生成<code>.env</code>文件</a></li>
-<li><a href="#命令行模式">命令行模式</a></li>
-<li><a href="#多个环境">多个环境</a></li>
-</ul></li>
-<li><a href="#一点源码">一点源码</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#高级特性">高级特性</a>
+      <ul>
+        <li><a href="#自动加载">自动加载</a></li>
+        <li><a href="#加载自定义文件">加载自定义文件</a></li>
+        <li><a href="#注释">注释</a></li>
+        <li><a href="#yaml">YAML</a></li>
+        <li><a href="#不存入环境变量">不存入环境变量</a></li>
+        <li><a href="#数据源">数据源</a></li>
+        <li><a href="#生成env文件">生成<code>.env</code>文件</a></li>
+        <li><a href="#命令行模式">命令行模式</a></li>
+        <li><a href="#多个环境">多个环境</a></li>
+      </ul>
+    </li>
+    <li><a href="#一点源码">一点源码</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p><a href="https://12factor.net/">twelve-factor</a>应用提倡将配置存储在环境变量中。任何从开发环境切换到生产环境时需要修改的东西都从代码抽取到环境变量里。
 但是在实际开发中，如果同一台机器运行多个项目，设置环境变量容易冲突，不实用。<a href="https://github.com/joho/godotenv">godotenv</a>库从<code>.env</code>文件中读取配置，
 然后存储到程序的环境变量中。在代码中可以使用读取非常方便。<code>godotenv</code>源于一个 Ruby 的开源项目<a href="https://github.com/bkeepers/dotenv">dotenv</a>。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>第三方库需要先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go get github.com/joho/godotenv</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/joho/godotenv
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后使用：</p>
+</div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -474,36 +465,36 @@ if (!doNotTrack) {
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;age: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后在可执行程序相同目录下，添加一个<code>.env</code>文件：</p>
+</div><p>然后在可执行程序相同目录下，添加一个<code>.env</code>文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-env" data-lang="env"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-env" data-lang="env">name = dj
-age = 18</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">name = dj
+age = 18
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行程序，输出：</p>
+</div><p>运行程序，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">name:  dj
-age:  18</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">name:  dj
+age:  18
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可见，使用非常方便。默认情况下，<code>godotenv</code>读取项目根目录下的<code>.env</code>文件，文件中使用<code>key = value</code>的格式，每行一个键值对。
+</div><p>可见，使用非常方便。默认情况下，<code>godotenv</code>读取项目根目录下的<code>.env</code>文件，文件中使用<code>key = value</code>的格式，每行一个键值对。
 调用<code>godotenv.Load()</code>即可加载，可直接调用<code>os.Getenv(&quot;key&quot;)</code>读取。<code>os.Getenv</code>是用来读取环境变量的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -524,19 +515,16 @@ age:  18</pre></td></tr></table>
 
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;GOPATH&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="高级特性">高级特性</h2>
-
+</div><h2 id="高级特性">高级特性</h2>
 <h3 id="自动加载">自动加载</h3>
-
 <p>如果你有程序员的优良传统——懒，你可能连<code>Load</code>方法都不想自己调用。没关系，<code>godotenv</code>给你懒的权力！</p>
-
 <p>导入<code>github.com/joho/godotenv/autoload</code>，配置会自动读取：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -563,15 +551,14 @@ age:  18</pre></td></tr></table>
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;age: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意，由于代码中没有显式用到<code>godotenv</code>库，需要使用空导入，即导入时包名前添加一个<code>_</code>。</p>
-
+</div><p>注意，由于代码中没有显式用到<code>godotenv</code>库，需要使用空导入，即导入时包名前添加一个<code>_</code>。</p>
 <p>看<code>autoload</code>包的源码，其实就是库帮你调用了<code>Load</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -604,17 +591,15 @@ age:  18</pre></td></tr></table>
 
 <span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">godotenv</span><span class="p">.</span><span class="nf">Load</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>仔细看注释，程序员的恶趣味😂！</p>
-
+</div><p>仔细看注释，程序员的恶趣味😂！</p>
 <h3 id="加载自定义文件">加载自定义文件</h3>
-
 <p>默认情况下，加载的是项目根目录下的<code>.env</code>文件。当然我们可以加载任意名称的文件，文件也不必以<code>.env</code>为后缀：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -655,75 +640,72 @@ age:  18</pre></td></tr></table>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;version: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;version&#34;</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;database: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;database&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>common</code>文件内容：</p>
+</div><p><code>common</code>文件内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">name = awesome web
-version = 0.0.1</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">name = awesome web
+version = 0.0.1
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>dev.env</code>：</p>
+</div><p><code>dev.env</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">database = sqlite</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">database = sqlite
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>production.env</code>：</p>
+</div><p><code>production.env</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">database = mysql</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">database = mysql
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>自己运行看看结果吧！</p>
-
+</div><p>自己运行看看结果吧！</p>
 <p>注意：<code>Load</code>接收多个文件名作为参数，如果不传入文件名，默认读取<code>.env</code>文件的内容。
 如果多个文件中存在同一个键，那么先出现的优先，后出现的不生效。所以，上面输出的<code>database</code>是什么？</p>
-
 <h3 id="注释">注释</h3>
-
 <p><code>.env</code>文件中可以添加注释，注释以<code>#</code>开始，直到该行结束。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"># app name
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># app name
 name = awesome web
 # current version
-version = 0.0.1</pre></td></tr></table>
+version = 0.0.1
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="yaml">YAML</h3>
-
+</div><h3 id="yaml">YAML</h3>
 <p><code>.env</code>文件还可以使用 YAML 格式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">name: awesome web
-version: 0.0.1</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">name: awesome web
+version: 0.0.1
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -750,15 +732,14 @@ version: 0.0.1</pre></td></tr></table>
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;version: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;version&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="不存入环境变量">不存入环境变量</h3>
-
+</div><h3 id="不存入环境变量">不存入环境变量</h3>
 <p><code>godotenv</code>允许不将<code>.env</code>文件内容存入环境变量，使用<code>godotenv.Read()</code>返回一个<code>map[string]string</code>，可直接使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -797,17 +778,15 @@ version: 0.0.1</pre></td></tr></table>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name: &#34;</span><span class="p">,</span> <span class="nx">myEnv</span><span class="p">[</span><span class="s">&#34;name&#34;</span><span class="p">])</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;version: &#34;</span><span class="p">,</span> <span class="nx">myEnv</span><span class="p">[</span><span class="s">&#34;version&#34;</span><span class="p">])</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>直接操作<code>map</code>，简单直接！</p>
-
+</div><p>直接操作<code>map</code>，简单直接！</p>
 <h3 id="数据源">数据源</h3>
-
 <p>除了读取文件，还可以从<code>io.Reader</code>，从<code>string</code>中读取配置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -852,13 +831,13 @@ version: 0.0.1</pre></td></tr></table>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name: &#34;</span><span class="p">,</span> <span class="nx">myEnv</span><span class="p">[</span><span class="s">&#34;name&#34;</span><span class="p">])</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;version: &#34;</span><span class="p">,</span> <span class="nx">myEnv</span><span class="p">[</span><span class="s">&#34;version&#34;</span><span class="p">])</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只要实现了<code>io.Reader</code>接口，就能作为数据源。可以从文件（<code>os.File</code>），网络（<code>net.Conn</code>），<code>bytes.Buffer</code>等多种来源读取：</p>
+</div><p>只要实现了<code>io.Reader</code>接口，就能作为数据源。可以从文件（<code>os.File</code>），网络（<code>net.Conn</code>），<code>bytes.Buffer</code>等多种来源读取：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -925,17 +904,15 @@ version: 0.0.1</pre></td></tr></table>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name: &#34;</span><span class="p">,</span> <span class="nx">myEnv</span><span class="p">[</span><span class="s">&#34;name&#34;</span><span class="p">])</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;version: &#34;</span><span class="p">,</span> <span class="nx">myEnv</span><span class="p">[</span><span class="s">&#34;version&#34;</span><span class="p">])</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意，从字符串读取和从<code>io.Reader</code>读取使用的方法是不同的。前者为<code>Unmarshal</code>，后者是<code>Parse</code>。</p>
-
-<h3 id="生成-env-文件">生成<code>.env</code>文件</h3>
-
+</div><p>注意，从字符串读取和从<code>io.Reader</code>读取使用的方法是不同的。前者为<code>Unmarshal</code>，后者是<code>Parse</code>。</p>
+<h3 id="生成env文件">生成<code>.env</code>文件</h3>
 <p>可以通过程序生成一个<code>.env</code>文件的内容，可以直接写入到文件中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -986,24 +963,24 @@ version: 0.0.1</pre></td></tr></table>
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>查看生成的<code>.env</code>文件：</p>
+</div><p>查看生成的<code>.env</code>文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">name=&#34;awesome web&#34;
-version=&#34;0.0.1&#34;</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">name=&#34;awesome web&#34;
+version=&#34;0.0.1&#34;
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>还可以返回一个字符串，怎么揉捏随你：</p>
+</div><p>还可以返回一个字符串，怎么揉捏随你：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1058,28 +1035,25 @@ version=&#34;0.0.1&#34;</pre></td></tr></table>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="命令行模式">命令行模式</h3>
-
+</div><h3 id="命令行模式">命令行模式</h3>
 <p><code>godotenv</code>还提供了一个命令行的模式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ godotenv -f ./.env command args</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ godotenv -f ./.env command args
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>前面在<code>go get</code>安装<code>godotenv</code>时，<code>godotenv</code>就已经安装在<code>$GOPATH/bin</code>目录下了，我习惯把<code>$GOPATH/bin</code>加入系统<code>PATH</code>，所以<code>godotenv</code>命令可以直接使用。</p>
-
+</div><p>前面在<code>go get</code>安装<code>godotenv</code>时，<code>godotenv</code>就已经安装在<code>$GOPATH/bin</code>目录下了，我习惯把<code>$GOPATH/bin</code>加入系统<code>PATH</code>，所以<code>godotenv</code>命令可以直接使用。</p>
 <p>命令行模式就是读取指定文件（如果不通过<code>-f</code>指定，则使用<code>.env</code>文件），设置环境变量，然后运行后面的程序。</p>
-
 <p>我们简单写一个程序验证一下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1102,35 +1076,34 @@ version=&#34;0.0.1&#34;</pre></td></tr></table>
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;version&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用<code>godotenv</code>运行一下：</p>
+</div><p>使用<code>godotenv</code>运行一下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ godotenv -f ./.env go run main.go</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ godotenv -f ./.env go run main.go
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">awesome web
-0.0.1</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">awesome web
+0.0.1
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="多个环境">多个环境</h3>
-
+</div><h3 id="多个环境">多个环境</h3>
 <p>实践中，一般会根据<code>APP_ENV</code>环境变量的值加载不同的文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1191,49 +1164,47 @@ version=&#34;0.0.1&#34;</pre></td></tr></table>
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">))</span>
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;version: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;version&#34;</span><span class="p">))</span>
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;database: &#34;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;database&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们先读取环境变量<code>GODAILYLIB_ENV</code>，然后读取对应的<code>.env.</code> + env，最后读取默认的<code>.env</code>文件。</p>
-
+</div><p>我们先读取环境变量<code>GODAILYLIB_ENV</code>，然后读取对应的<code>.env.</code> + env，最后读取默认的<code>.env</code>文件。</p>
 <p>前面也提到过，先读取到的优先。我们可以在默认的<code>.env</code>文件中配置基础信息和一些默认的值，
 如果在开发/测试/生产环境需要修改，那么在对应的<code>.env.development/.env.test/.env.production</code>文件中再配置一次即可。</p>
-
 <p><code>.env</code>文件内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-env" data-lang="env"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-env" data-lang="env">name = awesome web
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">name = awesome web
 version = 0.0.1
-database = file</code></pre></td></tr></table>
+database = file
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>.env.development</code>：</p>
+</div><p><code>.env.development</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">database = sqlite3</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">database = sqlite3
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>.env.production</code>：</p>
+</div><p><code>.env.production</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">database = mysql</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">database = mysql
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行程序：</p>
+</div><p>运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1244,9 +1215,9 @@ database = file</code></pre></td></tr></table>
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"># 默认是开发环境
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># 默认是开发环境
 $ go run main.go
 name:  awesome web
 version:  0.0.1
@@ -1256,15 +1227,14 @@ database:  sqlite3
 $ GODAILYLIB_ENV=production go run main.go
 name:  awesome web
 version:  0.0.1
-database:  mysql</pre></td></tr></table>
+database:  mysql
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="一点源码">一点源码</h2>
-
+</div><h2 id="一点源码">一点源码</h2>
 <p><code>godotenv</code>读取文件内容，为什么可以使用<code>os.Getenv</code>访问：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1309,28 +1279,20 @@ database:  mysql</pre></td></tr></table>
 	<span class="p">}</span>
 
 	<span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因为<code>godotenv</code>调用<code>os.Setenv</code>将键值对设置到环境变量中了。</p>
-
+</div><p>因为<code>godotenv</code>调用<code>os.Setenv</code>将键值对设置到环境变量中了。</p>
 <h2 id="总结">总结</h2>
-
 <p>本文介绍了<code>godotenv</code>库的基础和高级用法。<code>godotenv</code>的源码也比较好读，有时间，有兴趣的童鞋建议一看~</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>godotenv GitHub 仓库：<a href="https://github.com/joho/godotenv">https://github.com/joho/godotenv</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1532,7 +1494,7 @@ database:  mysql</pre></td></tr></table>
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 

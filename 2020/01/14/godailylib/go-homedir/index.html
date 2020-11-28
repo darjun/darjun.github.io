@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/01/14/godailylib/go-homedir/" />
@@ -69,10 +69,8 @@
 <meta property="article:modified_time" content="2020-01-14T07:33:05+00:00" />
 <meta itemprop="name" content="Go 每日一库之 go-homedir">
 <meta itemprop="description" content="简介 今天我们来看一个很小，很实用的库go-homedir。顾名思义，go-homedir用来获取用户的主目录。 实际上，使用标准库os/use">
-
-
-<meta itemprop="datePublished" content="2020-01-14T07:33:05&#43;00:00" />
-<meta itemprop="dateModified" content="2020-01-14T07:33:05&#43;00:00" />
+<meta itemprop="datePublished" content="2020-01-14T07:33:05+00:00" />
+<meta itemprop="dateModified" content="2020-01-14T07:33:05+00:00" />
 <meta itemprop="wordCount" content="1615">
 
 
@@ -384,32 +382,26 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#高级用法">高级用法</a></li>
-<li><a href="#实现">实现</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#高级用法">高级用法</a></li>
+    <li><a href="#实现">实现</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>今天我们来看一个很小，很实用的库<a href="https://github.com/mitchellh/go-homedir">go-homedir</a>。顾名思义，<code>go-homedir</code>用来获取用户的主目录。
 实际上，使用标准库<code>os/user</code>我们也可以得到这个信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -442,29 +434,26 @@ if (!doNotTrack) {
   <span class="p">}</span>
     
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Home dir:&#34;</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">HomeDir</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>那么为什么还要<code>go-homedir</code>库？</p>
-
+</div><p>那么为什么还要<code>go-homedir</code>库？</p>
 <p>在 Darwin 系统上，标准库<code>os/user</code>的使用需要 cgo。所以，任何使用<code>os/user</code>的代码都不能交叉编译。
 但是，大多数人使用<code>os/user</code>的目的仅仅只是想获取主目录。因此，<code>go-homedir</code>库出现了。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p><code>go-homedir</code>是第三方包，使用前需要先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go get github.com/mitchellh/go-homedir</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/mitchellh/go-homedir
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用非常简单：</p>
+</div><p>使用非常简单：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -515,23 +504,20 @@ if (!doNotTrack) {
   <span class="p">}</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Expand of %s is: %s\n&#34;</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">expandedDir</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>go-homedir</code>有两个功能：</p>
-
+</div><p><code>go-homedir</code>有两个功能：</p>
 <ul>
 <li><code>Dir</code>：获取用户主目录；</li>
 <li><code>Expand</code>：将路径中的第一个<code>~</code>扩展成用户主目录。</li>
 </ul>
-
 <h2 id="高级用法">高级用法</h2>
-
 <p>由于<code>Dir</code>的调用可能涉及一些系统调用和外部执行命令，多次调用费性能。所以<code>go-homedir</code>提供了缓存的功能。默认情况下，缓存是开启的。
 我们也可以将<code>DisableCache</code>设置为<code>false</code>来关闭它。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -570,17 +556,15 @@ if (!doNotTrack) {
   <span class="p">}</span>
   
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Home dir:&#34;</span><span class="p">,</span> <span class="nx">dir</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用缓存时，如果程序运行中修改了主目录，再次调用<code>Dir</code>还是返回之前的目录。如果需要获取最新的主目录，可以先调用<code>Reset</code>清除缓存。</p>
-
+</div><p>使用缓存时，如果程序运行中修改了主目录，再次调用<code>Dir</code>还是返回之前的目录。如果需要获取最新的主目录，可以先调用<code>Reset</code>清除缓存。</p>
 <h2 id="实现">实现</h2>
-
 <p><code>go-homedir</code>源码只有一个文件<a href="https://github.com/mitchellh/go-homedir/blob/master/homedir.go">homedir.go</a>，今天我们大概看一下<code>Dir</code>的实现，去掉缓存相关代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -611,13 +595,13 @@ if (!doNotTrack) {
     <span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">err</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">result</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>判断当前的系统是<code>windows</code>还是类 Unix，分别调用不同的方法。先看 windows 的，比较简单：</p>
+</div><p>判断当前的系统是<code>windows</code>还是类 Unix，分别调用不同的方法。先看 windows 的，比较简单：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -658,21 +642,19 @@ if (!doNotTrack) {
 	<span class="p">}</span>
 
 	<span class="k">return</span> <span class="nx">home</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>流程如下：</p>
-
+</div><p>流程如下：</p>
 <ul>
 <li>读取环境变量<code>HOME</code>，如果不为空，返回这个值；</li>
 <li>读取环境变量<code>USERPROFILE</code>，如果不为空，返回这个值；</li>
 <li>读取环境变量<code>HOMEDRIVE</code>和<code>HOMEPATH</code>，如果两者都不为空，拼接这两个值返回。</li>
 </ul>
-
 <p>类 Unix 系统的实现稍微复杂一点：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -789,33 +771,25 @@ if (!doNotTrack) {
   <span class="p">}</span>
 
   <span class="k">return</span> <span class="nx">result</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>流程如下：</p>
-
+</div><p>流程如下：</p>
 <ul>
 <li>先读取环境变量<code>HOME</code>（注意 plan9 系统上为<code>home</code>），如果不为空，返回这个值；</li>
 <li>使用<code>getnet</code>命令查看系统的数据库中的相关记录，我们知道<code>passwd</code>文件中存储了用户信息，包括用户的主目录。使用<code>getent</code>命令查看<code>passwd</code>中当前用户的那条记录，然后从中找到主目录部分返回；</li>
 <li>如果上一个步骤失败了，我们知道<code>cd</code>后不加参数是直接切换到用户主目录的，而<code>pwd</code>可以显示当前目录。那么就可以结合这两个命令返回主目录。</li>
 </ul>
-
 <p><strong>这里分析源码并不是表示使用任何库都要熟悉它的源码，毕竟使用库就是为了方便开发。</strong>
 <strong>但是源码是我们学习和提高的一个非常重要的途径。我们在使用库遇到问题的时候也要有能力从文档或甚至源码中查找原因。</strong></p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://github.com/mitchellh/go-homedir">home-dir</a> GitHub 仓库</li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
@@ -1017,7 +991,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 
