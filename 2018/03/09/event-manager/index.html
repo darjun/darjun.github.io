@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/03/09/event-manager/" />
@@ -69,8 +69,10 @@
 <meta property="article:modified_time" content="2018-03-09T10:58:00+00:00" />
 <meta itemprop="name" content="用C&#43;&#43;11实现事件管理器">
 <meta itemprop="description" content="背景 在游戏开发过程中，经常遇到这样一个问题。现在我们有几个功能系统：任务系统，成就系统等。这些系统都需要处理玩家击杀怪物的事件。通常的做法就">
-<meta itemprop="datePublished" content="2018-03-09T10:58:00+00:00" />
-<meta itemprop="dateModified" content="2018-03-09T10:58:00+00:00" />
+
+
+<meta itemprop="datePublished" content="2018-03-09T10:58:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-03-09T10:58:00&#43;00:00" />
 <meta itemprop="wordCount" content="1100">
 
 
@@ -382,46 +384,53 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#背景">背景</a></li>
-    <li><a href="#实现eventmanager">实现EventManager</a></li>
-    <li><a href="#使用eventmanager">使用EventManager</a></li>
-    <li><a href="#实现细节">实现细节</a></li>
-    <li><a href="#要求">要求</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#背景">背景</a></li>
+<li><a href="#实现eventmanager">实现EventManager</a></li>
+<li><a href="#使用eventmanager">使用EventManager</a></li>
+<li><a href="#实现细节">实现细节</a></li>
+<li><a href="#要求">要求</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="背景">背景</h2>
+      
+
+<h2 id="背景">背景</h2>
+
 <p>在游戏开发过程中，经常遇到这样一个问题。现在我们有几个功能系统：任务系统，成就系统等。这些系统都需要处理玩家击杀怪物的事件。通常的做法就是在击杀怪物的处理函数中调用这些功能系统的对应接口，代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Battle.cpp
+<pre class="chroma">// Battle.cpp
 void KillMonster(Player* player, Monster* monster)
 {
     ...
     player-&gt;GetTaskMgr().OnKillMonster(monster);
     player-&gt;GetAchievementMgr().OnKillMonster(monster);
-}
-</code></pre></td></tr></table>
+}</pre></td></tr></table>
 </div>
-</div><p>然后在对应接口中做各自的计数，状态变更等等等等。</p>
+</div>
+<p>然后在对应接口中做各自的计数，状态变更等等等等。</p>
+
 <p>然后，来了一个新的需求。策划想要做一个活动，也需要处理这个事件。那么除了活动代码中需要增加接口<code>OnKillMonster</code>，<code>Battle.cpp</code>还需要做以下修改：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -429,67 +438,76 @@ void KillMonster(Player* player, Monster* monster)
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Battle.cpp
+<pre class="chroma">// Battle.cpp
 void KillMonster(Player* player, Monster* monster)
 {
     ...
     player-&gt;GetTaskMgr().OnKillMonster(monster);
     player-&gt;GetAchievementMgr().OnKillMonster(monster);
     player-&gt;GetActivityMgr().OnKillMonster(monster);
-}
-</code></pre></td></tr></table>
+}</pre></td></tr></table>
 </div>
-</div><p>代码耦合度太高！</p>
+</div>
+<p>代码耦合度太高！</p>
+
 <h2 id="实现eventmanager">实现EventManager</h2>
+
 <p>实际上，我们可以用事件(例如上面的<code>KillMonster</code>)作关联，对应这个事件的处理函数(有可能有多个)，即<code>event-&gt;callbacks</code>。因而我们可以实现一个<code>EventManager</code>，用来管理这种对应关系。实现采用<code>C++11</code>。</p>
+
 <p><code>event</code>可以用事件名称(调用<code>typeid(event).name()</code>获取)作为标识，<code>callback</code>可以使用<code>C++11</code>中的<code>function</code>来表示，<code>function</code>类型为<code>function&lt;void (EventType&amp;)&gt;</code>。</p>
+
 <p>这里有一个问题，每种<code>event</code>对应的<code>callback</code>类型各不相同，无法存入同一个容器中。这时，我们需要一种类型擦除的技术。可以使用<code>boost::any</code>。这里我自己实现了一个<code>Any</code>类。实现参考<strong>祁 宇</strong>的《深入应用C++11：代码优化与工程级应用》一书。</p>
+
 <p>这时，就可以很简单地实现<code>EventManager</code>类了。使用<code>C++11</code>中的<code>unordered_multimap</code>来存储这种对应关系。</p>
+
 <p>这里有一种设计模式：<a href="https://zh.wikipedia.org/zh-hans/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F">观察者模式</a></p>
+
 <p>具体实现代码见<a href="https://github.com/darjun/event-manager">github</a>。</p>
+
 <h2 id="使用eventmanager">使用EventManager</h2>
+
 <p>首先，我们需要在<code>Event.h</code>中定义对应的事件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct KillMonsterEvent
+<pre class="chroma">struct KillMonsterEvent
 {
     Monster* monster;
-};
-</code></pre></td></tr></table>
+};</pre></td></tr></table>
 </div>
-</div><p>然后在<code>KillMonster</code>处理中发出这个事件:</p>
+</div>
+<p>然后在<code>KillMonster</code>处理中发出这个事件:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Battle.cpp
+<pre class="chroma">// Battle.cpp
 void KillMonster(Player* player, Monster* monster)
 {
     ...
     KillMonsterEvent event{monster};
     FIRE_EVENT(event);
-}
-</code></pre></td></tr></table>
+}</pre></td></tr></table>
 </div>
-</div><p>这个函数中的代码编写完成之后，今后不管什么功能需要这个事件，都不需要再来修改这个函数了。新增系统的处理：</p>
+</div>
+<p>这个函数中的代码编写完成之后，今后不管什么功能需要这个事件，都不需要再来修改这个函数了。新增系统的处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -503,9 +521,9 @@ void KillMonster(Player* player, Monster* monster)
 </span><span class="lnt">12
 </span><span class="lnt">13
 </span><span class="lnt">14
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// ActivityMgr.cpp
+<pre class="chroma">// ActivityMgr.cpp
 class ActivityMgr
 {
 public:
@@ -518,20 +536,26 @@ public:
     {
         // ...
     }
-};
-</code></pre></td></tr></table>
+};</pre></td></tr></table>
 </div>
-</div><p>功能与功能之间解耦了。随着时间的推移，积累的事件越来越多，编写程序越来越方便。</p>
+</div>
+<p>功能与功能之间解耦了。随着时间的推移，积累的事件越来越多，编写程序越来越方便。</p>
+
 <p>现在只有在添加新的事件时，需要修改对应位置的代码。</p>
+
 <p>详细用法查看<a href="https://github.com/darjun/event-manager/blob/master/test.cpp">test.cpp</a>文件。</p>
+
 <h2 id="实现细节">实现细节</h2>
+
 <ul>
 <li>非线程安全。</li>
 <li>多个相同事件的处理函数调用顺序不定。</li>
 <li>实现了一个简单的单例<code>Singleton</code>。</li>
 <li>定义注册与发出事件的宏<code>REGISTER_EVENT</code>和<code>FIRE_EVENT</code>，方便使用。</li>
 </ul>
+
 <h2 id="要求">要求</h2>
+
 <ul>
 <li>需要支持<code>C++11</code>的编译器。编译器支持情况可以看<a href="http://zh.cppreference.com/w/cpp/compiler_support">这里</a>。</li>
 </ul>
@@ -689,7 +713,7 @@ public:
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -737,7 +761,7 @@ public:
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 

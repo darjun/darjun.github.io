@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/04/20/godailylib/gron/" />
@@ -69,8 +69,10 @@
 <meta property="article:modified_time" content="2020-04-19T22:13:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 gron">
 <meta itemprop="description" content="简介 gron是一个比较小巧、灵活的定时任务库，可以执行定时的、周期性的任务。gron提供简洁的、并发安全的接口。我们先介绍gron库的使用，">
-<meta itemprop="datePublished" content="2020-04-19T22:13:23+00:00" />
-<meta itemprop="dateModified" content="2020-04-19T22:13:23+00:00" />
+
+
+<meta itemprop="datePublished" content="2020-04-19T22:13:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-04-19T22:13:23&#43;00:00" />
 <meta itemprop="wordCount" content="3164">
 
 
@@ -382,39 +384,47 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#简介">简介</a></li>
-    <li><a href="#快速使用">快速使用</a></li>
-    <li><a href="#时间格式">时间格式</a></li>
-    <li><a href="#自定义任务">自定义任务</a></li>
-    <li><a href="#一点源码">一点源码</a></li>
-    <li><a href="#自定义时间策略">自定义时间策略</a></li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#参考">参考</a></li>
-    <li><a href="#我">我</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#时间格式">时间格式</a></li>
+<li><a href="#自定义任务">自定义任务</a></li>
+<li><a href="#一点源码">一点源码</a></li>
+<li><a href="#自定义时间策略">自定义时间策略</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="简介">简介</h2>
+      
+
+<h2 id="简介">简介</h2>
+
 <p><a href="https://github.com/roylee0704/gron"><code>gron</code></a>是一个比较小巧、灵活的定时任务库，可以执行定时的、周期性的任务。<code>gron</code>提供简洁的、并发安全的接口。我们先介绍<code>gron</code>库的使用，然后简单分析一下源码。</p>
+
 <h2 id="快速使用">快速使用</h2>
+
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">roylee0704</span><span class="o">/</span><span class="nx">gron</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">roylee0704</span><span class="o">/</span><span class="nx">gron</span></code></pre></td></tr></table>
 </div>
-</div><p>后使用：</p>
+</div>
+<p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -459,36 +469,42 @@ if (!doNotTrack) {
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>gron</code>的使用比较简单：</p>
+</div>
+<p><code>gron</code>的使用比较简单：</p>
+
 <ul>
 <li>首先调用<code>gron.New()</code>创建一个<strong>管理器</strong>，这是一个定时任务的管理器；</li>
 <li>然后调用管理器的<code>AddFunc()</code>或<code>Add()</code>方法向它添加任务，在启动时添加也是可以的，见下文分析；</li>
 <li>最后调用管理器的<code>Start()</code>方法启动它。</li>
 </ul>
+
 <p><code>gron</code>支持两种添加任务的方式，一种是使用<strong>无参数</strong>的函数，另一种是实现任务接口。上面例子中使用的是前一种方式，实现接口的方式我们后面会介绍。添加任务时通过<code>gron.Every()</code>指定周期任务的间隔，上面添加了一个 5s 的周期任务，每隔 5s 输出一行文字。</p>
+
 <p>需要注意的是，我们使用<code>sync.WaitGroup</code>保证主 goroutine 不退出。因为<code>c.Start()</code>中只是启动了一个 goroutine，如果主 goroutine 退出了，整个程序就停止了。</p>
+
 <p>运行程序，每隔 5s 输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">runs</span> <span class="nx">every</span> <span class="mi">5</span> <span class="nx">seconds</span><span class="p">.</span>
 <span class="nx">runs</span> <span class="nx">every</span> <span class="mi">5</span> <span class="nx">seconds</span><span class="p">.</span>
-<span class="nx">runs</span> <span class="nx">every</span> <span class="mi">5</span> <span class="nx">seconds</span><span class="p">.</span>
-</code></pre></td></tr></table>
+<span class="nx">runs</span> <span class="nx">every</span> <span class="mi">5</span> <span class="nx">seconds</span><span class="p">.</span></code></pre></td></tr></table>
 </div>
-</div><p>该程序需要按下<code>ctrl + c</code>停止！</p>
+</div>
+<p>该程序需要按下<code>ctrl + c</code>停止！</p>
+
 <h2 id="时间格式">时间格式</h2>
+
 <p><code>gron</code>接受<code>time.Duration</code>类型的时间间隔，除了<code>time</code>包中定义的基础<code>Second/Minute/Hour</code>，<code>gron</code>中的<code>xtime</code>子包还提供了<code>Day/Week</code>单位的时间。有一点需要注意，<code>gron</code>支持的时间精度为 1s，小于 1s 的间隔是不支持的。除了单位时间间隔，我们还可以使用<code>4m10s</code>这样的时间：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -545,13 +561,13 @@ if (!doNotTrack) {
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>通过<code>gron.Every()</code>设置每隔多长时间执行一次任务。对于大于 1 天的时间间隔，我们还可以使用<code>gron.Every().At()</code>指定其在某个时间点执行。例如下面的程序，从第二天的<code>22:00</code>开始，每隔一天触发一次，即每天的<code>22:00</code>触发：</p>
+</div>
+<p>通过<code>gron.Every()</code>设置每隔多长时间执行一次任务。对于大于 1 天的时间间隔，我们还可以使用<code>gron.Every().At()</code>指定其在某个时间点执行。例如下面的程序，从第二天的<code>22:00</code>开始，每隔一天触发一次，即每天的<code>22:00</code>触发：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -576,14 +592,15 @@ if (!doNotTrack) {
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="自定义任务">自定义任务</h2>
+</div>
+<h2 id="自定义任务">自定义任务</h2>
+
 <p>实现自定义任务也很简单，只需要实现<code>gron.Job</code>接口即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -592,13 +609,13 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/roylee0704/gron/cron.go
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Job</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>我们需要调用调度器的<code>Add()</code>方法向管理器添加自定义任务：</p>
+</div>
+<p>我们需要调用调度器的<code>Add()</code>方法向管理器添加自定义任务：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -643,14 +660,15 @@ if (!doNotTrack) {
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面我们编写了一个<code>GreetingJob</code>结构，实现<code>gron.Job</code>接口，然后创建两个对象<code>g1/g2</code>，一个 5s 触发一次，一个 10s 触发一次。使用自定义任务的方式可以比较好地处理携带状态的任务，如上面的<code>Name</code>字段。</p>
+</div>
+<p>上面我们编写了一个<code>GreetingJob</code>结构，实现<code>gron.Job</code>接口，然后创建两个对象<code>g1/g2</code>，一个 5s 触发一次，一个 10s 触发一次。使用自定义任务的方式可以比较好地处理携带状态的任务，如上面的<code>Name</code>字段。</p>
+
 <p>实际上，<code>AddFunc()</code>方法内部也是通过<code>Add()</code>实现的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -671,15 +689,17 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">j</span> <span class="nx">JobFunc</span><span class="p">)</span> <span class="nf">Run</span><span class="p">()</span> <span class="p">{</span>
   <span class="nf">j</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>在<code>AddFunc()</code>内部，将传入的函数转为<code>JobFunc</code>类型，而<code>gron</code>为<code>JobFunc</code>实现了<code>gron.Job</code>接口。是不是与<code>net/http</code>包中的<code>HandleFunc</code>和<code>Handle</code>很像。如果注意观察的话，在很多 Go 语言的代码中都有此类模式。</p>
+</div>
+<p>在<code>AddFunc()</code>内部，将传入的函数转为<code>JobFunc</code>类型，而<code>gron</code>为<code>JobFunc</code>实现了<code>gron.Job</code>接口。是不是与<code>net/http</code>包中的<code>HandleFunc</code>和<code>Handle</code>很像。如果注意观察的话，在很多 Go 语言的代码中都有此类模式。</p>
+
 <h2 id="一点源码">一点源码</h2>
+
 <p><code>gron</code>的源码只有两个文件<code>cron.go</code>和<code>schedule.go</code>，<code>cron.go</code>中实现添加任务和调度的方法，<code>schedule.go</code>中是时间策略相关的代码。两个文件算上注释一共才 260 行！我们添加的任务在<code>gron</code>内部都是以<code>Entry</code>结构表示的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -692,14 +712,15 @@ if (!doNotTrack) {
   <span class="nx">Job</span>      <span class="nx">Job</span>
   <span class="nx">Next</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
   <span class="nx">Prev</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>Next</code>为下次执行时间，<code>Prev</code>为上次执行时间，<code>Job</code>是要执行的任务，<code>Schedule</code>为<code>gron.Schedule</code>接口类型，调用其<code>Next()</code>可计算出下次执行的时间点。</p>
+</div>
+<p><code>Next</code>为下次执行时间，<code>Prev</code>为上次执行时间，<code>Job</code>是要执行的任务，<code>Schedule</code>为<code>gron.Schedule</code>接口类型，调用其<code>Next()</code>可计算出下次执行的时间点。</p>
+
 <p>管理器使用<code>gron.Cron</code>结构表示：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -712,13 +733,13 @@ if (!doNotTrack) {
   <span class="nx">running</span> <span class="kt">bool</span>
   <span class="nx">add</span>     <span class="kd">chan</span> <span class="o">*</span><span class="nx">Entry</span>
   <span class="nx">stop</span>    <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>任务的调度在另外一个 goroutine 中。如果调度未开始，添加任务可直接<code>append</code>到<code>entries</code>切片中；如果调度已开始（<code>Start()</code>方法已调用），需要向通道<code>add</code>发送待添加的任务。任务调度的核心逻辑在<code>Run()</code>方法中：</p>
+</div>
+<p>任务的调度在另外一个 goroutine 中。如果调度未开始，添加任务可直接<code>append</code>到<code>entries</code>切片中；如果调度已开始（<code>Start()</code>方法已调用），需要向通道<code>add</code>发送待添加的任务。任务调度的核心逻辑在<code>Run()</code>方法中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -791,27 +812,31 @@ if (!doNotTrack) {
       <span class="k">return</span> <span class="c1">// terminate go-routine.
 </span><span class="c1"></span>    <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>执行流程如下：</p>
+</div>
+<p>执行流程如下：</p>
+
 <ol>
 <li>调度器刚启动时，先计算所有任务的下次执行时间；</li>
 <li>然后在一个<code>for</code>循环中，按照执行时间从早到晚排序，取出最近需要执行任务的时间点；</li>
 <li>在<code>select</code>语句中等待到这个时间点，启动新的 goroutine 执行到期的任务，每个任务一个新的 goroutine；</li>
 <li>如果在等待的过程中，又添加了新的任务（通过通道<code>c.add</code>），计算这个新任务的首次执行时间。跳到步骤 2，因为新添加的任务可能最早执行。</li>
 </ol>
+
 <p>有几个细节需要注意一下：</p>
+
 <ol>
 <li>任务到期判断使用的是本地时间：<code>time.Now().Local()</code>；</li>
 <li>如果没有任务，等待时间设置为<code>now.AddDate(15, 0, 0)</code>，即 15 年，防止 CPU 空转；</li>
 <li>任务都是在独立的 goroutine 中执行的；</li>
 <li>通过实现<code>sort.Interface</code>接口可以实现自定义排序（代码中的<code>byTime</code>）。</li>
 </ol>
+
 <p>最后，我们来看一下时间策略的代码。我们知道在<code>Entry</code>结构中存储了一个<code>gron.Schedule</code>类型的对象，调用该对象的<code>Next()</code>方法返回下次执行的时间点：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -820,13 +845,13 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/roylee0704/gron/schedule.go
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Schedule</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Next</span><span class="p">(</span><span class="nx">t</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>gron</code>内置实现了两种<code>Schedule</code>，一种是<code>periodicSchedule</code>，即<strong>周期触发</strong>，<code>gron.Every()</code>函数返回的就是这个对象：</p>
+</div>
+<p><code>gron</code>内置实现了两种<code>Schedule</code>，一种是<code>periodicSchedule</code>，即<strong>周期触发</strong>，<code>gron.Every()</code>函数返回的就是这个对象：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -835,13 +860,13 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/roylee0704/gron/schedule.go
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">periodicSchedule</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">period</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>一种是<strong>固定时刻的周期触发</strong>，它实际上也是周期触发，只是固定了时间点：</p>
+</div>
+<p>一种是<strong>固定时刻的周期触发</strong>，它实际上也是周期触发，只是固定了时间点：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -852,26 +877,26 @@ if (!doNotTrack) {
   <span class="nx">period</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span>
   <span class="nx">hh</span>     <span class="kt">int</span>
   <span class="nx">mm</span>     <span class="kt">int</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>他们的核心逻辑在<code>Next()</code>方法中，<code>periodicSchedule</code>只需要用当前时间加上周期即可得到下次触发时间。这里<code>Truncate()</code>方法截掉了当前时间中小于 1s 的部分：</p>
+</div>
+<p>他们的核心逻辑在<code>Next()</code>方法中，<code>periodicSchedule</code>只需要用当前时间加上周期即可得到下次触发时间。这里<code>Truncate()</code>方法截掉了当前时间中小于 1s 的部分：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">ps</span> <span class="nx">periodicSchedule</span><span class="p">)</span> <span class="nf">Next</span><span class="p">(</span><span class="nx">t</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Truncate</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">).</span><span class="nf">Add</span><span class="p">(</span><span class="nx">ps</span><span class="p">.</span><span class="nx">period</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>atSchedule</code>的<code>Next()</code>方法先计算当天该时间点，再加上周期就是下次触发的时间：</p>
+</div>
+<p><code>atSchedule</code>的<code>Next()</code>方法先计算当天该时间点，再加上周期就是下次触发的时间：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -894,13 +919,13 @@ if (!doNotTrack) {
     <span class="k">return</span> <span class="nx">next</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">as</span><span class="p">.</span><span class="nx">period</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">next</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>periodicSchedule</code>提供了<code>At()</code>方法可以转为<code>atSchedule</code>：</p>
+</div>
+<p><code>periodicSchedule</code>提供了<code>At()</code>方法可以转为<code>atSchedule</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -937,14 +962,15 @@ if (!doNotTrack) {
     <span class="nx">hh</span><span class="p">:</span>     <span class="nx">h</span><span class="p">,</span>
     <span class="nx">mm</span><span class="p">:</span>     <span class="nx">m</span><span class="p">,</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="自定义时间策略">自定义时间策略</h2>
+</div>
+<h2 id="自定义时间策略">自定义时间策略</h2>
+
 <p>我们可以很轻松的实现一个自定义的时间策略。例如，我们要实现一个“指数退避”的时间序列，先等待 1s，然后 2s、4s&hellip;</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -989,13 +1015,13 @@ if (!doNotTrack) {
 	<span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
 	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>运行结果如下：</p>
+</div>
+<p>运行结果如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1004,22 +1030,31 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="mi">2020</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">20</span> <span class="mi">23</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span><span class="mi">11</span> <span class="nx">hello</span>
 <span class="mi">2020</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">20</span> <span class="mi">23</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span><span class="mi">13</span> <span class="nx">hello</span>
 <span class="mi">2020</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">20</span> <span class="mi">23</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span><span class="mi">17</span> <span class="nx">hello</span>
-<span class="mi">2020</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">20</span> <span class="mi">23</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span><span class="mi">25</span> <span class="nx">hello</span>
-</code></pre></td></tr></table>
+<span class="mi">2020</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">20</span> <span class="mi">23</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span><span class="mi">25</span> <span class="nx">hello</span></code></pre></td></tr></table>
 </div>
-</div><p>第二次输出与第一次相差 2s，第三次与第二次相差 4s，第4次与第三次相差 8s，完美！</p>
+</div>
+<p>第二次输出与第一次相差 2s，第三次与第二次相差 4s，第4次与第三次相差 8s，完美！</p>
+
 <h2 id="总结">总结</h2>
+
 <p>本文介绍了<code>gron</code>这个小巧的定时任务库，如何使用，如何自定义任务和时间策略，顺带分析了一下源码。<code>gron</code>源码实现非常简洁，非常推荐阅读！</p>
+
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
 <h2 id="参考">参考</h2>
+
 <ol>
 <li>gron GitHub：<a href="https://github.com/roylee0704/gron">https://github.com/roylee0704/gron</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
+
 <h2 id="我">我</h2>
+
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
 
     </div>
 
@@ -1173,7 +1208,7 @@ if (!doNotTrack) {
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -1221,7 +1256,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 

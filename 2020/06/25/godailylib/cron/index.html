@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/06/25/godailylib/cron/" />
@@ -69,8 +69,10 @@
 <meta property="article:modified_time" content="2020-06-25T22:53:53+00:00" />
 <meta itemprop="name" content="Go 每日一库之 cron">
 <meta itemprop="description" content="简介 cron一个用于管理定时任务的库，用 Go 实现 Linux 中crontab这个命令的效果。之前我们也介绍过一个类似的 Go 库——gron。gron代码小巧">
-<meta itemprop="datePublished" content="2020-06-25T22:53:53+00:00" />
-<meta itemprop="dateModified" content="2020-06-25T22:53:53+00:00" />
+
+
+<meta itemprop="datePublished" content="2020-06-25T22:53:53&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-25T22:53:53&#43;00:00" />
 <meta itemprop="wordCount" content="5728">
 
 
@@ -382,64 +384,76 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#简介">简介</a></li>
-    <li><a href="#快速使用">快速使用</a></li>
-    <li><a href="#时间格式">时间格式</a>
-      <ul>
-        <li><a href="#预定义时间规则">预定义时间规则</a></li>
-        <li><a href="#固定时间间隔">固定时间间隔</a></li>
-      </ul>
-    </li>
-    <li><a href="#时区">时区</a></li>
-    <li><a href="#job接口"><code>Job</code>接口</a></li>
-    <li><a href="#线程安全">线程安全</a></li>
-    <li><a href="#自定义时间格式">自定义时间格式</a></li>
-    <li><a href="#选项">选项</a>
-      <ul>
-        <li><a href="#withlogger"><code>WithLogger</code></a></li>
-        <li><a href="#withchain"><code>WithChain</code></a></li>
-        <li><a href="#内置jobwrapper">内置<code>JobWrapper</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#参考">参考</a></li>
-    <li><a href="#我">我</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#时间格式">时间格式</a>
+<ul>
+<li><a href="#预定义时间规则">预定义时间规则</a></li>
+<li><a href="#固定时间间隔">固定时间间隔</a></li>
+</ul></li>
+<li><a href="#时区">时区</a></li>
+<li><a href="#job-接口"><code>Job</code>接口</a></li>
+<li><a href="#线程安全">线程安全</a></li>
+<li><a href="#自定义时间格式">自定义时间格式</a></li>
+<li><a href="#选项">选项</a>
+<ul>
+<li><a href="#withlogger"><code>WithLogger</code></a></li>
+<li><a href="#withchain"><code>WithChain</code></a></li>
+<li><a href="#内置-jobwrapper">内置<code>JobWrapper</code></a>
+<ul>
+<li><a href="#recover"><code>Recover</code></a></li>
+<li><a href="#delayifstillrunning"><code>DelayIfStillRunning</code></a></li>
+<li><a href="#skipifstillrunning"><code>SkipIfStillRunning</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="简介">简介</h2>
+      
+
+<h2 id="简介">简介</h2>
+
 <p><a href="https://github.com/robfig/cron"><code>cron</code></a>一个用于管理定时任务的库，用 Go 实现 Linux 中<code>crontab</code>这个命令的效果。之前我们也介绍过一个类似的 Go 库——<a href="https://darjun.github.io/2020/04/20/godailylib/gron/"><code>gron</code></a>。<code>gron</code>代码小巧，用于学习是比较好的。但是它功能相对简单些，并且已经不维护了。如果有定时任务需求，还是建议使用<code>cron</code>。</p>
+
 <h2 id="快速使用">快速使用</h2>
+
 <p>文本代码使用 Go Modules。</p>
+
 <p>创建目录并初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir cron <span class="p">&amp;&amp;</span> <span class="k">cd</span> cron
-$ go mod init github.com/darjun/go-daily-lib/cron
-</code></pre></td></tr></table>
+$ go mod init github.com/darjun/go-daily-lib/cron</code></pre></td></tr></table>
 </div>
-</div><p>安装<code>cron</code>，目前最新稳定版本为 v3：</p>
+</div>
+<p>安装<code>cron</code>，目前最新稳定版本为 v3：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/robfig/cron/v3
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/robfig/cron/v3</code></pre></td></tr></table>
 </div>
-</div><p>使用：</p>
+</div>
+<p>使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -478,17 +492,21 @@ $ go mod init github.com/darjun/go-daily-lib/cron
 
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>使用非常简单，创建<code>cron</code>对象，这个对象用于管理定时任务。</p>
+</div>
+<p>使用非常简单，创建<code>cron</code>对象，这个对象用于管理定时任务。</p>
+
 <p>调用<code>cron</code>对象的<code>AddFunc()</code>方法向管理器中添加定时任务。<code>AddFunc()</code>接受两个参数，参数 1 以字符串形式指定触发时间规则，参数 2 是一个无参的函数，每次触发时调用。<code>@every 1s</code>表示每秒触发一次，<code>@every</code>后加一个时间间隔，表示每隔多长时间触发一次。例如<code>@every 1h</code>表示每小时触发一次，<code>@every 1m2s</code>表示每隔 1 分 2 秒触发一次。<code>time.ParseDuration()</code>支持的格式都可以用在这里。</p>
+
 <p>调用<code>c.Start()</code>启动定时循环。</p>
+
 <p>注意一点，因为<code>c.Start()</code>启动一个新的 goroutine 做循环检测，我们在代码最后加了一行<code>time.Sleep(time.Second * 5)</code>防止主 goroutine 退出。</p>
+
 <p>运行效果，每隔 1s 输出一行字符串：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -501,11 +519,13 @@ tick every 1 second
 tick every 1 second
 tick every 1 second
 tick every 1 second
-tick every 1 second
-</code></pre></td></tr></table>
+tick every 1 second</code></pre></td></tr></table>
 </div>
-</div><h2 id="时间格式">时间格式</h2>
+</div>
+<h2 id="时间格式">时间格式</h2>
+
 <p>与Linux 中<code>crontab</code>命令相似，<code>cron</code>库支持用 <strong>5</strong> 个空格分隔的域来表示时间。这 5 个域含义依次为：</p>
+
 <ul>
 <li><code>Minutes</code>：分钟，取值范围<code>[0-59]</code>，支持特殊字符<code>* / , -</code>；</li>
 <li><code>Hours</code>：小时，取值范围<code>[0-23]</code>，支持特殊字符<code>* / , -</code>；</li>
@@ -513,8 +533,11 @@ tick every 1 second
 <li><code>Month</code>：月，取值范围<code>[1-12]</code>或者使用月份名字缩写<code>[JAN-DEC]</code>，支持特殊字符<code>* / , -</code>；</li>
 <li><code>Day of week</code>：周历，取值范围<code>[0-6]</code>或名字缩写<code>[JUN-SAT]</code>，支持特殊字符<code>* / , - ?</code>。</li>
 </ul>
+
 <p>注意，月份和周历名称都是不区分大小写的，也就是说<code>SUN/Sun/sun</code>表示同样的含义（都是周日）。</p>
+
 <p>特殊字符含义如下：</p>
+
 <ul>
 <li><code>*</code>：使用<code>*</code>的域可以匹配任何值，例如将月份域（第 4 个）设置为<code>*</code>，表示每个月；</li>
 <li><code>/</code>：用来指定范围的<strong>步长</strong>，例如将小时域（第 2 个）设置为<code>3-59/15</code>表示第 3 分钟触发，以后每隔 15 分钟触发一次，因此第 2 次触发为第 18 分钟，第 3 次为 33 分钟。。。直到分钟大于 59；</li>
@@ -522,16 +545,19 @@ tick every 1 second
 <li><code>-</code>：用来表示范围，例如将小时的域（第 1 个）设置为<code>9-17</code>表示上午 9 点到下午 17 点（包括 9 和 17）；</li>
 <li><code>?</code>：只能用在月历和周历的域中，用来代替<code>*</code>，表示每月/周的任意一天。</li>
 </ul>
+
 <p>了解规则之后，我们可以定义任意时间：</p>
+
 <ul>
 <li><code>30 * * * *</code>：分钟域为 30，其他域都是<code>*</code>表示任意。每小时的 30 分触发；</li>
 <li><code>30 3-6,20-23 * * *</code>：分钟域为 30，小时域的<code>3-6,20-23</code>表示 3 点到 6 点和 20 点到 23 点。3,4,5,6,20,21,22,23 时的 30 分触发；</li>
 <li><code>0 0 1 1 *</code>：1（第 4 个） 月 1（第 3 个） 号的 0（第 2 个） 时 0（第 1 个） 分触发。</li>
 </ul>
+
 <p>记熟了这几个域的顺序，再多练习几次很容易就能掌握格式。熟悉规则了之后，就能熟练使用<code>crontab</code>命令了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -574,11 +600,13 @@ tick every 1 second
   <span class="k">for</span> <span class="p">{</span>
     <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h3 id="预定义时间规则">预定义时间规则</h3>
+</div>
+<h3 id="预定义时间规则">预定义时间规则</h3>
+
 <p>为了方便使用，<code>cron</code>预定义了一些时间规则：</p>
+
 <ul>
 <li><code>@yearly</code>：也可以写作<code>@annually</code>，表示每年第一天的 0 点。等价于<code>0 0 1 1 *</code>；</li>
 <li><code>@monthly</code>：表示每月第一天的 0 点。等价于<code>0 0 1 * *</code>；</li>
@@ -586,10 +614,11 @@ tick every 1 second
 <li><code>@daily</code>：也可以写作<code>@midnight</code>，表示每天 0 点。等价于<code>0 0 * * *</code>；</li>
 <li><code>@hourly</code>：表示每小时的开始。等价于<code>0 * * * *</code>。</li>
 </ul>
+
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -632,31 +661,37 @@ tick every 1 second
   <span class="k">for</span> <span class="p">{</span>
     <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面代码只是演示用法，实际运行可能要等待非常长的时间才能有输出。</p>
+</div>
+<p>上面代码只是演示用法，实际运行可能要等待非常长的时间才能有输出。</p>
+
 <h3 id="固定时间间隔">固定时间间隔</h3>
+
 <p><code>cron</code>支持固定时间间隔，格式为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">@</span><span class="nx">every</span> <span class="p">&lt;</span><span class="nx">duration</span><span class="p">&gt;</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">@</span><span class="nx">every</span> <span class="p">&lt;</span><span class="nx">duration</span><span class="p">&gt;</span></code></pre></td></tr></table>
 </div>
-</div><p>含义为每隔<code>duration</code>触发一次。<code>&lt;duration&gt;</code>会调用<code>time.ParseDuration()</code>函数解析，所以<code>ParseDuration</code>支持的格式都可以。例如<code>1h30m10s</code>。在快速开始部分，我们已经演示了<code>@every</code>的用法了，这里就不赘述了。</p>
+</div>
+<p>含义为每隔<code>duration</code>触发一次。<code>&lt;duration&gt;</code>会调用<code>time.ParseDuration()</code>函数解析，所以<code>ParseDuration</code>支持的格式都可以。例如<code>1h30m10s</code>。在快速开始部分，我们已经演示了<code>@every</code>的用法了，这里就不赘述了。</p>
+
 <h2 id="时区">时区</h2>
+
 <p>默认情况下，所有时间都是基于当前时区的。当然我们也可以指定时区，有 2 两种方式：</p>
+
 <ul>
 <li>在时间字符串前面添加一个<code>CRON_TZ=</code> + 具体时区，具体时区的格式在之前<a href="https://darjun.github.io/2020/02/14/godailylib/carbon/"><code>carbon</code></a>的文章中有详细介绍。东京时区为<code>Asia/Tokyo</code>，纽约时区为<code>America/New_York</code>；</li>
 <li>创建<code>cron</code>对象时增加一个时区选项<code>cron.WithLocation(location)</code>，<code>location</code>为<code>time.LoadLocation(zone)</code>加载的时区对象，<code>zone</code>为具体的时区格式。或者调用已创建好的<code>cron</code>对象的<code>SetLocation()</code>方法设置时区。</li>
 </ul>
+
 <p>示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -691,14 +726,15 @@ tick every 1 second
   <span class="k">for</span> <span class="p">{</span>
     <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="job接口"><code>Job</code>接口</h2>
+</div>
+<h2 id="job-接口"><code>Job</code>接口</h2>
+
 <p>除了直接将无参函数作为回调外，<code>cron</code>还支持<code>Job</code>接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -707,13 +743,13 @@ tick every 1 second
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// cron.go
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Job</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Run</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>我们定义一个实现接口<code>Job</code>的结构：</p>
+</div>
+<p>我们定义一个实现接口<code>Job</code>的结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -728,13 +764,13 @@ tick every 1 second
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="nx">GreetingJob</span><span class="p">)</span> <span class="nf">Run</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Hello &#34;</span><span class="p">,</span> <span class="nx">g</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>调用<code>cron</code>对象的<code>AddJob()</code>方法将<code>GreetingJob</code>对象添加到定时管理器中：</p>
+</div>
+<p>调用<code>cron</code>对象的<code>AddJob()</code>方法将<code>GreetingJob</code>对象添加到定时管理器中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -749,13 +785,13 @@ tick every 1 second
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>运行效果：</p>
+</div>
+<p>运行效果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -768,25 +804,26 @@ Hello  dj
 Hello  dj
 Hello  dj
 Hello  dj
-Hello  dj
-</code></pre></td></tr></table>
+Hello  dj</code></pre></td></tr></table>
 </div>
-</div><p>使用自定义的结构可以让任务携带状态（<code>Name</code>字段）。</p>
+</div>
+<p>使用自定义的结构可以让任务携带状态（<code>Name</code>字段）。</p>
+
 <p>实际上<code>AddFunc()</code>方法内部也调用了<code>AddJob()</code>方法。首先，<code>cron</code>基于<code>func()</code>类型定义一个新的类型<code>FuncJob</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// cron.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">FuncJob</span> <span class="kd">func</span><span class="p">()</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">FuncJob</span> <span class="kd">func</span><span class="p">()</span></code></pre></td></tr></table>
 </div>
-</div><p>然后让<code>FuncJob</code>实现<code>Job</code>接口：</p>
+</div>
+<p>然后让<code>FuncJob</code>实现<code>Job</code>接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -795,30 +832,34 @@ Hello  dj
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// cron.go
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="nx">FuncJob</span><span class="p">)</span> <span class="nf">Run</span><span class="p">()</span> <span class="p">{</span>
   <span class="nf">f</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>在<code>AddFunc()</code>方法中，将传入的回调转为<code>FuncJob</code>类型，然后调用<code>AddJob()</code>方法：</p>
+</div>
+<p>在<code>AddFunc()</code>方法中，将传入的回调转为<code>FuncJob</code>类型，然后调用<code>AddJob()</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Cron</span><span class="p">)</span> <span class="nf">AddFunc</span><span class="p">(</span><span class="nx">spec</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">cmd</span> <span class="kd">func</span><span class="p">())</span> <span class="p">(</span><span class="nx">EntryID</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">AddJob</span><span class="p">(</span><span class="nx">spec</span><span class="p">,</span> <span class="nf">FuncJob</span><span class="p">(</span><span class="nx">cmd</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="线程安全">线程安全</h2>
+</div>
+<h2 id="线程安全">线程安全</h2>
+
 <p><code>cron</code>会创建一个新的 goroutine 来执行触发回调。如果这些回调需要并发访问一些资源、数据，我们需要显式地做同步。</p>
+
 <h2 id="自定义时间格式">自定义时间格式</h2>
+
 <p><code>cron</code>支持灵活的时间格式，如果默认的格式不能满足要求，我们可以自己定义时间格式。时间规则字符串需要<code>cron.Parser</code>对象来解析。我们先来看看默认的解析器是如何工作的。</p>
+
 <p>首先定义各个域：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -843,13 +884,13 @@ Hello  dj
   <span class="nx">Dow</span>                                   
   <span class="nx">DowOptional</span>                           
   <span class="nx">Descriptor</span>                            
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>除了<code>Minute/Hour/Dom(Day of month)/Month/Dow(Day of week)</code>外，还可以支持<code>Second</code>。相对顺序都是固定的：</p>
+</div>
+<p>除了<code>Minute/Hour/Dom(Day of month)/Month/Dow(Day of week)</code>外，还可以支持<code>Second</code>。相对顺序都是固定的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -886,27 +927,28 @@ Hello  dj
   <span class="s">&#34;*&#34;</span><span class="p">,</span>
   <span class="s">&#34;*&#34;</span><span class="p">,</span>
   <span class="s">&#34;*&#34;</span><span class="p">,</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>默认的时间格式使用 5 个域。</p>
+</div>
+<p>默认的时间格式使用 5 个域。</p>
+
 <p>我们可以调用<code>cron.NewParser()</code>创建自己的<code>Parser</code>对象，以位格式传入使用哪些域，例如下面的<code>Parser</code>使用 6 个域，支持<code>Second</code>（秒）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">parser</span> <span class="o">:=</span> <span class="nx">cron</span><span class="p">.</span><span class="nf">NewParser</span><span class="p">(</span>
   <span class="nx">cron</span><span class="p">.</span><span class="nx">Second</span> <span class="p">|</span> <span class="nx">cron</span><span class="p">.</span><span class="nx">Minute</span> <span class="p">|</span> <span class="nx">cron</span><span class="p">.</span><span class="nx">Hour</span> <span class="p">|</span> <span class="nx">cron</span><span class="p">.</span><span class="nx">Dom</span> <span class="p">|</span> <span class="nx">cron</span><span class="p">.</span><span class="nx">Month</span> <span class="p">|</span> <span class="nx">cron</span><span class="p">.</span><span class="nx">Dow</span> <span class="p">|</span> <span class="nx">cron</span><span class="p">.</span><span class="nx">Descriptor</span><span class="p">,</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>调用<code>cron.WithParser(parser)</code>创建一个选项传入构造函数<code>cron.New()</code>，使用时就可以指定秒了：</p>
+</div>
+<p>调用<code>cron.WithParser(parser)</code>创建一个选项传入构造函数<code>cron.New()</code>，使用时就可以指定秒了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -917,14 +959,15 @@ Hello  dj
 <span class="nx">c</span><span class="p">.</span><span class="nf">AddFunc</span><span class="p">(</span><span class="s">&#34;1 * * * * *&#34;</span><span class="p">,</span> <span class="kd">func</span> <span class="p">()</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;every 1 second&#34;</span><span class="p">)</span>
 <span class="p">})</span>
-<span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span></code></pre></td></tr></table>
 </div>
-</div><p>这里时间格式必须使用 6 个域，顺序与上面的<code>const</code>定义一致。</p>
+</div>
+<p>这里时间格式必须使用 6 个域，顺序与上面的<code>const</code>定义一致。</p>
+
 <p>因为上面的时间格式太常见了，<code>cron</code>定义了一个便捷的函数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -937,35 +980,41 @@ Hello  dj
   <span class="k">return</span> <span class="nf">WithParser</span><span class="p">(</span><span class="nf">NewParser</span><span class="p">(</span>
     <span class="nx">Second</span> <span class="p">|</span> <span class="nx">Minute</span> <span class="p">|</span> <span class="nx">Hour</span> <span class="p">|</span> <span class="nx">Dom</span> <span class="p">|</span> <span class="nx">Month</span> <span class="p">|</span> <span class="nx">Dow</span> <span class="p">|</span> <span class="nx">Descriptor</span><span class="p">,</span>
   <span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>注意<code>Descriptor</code>表示对<code>@every/@hour</code>等的支持。有了<code>WithSeconds()</code>，我们不用手动创建<code>Parser</code>对象了：</p>
+</div>
+<p>注意<code>Descriptor</code>表示对<code>@every/@hour</code>等的支持。有了<code>WithSeconds()</code>，我们不用手动创建<code>Parser</code>对象了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">c</span> <span class="o">:=</span> <span class="nx">cron</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">cron</span><span class="p">.</span><span class="nf">WithSeconds</span><span class="p">())</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">c</span> <span class="o">:=</span> <span class="nx">cron</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">cron</span><span class="p">.</span><span class="nf">WithSeconds</span><span class="p">())</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="选项">选项</h2>
+</div>
+<h2 id="选项">选项</h2>
+
 <p><code>cron</code>对象创建使用了选项模式，我们前面已经介绍了 3 个选项：</p>
+
 <ul>
 <li><code>WithLocation</code>：指定时区；</li>
 <li><code>WithParser</code>：使用自定义的解析器；</li>
 <li><code>WithSeconds</code>：让时间格式支持秒，实际上内部调用了<code>WithParser</code>。</li>
 </ul>
+
 <p><code>cron</code>还提供了另外两种选项：</p>
+
 <ul>
 <li><code>WithLogger</code>：自定义<code>Logger</code>；</li>
 <li><code>WithChain</code>：Job 包装器。</li>
 </ul>
+
 <h3 id="withlogger"><code>WithLogger</code></h3>
+
 <p><code>WithLogger</code>可以设置<code>cron</code>内部使用我们自定义的<code>Logger</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -988,13 +1037,13 @@ Hello  dj
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面调用<code>cron.VerbosPrintfLogger()</code>包装<code>log.Logger</code>，这个<code>logger</code>会详细记录<code>cron</code>内部的调度过程：</p>
+</div>
+<p>上面调用<code>cron.VerbosPrintfLogger()</code>包装<code>log.Logger</code>，这个<code>logger</code>会详细记录<code>cron</code>内部的调度过程：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1031,13 +1080,13 @@ hello world
 cron: 2020/06/26 07:09:18 run, now=2020-06-26T07:09:18+08:00, entry=1, next=2020-06-26T07:09:19+08:00
 cron: 2020/06/26 07:09:19 wake, now=2020-06-26T07:09:19+08:00
 hello world
-cron: 2020/06/26 07:09:19 run, now=2020-06-26T07:09:19+08:00, entry=1, next=2020-06-26T07:09:20+08:0
-</code></pre></td></tr></table>
+cron: 2020/06/26 07:09:19 run, now=2020-06-26T07:09:19+08:00, entry=1, next=2020-06-26T07:09:20+08:0</code></pre></td></tr></table>
 </div>
-</div><p>我们看看默认的<code>Logger</code>是什么样的：</p>
+</div>
+<p>我们看看默认的<code>Logger</code>是什么样的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1068,32 +1117,35 @@ cron: 2020/06/26 07:09:19 run, now=2020-06-26T07:09:19+08:00, entry=1, next=2020
 <span class="kd">type</span> <span class="nx">printfLogger</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">logger</span>  <span class="kd">interface</span><span class="p">{</span> <span class="nf">Printf</span><span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">}</span>
   <span class="nx">logInfo</span> <span class="kt">bool</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h3 id="withchain"><code>WithChain</code></h3>
+</div>
+<h3 id="withchain"><code>WithChain</code></h3>
+
 <p>Job 包装器可以在执行实际的<code>Job</code>前后添加一些逻辑：</p>
+
 <ul>
 <li>捕获<code>panic</code>；</li>
 <li>如果<code>Job</code>上次运行还未结束，推迟本次执行;</li>
 <li>如果<code>Job</code>上次运行还未介绍，跳过本次执行；</li>
 <li>记录每个<code>Job</code>的执行情况。</li>
 </ul>
+
 <p>我们可以将<code>Chain</code>类比为 Web 处理器的中间件。实际上就是在<code>Job</code>的执行逻辑外在封装一层逻辑。我们的封装逻辑需要写成一个函数，传入一个<code>Job</code>类型，返回封装后的<code>Job</code>。<code>cron</code>为这种函数定义了一个类型<code>JobWrapper</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// chain.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">JobWrapper</span> <span class="kd">func</span><span class="p">(</span><span class="nx">Job</span><span class="p">)</span> <span class="nx">Job</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">JobWrapper</span> <span class="kd">func</span><span class="p">(</span><span class="nx">Job</span><span class="p">)</span> <span class="nx">Job</span></code></pre></td></tr></table>
 </div>
-</div><p>然后使用一个<code>Chain</code>对象将这些<code>JobWrapper</code>组合到一起：</p>
+</div>
+<p>然后使用一个<code>Chain</code>对象将这些<code>JobWrapper</code>组合到一起：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1108,13 +1160,13 @@ cron: 2020/06/26 07:09:19 run, now=2020-06-26T07:09:19+08:00, entry=1, next=2020
 
 <span class="kd">func</span> <span class="nf">NewChain</span><span class="p">(</span><span class="nx">c</span> <span class="o">...</span><span class="nx">JobWrapper</span><span class="p">)</span> <span class="nx">Chain</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">Chain</span><span class="p">{</span><span class="nx">c</span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>调用<code>Chain</code>对象的<code>Then(job)</code>方法应用这些<code>JobWrapper</code>，返回最终的`Job：</p>
+</div>
+<p>调用<code>Chain</code>对象的<code>Then(job)</code>方法应用这些<code>JobWrapper</code>，返回最终的`Job：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1127,23 +1179,29 @@ cron: 2020/06/26 07:09:19 run, now=2020-06-26T07:09:19+08:00, entry=1, next=2020
     <span class="nx">j</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">wrappers</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">wrappers</span><span class="p">)</span><span class="o">-</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span><span class="nx">j</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">j</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>注意应用<code>JobWrapper</code>的顺序。</p>
-<h3 id="内置jobwrapper">内置<code>JobWrapper</code></h3>
+</div>
+<p>注意应用<code>JobWrapper</code>的顺序。</p>
+
+<h3 id="内置-jobwrapper">内置<code>JobWrapper</code></h3>
+
 <p><code>cron</code>内置了 3 个用得比较多的<code>JobWrapper</code>：</p>
+
 <ul>
 <li><code>Recover</code>：捕获内部<code>Job</code>产生的 panic；</li>
 <li><code>DelayIfStillRunning</code>：触发时，如果上一次任务还未执行完成（耗时太长），则等待上一次任务完成之后再执行；</li>
 <li><code>SkipIfStillRunning</code>：触发时，如果上一次任务还未完成，则跳过此次执行。</li>
 </ul>
+
 <p>下面分别介绍。</p>
+
 <h4 id="recover"><code>Recover</code></h4>
+
 <p>先看看如何使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1184,13 +1242,13 @@ cron: 2020/06/26 07:09:19 run, now=2020-06-26T07:09:19+08:00, entry=1, next=2020
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>panicJob</code>在第一次触发时，触发了<code>panic</code>。因为有<code>cron.Recover()</code>保护，后续任务还能执行：</p>
+</div>
+<p><code>panicJob</code>在第一次触发时，触发了<code>panic</code>。因为有<code>cron.Recover()</code>保护，后续任务还能执行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1233,13 +1291,13 @@ created by github.com/robfig/cron/v3.(*Cron).startJob
 hello world
 hello world
 hello world
-hello world
-</code></pre></td></tr></table>
+hello world</code></pre></td></tr></table>
 </div>
-</div><p>我们看看<code>cron.Recover()</code>的实现，很简单：</p>
+</div>
+<p>我们看看<code>cron.Recover()</code>的实现，很简单：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1280,15 +1338,17 @@ hello world
       <span class="nx">j</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
     <span class="p">})</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>就是在执行内层的<code>Job</code>逻辑前，添加<code>recover()</code>调用。如果<code>Job.Run()</code>执行过程中有<code>panic</code>。这里的<code>recover()</code>会捕获到，输出调用堆栈。</p>
+</div>
+<p>就是在执行内层的<code>Job</code>逻辑前，添加<code>recover()</code>调用。如果<code>Job.Run()</code>执行过程中有<code>panic</code>。这里的<code>recover()</code>会捕获到，输出调用堆栈。</p>
+
 <h4 id="delayifstillrunning"><code>DelayIfStillRunning</code></h4>
+
 <p>还是先看如何使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1323,13 +1383,13 @@ hello world
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面我们在<code>Run()</code>中增加了一个 2s 的延迟，输出中间隔变为 2s，而不是定时的 1s：</p>
+</div>
+<p>上面我们在<code>Run()</code>中增加了一个 2s 的延迟，输出中间隔变为 2s，而不是定时的 1s：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1340,13 +1400,13 @@ hello world
 <span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">16</span> <span class="mi">1</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span>
 <span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">18</span> <span class="mi">2</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span>
 <span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">20</span> <span class="mi">3</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span>
-<span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">22</span> <span class="mi">4</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span>
-</code></pre></td></tr></table>
+<span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">22</span> <span class="mi">4</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span></code></pre></td></tr></table>
 </div>
-</div><p>看看源码：</p>
+</div>
+<p>看看源码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1377,15 +1437,17 @@ hello world
       <span class="nx">j</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
     <span class="p">})</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>首先定义一个该任务共用的互斥锁<code>sync.Mutex</code>，每次执行任务前获取锁，执行结束之后释放锁。所以在上一个任务结束前，下一个任务获取锁是无法成功的，从而保证的任务的串行执行。</p>
+</div>
+<p>首先定义一个该任务共用的互斥锁<code>sync.Mutex</code>，每次执行任务前获取锁，执行结束之后释放锁。所以在上一个任务结束前，下一个任务获取锁是无法成功的，从而保证的任务的串行执行。</p>
+
 <h4 id="skipifstillrunning"><code>SkipIfStillRunning</code></h4>
+
 <p>还是先看看如何使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1424,13 +1486,13 @@ hello world
   <span class="nx">c</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
 
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>输出：</p>
+</div>
+<p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1449,15 +1511,17 @@ hello world
 <span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">13</span> <span class="mi">5</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span>
 <span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">14</span> <span class="mi">6</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span>
 <span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">15</span> <span class="mi">7</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span>
-<span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">16</span> <span class="mi">8</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span>
-</code></pre></td></tr></table>
+<span class="mi">2020</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">27</span> <span class="mi">14</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">16</span> <span class="mi">8</span><span class="p">:</span> <span class="nx">hello</span> <span class="nx">world</span></code></pre></td></tr></table>
 </div>
-</div><p>注意观察时间，第一个与第二个输出之间相差 3s，因为跳过了两次执行。</p>
+</div>
+<p>注意观察时间，第一个与第二个输出之间相差 3s，因为跳过了两次执行。</p>
+
 <p>注意<code>DelayIfStillRunning</code>与<code>SkipIfStillRunning</code>是有本质上的区别的，前者<code>DelayIfStillRunning</code>只要时间足够长，所有的任务都会按部就班地完成，只是可能前一个任务耗时过长，导致后一个任务的执行时间推迟了一点。<code>SkipIfStillRunning</code>会跳过一些执行。</p>
+
 <p>看看源码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1488,24 +1552,33 @@ hello world
       <span class="p">}</span>
     <span class="p">})</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>定义一个该任务共用的缓存大小为 1 的通道<code>chan struct{}</code>。执行任务时，从通道中取值，如果成功，执行，否则跳过。执行完成之后再向通道中发送一个值，确保下一个任务能执行。初始发送一个值到通道中，保证第一个任务的执行。</p>
+</div>
+<p>定义一个该任务共用的缓存大小为 1 的通道<code>chan struct{}</code>。执行任务时，从通道中取值，如果成功，执行，否则跳过。执行完成之后再向通道中发送一个值，确保下一个任务能执行。初始发送一个值到通道中，保证第一个任务的执行。</p>
+
 <h2 id="总结">总结</h2>
+
 <p><code>cron</code>实现比较小巧，且优雅，代码行数也不多，非常值得一看！</p>
+
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
 <h2 id="参考">参考</h2>
+
 <ol>
 <li>cron GitHub：<a href="https://github.com/robfig/cron">https://github.com/robfig/cron</a></li>
 <li>Go 每日一库之 carbon：<a href="https://darjun.github.io/2020/02/14/godailylib/carbon/">https://darjun.github.io/2020/02/14/godailylib/carbon/</a></li>
 <li>Go 每日一库之 gron：<a href="https://darjun.github.io/2020/04/20/godailylib/gron/">https://darjun.github.io/2020/04/20/godailylib/gron/</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
+
 <h2 id="我">我</h2>
+
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
 
     </div>
 
@@ -1659,7 +1732,7 @@ hello world
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -1707,7 +1780,7 @@ hello world
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 

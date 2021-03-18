@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/14/godailylib/carbon/" />
@@ -69,8 +69,10 @@
 <meta property="article:modified_time" content="2020-02-14T21:12:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 carbon">
 <meta itemprop="description" content="简介 一线开发人员每天都要使用日期和时间相关的功能，各种定时器，活动时间处理等。标准库time使用起来不太灵活，特别是日期时间的创建和运算。c">
-<meta itemprop="datePublished" content="2020-02-14T21:12:23+00:00" />
-<meta itemprop="dateModified" content="2020-02-14T21:12:23+00:00" />
+
+
+<meta itemprop="datePublished" content="2020-02-14T21:12:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-02-14T21:12:23&#43;00:00" />
 <meta itemprop="wordCount" content="3679">
 
 
@@ -382,45 +384,52 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#简介">简介</a></li>
-    <li><a href="#快速使用">快速使用</a></li>
-    <li><a href="#时区">时区</a></li>
-    <li><a href="#时间运算">时间运算</a></li>
-    <li><a href="#时间比较">时间比较</a></li>
-    <li><a href="#格式化">格式化</a></li>
-    <li><a href="#高级特性">高级特性</a>
-      <ul>
-        <li><a href="#修饰器">修饰器</a></li>
-        <li><a href="#自定义工作日和周末">自定义工作日和周末</a></li>
-      </ul>
-    </li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#参考">参考</a></li>
-    <li><a href="#我">我</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#时区">时区</a></li>
+<li><a href="#时间运算">时间运算</a></li>
+<li><a href="#时间比较">时间比较</a></li>
+<li><a href="#格式化">格式化</a></li>
+<li><a href="#高级特性">高级特性</a>
+<ul>
+<li><a href="#修饰器">修饰器</a></li>
+<li><a href="#自定义工作日和周末">自定义工作日和周末</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="简介">简介</h2>
+      
+
+<h2 id="简介">简介</h2>
+
 <p>一线开发人员每天都要使用日期和时间相关的功能，各种定时器，活动时间处理等。标准库<a href="https://golang.org/pkg/time">time</a>使用起来不太灵活，特别是日期时间的创建和运算。<a href="https://github.com/uniplaces/carbon">carbon</a>库是一个时间扩展库，基于 PHP 的<a href="https://github.com/briannesbitt/carbon">carbon</a>库编写。提供易于使用的接口。本文就来介绍一下这个库。</p>
+
 <h2 id="快速使用">快速使用</h2>
+
 <p>第三方库需要先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/uniplaces/carbon
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/uniplaces/carbon</code></pre></td></tr></table>
 </div>
-</div><p>后使用：</p>
+</div>
+<p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -473,13 +482,13 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">IsWeekend</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Happy time!&#34;</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>carbon</code>库的使用很便捷，首先它完全兼容标准库的<code>time.Time</code>类型，实际上该库的日期时间类型<code>Carbon</code>直接将<code>time.Time</code>内嵌到结构中，所以<code>time.Time</code>的方法可直接调用：</p>
+</div>
+<p><code>carbon</code>库的使用很便捷，首先它完全兼容标准库的<code>time.Time</code>类型，实际上该库的日期时间类型<code>Carbon</code>直接将<code>time.Time</code>内嵌到结构中，所以<code>time.Time</code>的方法可直接调用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -498,25 +507,34 @@ if (!doNotTrack) {
   <span class="nx">weekendDays</span>  <span class="p">[]</span><span class="nx">time</span><span class="p">.</span><span class="nx">Weekday</span>
   <span class="nx">stringFormat</span> <span class="kt">string</span>
   <span class="nx">Translator</span>   <span class="o">*</span><span class="nx">Translator</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>其次，简化了创建操作。标准库<code>time</code>创建一个<code>Time</code>对象，如果不是本地或 UTC 时区，需要自己先调用<code>LoadLocation</code>加载对应时区。然后将该时区对象传给<code>time.Date</code>方法创建。<code>carbon</code>可以直接传时区名字。</p>
+</div>
+<p>其次，简化了创建操作。标准库<code>time</code>创建一个<code>Time</code>对象，如果不是本地或 UTC 时区，需要自己先调用<code>LoadLocation</code>加载对应时区。然后将该时区对象传给<code>time.Date</code>方法创建。<code>carbon</code>可以直接传时区名字。</p>
+
 <p><code>carbon</code>还提供了很多方法做日期运算，如例子中的<code>AddDay</code>，<code>SubWeek</code>等，都是见名知义的。</p>
+
 <h2 id="时区">时区</h2>
+
 <p>在介绍其它内容之前，我们先说一说这个时区的问题。以下引用维基百科的描述：</p>
+
 <blockquote>
 <p>时区是地球上的区域使用同一个时间定义。以前，人们通过观察太阳的位置（时角）决定时间，这就使得不同经度的地方的时间有所不同（地方时）。1863年，首次使用时区的概念。时区通过设立一个区域的标准时间部分地解决了这个问题。
 世界各国位于地球不同位置上，因此不同国家，特别是东西跨度大的国家日出、日落时间必定有所偏差。这些偏差就是所谓的时差。</p>
 </blockquote>
+
 <p>例如，日本东京位于东九区，北京位于东八区，所以日本比中国快一个小时，日本14:00的时候中国13:00。</p>
+
 <p>在 Linux 中，时区一般存放在类似<code>/usr/share/zoneinfo</code>这样的目录。这个目录中有很多文件，每个时区一个文件。时区文件是二进制文件，可以执行<code>info tzfile</code>查看具体格式。</p>
+
 <p>时区名称的一般格式为<code>city</code>，或<code>country/city</code>，或<code>continent/city</code>。即要么就是一个城市名，要么是国家名+/+城市名，要么是洲名+/+城市名。例如上海时区为<code>Asia/Shanghai</code>，香港时区为<code>Asia/Hong_Kong</code>。也有一些特殊的，如 UTC，Local等。</p>
+
 <p>Go 语言为了可移植性，在安装包中提供了时区文件，在安装目录下（我的为<code>C:\Go</code>）的<code>lib/time/zoneinfo.zip</code>文件，大家可以执行解压看看😀。</p>
+
 <p>使用 Go 标准库<code>time</code>创建某个时区的时间，需要先加载时区：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -551,13 +569,13 @@ if (!doNotTrack) {
 
   <span class="nx">d</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Date</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">July</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">loc</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;The opening ceremony of next olympics will start at %s in Japan\n&#34;</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>使用<code>carbon</code>就不用这么麻烦：</p>
+</div>
+<p>使用<code>carbon</code>就不用这么麻烦：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -594,14 +612,15 @@ if (!doNotTrack) {
   <span class="p">}</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;The opening ceremony of next olympics will start at %s in Japan\n&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="时间运算">时间运算</h2>
+</div>
+<h2 id="时间运算">时间运算</h2>
+
 <p>使用标准库<code>time</code>的时间运算需要先定义一个<code>time.Duration</code>对象，<code>time</code>库预定义的只有纳秒到小时的精度：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -618,14 +637,14 @@ if (!doNotTrack) {
   <span class="nx">Second</span>      <span class="p">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="nx">Millisecond</span>
   <span class="nx">Minute</span>      <span class="p">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="nx">Second</span>
   <span class="nx">Hour</span>        <span class="p">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="nx">Minute</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>其它的时长就需要自己使用<code>time.ParseDuration</code>构造了，而且<code>time.ParseDuration</code>不能构造其它精度的时间。
+</div>
+<p>其它的时长就需要自己使用<code>time.ParseDuration</code>构造了，而且<code>time.ParseDuration</code>不能构造其它精度的时间。
 如果想要增加/减少年月日，就需要使用<code>time.Time</code>的<code>AddDate</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -688,14 +707,14 @@ if (!doNotTrack) {
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;2 hours and 30 minutes later is:&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">d</span><span class="p">))</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;3 days and 2 hours later is:&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">AddDate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">).</span><span class="nf">Add</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Hour</span><span class="o">*</span><span class="mi">2</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>需要注意的是，时间操作都是返回一个新的对象，原对象不会修改。<code>carbon</code>库也是如此。<strong>Go 的标准库也建议我们不要使用<code>time.Time</code>的指针</strong>。
+</div>
+<p>需要注意的是，时间操作都是返回一个新的对象，原对象不会修改。<code>carbon</code>库也是如此。<strong>Go 的标准库也建议我们不要使用<code>time.Time</code>的指针</strong>。
 当然<code>carbon</code>库也能使用上面的方法，它还提供了多种粒度的方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -736,19 +755,24 @@ if (!doNotTrack) {
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;3 minutes and 20 seconds later is:&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">AddMinutes</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nf">AddSeconds</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;2 hours and 30 minutes later is:&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">AddHours</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nf">AddMinutes</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;3 days and 2 hours later is:&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">AddDays</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nf">AddHours</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>carbon</code>还提供了：</p>
+</div>
+<p><code>carbon</code>还提供了：</p>
+
 <ul>
 <li>增加<strong>季度</strong>的方法：<code>AddQuarters/AddQuarter</code>，复数形式介绍一个表示倍数的参数，单数形式倍数为1；</li>
 <li>增加<strong>世纪</strong>的方法：<code>AddCenturies/AddCentury</code>；</li>
 <li>增加<strong>工作日</strong>的方法：<code>AddWeekdays/AddWeekday</code>，这个方法会跳过非工作日；</li>
 <li>增加<strong>周</strong>的方法：<code>AddWeeks/AddWeek</code>。</li>
 </ul>
+
 <p>其实给上面方法传入负数就表示减少，另外<code>carbon</code>也提供了对应的<code>Sub*</code>方法。</p>
+
 <h2 id="时间比较">时间比较</h2>
+
 <p>标准库<code>time</code>可以使用<code>time.Time</code>对象的<code>Before/After/Equal</code>判断是否在另一个时间对象前，后，或相等。<code>carbon</code>库也可以使用上面的方法比较时间。除此之外，它还提供了多组方法，每个方法提供一个简短名，一个详细名：</p>
+
 <ul>
 <li><code>Eq/EqualTo</code>：是否相等；</li>
 <li><code>Ne/NotEqualTo</code>：是否不等；</li>
@@ -757,14 +781,16 @@ if (!doNotTrack) {
 <li><code>Lte/LessThanOrEqual</code>：是否相同或在之前；</li>
 <li><code>Between</code>：是否在两个时间之间。</li>
 </ul>
+
 <p>另外<code>carbon</code>提供了：</p>
+
 <ul>
 <li>判断当前时间是周几的方法：<code>IsMonday/IsTuesday/.../IsSunday</code>；</li>
-<li>是否是工作日，周末，闰年，过去时间还是未来时间：<code>IsWeekday/IsWeekend/IsLeapYear/IsPast/IsFuture</code>。</li>
-</ul>
+
+<li><p>是否是工作日，周末，闰年，过去时间还是未来时间：<code>IsWeekday/IsWeekend/IsLeapYear/IsPast/IsFuture</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -797,37 +823,39 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
+<span class="s">&#34;fmt&#34;</span>
 
-  <span class="s">&#34;github.com/uniplaces/carbon&#34;</span>
+<span class="s">&#34;github.com/uniplaces/carbon&#34;</span>
 <span class="p">)</span>
 
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">t1</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">CreateFromDate</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#34;Asia/Shanghai&#34;</span><span class="p">)</span>
-  <span class="nx">t2</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">CreateFromDate</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&#34;Asia/Shanghai&#34;</span><span class="p">)</span>
+<span class="nx">t1</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">CreateFromDate</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#34;Asia/Shanghai&#34;</span><span class="p">)</span>
+<span class="nx">t2</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">CreateFromDate</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&#34;Asia/Shanghai&#34;</span><span class="p">)</span>
 
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t1 equal to t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t1</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="nx">t2</span><span class="p">))</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t1 not equal to t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t1</span><span class="p">.</span><span class="nf">Ne</span><span class="p">(</span><span class="nx">t2</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t1 equal to t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t1</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="nx">t2</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t1 not equal to t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t1</span><span class="p">.</span><span class="nf">Ne</span><span class="p">(</span><span class="nx">t2</span><span class="p">))</span>
 
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t1 greater than t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t1</span><span class="p">.</span><span class="nf">Gt</span><span class="p">(</span><span class="nx">t2</span><span class="p">))</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t1 less than t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t1</span><span class="p">.</span><span class="nf">Lt</span><span class="p">(</span><span class="nx">t2</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t1 greater than t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t1</span><span class="p">.</span><span class="nf">Gt</span><span class="p">(</span><span class="nx">t2</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t1 less than t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t1</span><span class="p">.</span><span class="nf">Lt</span><span class="p">(</span><span class="nx">t2</span><span class="p">))</span>
 
-  <span class="nx">t3</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">CreateFromDate</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&#34;Asia/Shanghai&#34;</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t3 between t1 and t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t3</span><span class="p">.</span><span class="nf">Between</span><span class="p">(</span><span class="nx">t1</span><span class="p">,</span> <span class="nx">t2</span><span class="p">,</span> <span class="kc">true</span><span class="p">))</span>
+<span class="nx">t3</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">CreateFromDate</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&#34;Asia/Shanghai&#34;</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;t3 between t1 and t2: %t\n&#34;</span><span class="p">,</span> <span class="nx">t3</span><span class="p">.</span><span class="nf">Between</span><span class="p">(</span><span class="nx">t1</span><span class="p">,</span> <span class="nx">t2</span><span class="p">,</span> <span class="kc">true</span><span class="p">))</span>
 
-  <span class="nx">now</span> <span class="o">:=</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Weekday? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsWeekday</span><span class="p">())</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Weekend? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsWeekend</span><span class="p">())</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;LeapYear? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsLeapYear</span><span class="p">())</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Past? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsPast</span><span class="p">())</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Future? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsFuture</span><span class="p">())</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="nx">now</span> <span class="o">:=</span> <span class="nx">carbon</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Weekday? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsWeekday</span><span class="p">())</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Weekend? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsWeekend</span><span class="p">())</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;LeapYear? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsLeapYear</span><span class="p">())</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Past? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsPast</span><span class="p">())</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Future? %t\n&#34;</span><span class="p">,</span> <span class="nx">now</span><span class="p">.</span><span class="nf">IsFuture</span><span class="p">())</span>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>我们还可以使用<code>carbon</code>计算两个日期之间相差多少秒、分、小时、天：</p>
+</div></li>
+</ul>
+
+<p>我们还可以使用<code>carbon</code>计算两个日期之间相差多少秒、分、小时、天：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -896,14 +924,15 @@ if (!doNotTrack) {
 </span><span class="c1"></span>  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">DiffInMinutes</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">AddSeconds</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span> <span class="kc">true</span><span class="p">))</span>  <span class="c1">// 1
 </span><span class="c1"></span>  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">DiffInMinutes</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">AddSeconds</span><span class="p">(</span><span class="mi">119</span><span class="p">),</span> <span class="kc">true</span><span class="p">))</span> <span class="c1">// 1
 </span><span class="c1"></span>  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">DiffInMinutes</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">AddSeconds</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="kc">true</span><span class="p">))</span> <span class="c1">// 2
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="格式化">格式化</h2>
+</div>
+<h2 id="格式化">格式化</h2>
+
 <p>我们知道<code>time.Time</code>提供了一个<code>Format</code>方法，相比于其他编程语言使用格式化符来描述格式（需要记忆<code>%d/%m/%h</code>等的含义），Go 提供了一个一种更简单、直观的方式——使用 layout。即我们传入一个日期字符串，表示我们想要格式化成什么样子。Go 会用当前的时间替换字符串中的对应部分：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -926,14 +955,15 @@ if (!doNotTrack) {
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">t</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面我们只需要传入一个<code>2006-01-02 15:04:05</code>表示我们想要的格式为<code>yyyy-mm-dd hh:mm:ss</code>，省去了我们需要记忆的麻烦。</p>
+</div>
+<p>上面我们只需要传入一个<code>2006-01-02 15:04:05</code>表示我们想要的格式为<code>yyyy-mm-dd hh:mm:ss</code>，省去了我们需要记忆的麻烦。</p>
+
 <p>为了使用方便，Go 内置了一些标准的时间格式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -972,13 +1002,13 @@ if (!doNotTrack) {
   <span class="nx">StampMilli</span> <span class="p">=</span> <span class="s">&#34;Jan _2 15:04:05.000&#34;</span>
   <span class="nx">StampMicro</span> <span class="p">=</span> <span class="s">&#34;Jan _2 15:04:05.000000&#34;</span>
   <span class="nx">StampNano</span>  <span class="p">=</span> <span class="s">&#34;Jan _2 15:04:05.000000000&#34;</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>除了上面这些格式，<code>carbon</code>还提供了其他一些格式：</p>
+</div>
+<p>除了上面这些格式，<code>carbon</code>还提供了其他一些格式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1009,16 +1039,19 @@ if (!doNotTrack) {
   <span class="nx">RFC1036Format</span>       <span class="p">=</span> <span class="s">&#34;Mon, 02 Jan 06 15:04:05 -0700&#34;</span>
   <span class="nx">RFC2822Format</span>       <span class="p">=</span> <span class="s">&#34;Mon, 02 Jan 2006 15:04:05 -0700&#34;</span>
   <span class="nx">RSSFormat</span>           <span class="p">=</span> <span class="s">&#34;Mon, 02 Jan 2006 15:04:05 -0700&#34;</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>注意一点，<code>time</code>库默认使用<code>2006-01-02 15:04:05.999999999 -0700 MST</code>格式，有点复杂了，<code>carbon</code>库默认使用更简洁的<code>2006-01-02 15:04:05</code>。</p>
+</div>
+<p>注意一点，<code>time</code>库默认使用<code>2006-01-02 15:04:05.999999999 -0700 MST</code>格式，有点复杂了，<code>carbon</code>库默认使用更简洁的<code>2006-01-02 15:04:05</code>。</p>
+
 <h2 id="高级特性">高级特性</h2>
+
 <h3 id="修饰器">修饰器</h3>
+
 <p>所谓修饰器（modifier）就是对一些特定的时间操作，获取开始和结束时间。如当天、月、季度、年、十年、世纪、周的开始和结束时间，还能获得上一个周二、下一个周一、下一个工作日的时间等等：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1071,14 +1104,15 @@ if (!doNotTrack) {
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;End of week:%s\n&#34;</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nf">EndOfWeek</span><span class="p">())</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Next:%s\n&#34;</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Next</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Wednesday</span><span class="p">))</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Previous:%s\n&#34;</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Previous</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Wednesday</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h3 id="自定义工作日和周末">自定义工作日和周末</h3>
+</div>
+<h3 id="自定义工作日和周末">自定义工作日和周末</h3>
+
 <p>有些地区每周的开始、周末和我们的不一样。例如，在美国周日是新的一周开始。没关系，<code>carbon</code>可以自定义每周的开始和周末：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1123,19 +1157,26 @@ if (!doNotTrack) {
   <span class="nx">t</span><span class="p">.</span><span class="nf">SetWeekendDays</span><span class="p">([]</span><span class="nx">time</span><span class="p">.</span><span class="nx">Weekday</span><span class="p">{</span><span class="nx">time</span><span class="p">.</span><span class="nx">Monday</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Tuesday</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Wednesday</span><span class="p">})</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Today is %s, weekend? %t\n&#34;</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Weekday</span><span class="p">(),</span> <span class="nx">t</span><span class="p">.</span><span class="nf">IsWeekend</span><span class="p">())</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="总结">总结</h2>
+</div>
+<h2 id="总结">总结</h2>
+
 <p><code>carbon</code>提供了很多的实用方法，另外<code>time</code>的方法它也能使用，使得它的功能非常强大。时间其实是一个非常复杂的问题，考虑到时区、闰秒、各地的夏令时等，自己处理起来简直是火葬场。幸好有这些库(┬＿┬)</p>
+
 <h2 id="参考">参考</h2>
+
 <ol>
 <li>carbon GitHub 仓库：<a href="https://github.com/uniplaces/carbon">https://github.com/uniplaces/carbon</a></li>
 </ol>
+
 <h2 id="我">我</h2>
+
 <p><a href="https://darjun.github.io">我的博客</a></p>
+
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
 
     </div>
 
@@ -1289,7 +1330,7 @@ if (!doNotTrack) {
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -1337,7 +1378,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 

@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/22/godailylib/dig/" />
@@ -69,9 +69,11 @@
 <meta property="article:modified_time" content="2020-02-22T12:40:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 dig">
 <meta itemprop="description" content="简介 今天我们来介绍 Go 语言的一个依赖注入（DI）库——dig。dig 是 uber 开源的库。Java 依赖注入的库有很多，相信即使不是做 Java 开发的童鞋也听过">
-<meta itemprop="datePublished" content="2020-02-22T12:40:23+00:00" />
-<meta itemprop="dateModified" content="2020-02-22T12:40:23+00:00" />
-<meta itemprop="wordCount" content="3810">
+
+
+<meta itemprop="datePublished" content="2020-02-22T12:40:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-02-22T12:40:23&#43;00:00" />
+<meta itemprop="wordCount" content="3813">
 
 
 
@@ -361,7 +363,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 3810 字 </span>
+        <span class="more-meta"> 约 3813 字 </span>
           <span class="more-meta"> 预计阅读 8 分钟 </span>
 
         
@@ -382,45 +384,53 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#简介">简介</a></li>
-    <li><a href="#快速使用">快速使用</a></li>
-    <li><a href="#参数对象">参数对象</a></li>
-    <li><a href="#结果对象">结果对象</a></li>
-    <li><a href="#可选依赖">可选依赖</a></li>
-    <li><a href="#命名">命名</a></li>
-    <li><a href="#组">组</a></li>
-    <li><a href="#常见错误">常见错误</a></li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#参考">参考</a></li>
-    <li><a href="#我">我</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#参数对象">参数对象</a></li>
+<li><a href="#结果对象">结果对象</a></li>
+<li><a href="#可选依赖">可选依赖</a></li>
+<li><a href="#命名">命名</a></li>
+<li><a href="#组">组</a></li>
+<li><a href="#常见错误">常见错误</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="简介">简介</h2>
+      
+
+<h2 id="简介">简介</h2>
+
 <p>今天我们来介绍 Go 语言的一个依赖注入（DI）库——<a href="https://github.com/uber-go/dig">dig</a>。dig 是 uber 开源的库。Java 依赖注入的库有很多，相信即使不是做 Java 开发的童鞋也听过大名鼎鼎的 Spring。相比庞大的 Spring，dig 很小巧，实现和使用都比较简洁。</p>
+
 <h2 id="快速使用">快速使用</h2>
+
 <p>第三方库需要先安装，由于我们的示例中使用了前面介绍的<a href="https://darjun.github.io/2020/01/15/godailylib/go-ini/">go-ini</a>和<a href="https://darjun.github.io/2020/01/10/godailylib/go-flags/">go-flags</a>，这两个库也需要安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get go.uber.org/dig
 $ go get gopkg.in/ini.v1
-$ go get github.com/jessevdk/go-flags
-</code></pre></td></tr></table>
+$ go get github.com/jessevdk/go-flags</code></pre></td></tr></table>
 </div>
-</div><p>下面看看如何使用：</p>
+</div>
+<p>下面看看如何使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -499,13 +509,13 @@ $ go get github.com/jessevdk/go-flags
   <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConf</span><span class="p">)</span>
 
   <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>在同一目录下创建配置文件<code>my.ini</code>：</p>
+</div>
+<p>在同一目录下创建配置文件<code>my.ini</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-ini" data-lang="ini"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -532,46 +542,46 @@ $ go get github.com/jessevdk/go-flags
 
 <span class="k">[redis]</span>
 <span class="na">ip</span> <span class="o">=</span> <span class="s">127.0.0.1</span>
-<span class="na">port</span> <span class="o">=</span> <span class="s">6381</span>
-</code></pre></td></tr></table>
+<span class="na">port</span> <span class="o">=</span> <span class="s">6381</span></code></pre></td></tr></table>
 </div>
-</div><p>运行程序，输出：</p>
+</div>
+<p>运行程序，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go -c=my.ini
 App Name: awesome web
-Log Level: DEBUG
-</code></pre></td></tr></table>
+Log Level: DEBUG</code></pre></td></tr></table>
 </div>
-</div><p><code>dig</code>库帮助开发者管理这些对象的创建和维护，每种类型的对象会<strong>创建且只创建一次</strong>。<code>dig</code>库使用的一般流程：</p>
-<ul>
-<li>创建一个容器：<code>dig.New</code>；</li>
-<li>为想要让<code>dig</code>容器管理的类型创建构造函数，构造函数可以返回多个值，这些值都会被容器管理；</li>
-<li>使用这些类型的时候直接编写一个函数，将这些类型作为参数，然后使用<code>container.Invoke</code>执行我们编写的函数。</li>
-</ul>
+</div>
+<p><code>dig</code>库帮助开发者管理这些对象的创建和维护，每种类型的对象会<strong>创建且只创建一次</strong>。<code>dig</code>库使用的一般流程：
+* 创建一个容器：<code>dig.New</code>；
+* 为想要让<code>dig</code>容器管理的类型创建构造函数，构造函数可以返回多个值，这些值都会被容器管理；
+* 使用这些类型的时候直接编写一个函数，将这些类型作为参数，然后使用<code>container.Invoke</code>执行我们编写的函数。</p>
+
 <h2 id="参数对象">参数对象</h2>
+
 <p>有时候，创建对象有很多依赖，或者编写函数时有多个参数依赖。如果将这些依赖都作为参数传入，那么代码将变得非常难以阅读：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">arg1</span> <span class="o">*</span><span class="nx">Arg1</span><span class="p">,</span> <span class="nx">arg2</span> <span class="o">*</span><span class="nx">Arg2</span><span class="p">,</span> <span class="nx">arg3</span> <span class="o">*</span><span class="nx">Arg3</span><span class="p">,</span> <span class="o">...</span><span class="p">.)</span> <span class="p">{</span>
   <span class="c1">// ...
-</span><span class="c1"></span><span class="p">})</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">})</span></code></pre></td></tr></table>
 </div>
-</div><p><code>dig</code>支持将所有参数打包进一个对象中，唯一需要的就是将<code>dig.In</code>内嵌到该类型中：</p>
+</div>
+<p><code>dig</code>支持将所有参数打包进一个对象中，唯一需要的就是将<code>dig.In</code>内嵌到该类型中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -596,13 +606,13 @@ Log Level: DEBUG
 
 <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">params</span> <span class="nx">Params</span><span class="p">)</span> <span class="o">*</span><span class="nx">Object</span> <span class="p">{</span>
   <span class="c1">// ...
-</span><span class="c1"></span><span class="p">})</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">})</span></code></pre></td></tr></table>
 </div>
-</div><p>内嵌了<code>dig.In</code>之后，<code>dig</code>会将该类型中的其它字段看成<code>Object</code>的依赖，创建<code>Object</code>类型的对象时，会先将依赖的<code>Arg1/Arg2/Arg3/Arg4</code>创建好。</p>
+</div>
+<p>内嵌了<code>dig.In</code>之后，<code>dig</code>会将该类型中的其它字段看成<code>Object</code>的依赖，创建<code>Object</code>类型的对象时，会先将依赖的<code>Arg1/Arg2/Arg3/Arg4</code>创建好。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -823,14 +833,15 @@ Log Level: DEBUG
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面代码中，类型<code>Config</code>内嵌了<code>dig.In</code>，<code>PrintInfo</code>接受一个<code>Config</code>类型的参数。调用<code>Invoke</code>时，<code>dig</code>自动调用<code>InitRedisConfig</code>和<code>InitMySQLConfig</code>，并将生成的<code>*RedisConfig</code>和<code>*MySQLConfig</code>“打包”成一个<code>Config</code>对象传给<code>PrintInfo</code>。</p>
+</div>
+<p>上面代码中，类型<code>Config</code>内嵌了<code>dig.In</code>，<code>PrintInfo</code>接受一个<code>Config</code>类型的参数。调用<code>Invoke</code>时，<code>dig</code>自动调用<code>InitRedisConfig</code>和<code>InitMySQLConfig</code>，并将生成的<code>*RedisConfig</code>和<code>*MySQLConfig</code>“打包”成一个<code>Config</code>对象传给<code>PrintInfo</code>。</p>
+
 <p>运行结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -853,14 +864,15 @@ mysql ip: 127.0.0.1
 mysql port: 3306
 mysql user: dj
 mysql password: 123456
-mysql db: awesome
-</code></pre></td></tr></table>
+mysql db: awesome</code></pre></td></tr></table>
 </div>
-</div><h2 id="结果对象">结果对象</h2>
+</div>
+<h2 id="结果对象">结果对象</h2>
+
 <p>前面说过，如果构造函数返回多个值，这些不同类型的值都会存储到<code>dig</code>容器中。参数过多会影响代码的可读性和可维护性，返回值过多同样也是如此。为此，<code>dig</code>提供了返回值对象，返回一个包含多个类型对象的对象。返回的类型，必须内嵌<code>dig.Out</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -877,25 +889,24 @@ mysql db: awesome
   <span class="nx">Result2</span> <span class="o">*</span><span class="nx">Result2</span>
   <span class="nx">Result3</span> <span class="o">*</span><span class="nx">Result3</span>
   <span class="nx">Result4</span> <span class="o">*</span><span class="nx">Result4</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">dig</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">()</span> <span class="p">(</span><span class="nx">Results</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// ...
-</span><span class="c1"></span><span class="p">})</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">})</span></code></pre></td></tr></table>
 </div>
-</div><p>我们把上面的例子稍作修改。将<code>Config</code>内嵌的<code>dig.In</code>变为<code>dig.Out</code>：</p>
+</div>
+<p>我们把上面的例子稍作修改。将<code>Config</code>内嵌的<code>dig.In</code>变为<code>dig.Out</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -908,13 +919,13 @@ mysql db: awesome
 
   <span class="nx">Redis</span> <span class="o">*</span><span class="nx">RedisConfig</span>
   <span class="nx">MySQL</span> <span class="o">*</span><span class="nx">MySQLConfig</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>提供构造函数<code>InitRedisAndMySQLConfig</code>同时创建<code>RedisConfig</code>和<code>MySQLConfig</code>，通过<code>Config</code>返回。这样就不需要将<code>InitRedisConfig</code>和<code>InitMySQLConfig</code>加入<code>dig</code>容器了：</p>
+</div>
+<p>提供构造函数<code>InitRedisAndMySQLConfig</code>同时创建<code>RedisConfig</code>和<code>MySQLConfig</code>，通过<code>Config</code>返回。这样就不需要将<code>InitRedisConfig</code>和<code>InitMySQLConfig</code>加入<code>dig</code>容器了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -975,13 +986,13 @@ mysql db: awesome
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>PrintInfo</code>直接依赖<code>RedisConfig</code>和<code>MySQLConfig</code>：</p>
+</div>
+<p><code>PrintInfo</code>直接依赖<code>RedisConfig</code>和<code>MySQLConfig</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1008,16 +1019,19 @@ mysql db: awesome
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql user:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql password:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">Password</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql db:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">Database</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>可以看到<code>InitRedisAndMySQLConfig</code>返回<code>Config</code>类型的对象，该类型中的<code>RedisConfig</code>和<code>MySQLConfig</code>都被添加到了容器中，<code>PrintInfo</code>函数可直接使用。</p>
+</div>
+<p>可以看到<code>InitRedisAndMySQLConfig</code>返回<code>Config</code>类型的对象，该类型中的<code>RedisConfig</code>和<code>MySQLConfig</code>都被添加到了容器中，<code>PrintInfo</code>函数可直接使用。</p>
+
 <p>运行结果与之前的例子完全一样。</p>
+
 <h2 id="可选依赖">可选依赖</h2>
+
 <p>默认情况下，容器如果找不到对应的依赖，那么相应的对象无法创建成功，调用<code>Invoke</code>时也会返回错误。有些依赖不是必须的，<code>dig</code>也提供了一种方式将依赖设置为可选的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1030,14 +1044,15 @@ mysql db: awesome
 
   <span class="nx">Redis</span> <span class="o">*</span><span class="nx">RedisConfig</span> <span class="s">`optional:&#34;true&#34;`</span>
   <span class="nx">MySQL</span> <span class="o">*</span><span class="nx">MySQLConfig</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>通过在字段后添加结构标签<code>optional:&quot;true&quot;</code>，我们将<code>RedisConfig</code>这个依赖设置为可选的，容器中<code>RedisConfig</code>对象也不要紧，这时传入的<code>Config</code>中<code>redis</code>为 nil，方法可以正常调用。显然可选依赖只能在参数对象中使用。</p>
+</div>
+<p>通过在字段后添加结构标签<code>optional:&quot;true&quot;</code>，我们将<code>RedisConfig</code>这个依赖设置为可选的，容器中<code>RedisConfig</code>对象也不要紧，这时传入的<code>Config</code>中<code>redis</code>为 nil，方法可以正常调用。显然可选依赖只能在参数对象中使用。</p>
+
 <p>我们直接注释掉<code>InitRedisConfig</code>，然后运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1070,27 +1085,30 @@ mysql db: awesome
   <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitMySQLConfig</span><span class="p">)</span>
 
   <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>输出：</p>
+</div>
+<p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go -c=my.ini
-no redis config
-</code></pre></td></tr></table>
+no redis config</code></pre></td></tr></table>
 </div>
-</div><p>注意，创建失败和没有提供构造函数是两个概念。如果<code>InitRedisConfig</code>调用失败了，使用<code>Invoke</code>执行<code>PrintInfo</code>还是会报错的。</p>
+</div>
+<p>注意，创建失败和没有提供构造函数是两个概念。如果<code>InitRedisConfig</code>调用失败了，使用<code>Invoke</code>执行<code>PrintInfo</code>还是会报错的。</p>
+
 <h2 id="命名">命名</h2>
+
 <p>前面我们说过，<code>dig</code>默认只会为每种类型创建一个对象。如果要创建某个类型的多个对象怎么办呢？可以为对象命名！</p>
+
 <p>调用容器的<code>Provide</code>方法时，可以为构造函数的返回对象命名，这样同一个类型就可以有多个对象了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1115,13 +1133,13 @@ no redis config
   <span class="p">}</span>
 <span class="p">}</span>
 <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">))</span>
-<span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">))</span>
-</code></pre></td></tr></table>
+<span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">))</span></code></pre></td></tr></table>
 </div>
-</div><p>也可以在结果对象中通过结构标签指定：</p>
+</div>
+<p>也可以在结果对象中通过结构标签指定：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1134,13 +1152,13 @@ no redis config
 
   <span class="nx">User1</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj&#34;`</span>
   <span class="nx">User2</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj2&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>然后在参数对象中通过名字指定使用哪个对象：</p>
+</div>
+<p>然后在参数对象中通过名字指定使用哪个对象：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1153,13 +1171,13 @@ no redis config
 
   <span class="nx">User1</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj&#34;`</span>
   <span class="nx">User2</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj2&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>完整代码：</p>
+</div>
+<p>完整代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1250,13 +1268,13 @@ no redis config
   <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">))</span>
 
   <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>程序运行结果：</p>
+</div>
+<p>程序运行结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1271,27 +1289,30 @@ Name: dj
 Age: 18
 User 2 ===========
 Name: dj2
-Age: 18
-</code></pre></td></tr></table>
+Age: 18</code></pre></td></tr></table>
 </div>
-</div><p>需要注意的时候，<code>NewUser</code>返回的是一个函数，由<code>dig</code>在需要的时候调用。</p>
+</div>
+<p>需要注意的时候，<code>NewUser</code>返回的是一个函数，由<code>dig</code>在需要的时候调用。</p>
+
 <h2 id="组">组</h2>
+
 <p>组可以将相同类型的对象放到一个切片中，可以直接使用这个切片。组的定义与上面名字定义类似。可以通过为<code>Provide</code>提供额外的参数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">))</span>
-<span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">))</span>
-</code></pre></td></tr></table>
+<span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">))</span></code></pre></td></tr></table>
 </div>
-</div><p>也可以在结果对象中添加结构标签<code>group:&quot;user&quot;</code>。</p>
+</div>
+<p>也可以在结果对象中添加结构标签<code>group:&quot;user&quot;</code>。</p>
+
 <p>然后我们定义一个参数对象，通过指定同样的结构标签来使用这个切片：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1322,13 +1343,13 @@ Age: 18
   <span class="k">return</span> <span class="kc">nil</span>
 <span class="p">}</span>
 
-<span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">Info</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">Info</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>最后我们通过一个完整的例子演示组的使用，我们将创建一个 HTTP 服务器：</p>
+</div>
+<p>最后我们通过一个完整的例子演示组的使用，我们将创建一个 HTTP 服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1475,11 +1496,13 @@ Age: 18
   <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">NewHello2Handler</span><span class="p">)</span>
 
   <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">RunServer</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>我们创建了两个处理器，添加到<code>server</code>组中，在<code>RunServer</code>函数中创建 HTTP 服务器，将这些处理器注册到服务器中。</p>
+</div>
+<p>我们创建了两个处理器，添加到<code>server</code>组中，在<code>RunServer</code>函数中创建 HTTP 服务器，将这些处理器注册到服务器中。</p>
+
 <p>运行程序，在浏览器中输入<code>localhost:8080/hello1</code>和<code>localhost:8080/hello2</code>看看。关于 Go Web 编程相关的知识，可以看看我写的 Go Web 编程系列文章：</p>
+
 <ul>
 <li><a href="https://darjun.github.io/2019/11/25/goweb/hello-world/">Go Web 编程之 Hello World</a></li>
 <li><a href="https://darjun.github.io/2019/12/05/goweb/structure/">Go Web 编程之 程序结构</a></li>
@@ -1490,26 +1513,40 @@ Age: 18
 <li><a href="https://darjun.github.io/2020/01/13/goweb/fileserver/">Go Web 编程之 静态文件</a></li>
 <li><a href="https://darjun.github.io/2020/01/16/goweb/db/">Go Web 编程之 数据库</a></li>
 </ul>
+
 <h2 id="常见错误">常见错误</h2>
+
 <p>使用<code>dig</code>过程中会遇到一些错误，我们来看看常见的错误。</p>
+
 <p><code>Invoke</code>方法在以下几种情况下会返回一个<code>error</code>：</p>
+
 <ul>
 <li>无法找到依赖，或依赖创建失败；</li>
 <li><code>Invoke</code>执行的函数返回<code>error</code>，该错误也会被传给调用者。</li>
 </ul>
+
 <p>这两种情况，我们都可以判断<code>Invoke</code>的返回值来查找原因。</p>
+
 <h2 id="总结">总结</h2>
+
 <p>本文介绍了<code>dig</code>库，它适用于解决循环依赖的对象创建问题。同时也有利于将关注点分离，我们不需要将各种对象传来传去，只需要将构造函数交给<code>dig</code>容器，然后通过<code>Invoke</code>直接使用依赖即可，连判空逻辑都可以省略了！</p>
+
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
 <h2 id="参考">参考</h2>
+
 <ol>
 <li>dig GitHub：<a href="https://github.com/uber-go/dig">https://github.com/uber-go/dig</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
+
 <h2 id="我">我</h2>
+
 <p><a href="https://darjun.github.io">我的博客</a></p>
+
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
 
     </div>
 
@@ -1663,7 +1700,7 @@ Age: 18
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -1711,7 +1748,7 @@ Age: 18
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 

@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2019/10/15/algorithm/permutation/" />
@@ -69,9 +69,11 @@
 <meta property="article:modified_time" content="2019-10-15T12:30:00+00:00" />
 <meta itemprop="name" content="生成排列的算法汇总">
 <meta itemprop="description" content="概述 我觉得自己的算法思维能力有些薄弱，所以基本上每天晚上都会抽空做1-2到 leetcode 算法题。这两天遇到一个排列的问题——Next Permutatio">
-<meta itemprop="datePublished" content="2019-10-15T12:30:00+00:00" />
-<meta itemprop="dateModified" content="2019-10-15T12:30:00+00:00" />
-<meta itemprop="wordCount" content="3355">
+
+
+<meta itemprop="datePublished" content="2019-10-15T12:30:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-10-15T12:30:00&#43;00:00" />
+<meta itemprop="wordCount" content="3339">
 
 
 
@@ -361,7 +363,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/algorithms/"> Algorithms </a>
             
           </div>
-        <span class="more-meta"> 约 3355 字 </span>
+        <span class="more-meta"> 约 3339 字 </span>
           <span class="more-meta"> 预计阅读 7 分钟 </span>
 
         
@@ -382,29 +384,62 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#概述">概述</a></li>
-    <li><a href="#算法">算法</a>
-      <ul>
-        <li><a href="#暴力法">暴力法</a></li>
-        <li><a href="#插入法">插入法</a></li>
-        <li><a href="#字典法">字典法</a></li>
-        <li><a href="#sjt算法">SJT算法</a></li>
-        <li><a href="#heap算法">Heap算法</a></li>
-      </ul>
-    </li>
-    <li><a href="#结语">结语</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#概述">概述</a></li>
+<li><a href="#算法">算法</a>
+<ul>
+<li><a href="#暴力法">暴力法</a>
+<ul>
+<li><a href="#描述">描述</a></li>
+<li><a href="#实现">实现</a></li>
+<li><a href="#优缺点">优缺点</a></li>
+</ul></li>
+<li><a href="#插入法">插入法</a>
+<ul>
+<li><a href="#描述-1">描述</a></li>
+<li><a href="#实现-1">实现</a></li>
+<li><a href="#优缺点-1">优缺点</a></li>
+</ul></li>
+<li><a href="#字典法">字典法</a>
+<ul>
+<li><a href="#描述-2">描述</a></li>
+<li><a href="#实现-2">实现</a></li>
+<li><a href="#优缺点-2">优缺点</a></li>
+</ul></li>
+<li><a href="#sjt算法">SJT算法</a>
+<ul>
+<li><a href="#描述-3">描述</a></li>
+<li><a href="#实现-3">实现</a></li>
+<li><a href="#优缺点-3">优缺点</a></li>
+</ul></li>
+<li><a href="#heap算法">Heap算法</a>
+<ul>
+<li><a href="#描述-4">描述</a></li>
+<li><a href="#实现-4">实现</a></li>
+<li><a href="#优缺点-4">优缺点</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#结语">结语</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="概述">概述</h2>
+      
+
+<h2 id="概述">概述</h2>
+
 <p>我觉得自己的算法思维能力有些薄弱，所以基本上每天晚上都会抽空做1-2到 leetcode 算法题。这两天遇到一个排列的问题——<a href="https://leetcode.com/problems/next-permutation/">Next Permutation</a>。然后我去搜索了一下生成排列的算法。这里做一下总结。</p>
+
 <h2 id="算法">算法</h2>
+
 <p>目前，生成一个序列的排列常用的有以下几种算法：</p>
+
 <ul>
 <li>暴力法（Brute Force）</li>
 <li>插入法（Insert）</li>
@@ -412,26 +447,36 @@ if (!doNotTrack) {
 <li>SJT算法（Steinhaus-Johnson-Trotter）</li>
 <li>堆算法（Heap）</li>
 </ul>
+
 <p>下面依次介绍算法的内容，实现和优缺点。</p>
+
 <p>在介绍这些算法之前，我们先做一些示例和代码上的约定：</p>
+
 <ul>
 <li>我的代码实现是使用 Go 语言，且仅实现了求<code>int</code>切片的所有排列，其它类型自行扩展也不难。</li>
 <li>除非特殊说明，我假定输入的<code>int</code>中无重复元素，有重复元素可自行去重，其中有个别算法可处理重复元素的问题。</li>
 </ul>
+
 <p>完整代码放在<a href="https://github.com/darjun/algorithms/tree/master/golang/permutation">Github</a>上。</p>
+
 <h3 id="暴力法">暴力法</h3>
+
 <h4 id="描述">描述</h4>
+
 <p><strong>暴力法</strong>是很直接的一种分治法：先生成 n-1 个元素的排列，加上第 n 个元素即可得到 n 个元素的排列。算法步骤如下：</p>
+
 <ul>
 <li>将第 n 个元素依次交换到最后一个位置上</li>
 <li>递归生成前 n-1 个元素的排列</li>
 <li>加上最后一个元素即为 n 个元素的排列</li>
 </ul>
+
 <h4 id="实现">实现</h4>
+
 <p>算法实现也很简单。这里引入两个辅助函数，拷贝和反转切片，后面代码都会用到：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -460,13 +505,13 @@ if (!doNotTrack) {
     <span class="nx">i</span><span class="o">++</span>
     <span class="nx">j</span><span class="o">--</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>算法代码如下：</p>
+</div>
+<p>算法代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -493,13 +538,13 @@ if (!doNotTrack) {
     <span class="nf">BruteForce</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">ans</span><span class="p">)</span>
     <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>作为一个接口，需要做到尽可能简洁，第二个参数初始值就是前一个参数切片的长度。优化接口：</p>
+</div>
+<p>作为一个接口，需要做到尽可能简洁，第二个参数初始值就是前一个参数切片的长度。优化接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -520,36 +565,45 @@ if (!doNotTrack) {
   <span class="nx">ans</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([][]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">))</span>
   <span class="nf">bruteForceHelper</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">ans</span><span class="p">)</span>
   <span class="k">return</span> <span class="nx">ans</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h4 id="优缺点">优缺点</h4>
+</div>
+<h4 id="优缺点">优缺点</h4>
+
 <p>优点：逻辑简单直接，易于理解。</p>
+
 <p>缺点：返回的排列数肯定是<code>n!</code>，性能的关键在于系数的大小。由于暴力法的每次循环都需要交换两个位置上的元素，递归结束后又需要<strong>再交换回来</strong>，在<code>n</code>较大的情况下，性能较差。</p>
+
 <h3 id="插入法">插入法</h3>
+
 <h4 id="描述-1">描述</h4>
+
 <p>插入法顾名思义就是将元素插入到一个序列中所有可能的位置生成新的序列。从 1 个元素开始。例如要生成<code>{1,2,3}</code>的排列：</p>
+
 <ul>
 <li>先从序列 1 开始，插入元素 2，有两个位置可以插入，生成两个序列 12 和 21</li>
-<li>将 3 插入这两个序列的所有可能位置，生成最终的 6 个序列</li>
-</ul>
+
+<li><p>将 3 插入这两个序列的所有可能位置，生成最终的 6 个序列</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">          1
-    12          21
-123 132 312  213 231 321
-</code></pre></td></tr></table>
+<pre class="chroma">      1
+12          21
+123 132 312  213 231 321</pre></td></tr></table>
 </div>
-</div><h4 id="实现-1">实现</h4>
+</div></li>
+</ul>
+
+<h4 id="实现-1">实现</h4>
+
 <p>实现如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -596,18 +650,23 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="nf">Insert</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[][]</span><span class="kt">int</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nf">insertHelper</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h4 id="优缺点-1">优缺点</h4>
+</div>
+<h4 id="优缺点-1">优缺点</h4>
+
 <p>优点：同样是简单直接，易于理解。</p>
+
 <p>缺点：由于算法中有不少的数据移动，性能与暴力法相比降低了<strong>16%</strong>。</p>
+
 <h3 id="字典法">字典法</h3>
+
 <h4 id="描述-2">描述</h4>
-<p><strong>该算法有个前提是序列必须是有升序排列的</strong>，当然也可以微调对其它序列使用。它通过修改当前序列得到下一个序列。我们为每个序列定义一个<strong>权重</strong>，类比序列组成的数字的大小，序列升序排列时**“权重”**最小，降序排列时**“权重”**最大。下面是 1234 的排列按**“权重”由小到大：</p>
+
+<p><strong>该算法有个前提是序列必须是有升序排列的</strong>，当然也可以微调对其它序列使用。它通过修改当前序列得到下一个序列。我们为每个序列定义一个<strong>权重</strong>，类比序列组成的数字的大小，序列升序排列时<strong>“权重”</strong>最小，降序排列时<strong>“权重”</strong>最大。下面是 1234 的排列按**“权重”由小到大：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -615,29 +674,32 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">1234
+<pre class="chroma">1234
 1243
 1324
 1342
 1423
 1432
 2134
-...
-</code></pre></td></tr></table>
+...</pre></td></tr></table>
 </div>
-</div><p>我们观察到一开始最高位都是 1，稍微调整一下后面三个元素的顺序就可以使得整个**“权重”**增加，类比整数。当后面三个元素已经逆序时，下一个序列最高位就必须是 2 了，因为仅调整后三个元素已经无法使**“权重”**增加了。算法的核心步骤为：</p>
+</div>
+<p>我们观察到一开始最高位都是 1，稍微调整一下后面三个元素的顺序就可以使得整个<strong>“权重”</strong>增加，类比整数。当后面三个元素已经逆序时，下一个序列最高位就必须是 2 了，因为仅调整后三个元素已经无法使<strong>“权重”</strong>增加了。算法的核心步骤为：</p>
+
 <ul>
 <li>对于当前的序列，找到索引<code>i</code>满足其后的元素完全逆序。</li>
 <li>这时索引<code>i</code>处的元素需要变为后面元素中大于该元素的最小值。</li>
 <li>然后剩余元素升序排列，即为当前序列的下一个序列。</li>
 </ul>
+
 <p>该算法用于 C++ 标准库中<code>next_permutation</code>算法的实现，见<a href="https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.4/a01347.html">GNU C++ std::next_permutation</a>。</p>
+
 <h4 id="实现-2">实现</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -720,140 +782,153 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="nf">Lexicographic</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[][]</span><span class="kt">int</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="nf">lexicographicHelper</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>NextPermutation</code>函数即可用于解决前文 LeetCode 算法题。其返回<code>false</code>表示已经到达最后一个序列了。</p>
+</div>
+<p><code>NextPermutation</code>函数即可用于解决前文 LeetCode 算法题。其返回<code>false</code>表示已经到达最后一个序列了。</p>
+
 <h4 id="优缺点-2">优缺点</h4>
+
 <p>优点：<code>NextPermutation</code>可以单独使用，性能也不错。</p>
+
 <p>缺点：稍微有点难理解。</p>
+
 <h3 id="sjt算法">SJT算法</h3>
+
 <h4 id="描述-3">描述</h4>
+
 <p>SJT 算法在前一个排列的基础上通过<strong>仅交换相邻的两个元素</strong>来生成下一个排列。例如，按照下面顺序生成 123 的排列:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></code></pre></td>
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">123(交换23) -&gt;
+<pre class="chroma">123(交换23) -&gt;
 132(交换13) -&gt;
 312(交换12) -&gt;
 321(交换32) -&gt;
 231(交换31) -&gt;
-213
-</code></pre></td></tr></table>
+213</pre></td></tr></table>
 </div>
-</div><p>一个简单的方案是通过 n-1 个元素的排列生成 n 个元素的排列。例如我们现在用 2 个元素的排列生成 3 个元素的排列。</p>
+</div>
+<p>一个简单的方案是通过 n-1 个元素的排列生成 n 个元素的排列。例如我们现在用 2 个元素的排列生成 3 个元素的排列。</p>
+
 <p>2 个元素的排列只有 2 个： 1 2 和 2 1。</p>
+
 <p>通过在 2 个元素的排列中所有不同的位置插入 3，我们就能得到 3 个元素的排列。</p>
+
 <p>在 1 2 的不同位置插入 3 得到：1 2 <strong>3</strong>，1 <strong>3</strong> 2 和 <strong>3</strong> 1 2。 在 2 1 的不同位置插入 3 得到：2 1 <strong>3</strong>，2 <strong>3</strong> 1 和 <strong>3</strong> 2 1。</p>
+
 <p>上面是插入法的逻辑，但是插入法由于有大量的数据移动导致性能较差。SJT 算法不要求生成所有 n-1 个元素的排列。它记录排列中每个元素的方向。算法步骤如下：</p>
+
 <ul>
 <li>查找序列中可移动的最大元素。一个元素可移动意味着它的值大于它指向的相邻元素。</li>
 <li>交换该元素与它指向的相邻元素。</li>
 <li>修改所有值大于该元素的元素的方向。</li>
 <li>重复以上步骤直到没有可移动的元素。</li>
 </ul>
+
 <p>假设我们需要生成序列 1 2 3 4 的所有排列。首先初始化所有元素的方向为从右到左。第一个排列即为初始序列：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;1 &lt;2 &lt;3 &lt;4
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;1 &lt;2 &lt;3 &lt;4</pre></td></tr></table>
 </div>
-</div><p>所有可移动的元素为 2，3 和 4。最大的为 4。我们交换 3 和 4。由于此时 4 是最大元素，不用改变方向。得到下一个排列：</p>
+</div>
+<p>所有可移动的元素为 2，3 和 4。最大的为 4。我们交换 3 和 4。由于此时 4 是最大元素，不用改变方向。得到下一个排列：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;1 &lt;2 &lt;4 &lt;3
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;1 &lt;2 &lt;4 &lt;3</pre></td></tr></table>
 </div>
-</div><p>4 还是最大的可移动元素，交换 2 和 4，不用改变方向。得到下一个排列：</p>
+</div>
+<p>4 还是最大的可移动元素，交换 2 和 4，不用改变方向。得到下一个排列：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;1 &lt;4 &lt;2 &lt;3
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;1 &lt;4 &lt;2 &lt;3</pre></td></tr></table>
 </div>
-</div><p>4 还是最大的可移动元素，交换 1 和 4，不用改变方向。得到下一个排列：</p>
+</div>
+<p>4 还是最大的可移动元素，交换 1 和 4，不用改变方向。得到下一个排列：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;4 &lt;1 &lt;2 &lt;3
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;4 &lt;1 &lt;2 &lt;3</pre></td></tr></table>
 </div>
-</div><p>当前 4 已经无法移动了，3 成为最大的可移动元素，交换 2 和 3。注意，元素 4 比 3 大，所以要改变元素 4 的方向。得到下一个排列：</p>
+</div>
+<p>当前 4 已经无法移动了，3 成为最大的可移动元素，交换 2 和 3。注意，元素 4 比 3 大，所以要改变元素 4 的方向。得到下一个排列：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&gt;4 &lt;1 &lt;3 &lt;2
-</code></pre></td></tr></table>
+<pre class="chroma">&gt;4 &lt;1 &lt;3 &lt;2</pre></td></tr></table>
 </div>
-</div><p>这时，元素 4 又成为了最大的可移动元素，交换 4 和 1。注意，此时元素 4 方向已经变了。得到下一个排列：</p>
+</div>
+<p>这时，元素 4 又成为了最大的可移动元素，交换 4 和 1。注意，此时元素 4 方向已经变了。得到下一个排列：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;1 &gt;4 &lt;3 &lt;2
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;1 &gt;4 &lt;3 &lt;2</pre></td></tr></table>
 </div>
-</div><p>交换 4 和 3，得到下一个排列：</p>
+</div>
+<p>交换 4 和 3，得到下一个排列：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;1 &lt;3 &gt;4 &lt;2
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;1 &lt;3 &gt;4 &lt;2</pre></td></tr></table>
 </div>
-</div><p>交换 4 和 2：</p>
+</div>
+<p>交换 4 和 2：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;1 &lt;3 &lt;2 &gt;4
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;1 &lt;3 &lt;2 &gt;4</pre></td></tr></table>
 </div>
-</div><p>这时元素 3 为可移动的最大元素，交换 1 和 3，改变元素 4 的方向：</p>
+</div>
+<p>这时元素 3 为可移动的最大元素，交换 1 和 3，改变元素 4 的方向：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;3 &lt;1 &lt;2 &lt;4
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;3 &lt;1 &lt;2 &lt;4</pre></td></tr></table>
 </div>
-</div><p>继续这个过程，最后得到的排列为（<strong>强烈建议自己试试</strong>）：</p>
+</div>
+<p>继续这个过程，最后得到的排列为（<strong>强烈建议自己试试</strong>）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;2 &lt;1 &gt;3 &gt;4
-</code></pre></td></tr></table>
+<pre class="chroma">&lt;2 &lt;1 &gt;3 &gt;4</pre></td></tr></table>
 </div>
-</div><p>已经没有可移动的元素了，算法结束。</p>
+</div>
+<p>已经没有可移动的元素了，算法结束。</p>
+
 <h4 id="实现-3">实现</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -978,25 +1053,34 @@ if (!doNotTrack) {
 	<span class="nx">ans</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">ans</span><span class="p">,</span> <span class="nf">copySlice</span><span class="p">(</span><span class="nx">nums</span><span class="p">))</span>
 	<span class="nf">sjtHelper</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ans</span><span class="p">)</span>
 	<span class="k">return</span> <span class="nx">ans</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h4 id="优缺点-3">优缺点</h4>
+</div>
+<h4 id="优缺点-3">优缺点</h4>
+
 <p>优点：作为一种算法思维可以学习借鉴。</p>
+
 <p>缺点：性能不理想。</p>
+
 <h3 id="heap算法">Heap算法</h3>
+
 <h4 id="描述-4">描述</h4>
+
 <p>Heap算法优雅、高效。它是从暴力法演化而来的，我们前面提到暴力法性能差主要是由于多次交换，堆算法就是通过减少交换提升效率。</p>
+
 <p>算法步骤如下：</p>
+
 <ul>
 <li>如果元素个数为奇数，交换第一个和最后一个元素。</li>
 <li>如果元素个数为偶数，依次交换第 i 个和最后一个元素。</li>
 </ul>
+
 <p><a href="https://en.wikipedia.org/wiki/Heap%27s_algorithm">Wikipedia</a>上有详细的证明，有兴趣可以看看。</p>
+
 <h4 id="实现-4">实现</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1047,14 +1131,19 @@ if (!doNotTrack) {
 	<span class="nx">ans</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([][]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">))</span>
 	<span class="nf">heapHelper</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">ans</span><span class="p">)</span>
 	<span class="k">return</span> <span class="nx">ans</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>Heap 算法非常难理解，而且很容易写错，我现在纯粹是背下来了😂 。</p>
+</div>
+<p>Heap 算法非常难理解，而且很容易写错，我现在纯粹是背下来了😂 。</p>
+
 <h4 id="优缺点-4">优缺点</h4>
+
 <p>优点：代码实现简单、高效。</p>
+
 <p>缺点：非常难理解。</p>
+
 <h2 id="结语">结语</h2>
+
 <p>本文介绍了几种生成排列的算法，希望对大家有所帮助。</p>
 
     </div>
@@ -1210,7 +1299,7 @@ if (!doNotTrack) {
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -1258,7 +1347,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 

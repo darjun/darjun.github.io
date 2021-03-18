@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/03/01/godailylib/watermill/" />
@@ -69,8 +69,10 @@
 <meta property="article:modified_time" content="2020-03-01T07:03:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 watermill">
 <meta itemprop="description" content="简介 在上一篇文章Go 每日一库之 message-bus中，我们介绍了一款小巧、实现简单的异步通信库。作为学习，message-bus确实不错。">
-<meta itemprop="datePublished" content="2020-03-01T07:03:23+00:00" />
-<meta itemprop="dateModified" content="2020-03-01T07:03:23+00:00" />
+
+
+<meta itemprop="datePublished" content="2020-03-01T07:03:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-03-01T07:03:23&#43;00:00" />
 <meta itemprop="wordCount" content="3852">
 
 
@@ -382,44 +384,53 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#简介">简介</a></li>
-    <li><a href="#快速使用">快速使用</a></li>
-    <li><a href="#路由">路由</a>
-      <ul>
-        <li><a href="#中间件">中间件</a></li>
-      </ul>
-    </li>
-    <li><a href="#设置">设置</a></li>
-    <li><a href="#rabbitmq">RabbitMQ</a></li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#参考">参考</a></li>
-    <li><a href="#我">我</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#路由">路由</a>
+<ul>
+<li><a href="#中间件">中间件</a></li>
+</ul></li>
+<li><a href="#设置">设置</a></li>
+<li><a href="#rabbitmq">RabbitMQ</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="简介">简介</h2>
+      
+
+<h2 id="简介">简介</h2>
+
 <p>在上一篇文章<a href="https://darjun.github.io/2020/02/26/godailylib/message-bus/">Go 每日一库之 message-bus</a>中，我们介绍了一款小巧、实现简单的异步通信库。作为学习，<code>message-bus</code>确实不错。但是在实际使用上，<code>message-bus</code>的功能就有点捉襟见肘了。例如，<code>message-bus</code>将消息发送到订阅者管道之后就不管了，这样如果订阅者处理压力较大，会在管道中堆积太多消息，一旦订阅者异常退出，这些消息将会全部丢失！另外，<code>message-bus</code>不负责保存消息，如果订阅者后启动，之前发布的消息，这个订阅者是无法收到的。这些问题，我们将要介绍的<a href="https://watermill.io/">watermill</a>都能解决！</p>
+
 <p><a href="https://watermill.io/">watermill</a>是 Go 语言的一个异步消息解决方案，它支持消息重传、保存消息，后启动的订阅者也能收到前面发布的消息。<code>watermill</code>内置了多种<strong>订阅-发布</strong>实现，包括<code>Kafka/RabbitMQ</code>，甚至还支持<code>HTTP/MySQL binlog</code>。当然也可以编写自己的订阅-发布实现。此外，它还提供了监控、限流等中间件。</p>
+
 <h2 id="快速使用">快速使用</h2>
+
 <p><code>watermill</code>内置了很多<strong>订阅-发布</strong>实现，最简单、直接的要属<code>GoChannel</code>。我们就以这个实现为例介绍<code>watermill</code>的特性。</p>
+
 <p>安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/ThreeDotsLabs/watermill
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/ThreeDotsLabs/watermill</code></pre></td></tr></table>
 </div>
-</div><p>使用：</p>
+</div>
+<p>使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -512,26 +523,36 @@ if (!doNotTrack) {
     <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;received message: %s, payload: %s&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Payload</span><span class="p">))</span>
     <span class="nx">msg</span><span class="p">.</span><span class="nf">Ack</span><span class="p">()</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>首先，我们创建一个<code>GoChannel</code>对象，它是一个消息管理器。可以调用其<code>Subscribe</code>订阅某个主题（<strong>topic</strong>）的消息，调用其<code>Publish()</code>以某个主题发布消息。<code>Subscribe()</code>方法会返回一个<code>&lt;-chan *message.Message</code>，一旦该主题有消息发布，<code>GoChannel</code>就会将消息发送到该管道中。订阅者只需监听此管道，接收消息进行处理。在上面的例子中，我们启动了一个消息处理的<code>goroutine</code>，持续从管道中读取消息，然后打印输出。主<code>goroutine</code>在一个死循环中每隔 1s 发布一次消息。</p>
+</div>
+<p>首先，我们创建一个<code>GoChannel</code>对象，它是一个消息管理器。可以调用其<code>Subscribe</code>订阅某个主题（<strong>topic</strong>）的消息，调用其<code>Publish()</code>以某个主题发布消息。<code>Subscribe()</code>方法会返回一个<code>&lt;-chan *message.Message</code>，一旦该主题有消息发布，<code>GoChannel</code>就会将消息发送到该管道中。订阅者只需监听此管道，接收消息进行处理。在上面的例子中，我们启动了一个消息处理的<code>goroutine</code>，持续从管道中读取消息，然后打印输出。主<code>goroutine</code>在一个死循环中每隔 1s 发布一次消息。</p>
+
 <p><code>message.Message</code>这个结构是<code>watermill</code>库的核心，每个消息都会封装到该结构中发送。<code>Message</code>保存的是原始的字节流（<code>[]byte</code>），所以可以将 JSON/protobuf/XML 等等格式的序列化结果保存到<code>Message</code>中。</p>
+
 <p>有两点注意：</p>
+
 <ul>
 <li>收到的每个消息都需要调用<code>Message</code>的<code>Ack()</code> 方法确认，否则<code>GoChannel</code>会重发当前消息；</li>
 <li><code>Message</code>有一个<code>UUID</code>字段，建议设置为唯一的，方便定位问题。<code>watermill</code>提供方法<code>NewUUID()</code>生成唯一 id。</li>
 </ul>
+
 <p>下面看示例运行：</p>
-<p><img src="/img/in-post/godailylib/watermill1.gif#center" alt=""></p>
+
+<p><img src="/img/in-post/godailylib/watermill1.gif#center" alt="" /></p>
+
 <h2 id="路由">路由</h2>
+
 <p>上面的发布和订阅实现是非常底层的模式。在实际应用中，我们通常想要监控、重试、统计等一些功能。而且上面的例子中，每个消息处理结束需要手动调用<code>Ack()</code>方法，消息管理器才会下发后面一条信息，很容易遗忘。还有些时候，我们有这样的需求，处理完某个消息后，重新发布另外一些消息。</p>
+
 <p>这些功能都是比较通用的，为此<code>watermill</code>提供了路由（<strong>Router</strong>）功能。直接拿来官网的图：</p>
-<p><img src="/img/in-post/godailylib/watermill2.svg#center" alt=""></p>
+
+<p><img src="/img/in-post/godailylib/watermill2.svg#center" alt="" /></p>
+
 <p>路由其实管理多个订阅者，每个订阅者在一个独立的<code>goroutine</code>中运行，彼此互不干扰。订阅者收到消息后，交由注册时指定的处理函数（<strong>HandlerFunc</strong>）。路由还可以设置插件（<strong>plugin</strong>）和中间件（<strong>middleware</strong>），插件是定制路由的行为，而中间件是定制处理器的行为。处理器处理消息后会返回若干消息，这些消息会被路由重新发布到（另一个）管理器中。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -630,31 +651,31 @@ if (!doNotTrack) {
 
   <span class="nx">msg</span> <span class="p">=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;message produced by myHandler&#34;</span><span class="p">))</span>
   <span class="k">return</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Messages</span><span class="p">{</span><span class="nx">msg</span><span class="p">},</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>首先，我们创建一个路由：</p>
+</div>
+<p>首先，我们创建一个路由：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewRouter</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">RouterConfig</span><span class="p">{},</span> <span class="nx">logger</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewRouter</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">RouterConfig</span><span class="p">{},</span> <span class="nx">logger</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>然后为路由注册处理器。注册的处理器有两种类型，一种是：</p>
+</div>
+<p>然后为路由注册处理器。注册的处理器有两种类型，一种是：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddHandler</span><span class="p">(</span><span class="s">&#34;myhandler&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">myHandler</span><span class="p">{}.</span><span class="nx">Handler</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddHandler</span><span class="p">(</span><span class="s">&#34;myhandler&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">myHandler</span><span class="p">{}.</span><span class="nx">Handler</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>这个方法原型为：</p>
+</div>
+<p>这个方法原型为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -671,28 +692,36 @@ if (!doNotTrack) {
   <span class="nx">publishTopic</span> <span class="kt">string</span><span class="p">,</span>
   <span class="nx">publisher</span> <span class="nx">Publisher</span><span class="p">,</span>
   <span class="nx">handlerFunc</span> <span class="nx">HandlerFunc</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">*</span><span class="nx">Handler</span>
-</code></pre></td></tr></table>
+<span class="p">)</span> <span class="o">*</span><span class="nx">Handler</span></code></pre></td></tr></table>
 </div>
-</div><p>该方法的作用是创建一个名为<code>handlerName</code>的处理器，监听<code>subscriber</code>中主题为<code>subscribeTopic</code>的消息，收到消息后调用<code>handlerFunc</code>处理，将返回的消息以主题<code>publishTopic</code>发布到<code>publisher</code>中。</p>
+</div>
+<p>该方法的作用是创建一个名为<code>handlerName</code>的处理器，监听<code>subscriber</code>中主题为<code>subscribeTopic</code>的消息，收到消息后调用<code>handlerFunc</code>处理，将返回的消息以主题<code>publishTopic</code>发布到<code>publisher</code>中。</p>
+
 <p>另外一种处理器是下面这种形式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_in_messages&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
-<span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_out_messages&#34;</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_out_messages&#34;</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>从名字我们也可以看出，这种形式的处理器只处理接收到的消息，不发布新消息。</p>
+</div>
+<p>从名字我们也可以看出，这种形式的处理器只处理接收到的消息，不发布新消息。</p>
+
 <p>最后，我们调用<code>router.Run()</code>运行这个路由。</p>
+
 <p>其中，创建<code>GoChannel</code>发布消息和上面的没什么不同。</p>
+
 <p><strong>使用路由还有个好处，处理器返回时，若无错误，路由会自动调用消息的<code>Ack()</code>方法；若发生错误，路由会调用消息的<code>Nack()</code>方法通知管理器重发这条消息。</strong></p>
+
 <p>上面只是路由的最基本用法，路由的强大之处在于中间件。</p>
+
 <h3 id="中间件">中间件</h3>
+
 <p><code>watermill</code>中内置了几个比较常用的中间件：</p>
+
 <ul>
 <li><code>IgnoreErrors</code>：可以忽略指定的错误；</li>
 <li><code>Throttle</code>：限流，限制单位时间内处理的消息数量；</li>
@@ -705,19 +734,20 @@ if (!doNotTrack) {
 <li><code>Correlation</code>：处理函数生成的消息都统一设置成原始消息中的<code>correlation id</code>，方便追踪消息来源；</li>
 <li><code>Recoverer</code>：捕获处理函数中的<code>panic</code>，包装成错误返回。</li>
 </ul>
+
 <p>中间件的使用也是比较简单和直接的：调用<code>router.AddMiddleware()</code>。例如，我们想要把处理返回的消息 double 一下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Duplicator</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Duplicator</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>想重试？可以：</p>
+</div>
+<p>想重试？可以：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -728,23 +758,24 @@ if (!doNotTrack) {
   <span class="nx">MaxRetries</span><span class="p">:</span>      <span class="mi">3</span><span class="p">,</span>
   <span class="nx">InitialInterval</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
   <span class="nx">Logger</span><span class="p">:</span>          <span class="nx">logger</span><span class="p">,</span>
-<span class="p">}.</span><span class="nx">Middleware</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<span class="p">}.</span><span class="nx">Middleware</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>上面设置最大重试次数为 3，重试初始时间间隔为 100ms。</p>
+</div>
+<p>上面设置最大重试次数为 3，重试初始时间间隔为 100ms。</p>
+
 <p>一般情况下，生产环境需要保证稳定性，某个处理异常不能影响后续的消息处理。故设置<code>Recoverer</code>是比较好的选择：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Recoverer</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Recoverer</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>也可以实现自己的中间件：</p>
+</div>
+<p>也可以实现自己的中间件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -763,13 +794,13 @@ if (!doNotTrack) {
     <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware after&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
     <span class="k">return</span> <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>中间件有两种实现方式，如果不需要参数或依赖，那么直接实现为函数即可，像上面这样。如果需要有参数，那么可以实现为一个结构：</p>
+</div>
+<p>中间件有两种实现方式，如果不需要参数或依赖，那么直接实现为函数即可，像上面这样。如果需要有参数，那么可以实现为一个结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -796,41 +827,42 @@ if (!doNotTrack) {
     <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware after&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
     <span class="k">return</span> <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>这两种中间件的添加方式有所不同，第一种直接添加：</p>
+</div>
+<p>这两种中间件的添加方式有所不同，第一种直接添加：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">MyMiddleware</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">MyMiddleware</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>第二种要构造一个对象，然后将其<code>Middleware</code>方法传入，在该方法中可以访问<code>MyMiddleware</code>对象的字段：</p>
+</div>
+<p>第二种要构造一个对象，然后将其<code>Middleware</code>方法传入，在该方法中可以访问<code>MyMiddleware</code>对象的字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">MyMiddleware</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}.</span><span class="nx">Middleware</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">MyMiddleware</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}.</span><span class="nx">Middleware</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="设置">设置</h2>
+</div>
+<h2 id="设置">设置</h2>
+
 <p>如果运行上面程序，你很可能会看到这样一条日志：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">No</span> <span class="nx">subscribers</span> <span class="nx">to</span> <span class="nx">send</span> <span class="nx">message</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">No</span> <span class="nx">subscribers</span> <span class="nx">to</span> <span class="nx">send</span> <span class="nx">message</span></code></pre></td></tr></table>
 </div>
-</div><p>因为发布消息是在另一个<code>goroutine</code>，我们没有控制何时发布，可能发布消息时，我们还未订阅。我们观察后面的处理日志，对比 uuid 发现这条消息直接被丢弃了。<code>watermill</code>提供了一个选项，可以将消息都保存下来，订阅某个主题时将该主题之前的消息也发送给它：</p>
+</div>
+<p>因为发布消息是在另一个<code>goroutine</code>，我们没有控制何时发布，可能发布消息时，我们还未订阅。我们观察后面的处理日志，对比 uuid 发现这条消息直接被丢弃了。<code>watermill</code>提供了一个选项，可以将消息都保存下来，订阅某个主题时将该主题之前的消息也发送给它：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -839,43 +871,46 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">pubSub</span> <span class="o">:=</span> <span class="nx">gochannel</span><span class="p">.</span><span class="nf">NewGoChannel</span><span class="p">(</span>
   <span class="nx">gochannel</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
     <span class="nx">Persistent</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="p">},</span> <span class="nx">logger</span><span class="p">)</span>
-</code></pre></td></tr></table>
+  <span class="p">},</span> <span class="nx">logger</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
-</div><p>创建<code>GoChannel</code>时将<code>Config</code>中<code>Persistent</code>字段设置为<code>true</code>即可。此时运行，我们仔细观察一下，出现<code>No subscribers to send message</code>信息的消息后续确实被处理了。</p>
+</div>
+<p>创建<code>GoChannel</code>时将<code>Config</code>中<code>Persistent</code>字段设置为<code>true</code>即可。此时运行，我们仔细观察一下，出现<code>No subscribers to send message</code>信息的消息后续确实被处理了。</p>
+
 <h2 id="rabbitmq">RabbitMQ</h2>
+
 <p>除了<code>GoChannel</code>，<code>watermill</code>还内置了其他的发布-订阅实现。这些实现除了发布-订阅器创建的方式不同，其他与我们之前介绍的基本一样。这里我们简单介绍一下<code>RabbitMQ</code>，其他的可自行研究。</p>
+
 <p>使用<code>RabbitMQ</code>需要先运行<code>RabbitMQ</code>程序，<code>RabbitMQ</code>采用<code>Erlang</code>开发。我们之前很多文章也介绍过 windows 上的软件安装神器<code>choco</code>。使用<code>choco</code>安装<code>RabbitMQ</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">choco</span> <span class="nx">install</span> <span class="nx">rabbitmq</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">choco</span> <span class="nx">install</span> <span class="nx">rabbitmq</span></code></pre></td></tr></table>
 </div>
-</div><p>启动<code>RabbitMQ</code>服务器：</p>
+</div>
+<p>启动<code>RabbitMQ</code>服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">rabbitmq</span><span class="o">-</span><span class="nx">server</span><span class="p">.</span><span class="nx">bat</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">rabbitmq</span><span class="o">-</span><span class="nx">server</span><span class="p">.</span><span class="nx">bat</span></code></pre></td></tr></table>
 </div>
-</div><p><code>watermill</code>对<code>RabbitMQ</code>的支持使用独立库的形式，需要另行安装：</p>
+</div>
+<p><code>watermill</code>对<code>RabbitMQ</code>的支持使用独立库的形式，需要另行安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">ThreeDotsLabs</span><span class="o">/</span><span class="nx">watermill</span><span class="o">-</span><span class="nx">amqp</span><span class="o">/</span><span class="nx">pkg</span><span class="o">/</span><span class="nx">amqp</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">ThreeDotsLabs</span><span class="o">/</span><span class="nx">watermill</span><span class="o">-</span><span class="nx">amqp</span><span class="o">/</span><span class="nx">pkg</span><span class="o">/</span><span class="nx">amqp</span></code></pre></td></tr></table>
 </div>
-</div><p>发布订阅：</p>
+</div>
+<p>发布订阅：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -968,22 +1003,31 @@ if (!doNotTrack) {
     <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;received message: %s, payload: %s&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Payload</span><span class="p">))</span>
     <span class="nx">msg</span><span class="p">.</span><span class="nf">Ack</span><span class="p">()</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>如果有自定义发布-订阅实现的需求，可以参考<code>RabbitMQ</code>的实现：<a href="github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp">github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp</a>。</p>
+</div>
+<p>如果有自定义发布-订阅实现的需求，可以参考<code>RabbitMQ</code>的实现：<a href="github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp">github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp</a>。</p>
+
 <h2 id="总结">总结</h2>
+
 <p><code>watermill</code>提供丰富的功能，且预留了扩展点，可自行扩展。另外，源码中处理<code>goroutine</code>创建和通信、多种并发模式的应用都是值得一看的。官方 GitHub 上还有一个事件驱动示例：<a href="https://github.com/ThreeDotsLabs/event-driven-example">https://github.com/ThreeDotsLabs/event-driven-example</a>。</p>
+
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
 <h2 id="参考">参考</h2>
+
 <ol>
 <li>watermill 官方文档：<a href="https://watermill.io/">https://watermill.io/</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
+
 <h2 id="我">我</h2>
+
 <p><a href="https://darjun.github.io">我的博客</a></p>
+
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
 
     </div>
 
@@ -1137,7 +1181,7 @@ if (!doNotTrack) {
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -1185,7 +1229,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 

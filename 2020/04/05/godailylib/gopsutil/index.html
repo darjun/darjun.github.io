@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/04/05/godailylib/gopsutil/" />
@@ -69,8 +69,10 @@
 <meta property="article:modified_time" content="2020-04-05T21:30:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 gopsutil">
 <meta itemprop="description" content="简介 gopsutil是 Python 工具库psutil 的 Golang 移植版，可以帮助我们方便地获取各种系统和硬件信息。gopsutil为我们屏蔽了各个系统之间的差">
-<meta itemprop="datePublished" content="2020-04-05T21:30:23+00:00" />
-<meta itemprop="dateModified" content="2020-04-05T21:30:23+00:00" />
+
+
+<meta itemprop="datePublished" content="2020-04-05T21:30:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-04-05T21:30:23&#43;00:00" />
 <meta itemprop="wordCount" content="4958">
 
 
@@ -382,77 +384,82 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#简介">简介</a></li>
-    <li><a href="#快速使用">快速使用</a></li>
-    <li><a href="#cpu">CPU</a>
-      <ul>
-        <li><a href="#详细信息">详细信息</a></li>
-        <li><a href="#时间占用">时间占用</a></li>
-      </ul>
-    </li>
-    <li><a href="#磁盘">磁盘</a>
-      <ul>
-        <li><a href="#io-统计">IO 统计</a></li>
-        <li><a href="#分区">分区</a></li>
-        <li><a href="#使用率">使用率</a></li>
-      </ul>
-    </li>
-    <li><a href="#主机">主机</a>
-      <ul>
-        <li><a href="#开机时间">开机时间</a></li>
-        <li><a href="#内核版本和平台信息">内核版本和平台信息</a></li>
-        <li><a href="#终端用户">终端用户</a></li>
-      </ul>
-    </li>
-    <li><a href="#内存">内存</a></li>
-    <li><a href="#进程">进程</a></li>
-    <li><a href="#windows-服务">Windows 服务</a></li>
-    <li><a href="#错误和超时">错误和超时</a></li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#参考">参考</a></li>
-    <li><a href="#我">我</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#cpu">CPU</a>
+<ul>
+<li><a href="#详细信息">详细信息</a></li>
+<li><a href="#时间占用">时间占用</a></li>
+</ul></li>
+<li><a href="#磁盘">磁盘</a>
+<ul>
+<li><a href="#io-统计">IO 统计</a></li>
+<li><a href="#分区">分区</a></li>
+<li><a href="#使用率">使用率</a></li>
+</ul></li>
+<li><a href="#主机">主机</a>
+<ul>
+<li><a href="#开机时间">开机时间</a></li>
+<li><a href="#内核版本和平台信息">内核版本和平台信息</a></li>
+<li><a href="#终端用户">终端用户</a></li>
+</ul></li>
+<li><a href="#内存">内存</a></li>
+<li><a href="#进程">进程</a></li>
+<li><a href="#windows-服务">Windows 服务</a></li>
+<li><a href="#错误和超时">错误和超时</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="简介">简介</h2>
+      
+
+<h2 id="简介">简介</h2>
+
 <p><code>gopsutil</code>是 Python 工具库<a href="https://github.com/giampaolo/psutil"><code>psutil</code></a> 的 Golang 移植版，可以帮助我们方便地获取各种系统和硬件信息。<code>gopsutil</code>为我们屏蔽了各个系统之间的差异，具有非常强悍的可移植性。有了<code>gopsutil</code>，我们不再需要针对不同的系统使用<code>syscall</code>调用对应的系统方法。更棒的是<code>gopsutil</code>的实现中没有任何<code>cgo</code>的代码，使得交叉编译成为可能。</p>
+
 <h2 id="快速使用">快速使用</h2>
+
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">shirou</span><span class="o">/</span><span class="nx">gopsutil</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">shirou</span><span class="o">/</span><span class="nx">gopsutil</span></code></pre></td></tr></table>
 </div>
-</div><p>由于<code>gopsutil</code>库用到了<code>golang.org/x/sys</code>，后者在墙外，如果有类似下面的报错：</p>
+</div>
+<p>由于<code>gopsutil</code>库用到了<code>golang.org/x/sys</code>，后者在墙外，如果有类似下面的报错：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">cannot</span> <span class="nx">find</span> <span class="kn">package</span> <span class="s">&#34;golang.org/x/sys/windows&#34;</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">cannot</span> <span class="nx">find</span> <span class="kn">package</span> <span class="s">&#34;golang.org/x/sys/windows&#34;</span></code></pre></td></tr></table>
 </div>
-</div><p>可使用下面的命令下载<code>golang.org/x/sys</code>在 GitHub 上的镜像：</p>
+</div>
+<p>可使用下面的命令下载<code>golang.org/x/sys</code>在 GitHub 上的镜像：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">git</span> <span class="nx">clone</span> <span class="nx">git</span><span class="err">@</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="p">:</span><span class="nx">golang</span><span class="o">/</span><span class="nx">sys</span><span class="p">.</span><span class="nx">git</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">golang</span><span class="p">.</span><span class="nx">org</span><span class="o">/</span><span class="nx">x</span><span class="o">/</span><span class="nx">sys</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">git</span> <span class="nx">clone</span> <span class="nx">git</span><span class="err">@</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="p">:</span><span class="nx">golang</span><span class="o">/</span><span class="nx">sys</span><span class="p">.</span><span class="nx">git</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">golang</span><span class="p">.</span><span class="nx">org</span><span class="o">/</span><span class="nx">x</span><span class="o">/</span><span class="nx">sys</span></code></pre></td></tr></table>
 </div>
-</div><p>使用：</p>
+</div>
+<p>使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -483,10 +490,11 @@ if (!doNotTrack) {
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Total: %v, Available: %v, UsedPercent:%f%%\n&#34;</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Total</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Available</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">UsedPercent</span><span class="p">)</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>gopsutil</code>将不同的功能划分到不同的子包中：</p>
+</div>
+<p><code>gopsutil</code>将不同的功能划分到不同的子包中：</p>
+
 <ul>
 <li><code>cpu</code>：CPU 相关；</li>
 <li><code>disk</code>：磁盘相关；</li>
@@ -497,28 +505,33 @@ if (!doNotTrack) {
 <li><code>process</code>：进程相关；</li>
 <li><code>winservices</code>：Windows 服务相关。</li>
 </ul>
+
 <p>想要使用对应的功能，要导入对应的子包。例如，上面代码中，我们要获取内存信息，导入的是<code>mem</code>子包。<code>mem.VirtualMemory()</code>方法返回内存信息结构<code>mem.VirtualMemoryStat</code>，该结构有丰富的字段，我们最常使用的无外乎<code>Total</code>（总内存）、<code>Available</code>（可用内存）、<code>Used</code>（已使用内存）和<code>UsedPercent</code>（内存使用百分比）。<code>mem.VirtualMemoryStat</code>还实现了<code>fmt.Stringer</code>接口，以 JSON 格式返回内存信息。语句<code>fmt.Println(v)</code>会自动调用<code>v.String()</code>，将返回信息输出。程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Total</span><span class="p">:</span> <span class="mi">8526921728</span><span class="p">,</span> <span class="nx">Available</span><span class="p">:</span> <span class="mi">3768975360</span><span class="p">,</span> <span class="nx">UsedPercent</span><span class="p">:</span><span class="mf">55.000000</span><span class="o">%</span>
-<span class="p">{</span><span class="s">&#34;total&#34;</span><span class="p">:</span><span class="mi">8526921728</span><span class="p">,</span><span class="s">&#34;available&#34;</span><span class="p">:</span><span class="mi">3768975360</span><span class="p">,</span><span class="s">&#34;used&#34;</span><span class="p">:</span><span class="mi">4757946368</span><span class="p">,</span><span class="s">&#34;usedPercent&#34;</span><span class="p">:</span><span class="mi">55</span><span class="p">,</span><span class="s">&#34;free&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;active&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;inactive&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;wired&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;laundry&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;buffers&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;cached&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;writeback&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;dirty&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;writebacktmp&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;shared&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;slab&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;sreclaimable&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;sunreclaim&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;pagetables&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;swapcached&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;commitlimit&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;committedas&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;hightotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;highfree&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;lowtotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;lowfree&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;swaptotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;swapfree&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;mapped&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;vmalloctotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;vmallocused&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;vmallocchunk&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;hugepagestotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;hugepagesfree&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;hugepagesize&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">{</span><span class="s">&#34;total&#34;</span><span class="p">:</span><span class="mi">8526921728</span><span class="p">,</span><span class="s">&#34;available&#34;</span><span class="p">:</span><span class="mi">3768975360</span><span class="p">,</span><span class="s">&#34;used&#34;</span><span class="p">:</span><span class="mi">4757946368</span><span class="p">,</span><span class="s">&#34;usedPercent&#34;</span><span class="p">:</span><span class="mi">55</span><span class="p">,</span><span class="s">&#34;free&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;active&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;inactive&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;wired&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;laundry&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;buffers&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;cached&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;writeback&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;dirty&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;writebacktmp&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;shared&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;slab&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;sreclaimable&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;sunreclaim&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;pagetables&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;swapcached&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;commitlimit&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;committedas&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;hightotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;highfree&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;lowtotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;lowfree&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;swaptotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;swapfree&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;mapped&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;vmalloctotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;vmallocused&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;vmallocchunk&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;hugepagestotal&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;hugepagesfree&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&#34;hugepagesize&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>单位为字节，我的电脑内存 8GB，当前使用百分比为 55%，可用内存 3768975360B（即 3.51GB）。</p>
+</div>
+<p>单位为字节，我的电脑内存 8GB，当前使用百分比为 55%，可用内存 3768975360B（即 3.51GB）。</p>
+
 <h2 id="cpu">CPU</h2>
+
 <p>我们知道 CPU 的核数有两种，一种是物理核数，一种是逻辑核数。物理核数就是主板上实际有多少个 CPU，一个物理 CPU 上可以有多个核心，这些核心被称为逻辑核。<code>gopsutil</code>中 CPU 相关功能在<code>cpu</code>子包中，<code>cpu</code>子包提供了获取物理和逻辑核数、CPU 使用率的接口：</p>
+
 <ul>
 <li><code>Counts(logical bool)</code>：传入<code>false</code>，返回物理核数，传入<code>true</code>，返回逻辑核数；</li>
 <li><code>Percent(interval time.Duration, percpu bool)</code>：表示获取<code>interval</code>时间间隔内的 CPU 使用率，<code>percpu</code>为<code>false</code>时，获取总的 CPU 使用率，<code>percpu</code>为<code>true</code>时，分别获取每个 CPU 的使用率，返回一个<code>[]float64</code>类型的值。</li>
 </ul>
+
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -537,25 +550,26 @@ if (!doNotTrack) {
   <span class="nx">totalPercent</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">cpu</span><span class="p">.</span><span class="nf">Percent</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
   <span class="nx">perPercents</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">cpu</span><span class="p">.</span><span class="nf">Percent</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;total percent:%v per percents:%v&#34;</span><span class="p">,</span> <span class="nx">totalPercent</span><span class="p">,</span> <span class="nx">perPercents</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面代码获取物理核数和逻辑核数，并获取 3s 内的总 CPU 使用率和每个 CPU 各自的使用率，程序输出（注意每次运行输出可能都不相同）：</p>
+</div>
+<p>上面代码获取物理核数和逻辑核数，并获取 3s 内的总 CPU 使用率和每个 CPU 各自的使用率，程序输出（注意每次运行输出可能都不相同）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">physical</span> <span class="nx">count</span><span class="p">:</span><span class="mi">4</span> <span class="nx">logical</span> <span class="nx">count</span><span class="p">:</span><span class="mi">8</span>
-<span class="nx">total</span> <span class="nx">percent</span><span class="p">:[</span><span class="mf">30.729166666666668</span><span class="p">]</span> <span class="nx">per</span> <span class="nx">percents</span><span class="p">:[</span><span class="mf">32.64248704663213</span> <span class="mf">26.94300518134715</span> <span class="mf">44.559585492227974</span> <span class="mf">23.958333333333336</span> <span class="mf">36.787564766839374</span> <span class="mf">20.3125</span> <span class="mf">38.54166666666667</span> <span class="mf">28.125</span><span class="p">]</span>
-</code></pre></td></tr></table>
+<span class="nx">total</span> <span class="nx">percent</span><span class="p">:[</span><span class="mf">30.729166666666668</span><span class="p">]</span> <span class="nx">per</span> <span class="nx">percents</span><span class="p">:[</span><span class="mf">32.64248704663213</span> <span class="mf">26.94300518134715</span> <span class="mf">44.559585492227974</span> <span class="mf">23.958333333333336</span> <span class="mf">36.787564766839374</span> <span class="mf">20.3125</span> <span class="mf">38.54166666666667</span> <span class="mf">28.125</span><span class="p">]</span></code></pre></td></tr></table>
 </div>
-</div><h3 id="详细信息">详细信息</h3>
+</div>
+<h3 id="详细信息">详细信息</h3>
+
 <p>调用<code>cpu.Info()</code>可获取 CPU 的详细信息，返回<code>[]cpu.InfoStat</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -570,13 +584,13 @@ if (!doNotTrack) {
     <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">MarshalIndent</span><span class="p">(</span><span class="nx">info</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34; &#34;</span><span class="p">)</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>为了方便查看，我使用 JSON 输出结果：</p>
+</div>
+<p>为了方便查看，我使用 JSON 输出结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -607,15 +621,17 @@ if (!doNotTrack) {
  <span class="s">&#34;cacheSize&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
  <span class="s">&#34;flags&#34;</span><span class="p">:</span> <span class="p">[],</span>
  <span class="s">&#34;microcode&#34;</span><span class="p">:</span> <span class="s">&#34;&#34;</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>由结果可以看出，CPU 是 Intel 的 i7-7700 系列，频率 3.60GHz。上面是我在 Windows 上运行的返回结果，内部使用了<code>github.com/StackExchange/wmi</code>库。在 Linux 下每个逻辑 CPU 都会返回一个<code>InfoStat</code>结构。</p>
+</div>
+<p>由结果可以看出，CPU 是 Intel 的 i7-7700 系列，频率 3.60GHz。上面是我在 Windows 上运行的返回结果，内部使用了<code>github.com/StackExchange/wmi</code>库。在 Linux 下每个逻辑 CPU 都会返回一个<code>InfoStat</code>结构。</p>
+
 <h3 id="时间占用">时间占用</h3>
+
 <p>调用<code>cpu.Times(percpu bool)</code>可以获取从开机算起，总 CPU 和 每个单独的 CPU 时间占用情况。传入<code>percpu=false</code>返回总的，传入<code>percpu=true</code>返回单个的。每个 CPU 时间占用情况是一个<code>TimeStat</code>结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -644,20 +660,21 @@ if (!doNotTrack) {
   <span class="nx">Steal</span>     <span class="kt">float64</span> <span class="s">`json:&#34;steal&#34;`</span>
   <span class="nx">Guest</span>     <span class="kt">float64</span> <span class="s">`json:&#34;guest&#34;`</span>
   <span class="nx">GuestNice</span> <span class="kt">float64</span> <span class="s">`json:&#34;guestNice&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><ul>
+</div>
+<ul>
 <li><code>CPU</code>：CPU 标识，如果是总的，该字段为<code>cpu-total</code>，否则为<code>cpu0</code>、<code>cpu1</code>&hellip;；</li>
 <li><code>User</code>：用户时间占用（用户态）；</li>
 <li><code>System</code>：系统时间占用（内核态）；</li>
 <li><code>Idle</code>：空闲时间；</li>
 <li>&hellip;</li>
 </ul>
+
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -672,13 +689,13 @@ if (!doNotTrack) {
     <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">MarshalIndent</span><span class="p">(</span><span class="nx">info</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34; &#34;</span><span class="p">)</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>为了方便查看，我用 JSON 输出结果，下面是其中一个输出：</p>
+</div>
+<p>为了方便查看，我用 JSON 输出结果，下面是其中一个输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -705,16 +722,19 @@ if (!doNotTrack) {
  <span class="s">&#34;steal&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
  <span class="s">&#34;guest&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
  <span class="s">&#34;guestNice&#34;</span><span class="p">:</span> <span class="mi">0</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="磁盘">磁盘</h2>
+</div>
+<h2 id="磁盘">磁盘</h2>
+
 <p>子包<code>disk</code>用于获取磁盘信息。<code>disk</code>可获取 IO 统计、分区和使用率信息。下面依次介绍。</p>
+
 <h3 id="io-统计">IO 统计</h3>
+
 <p>调用<code>disk.IOCounters()</code>函数，返回的 IO 统计信息用<code>map[string]IOCountersStat</code>类型表示。每个分区一个结构，键为分区名，值为统计信息。这里摘取统计结构的部分字段，主要有读写的次数、字节数和时间：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -739,13 +759,13 @@ if (!doNotTrack) {
   <span class="nx">ReadTime</span>         <span class="kt">uint64</span> <span class="s">`json:&#34;readTime&#34;`</span>
   <span class="nx">WriteTime</span>        <span class="kt">uint64</span> <span class="s">`json:&#34;writeTime&#34;`</span>
   <span class="c1">// ...
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>例如：</p>
+</div>
+<p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -762,13 +782,13 @@ if (!doNotTrack) {
     <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">MarshalIndent</span><span class="p">(</span><span class="nx">stat</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;  &#34;</span><span class="p">)</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>输出包括所有分区，我这里只展示一个：</p>
+</div>
+<p>输出包括所有分区，我这里只展示一个：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -803,15 +823,17 @@ if (!doNotTrack) {
   <span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="s">&#34;C:&#34;</span><span class="p">,</span>
   <span class="s">&#34;serialNumber&#34;</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
   <span class="s">&#34;label&#34;</span><span class="p">:</span> <span class="s">&#34;&#34;</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>注意，<code>disk.IOCounters()</code>可传入可变数量的字符串参数用于标识分区，<strong>此参数在 Windows 上无效</strong>。</p>
+</div>
+<p>注意，<code>disk.IOCounters()</code>可传入可变数量的字符串参数用于标识分区，<strong>此参数在 Windows 上无效</strong>。</p>
+
 <h3 id="分区">分区</h3>
+
 <p>调用<code>disk.PartitionStat(all bool)</code>函数，返回分区信息。如果<code>all = false</code>，只返回实际的物理分区（包括硬盘、CD-ROM、USB），忽略其它的虚拟分区。如果<code>all = true</code>则返回所有的分区。返回类型为<code>[]PartitionStat</code>，每个分区对应一个<code>PartitionStat</code>结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -826,19 +848,20 @@ if (!doNotTrack) {
   <span class="nx">Mountpoint</span> <span class="kt">string</span> <span class="s">`json:&#34;mountpoint&#34;`</span>
   <span class="nx">Fstype</span>     <span class="kt">string</span> <span class="s">`json:&#34;fstype&#34;`</span>
   <span class="nx">Opts</span>       <span class="kt">string</span> <span class="s">`json:&#34;opts&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><ul>
+</div>
+<ul>
 <li><code>Device</code>：分区标识，在 Windows 上即为<code>C:</code>这类格式；</li>
 <li><code>Mountpoint</code>：挂载点，即该分区的文件路径起始位置；</li>
 <li><code>Fstype</code>：文件系统类型，Windows 常用的有 FAT、NTFS 等，Linux 有 ext、ext2、ext3等；</li>
 <li><code>Opts</code>：选项，与系统相关。</li>
 </ul>
+
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -853,13 +876,13 @@ if (!doNotTrack) {
     <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">MarshalIndent</span><span class="p">(</span><span class="nx">info</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;  &#34;</span><span class="p">)</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>我的 Windows 机器输出（只展示第一个分区）：</p>
+</div>
+<p>我的 Windows 机器输出（只展示第一个分区）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -872,15 +895,17 @@ if (!doNotTrack) {
   <span class="s">&#34;mountpoint&#34;</span><span class="p">:</span> <span class="s">&#34;C:&#34;</span><span class="p">,</span>
   <span class="s">&#34;fstype&#34;</span><span class="p">:</span> <span class="s">&#34;NTFS&#34;</span><span class="p">,</span>
   <span class="s">&#34;opts&#34;</span><span class="p">:</span> <span class="s">&#34;rw.compress&#34;</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>由上面的输出可知，我的第一个分区为<code>C:</code>，文件系统类型为<code>NTFS</code>。</p>
+</div>
+<p>由上面的输出可知，我的第一个分区为<code>C:</code>，文件系统类型为<code>NTFS</code>。</p>
+
 <h3 id="使用率">使用率</h3>
+
 <p>调用<code>disk.Usage(path string)</code>即可获得路径<code>path</code>所在磁盘的使用情况，返回一个<code>UsageStat</code>结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -907,10 +932,10 @@ if (!doNotTrack) {
   <span class="nx">InodesUsed</span>        <span class="kt">uint64</span>  <span class="s">`json:&#34;inodesUsed&#34;`</span>
   <span class="nx">InodesFree</span>        <span class="kt">uint64</span>  <span class="s">`json:&#34;inodesFree&#34;`</span>
   <span class="nx">InodesUsedPercent</span> <span class="kt">float64</span> <span class="s">`json:&#34;inodesUsedPercent&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><ul>
+</div>
+<ul>
 <li><code>Path</code>：路径，传入的参数；</li>
 <li><code>Fstype</code>：文件系统类型；</li>
 <li><code>Total</code>：该分区总容量；</li>
@@ -918,10 +943,11 @@ if (!doNotTrack) {
 <li><code>Used</code>：已使用的容量；</li>
 <li><code>UsedPercent</code>：使用百分比。</li>
 </ul>
+
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -932,13 +958,13 @@ if (!doNotTrack) {
   <span class="nx">info</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">disk</span><span class="p">.</span><span class="nf">Usage</span><span class="p">(</span><span class="s">&#34;D:/code/golang&#34;</span><span class="p">)</span>
   <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">MarshalIndent</span><span class="p">(</span><span class="nx">info</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;  &#34;</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>由于返回的是磁盘的使用情况，所以路径<code>D:/code/golang</code>和<code>D:</code>返回同样的结果，只是结构中的<code>Path</code>字段不同而已。程序输出：</p>
+</div>
+<p>由于返回的是磁盘的使用情况，所以路径<code>D:/code/golang</code>和<code>D:</code>返回同样的结果，只是结构中的<code>Path</code>字段不同而已。程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -963,16 +989,19 @@ if (!doNotTrack) {
   <span class="s">&#34;inodesUsed&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
   <span class="s">&#34;inodesFree&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
   <span class="s">&#34;inodesUsedPercent&#34;</span><span class="p">:</span> <span class="mi">0</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="主机">主机</h2>
+</div>
+<h2 id="主机">主机</h2>
+
 <p>子包<code>host</code>可以获取主机相关信息，如开机时间、内核版本号、平台信息等等。</p>
+
 <h3 id="开机时间">开机时间</h3>
+
 <p><code>host.BootTime()</code>返回主机开机时间的时间戳：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -983,22 +1012,22 @@ if (!doNotTrack) {
   <span class="nx">timestamp</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">host</span><span class="p">.</span><span class="nf">BootTime</span><span class="p">()</span>
   <span class="nx">t</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Unix</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">timestamp</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">Local</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面先获取开机时间，然后通过<code>time.Unix()</code>将其转为<code>time.Time</code>类型，最后输出<code>2006-01-02 15:04:05</code>格式的时间：</p>
+</div>
+<p>上面先获取开机时间，然后通过<code>time.Unix()</code>将其转为<code>time.Time</code>类型，最后输出<code>2006-01-02 15:04:05</code>格式的时间：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="mi">2020</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mo">06</span> <span class="mi">20</span><span class="p">:</span><span class="mi">25</span><span class="p">:</span><span class="mi">32</span>
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="mi">2020</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mo">06</span> <span class="mi">20</span><span class="p">:</span><span class="mi">25</span><span class="p">:</span><span class="mi">32</span></code></pre></td></tr></table>
 </div>
-</div><h3 id="内核版本和平台信息">内核版本和平台信息</h3>
+</div>
+<h3 id="内核版本和平台信息">内核版本和平台信息</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1017,13 +1046,13 @@ if (!doNotTrack) {
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;platform:&#34;</span><span class="p">,</span> <span class="nx">platform</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;family:&#34;</span><span class="p">,</span> <span class="nx">family</span><span class="p">,</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;version:&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>在我的 Win10 上运行输出：</p>
+</div>
+<p>在我的 Win10 上运行输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1032,14 +1061,15 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="mf">10.0.18362</span> <span class="nx">Build</span> <span class="mi">18362</span>
 <span class="nx">platform</span><span class="p">:</span> <span class="nx">Microsoft</span> <span class="nx">Windows</span> <span class="mi">10</span> <span class="nx">Pro</span>
 <span class="nx">family</span><span class="p">:</span> <span class="nx">Standalone</span> <span class="nx">Workstation</span>
-<span class="nx">version</span><span class="p">:</span> <span class="mf">10.0.18362</span> <span class="nx">Build</span> <span class="mi">18362</span>
-</code></pre></td></tr></table>
+<span class="nx">version</span><span class="p">:</span> <span class="mf">10.0.18362</span> <span class="nx">Build</span> <span class="mi">18362</span></code></pre></td></tr></table>
 </div>
-</div><h3 id="终端用户">终端用户</h3>
+</div>
+<h3 id="终端用户">终端用户</h3>
+
 <p><code>host.Users()</code>返回终端连接上来的用户信息，每个用户一个<code>UserStat</code>结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1054,13 +1084,13 @@ if (!doNotTrack) {
   <span class="nx">Terminal</span> <span class="kt">string</span> <span class="s">`json:&#34;terminal&#34;`</span>
   <span class="nx">Host</span>     <span class="kt">string</span> <span class="s">`json:&#34;host&#34;`</span>
   <span class="nx">Started</span>  <span class="kt">int</span>    <span class="s">`json:&#34;started&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>字段一目了然，看示例：</p>
+</div>
+<p>字段一目了然，看示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1075,14 +1105,15 @@ if (!doNotTrack) {
     <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">MarshalIndent</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34; &#34;</span><span class="p">)</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="内存">内存</h2>
-<p>在<a href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B">快速开始</a>中，我们演示了如何使用<code>mem.VirtualMemory()</code>来获取内存信息。该函数返回的只是物理内存信息。我们还可以使用<code>mem.SwapMemory()</code>获取交换内存的信息，信息存储在结构<code>SwapMemoryStat</code>中：</p>
+</div>
+<h2 id="内存">内存</h2>
+
+<p>在<a href="#快速开始">快速开始</a>中，我们演示了如何使用<code>mem.VirtualMemory()</code>来获取内存信息。该函数返回的只是物理内存信息。我们还可以使用<code>mem.SwapMemory()</code>获取交换内存的信息，信息存储在结构<code>SwapMemoryStat</code>中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1107,14 +1138,15 @@ if (!doNotTrack) {
   <span class="nx">PgIn</span>        <span class="kt">uint64</span>  <span class="s">`json:&#34;pgin&#34;`</span>
   <span class="nx">PgOut</span>       <span class="kt">uint64</span>  <span class="s">`json:&#34;pgout&#34;`</span>
   <span class="nx">PgFault</span>     <span class="kt">uint64</span>  <span class="s">`json:&#34;pgfault&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>字段含义很容易理解，<code>PgIn/PgOut/PgFault</code>这三个字段我们重点介绍一下。交换内存是以<strong>页</strong>为单位的，如果出现缺页错误(<code>page fault</code>)，操作系统会将磁盘中的某些页载入内存，同时会根据特定的机制淘汰一些内存中的页。<code>PgIn</code>表征载入页数，<code>PgOut</code>淘汰页数，<code>PgFault</code>缺页错误数。</p>
+</div>
+<p>字段含义很容易理解，<code>PgIn/PgOut/PgFault</code>这三个字段我们重点介绍一下。交换内存是以<strong>页</strong>为单位的，如果出现缺页错误(<code>page fault</code>)，操作系统会将磁盘中的某些页载入内存，同时会根据特定的机制淘汰一些内存中的页。<code>PgIn</code>表征载入页数，<code>PgOut</code>淘汰页数，<code>PgFault</code>缺页错误数。</p>
+
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1125,14 +1157,15 @@ if (!doNotTrack) {
   <span class="nx">swapMemory</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">mem</span><span class="p">.</span><span class="nf">SwapMemory</span><span class="p">()</span>
   <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">MarshalIndent</span><span class="p">(</span><span class="nx">swapMemory</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34; &#34;</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="进程">进程</h2>
+</div>
+<h2 id="进程">进程</h2>
+
 <p><code>process</code>可用于获取系统当前运行的进程信息，创建新进程，对进程进行一些操作等。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1169,15 +1202,17 @@ if (!doNotTrack) {
   <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">p</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">children</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>先调用<code>process.Processes()</code>获取当前系统中运行的所有进程，然后找到<code>Pid</code>为 0 的进程，即操作系统的第一个进程，最后调用<code>Children()</code>返回其子进程。还有很多方法可获取进程信息，感兴趣可查看文档了解~</p>
+</div>
+<p>先调用<code>process.Processes()</code>获取当前系统中运行的所有进程，然后找到<code>Pid</code>为 0 的进程，即操作系统的第一个进程，最后调用<code>Children()</code>返回其子进程。还有很多方法可获取进程信息，感兴趣可查看文档了解~</p>
+
 <h2 id="windows-服务">Windows 服务</h2>
+
 <p><code>winservices</code>子包可以获取 Windows 系统中的服务信息，内部使用了<code>golang.org/x/sys</code>包。在<code>winservices</code>中，一个服务对应一个<code>Service</code>结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1192,13 +1227,13 @@ if (!doNotTrack) {
   <span class="nx">Config</span> <span class="nx">mgr</span><span class="p">.</span><span class="nx">Config</span>
   <span class="nx">Status</span> <span class="nx">ServiceStatus</span>
   <span class="c1">// contains filtered or unexported fields
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>mgr.Config</code>为包<code>golang.org/x/sys</code>中的结构，该结构详细记录了服务类型、启动类型（自动/手动）、二进制文件路径等信息：</p>
+</div>
+<p><code>mgr.Config</code>为包<code>golang.org/x/sys</code>中的结构，该结构详细记录了服务类型、启动类型（自动/手动）、二进制文件路径等信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1231,13 +1266,13 @@ if (!doNotTrack) {
   <span class="nx">Description</span>      <span class="kt">string</span>
   <span class="nx">SidType</span>          <span class="kt">uint32</span>
   <span class="nx">DelayedAutoStart</span> <span class="kt">bool</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>ServiceStatus</code>结构记录了服务的状态：</p>
+</div>
+<p><code>ServiceStatus</code>结构记录了服务的状态：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1252,19 +1287,20 @@ if (!doNotTrack) {
   <span class="nx">Accepts</span>       <span class="nx">svc</span><span class="p">.</span><span class="nx">Accepted</span>
   <span class="nx">Pid</span>           <span class="kt">uint32</span>
   <span class="nx">Win32ExitCode</span> <span class="kt">uint32</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><ul>
+</div>
+<ul>
 <li><code>State</code>：为服务状态，有已停止、运行、暂停等；</li>
 <li><code>Accepts</code>：表示服务接收哪些操作，有暂停、继续、会话切换等；</li>
 <li><code>Pid</code>：进程 ID；</li>
 <li><code>Win32ExitCode</code>：应用程序退出状态码。</li>
 </ul>
+
 <p>下面程序中，我将系统中所有服务的名称、二进制文件路径和状态输出到控制台：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1283,16 +1319,19 @@ if (!doNotTrack) {
     <span class="nx">newservice</span><span class="p">.</span><span class="nf">GetServiceDetail</span><span class="p">()</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Name:&#34;</span><span class="p">,</span> <span class="nx">newservice</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="s">&#34;Binary Path:&#34;</span><span class="p">,</span> <span class="nx">newservice</span><span class="p">.</span><span class="nx">Config</span><span class="p">.</span><span class="nx">BinaryPathName</span><span class="p">,</span> <span class="s">&#34;State: &#34;</span><span class="p">,</span> <span class="nx">newservice</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">State</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>注意，调用<code>winservices.ListServices()</code>返回的<code>Service</code>对象信息是不全的，我们通过<code>NewService()</code>以该服务名称创建一个服务，然后调用<code>GetServiceDetail()</code>方法获取该服务的详细信息。不能直接通过<code>service.GetServiceDetail()</code>来调用，因为<code>ListService()</code>返回的对象缺少必要的系统资源句柄（为了节约资源），调用<code>GetServiceDetail()</code>方法会<code>panic</code>！！！</p>
+</div>
+<p>注意，调用<code>winservices.ListServices()</code>返回的<code>Service</code>对象信息是不全的，我们通过<code>NewService()</code>以该服务名称创建一个服务，然后调用<code>GetServiceDetail()</code>方法获取该服务的详细信息。不能直接通过<code>service.GetServiceDetail()</code>来调用，因为<code>ListService()</code>返回的对象缺少必要的系统资源句柄（为了节约资源），调用<code>GetServiceDetail()</code>方法会<code>panic</code>！！！</p>
+
 <h2 id="错误和超时">错误和超时</h2>
+
 <p>由于大部分函数都涉及到底层的系统调用，所以发生错误和超时是在所难免的。几乎所有的接口都有两个返回值，第二个作为错误。在前面的例子中，我们为了简化代码都忽略了错误，在实际使用中，建议对错误进行处理。</p>
+
 <p>另外，大部分接口都是一对，一个不带<code>context.Context</code>类型的参数，另一个带有该类型参数，用于做上下文控制。在内部调用发生错误或超时后能及时处理，避免长时间等待返回。实际上，不带<code>context.Context</code>参数的函数内部都是以<code>context.Background()</code>为参数调用带有<code>context.Context</code>的函数的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1309,21 +1348,29 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="nf">TimesWithContext</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">percpu</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">([]</span><span class="nx">TimesStat</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// ...
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="总结">总结</h2>
+</div>
+<h2 id="总结">总结</h2>
+
 <p><code>gopsutil</code>库方便了我们获取本机的信息，且很好地处理了各个系统间的兼容问题，提供了一致的接口。还有几个子包例如<code>net/docker</code>限于篇幅没有介绍，感兴趣的童鞋可自行探索。</p>
+
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
 <h2 id="参考">参考</h2>
+
 <ol>
 <li>gopsutil GitHub：<a href="https://github.com/shirou/gopsutil">https://github.com/shirou/gopsutil</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
+
 <h2 id="我">我</h2>
+
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
 
     </div>
 
@@ -1477,7 +1524,7 @@ if (!doNotTrack) {
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -1525,7 +1572,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 

@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.60.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/06/22/godailylib/cli/" />
@@ -69,8 +69,10 @@
 <meta property="article:modified_time" content="2020-06-22T08:46:23+00:00" />
 <meta itemprop="name" content="Go 每日一库之 cli">
 <meta itemprop="description" content="简介 cli是一个用于构建命令行程序的库。我们之前也介绍过一个用于构建命令行程序的库cobra。在功能上来说两者差不多，cobra的优势是提供">
-<meta itemprop="datePublished" content="2020-06-22T08:46:23+00:00" />
-<meta itemprop="dateModified" content="2020-06-22T08:46:23+00:00" />
+
+
+<meta itemprop="datePublished" content="2020-06-22T08:46:23&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-22T08:46:23&#43;00:00" />
 <meta itemprop="wordCount" content="5634">
 
 
@@ -382,73 +384,79 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-  <ul>
-    <li><a href="#简介">简介</a></li>
-    <li><a href="#快速使用">快速使用</a></li>
-    <li><a href="#参数">参数</a></li>
-    <li><a href="#选项">选项</a>
-      <ul>
-        <li><a href="#存入变量">存入变量</a></li>
-        <li><a href="#占位值">占位值</a></li>
-        <li><a href="#别名">别名</a></li>
-        <li><a href="#环境变量">环境变量</a></li>
-        <li><a href="#文件">文件</a></li>
-        <li><a href="#选项优先级">选项优先级</a></li>
-        <li><a href="#组合短选项">组合短选项</a></li>
-        <li><a href="#必要选项">必要选项</a></li>
-        <li><a href="#帮助文本中的默认值">帮助文本中的默认值</a></li>
-      </ul>
-    </li>
-    <li><a href="#子命令">子命令</a>
-      <ul>
-        <li><a href="#分类">分类</a></li>
-      </ul>
-    </li>
-    <li><a href="#自定义帮助信息">自定义帮助信息</a></li>
-    <li><a href="#内置选项">内置选项</a>
-      <ul>
-        <li><a href="#帮助选项">帮助选项</a></li>
-        <li><a href="#版本选项">版本选项</a></li>
-      </ul>
-    </li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#参考">参考</a></li>
-    <li><a href="#我">我</a></li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#快速使用">快速使用</a></li>
+<li><a href="#参数">参数</a></li>
+<li><a href="#选项">选项</a>
+<ul>
+<li><a href="#存入变量">存入变量</a></li>
+<li><a href="#占位值">占位值</a></li>
+<li><a href="#别名">别名</a></li>
+<li><a href="#环境变量">环境变量</a></li>
+<li><a href="#文件">文件</a></li>
+<li><a href="#选项优先级">选项优先级</a></li>
+<li><a href="#组合短选项">组合短选项</a></li>
+<li><a href="#必要选项">必要选项</a></li>
+<li><a href="#帮助文本中的默认值">帮助文本中的默认值</a></li>
+</ul></li>
+<li><a href="#子命令">子命令</a>
+<ul>
+<li><a href="#分类">分类</a></li>
+</ul></li>
+<li><a href="#自定义帮助信息">自定义帮助信息</a></li>
+<li><a href="#内置选项">内置选项</a>
+<ul>
+<li><a href="#帮助选项">帮助选项</a></li>
+<li><a href="#版本选项">版本选项</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#参考">参考</a></li>
+<li><a href="#我">我</a></li>
+</ul></li>
+</ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      <h2 id="简介">简介</h2>
+      
+
+<h2 id="简介">简介</h2>
+
 <p><a href="https://github.com/urfave/cli"><code>cli</code></a>是一个用于构建命令行程序的库。我们之前也介绍过一个用于构建命令行程序的库<a href="https://darjun.github.io/2020/01/17/godailylib/cobra/"><code>cobra</code></a>。在功能上来说两者差不多，<code>cobra</code>的优势是提供了一个脚手架，方便开发。<code>cli</code>非常简洁，所有的初始化操作就是创建一个<code>cli.App</code>结构的对象。通过为对象的字段赋值来添加相应的功能。</p>
+
 <p><code>cli</code>与我们上一篇文章介绍的<code>negroni</code>是同一个作者<a href="https://github.com/urfave">urfave</a>。</p>
+
 <h2 id="快速使用">快速使用</h2>
+
 <p><code>cli</code>需要搭配 Go Modules 使用。创建目录并初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir cli <span class="p">&amp;&amp;</span> <span class="k">cd</span> cli
-$ go mod init github.com/darjun/go-daily-lib/cli
-</code></pre></td></tr></table>
+$ go mod init github.com/darjun/go-daily-lib/cli</code></pre></td></tr></table>
 </div>
-</div><p>安装<code>cli</code>库，有<code>v1</code>和<code>v2</code>两个版本。如果没有特殊需求，一般安装<code>v2</code>版本：</p>
+</div>
+<p>安装<code>cli</code>库，有<code>v1</code>和<code>v2</code>两个版本。如果没有特殊需求，一般安装<code>v2</code>版本：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/urfave/cli/v2
-</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/urfave/cli/v2</code></pre></td></tr></table>
 </div>
-</div><p>使用：</p>
+</div>
+<p>使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -499,40 +507,41 @@ $ go mod init github.com/darjun/go-daily-lib/cli
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>使用非常简单，理论上创建一个<code>cli.App</code>结构的对象，然后调用其<code>Run()</code>方法，传入命令行的参数即可。一个空白的<code>cli</code>应用程序如下：</p>
+</div>
+<p>使用非常简单，理论上创建一个<code>cli.App</code>结构的对象，然后调用其<code>Run()</code>方法，传入命令行的参数即可。一个空白的<code>cli</code>应用程序如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="p">(</span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{}).</span><span class="nf">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>但是这个空白程序没有什么用处。我们的<code>hello world</code>程序，设置了<code>Name/Usage/Action</code>。<code>Name</code>和<code>Usage</code>都显示在帮助中，<code>Action</code>是调用该命令行程序时实际执行的函数，需要的信息可以从参数<code>cli.Context</code>获取。</p>
+</div>
+<p>但是这个空白程序没有什么用处。我们的<code>hello world</code>程序，设置了<code>Name/Usage/Action</code>。<code>Name</code>和<code>Usage</code>都显示在帮助中，<code>Action</code>是调用该命令行程序时实际执行的函数，需要的信息可以从参数<code>cli.Context</code>获取。</p>
+
 <p>编译、运行（环境：Win10 + Git Bash）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go build -o hello
 $ ./hello
-hello world
-</code></pre></td></tr></table>
+hello world</code></pre></td></tr></table>
 </div>
-</div><p>除了这些，<code>cli</code>为我们额外生成了帮助信息：</p>
+</div>
+<p>除了这些，<code>cli</code>为我们额外生成了帮助信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -557,19 +566,22 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h  show help (default: false)
-</code></pre></td></tr></table>
+   --help, -h  show help (default: false)</code></pre></td></tr></table>
 </div>
-</div><h2 id="参数">参数</h2>
+</div>
+<h2 id="参数">参数</h2>
+
 <p>通过<code>cli.Context</code>的相关方法我们可以获取传给命令行的参数信息：</p>
+
 <ul>
 <li><code>NArg()</code>：返回参数个数；</li>
 <li><code>Args()</code>：返回<code>cli.Args</code>对象，调用其<code>Get(i)</code>获取位置<code>i</code>上的参数。</li>
 </ul>
+
 <p>示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -604,27 +616,28 @@ GLOBAL OPTIONS:
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>这里只是简单输出：</p>
+</div>
+<p>这里只是简单输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go hello world
 1<span class="p">:</span> <span class="nl">hello</span>
-2<span class="p">:</span> <span class="nl">world</span>
-</code></pre></td></tr></table>
+2<span class="p">:</span> <span class="nl">world</span></code></pre></td></tr></table>
 </div>
-</div><h2 id="选项">选项</h2>
+</div>
+<h2 id="选项">选项</h2>
+
 <p>一个好用的命令行程序怎么会少了选项呢？<code>cli</code>设置和获取选项非常简单。在<code>cli.App{}</code>结构初始化时，设置字段<code>Flags</code>即可添加选项。<code>Flags</code>字段是<code>[]cli.Flag</code>类型，<code>cli.Flag</code>实际上是接口类型。<code>cli</code>为常见类型都实现了对应的<code>XxxFlag</code>，如<code>BoolFlag/DurationFlag/StringFlag</code>等。它们有一些共用的字段，<code>Name/Value/Usage</code>（名称/默认值/释义）。看示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -683,13 +696,13 @@ GLOBAL OPTIONS:
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面是一个打招呼的命令行程序，可通过选项<code>lang</code>指定语言，默认为英语。设置选项为非<code>english</code>的值，使用汉语。如果有参数，使用第一个参数作为人名，否则使用<code>world</code>。注意选项是通过<code>c.Type(name)</code>来获取的，<code>Type</code>为选项类型，<code>name</code>为选项名。编译、运行：</p>
+</div>
+<p>上面是一个打招呼的命令行程序，可通过选项<code>lang</code>指定语言，默认为英语。设置选项为非<code>english</code>的值，使用汉语。如果有参数，使用第一个参数作为人名，否则使用<code>world</code>。注意选项是通过<code>c.Type(name)</code>来获取的，<code>Type</code>为选项类型，<code>name</code>为选项名。编译、运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -716,13 +729,13 @@ $ ./flags --lang chinese
 
 # 传入参数作为人名
 $ ./flags --lang chinese dj
-你好 dj
-</code></pre></td></tr></table>
+你好 dj</code></pre></td></tr></table>
 </div>
-</div><p>我们可以通过<code>./flags --help</code>来查看选项：</p>
+</div>
+<p>我们可以通过<code>./flags --help</code>来查看选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -749,14 +762,15 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --lang value  language for the greeting (default: <span class="s2">&#34;english&#34;</span>)
-   --help, -h    show help (default: false)
-</code></pre></td></tr></table>
+   --help, -h    show help (default: false)</code></pre></td></tr></table>
 </div>
-</div><h3 id="存入变量">存入变量</h3>
+</div>
+<h3 id="存入变量">存入变量</h3>
+
 <p>除了通过<code>c.Type(name)</code>来获取选项的值，我们还可以将选项存到某个预先定义好的变量中。只需要设置<code>Destination</code>字段为变量的地址即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -821,15 +835,17 @@ GLOBAL OPTIONS:
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>与上面的程序效果是一样的。</p>
+</div>
+<p>与上面的程序效果是一样的。</p>
+
 <h3 id="占位值">占位值</h3>
+
 <p><code>cli</code>可以在<code>Usage</code>字段中为选项设置占位值，占位值通过反引号 <strong>`</strong> 包围。只有第一个生效，其他的维持不变。占位值有助于生成易于理解的帮助信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -860,13 +876,13 @@ GLOBAL OPTIONS:
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>设置占位值之后，帮助信息中，该占位值会显示在对应的选项后面，对短选项也是有效的：</p>
+</div>
+<p>设置占位值之后，帮助信息中，该占位值会显示在对应的选项后面，对短选项也是有效的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -895,14 +911,15 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --config FILE  Load configuration from FILE
-   --help, -h     show help (default: false)
-</code></pre></td></tr></table>
+   --help, -h     show help (default: false)</code></pre></td></tr></table>
 </div>
-</div><h3 id="别名">别名</h3>
+</div>
+<h3 id="别名">别名</h3>
+
 <p>选项可以设置多个别名，设置对应选项的<code>Aliases</code>字段即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -963,13 +980,13 @@ GLOBAL OPTIONS:
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>使用<code>--lang chinese</code>、<code>--language chinese</code>和<code>-l chinese</code>效果是一样的。如果通过不同的名称指定同一个选项，会报错：</p>
+</div>
+<p>使用<code>--lang chinese</code>、<code>--language chinese</code>和<code>-l chinese</code>效果是一样的。如果通过不同的名称指定同一个选项，会报错：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -988,14 +1005,15 @@ GLOBAL OPTIONS:
 <span class="err">$</span> <span class="p">.</span><span class="o">/</span><span class="nx">aliase</span> <span class="o">-</span><span class="nx">l</span> <span class="nx">chinese</span>
 <span class="nx">你好</span> <span class="nx">world</span>
 <span class="err">$</span> <span class="p">.</span><span class="o">/</span><span class="nx">aliase</span> <span class="o">-</span><span class="nx">l</span> <span class="nx">chinese</span> <span class="o">--</span><span class="nx">lang</span> <span class="nx">chinese</span>
-<span class="nx">Cannot</span> <span class="nx">use</span> <span class="nx">two</span> <span class="nx">forms</span> <span class="nx">of</span> <span class="nx">the</span> <span class="nx">same</span> <span class="nx">flag</span><span class="p">:</span> <span class="nx">l</span> <span class="nx">lang</span>
-</code></pre></td></tr></table>
+<span class="nx">Cannot</span> <span class="nx">use</span> <span class="nx">two</span> <span class="nx">forms</span> <span class="nx">of</span> <span class="nx">the</span> <span class="nx">same</span> <span class="nx">flag</span><span class="p">:</span> <span class="nx">l</span> <span class="nx">lang</span></code></pre></td></tr></table>
 </div>
-</div><h3 id="环境变量">环境变量</h3>
+</div>
+<h3 id="环境变量">环境变量</h3>
+
 <p>除了通过执行程序时手动指定命令行选项，我们还可以读取指定的环境变量作为选项的值。只需要将环境变量的名字设置到选项对象的<code>EnvVars</code>字段即可。可以指定多个环境变量名字，<code>cli</code>会依次查找，第一个有值的环境变量会被使用。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1046,27 +1064,28 @@ GLOBAL OPTIONS:
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>编译、运行：</p>
+</div>
+<p>编译、运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go build -o env
 $ APP_LANG=chinese ./env
-你好
-</code></pre></td></tr></table>
+你好</code></pre></td></tr></table>
 </div>
-</div><h3 id="文件">文件</h3>
+</div>
+<h3 id="文件">文件</h3>
+
 <p><code>cli</code>还支持从文件中读取选项的值，设置选项对象的<code>FilePath</code>字段为文件路径：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1117,36 +1136,41 @@ $ APP_LANG=chinese ./env
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>在<code>main.go</code>同级目录创建一个<code>lang.txt</code>，输入内容<code>chinese</code>。然后编译运行程序：</p>
+</div>
+<p>在<code>main.go</code>同级目录创建一个<code>lang.txt</code>，输入内容<code>chinese</code>。然后编译运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go build -o file
 $ ./file
-你好
-</code></pre></td></tr></table>
+你好</code></pre></td></tr></table>
 </div>
-</div><p><code>cli</code>还支持从<code>YAML/JSON/TOML</code>等配置文件中读取选项值，这里就不一一介绍了。</p>
+</div>
+<p><code>cli</code>还支持从<code>YAML/JSON/TOML</code>等配置文件中读取选项值，这里就不一一介绍了。</p>
+
 <h3 id="选项优先级">选项优先级</h3>
+
 <p>上面我们介绍了几种设置选项值的方式，如果同时有多个方式生效，按照下面的优先级从高到低设置：</p>
+
 <ul>
 <li>用户指定的命令行选项值；</li>
 <li>环境变量；</li>
 <li>配置文件；</li>
 <li>选项的默认值。</li>
 </ul>
+
 <h3 id="组合短选项">组合短选项</h3>
+
 <p>我们时常会遇到有多个短选项的情况。例如 linux 命令<code>ls -a -l</code>，可以简写为<code>ls -al</code>。<code>cli</code>也支持短选项合写，只需要设置<code>cli.App</code>的<code>UseShortOptionHandling</code>字段为<code>true</code>即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1201,13 +1225,13 @@ $ ./file
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>编译运行：</p>
+</div>
+<p>编译运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1218,15 +1242,17 @@ $ ./file
 $ ./short short -som <span class="s2">&#34;some message&#34;</span>
 serve: true
 option: true
-message: true
-</code></pre></td></tr></table>
+message: true</code></pre></td></tr></table>
 </div>
-</div><p>需要特别注意一点，设置<code>UseShortOptionHandling</code>为<code>true</code>之后，我们不能再通过<code>-</code>指定选项了，这样会产生歧义。例如<code>-lang</code>，<code>cli</code>不知道应该解释为<code>l/a/n/g</code> 4 个选项还是<code>lang</code> 1 个。<code>--</code>还是有效的。</p>
+</div>
+<p>需要特别注意一点，设置<code>UseShortOptionHandling</code>为<code>true</code>之后，我们不能再通过<code>-</code>指定选项了，这样会产生歧义。例如<code>-lang</code>，<code>cli</code>不知道应该解释为<code>l/a/n/g</code> 4 个选项还是<code>lang</code> 1 个。<code>--</code>还是有效的。</p>
+
 <h3 id="必要选项">必要选项</h3>
+
 <p>如果将选项的<code>Required</code>字段设置为<code>true</code>，那么该选项就是必要选项。必要选项必须指定，否则会报错：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1277,25 +1303,26 @@ message: true
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>不指定选项<code>lang</code>运行：</p>
+</div>
+<p>不指定选项<code>lang</code>运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ ./required
-2020/06/23 22:11:32 Required flag <span class="s2">&#34;lang&#34;</span> not set
-</code></pre></td></tr></table>
+2020/06/23 22:11:32 Required flag <span class="s2">&#34;lang&#34;</span> not set</code></pre></td></tr></table>
 </div>
-</div><h3 id="帮助文本中的默认值">帮助文本中的默认值</h3>
+</div>
+<h3 id="帮助文本中的默认值">帮助文本中的默认值</h3>
+
 <p>默认情况下，帮助文本中选项的默认值显示为<code>Value</code>字段值。有些时候，<code>Value</code>并不是实际的默认值。这时，我们可以通过<code>DefaultText</code>设置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1330,13 +1357,13 @@ message: true
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面代码逻辑中，如果<code>Value</code>设置为 0 就随机一个端口，这时帮助信息中<code>default: 0</code>就容易产生误解了。通过<code>DefaultText</code>可以避免这种情况：</p>
+</div>
+<p>上面代码逻辑中，如果<code>Value</code>设置为 0 就随机一个端口，这时帮助信息中<code>default: 0</code>就容易产生误解了。通过<code>DefaultText</code>可以避免这种情况：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1365,15 +1392,17 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --port value  Use a randomized port (default: random)
-   --help, -h    show help (default: false)
-</code></pre></td></tr></table>
+   --help, -h    show help (default: false)</code></pre></td></tr></table>
 </div>
-</div><h2 id="子命令">子命令</h2>
+</div>
+<h2 id="子命令">子命令</h2>
+
 <p>子命令使命令行程序有更好的组织性。<code>git</code>有大量的命令，很多以某个命令下的子命令存在。例如<code>git remote</code>命令下有<code>add/rename/remove</code>等子命令，<code>git submodule</code>下有<code>add/status/init/update</code>等子命令。</p>
+
 <p><code>cli</code>通过设置<code>cli.App</code>的<code>Commands</code>字段添加命令，设置各个命令的<code>SubCommands</code>字段，即可添加子命令。非常方便！</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1478,13 +1507,13 @@ GLOBAL OPTIONS:
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面定义了 3 个命令<code>add/complete/template</code>，<code>template</code>命令定义了 2 个子命令<code>add/remove</code>。编译、运行：</p>
+</div>
+<p>上面定义了 3 个命令<code>add/complete/template</code>，<code>template</code>命令定义了 2 个子命令<code>add/remove</code>。编译、运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1503,13 +1532,13 @@ completed task:  dating
 $ ./subcommand template add alarm
 new task template:  alarm
 $ ./subcommand template remove alarm
-removed task template:  alarm
-</code></pre></td></tr></table>
+removed task template:  alarm</code></pre></td></tr></table>
 </div>
-</div><p>注意一点，子命令默认不显示在帮助信息中，需要显式调用子命令所属命令的帮助（<code>./subcommand template --help</code>）：</p>
+</div>
+<p>注意一点，子命令默认不显示在帮助信息中，需要显式调用子命令所属命令的帮助（<code>./subcommand template --help</code>）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1570,14 +1599,15 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 OPTIONS:
-   --help, -h  show help (default: false)
-</code></pre></td></tr></table>
+   --help, -h  show help (default: false)</code></pre></td></tr></table>
 </div>
-</div><h3 id="分类">分类</h3>
+</div>
+<h3 id="分类">分类</h3>
+
 <p>在子命令数量很多的时候，可以设置<code>Category</code>字段为它们分类，在帮助信息中会将相同分类的命令放在一起展示：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1628,13 +1658,13 @@ OPTIONS:
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>编译、运行：</p>
+</div>
+<p>编译、运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1669,15 +1699,17 @@ COMMANDS:
      remove  Usage for remove
 
 GLOBAL OPTIONS:
-   --help, -h  show help (default: false)
-</code></pre></td></tr></table>
+   --help, -h  show help (default: false)</code></pre></td></tr></table>
 </div>
-</div><p>看上面的<code>COMMANDS</code>部分。</p>
+</div>
+<p>看上面的<code>COMMANDS</code>部分。</p>
+
 <h2 id="自定义帮助信息">自定义帮助信息</h2>
+
 <p>在<code>cli</code>中所有的帮助信息文本都可以自定义，整个应用的帮助信息模板通过<code>AppHelpTemplate</code>指定。命令的帮助信息模板通过<code>CommandHelpTemplate</code>设置，子命令的帮助信息模板通过<code>SubcommandHelpTemplate</code>设置。甚至可以通过覆盖<code>cli.HelpPrinter</code>这个函数自己实现帮助信息输出。下面程序在默认的帮助信息后添加个人网站和微信信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1696,13 +1728,13 @@ GLOBAL OPTIONS:
 </span><span class="s">WECHAT: GoUpUp`</span><span class="p">,</span> <span class="nx">cli</span><span class="p">.</span><span class="nx">AppHelpTemplate</span><span class="p">)</span>
 
   <span class="p">(</span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{}).</span><span class="nf">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>编译运行：</p>
+</div>
+<p>编译运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1739,13 +1771,13 @@ GLOBAL OPTIONS:
 
 WEBSITE: http://darjun.github.io
 
-WECHAT: GoUpUp
-</code></pre></td></tr></table>
+WECHAT: GoUpUp</code></pre></td></tr></table>
 </div>
-</div><p>我们还可以改写整个模板：</p>
+</div>
+<p>我们还可以改写整个模板：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1810,13 +1842,13 @@ WECHAT: GoUpUp
     <span class="p">},</span>
   <span class="p">}</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p><code>{{.XXX}}</code>其中<code>XXX</code>对应<code>cli.App{}</code>结构中设置的字段，例如上面<code>Authors</code>：</p>
+</div>
+<p><code>{{.XXX}}</code>其中<code>XXX</code>对应<code>cli.App{}</code>结构中设置的字段，例如上面<code>Authors</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1845,14 +1877,15 @@ COMMANDS:
     help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-  --help, -h  show help (default: false)
-</code></pre></td></tr></table>
+  --help, -h  show help (default: false)</code></pre></td></tr></table>
 </div>
-</div><p>注意观察<code>AUTHOR</code>部分。</p>
+</div>
+<p>注意观察<code>AUTHOR</code>部分。</p>
+
 <p>通过覆盖<code>HelpPrinter</code>，我们能自己输出帮助信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1867,26 +1900,28 @@ GLOBAL OPTIONS:
   <span class="p">}</span>
 
   <span class="p">(</span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{}).</span><span class="nf">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>编译、运行：</p>
+</div>
+<p>编译、运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ ./help --help
-Simple help!
-</code></pre></td></tr></table>
+Simple help!</code></pre></td></tr></table>
 </div>
-</div><h2 id="内置选项">内置选项</h2>
+</div>
+<h2 id="内置选项">内置选项</h2>
+
 <h3 id="帮助选项">帮助选项</h3>
+
 <p>默认情况下，帮助选项为<code>--help/-h</code>。我们可以通过<code>cli.HelpFlag</code>字段设置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1905,13 +1940,13 @@ Simple help!
   <span class="p">}</span>
 
   <span class="p">(</span><span class="o">&amp;</span><span class="nx">cli</span><span class="p">.</span><span class="nx">App</span><span class="p">{}).</span><span class="nf">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>查看帮助：</p>
+</div>
+<p>查看帮助：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1936,14 +1971,15 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --haaaaalp, --halp  HALP (default: false)
-</code></pre></td></tr></table>
+   --haaaaalp, --halp  HALP (default: false)</code></pre></td></tr></table>
 </div>
-</div><h3 id="版本选项">版本选项</h3>
+</div>
+<h3 id="版本选项">版本选项</h3>
+
 <p>默认版本选项<code>-v/--version</code>输出应用的版本信息。我们可以通过<code>cli.VersionFlag</code>设置版本选项 ：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1970,13 +2006,13 @@ GLOBAL OPTIONS:
     <span class="nx">Version</span><span class="p">:</span> <span class="s">&#34;v1.0.0&#34;</span><span class="p">,</span>
   <span class="p">}</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>这样就可以通过指定<code>--print-version/-V</code>输出版本信息了。运行：</p>
+</div>
+<p>这样就可以通过指定<code>--print-version/-V</code>输出版本信息了。运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1987,13 +2023,13 @@ GLOBAL OPTIONS:
 version version v1.0.0
 
 $ go run main.go -V
-version version v1.0.0
-</code></pre></td></tr></table>
+version version v1.0.0</code></pre></td></tr></table>
 </div>
-</div><p>我们还可以通过设置<code>cli.VersionPrinter</code>字段控制版本信息的输出内容：</p>
+</div>
+<p>我们还可以通过设置<code>cli.VersionPrinter</code>字段控制版本信息的输出内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2024,33 +2060,41 @@ version version v1.0.0
     <span class="nx">Version</span><span class="p">:</span> <span class="s">&#34;v1.0.0&#34;</span><span class="p">,</span>
   <span class="p">}</span>
   <span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
-</div><p>上面程序同时输出版本号和<code>git</code>提交的 SHA 值：</p>
+</div>
+<p>上面程序同时输出版本号和<code>git</code>提交的 SHA 值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go -v
-version=v1.0.0 revision=0cebd6e32a4e7094bbdbf150a1c2ffa56c34e91b
-</code></pre></td></tr></table>
+version=v1.0.0 revision=0cebd6e32a4e7094bbdbf150a1c2ffa56c34e91b</code></pre></td></tr></table>
 </div>
-</div><h2 id="总结">总结</h2>
+</div>
+<h2 id="总结">总结</h2>
+
 <p><code>cli</code>非常灵活，只需要设置<code>cli.App</code>的字段值即可实现相应的功能，不需要额外记忆函数、方法。另外<code>cli</code>还支持 Bash 自动补全的功能，对 zsh 的支持也比较好，感兴趣可自行探索。</p>
+
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+
 <h2 id="参考">参考</h2>
+
 <ol>
 <li>cli GitHub：<a href="https://github.com/urfave/cli">https://github.com/urfave/cli</a></li>
 <li>Go 每日一库之 cobra：<a href="https://darjun.github.io/2020/01/17/godailylib/cobra/">https://darjun.github.io/2020/01/17/godailylib/cobra/</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
+
 <h2 id="我">我</h2>
+
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
+
+<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
 
     </div>
 
@@ -2204,7 +2248,7 @@ version=v1.0.0 revision=0cebd6e32a4e7094bbdbf150a1c2ffa56c34e91b
     &copy;
     
       2018 -
-    2020
+    2021
     <span class="heart">
       
       <i class="iconfont">
@@ -2252,7 +2296,7 @@ version=v1.0.0 revision=0cebd6e32a4e7094bbdbf150a1c2ffa56c34e91b
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
