@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.84.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/06/07/godailylib/twirp/" />
@@ -64,21 +64,15 @@
 <meta property="og:title" content="Go 每日一库之 twirp" />
 <meta property="og:description" content="简介 twirp是一个基于 Google Protobuf 的 RPC 框架。twirp通过在.proto文件中定义服务，然后自动生产服务器和客户端的代码。让我们可以将更多的精力放" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://darjun.github.io/2020/06/07/godailylib/twirp/" />
-<meta property="article:published_time" content="2020-06-07T17:18:23+00:00" />
-<meta property="article:modified_time" content="2020-06-07T17:18:23+00:00" />
+<meta property="og:url" content="https://darjun.github.io/2020/06/07/godailylib/twirp/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-06-07T17:18:23&#43;00:00" />
+<meta property="article:modified_time" content="2020-06-07T17:18:23&#43;00:00" />
+
 <meta itemprop="name" content="Go 每日一库之 twirp">
-<meta itemprop="description" content="简介 twirp是一个基于 Google Protobuf 的 RPC 框架。twirp通过在.proto文件中定义服务，然后自动生产服务器和客户端的代码。让我们可以将更多的精力放">
-
-
-<meta itemprop="datePublished" content="2020-06-07T17:18:23&#43;00:00" />
+<meta itemprop="description" content="简介 twirp是一个基于 Google Protobuf 的 RPC 框架。twirp通过在.proto文件中定义服务，然后自动生产服务器和客户端的代码。让我们可以将更多的精力放"><meta itemprop="datePublished" content="2020-06-07T17:18:23&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-07T17:18:23&#43;00:00" />
 <meta itemprop="wordCount" content="3042">
-
-
-
-<meta itemprop="keywords" content="Go 每日一库," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 twirp"/>
 <meta name="twitter:description" content="简介 twirp是一个基于 Google Protobuf 的 RPC 框架。twirp通过在.proto文件中定义服务，然后自动生产服务器和客户端的代码。让我们可以将更多的精力放"/>
 
@@ -384,73 +378,62 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#json-客户端">JSON 客户端</a></li>
-<li><a href="#提供其他-http-服务">提供其他 HTTP 服务</a></li>
-<li><a href="#发送自定义的-header">发送自定义的 Header</a></li>
-<li><a href="#请求路由">请求路由</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#json-客户端">JSON 客户端</a></li>
+    <li><a href="#提供其他-http-服务">提供其他 HTTP 服务</a></li>
+    <li><a href="#发送自定义的-header">发送自定义的 Header</a></li>
+    <li><a href="#请求路由">请求路由</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p><a href="https://github.com/twitchtv/twirp">twirp</a>是一个基于 Google Protobuf 的 RPC 框架。<code>twirp</code>通过在<code>.proto</code>文件中定义服务，然后自动生产服务器和客户端的代码。让我们可以将更多的精力放在业务逻辑上。咦？这不就是 gRPC 吗？不同的是，gRPC 自己实现了一套 HTTP 服务器和网络传输层，twirp 使用标准库<code>net/http</code>。另外 gRPC 只支持 HTTP/2 协议，twirp 还可以运行在 HTTP 1.1 之上。同时 twirp 还可以使用 JSON 格式交互。当然并不是说 twirp 比 gRPC 好，只是多了解一种框架也就多了一个选择😊</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>首先需要安装 twirp 的代码生成插件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">twitchtv</span><span class="o">/</span><span class="nx">twirp</span><span class="o">/</span><span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">twirp</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">twitchtv</span><span class="o">/</span><span class="nx">twirp</span><span class="o">/</span><span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">twirp</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面命令会在<code>$GOPATH/bin</code>目录下生成可执行程序<code>protoc-gen-twirp</code>。我的习惯是将<code>$GOPATH/bin</code>放到 PATH 中，所以可在任何地方执行该命令。</p>
-
+</div><p>上面命令会在<code>$GOPATH/bin</code>目录下生成可执行程序<code>protoc-gen-twirp</code>。我的习惯是将<code>$GOPATH/bin</code>放到 PATH 中，所以可在任何地方执行该命令。</p>
 <p>接下来安装 protobuf 编译器，直接到 GitHub 上<a href="https://github.com/protocolbuffers/protobuf/releases">https://github.com/protocolbuffers/protobuf/releases</a>下载编译好的二进制程序放到 PATH 目录即可。</p>
-
 <p>最后是 Go 语言的 protobuf 生成插件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">golang</span><span class="o">/</span><span class="nx">protobuf</span><span class="o">/</span><span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="k">go</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">golang</span><span class="o">/</span><span class="nx">protobuf</span><span class="o">/</span><span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="k">go</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>同样地，命令<code>protoc-gen-go</code>会安装到<code>$GOPATH/bin</code>目录中。</p>
-
+</div><p>同样地，命令<code>protoc-gen-go</code>会安装到<code>$GOPATH/bin</code>目录中。</p>
 <p>本文代码采用<strong>Go Modules</strong>。先创建目录，然后初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir twirp <span class="p">&amp;&amp;</span> <span class="k">cd</span> twirp
-$ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table>
+$ go mod init github.com/darjun/go-daily-lib/twirp
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>接下来，我们开始代码编写。先编写<code>.proto</code>文件：</p>
+</div><p>接下来，我们开始代码编写。先编写<code>.proto</code>文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-proto" data-lang="proto"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -479,24 +462,23 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
 </span><span class="err">
 </span><span class="err"></span><span class="kd">message</span> <span class="nc">Response</span> <span class="p">{</span><span class="err">
 </span><span class="err"></span>  <span class="kt">string</span> <span class="n">text</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
-</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>我们定义一个<code>service</code>实现<strong>echo</strong>功能，即发送什么就返回什么。切换到<code>echo.proto</code>所在目录，使用<code>protoc</code>命令生成代码：</p>
+</div><p>我们定义一个<code>service</code>实现<strong>echo</strong>功能，即发送什么就返回什么。切换到<code>echo.proto</code>所在目录，使用<code>protoc</code>命令生成代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ protoc --twirp_out=. --go_out=. ./echo.proto</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ protoc --twirp_out=. --go_out=. ./echo.proto
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面命令会生成<code>echo.pb.go</code>和<code>echo.twirp.go</code>两个文件。前一个是 Go Protobuf 文件，后一个文件中包含了<code>twirp</code>的服务器和客户端代码。</p>
-
+</div><p>上面命令会生成<code>echo.pb.go</code>和<code>echo.twirp.go</code>两个文件。前一个是 Go Protobuf 文件，后一个文件中包含了<code>twirp</code>的服务器和客户端代码。</p>
 <p>然后我们就可以编写服务器和客户端程序了。服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -539,21 +521,19 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
   <span class="nx">twirpHandler</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nf">NewEchoServer</span><span class="p">(</span><span class="nx">server</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
 
   <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">,</span> <span class="nx">twirpHandler</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用自动生成的代码，我们只需要 3 步即可完成一个 RPC 服务器：</p>
-
+</div><p>使用自动生成的代码，我们只需要 3 步即可完成一个 RPC 服务器：</p>
 <ol>
 <li>定义一个结构，可以存储一些状态。让它实现我们定义的<code>service</code>接口；</li>
 <li>创建一个该结构的对象，调用生成的<code>New{{ServiceName}}Server</code>方法创建<code>net/http</code>需要的处理器，这里的<code>ServiceName</code>为我们的服务名；</li>
 <li>监听端口。</li>
 </ol>
-
 <p>客户端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -594,42 +574,41 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;response:%s\n&#34;</span><span class="p">,</span> <span class="nx">response</span><span class="p">.</span><span class="nf">GetText</span><span class="p">())</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>twirp</code>也生成了客户端相关代码，直接调用<code>NewEchoProtobufClient</code>连接到对应的服务器，然后调用<code>rpc</code>请求。</p>
-
+</div><p><code>twirp</code>也生成了客户端相关代码，直接调用<code>NewEchoProtobufClient</code>连接到对应的服务器，然后调用<code>rpc</code>请求。</p>
 <p>开启两个控制台，分别运行服务器和客户端程序。服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ cd server <span class="p">&amp;&amp;</span> go run main.go</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ cd server <span class="p">&amp;&amp;</span> go run main.go
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>客户端：</p>
+</div><p>客户端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ cd client <span class="p">&amp;&amp;</span> go run main.go</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ cd client <span class="p">&amp;&amp;</span> go run main.go
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>正确返回结果：</p>
+</div><p>正确返回结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">response:Hello World</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">response:Hello World
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>为了便于对照，下面列出该程序的目录结构。也可以去我的 GitHub 上查看示例代码：</p>
+</div><p>为了便于对照，下面列出该程序的目录结构。也可以去我的 GitHub 上查看示例代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -648,15 +627,14 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
 <span class="err">│</span>   <span class="err">├──</span> <span class="nx">echo</span><span class="p">.</span><span class="nx">proto</span>
 <span class="err">│</span>   <span class="err">└──</span> <span class="nx">echo</span><span class="p">.</span><span class="nx">twirp</span><span class="p">.</span><span class="k">go</span>
 <span class="err">└──</span> <span class="nx">server</span>
-    <span class="err">└──</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+    <span class="err">└──</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="json-客户端">JSON 客户端</h2>
-
+</div><h2 id="json-客户端">JSON 客户端</h2>
 <p>除了使用 Protobuf，<code>twirp</code>还支持 JSON 格式的请求。使用也非常简单，只需要在创建<code>Client</code>时将<code>NewEchoProtobufClient</code>改为<code>NewEchoJSONClient</code>即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -675,13 +653,13 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;response:%s\n&#34;</span><span class="p">,</span> <span class="nx">response</span><span class="p">.</span><span class="nf">GetText</span><span class="p">())</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>Protobuf Client 发送的请求带有<code>Content-Type: application/protobuf</code>的<code>Header</code>，JSON Client 则设置<code>Content-Type</code>为<code>application/json</code>。服务器收到请求时根据<code>Content-Type</code>来区分请求类型：</p>
+</div><p>Protobuf Client 发送的请求带有<code>Content-Type: application/protobuf</code>的<code>Header</code>，JSON Client 则设置<code>Content-Type</code>为<code>application/json</code>。服务器收到请求时根据<code>Content-Type</code>来区分请求类型：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -718,15 +696,14 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
     <span class="nx">twerr</span> <span class="o">:=</span> <span class="nf">badRouteError</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">Method</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">Path</span><span class="p">)</span>
     <span class="nx">s</span><span class="p">.</span><span class="nf">writeError</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">twerr</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="提供其他-http-服务">提供其他 HTTP 服务</h2>
-
+</div><h2 id="提供其他-http-服务">提供其他 HTTP 服务</h2>
 <p>实际上，<code>twirpHandler</code>只是一个<code>http</code>的处理器，正如其他千千万万的处理器一样，没什么特殊的。我们当然可以挂载我们自己的处理器或处理器函数（概念有不清楚的可以参见我的<a href="https://darjun.github.io/tags/go-web-%E7%BC%96%E7%A8%8B/">《Go Web 编程》系列文章</a>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -783,15 +760,14 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面程序挂载了一个简单的<code>/greeting</code>请求，可以通过浏览器来请求地址<code>http://localhost:8080/greeting</code>。<code>twirp</code>的请求会挂载到路径<code>twirp/{{ServiceName}}</code>这个路径下，其中<code>ServiceName</code>为服务名。上面程序中的<code>PathPrefix()</code>会返回<code>/twirp/Echo</code>。</p>
-
+</div><p>上面程序挂载了一个简单的<code>/greeting</code>请求，可以通过浏览器来请求地址<code>http://localhost:8080/greeting</code>。<code>twirp</code>的请求会挂载到路径<code>twirp/{{ServiceName}}</code>这个路径下，其中<code>ServiceName</code>为服务名。上面程序中的<code>PathPrefix()</code>会返回<code>/twirp/Echo</code>。</p>
 <p>客户端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -824,13 +800,13 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
   <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadAll</span><span class="p">(</span><span class="nx">httpResp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
   <span class="nx">httpResp</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;greeting:&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>先运行服务器，然后执行客户端程序：</p>
+</div><p>先运行服务器，然后执行客户端程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -839,17 +815,15 @@ $ go mod init github.com/darjun/go-daily-lib/twirp</code></pre></td></tr></table
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
 <span class="k">echo</span>: Hello World
 greeting: hi,world
-greeting: hi,dj</code></pre></td></tr></table>
+greeting: hi,dj
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="发送自定义的-header">发送自定义的 Header</h2>
-
+</div><h2 id="发送自定义的-header">发送自定义的 Header</h2>
 <p>默认情况下，<code>twirp</code>实现会发送一些 Header。例如上面介绍的，使用<code>Content-Type</code>辨别客户端使用的协议格式。有时候我们可能需要发送一些自定义的 Header，例如<code>token</code>。<code>twirp</code>提供了<code>WithHTTPRequestHeaders</code>方法实现这个功能，该方法返回一个<code>context.Context</code>。发送时会将保存在该对象中的 Header 一并发送。类似地，服务器使用<code>WithHTTPResponseHeaders</code>发送自定义 Header。</p>
-
 <p>由于<code>twirp</code>封装了<code>net/http</code>，导致外层拿不到原始的<code>http.Request</code>和<code>http.Response</code>对象，所以 Header 的读取有点麻烦。在服务器端，<code>NewEchoServer</code>返回的是一个<code>http.Handler</code>，我们加一层中间件读取<code>http.Request</code>。看下面代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -912,13 +886,13 @@ greeting: hi,dj</code></pre></td></tr></table>
   <span class="nx">wrapped</span> <span class="o">:=</span> <span class="nf">WithTwirpToken</span><span class="p">(</span><span class="nx">twirpHandler</span><span class="p">)</span>
 
   <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">,</span> <span class="nx">wrapped</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面程序给客户端返回了一个名为<code>Token-Lifecycle</code>的 Header。客户端代码：</p>
+</div><p>上面程序给客户端返回了一个名为<code>Token-Lifecycle</code>的 Header。客户端代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -955,17 +929,15 @@ greeting: hi,dj</code></pre></td></tr></table>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;call say failed: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;response:%s\n&#34;</span><span class="p">,</span> <span class="nx">response</span><span class="p">.</span><span class="nf">GetText</span><span class="p">())</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行程序，服务器正确获取客户端传过来的 token。</p>
-
+</div><p>运行程序，服务器正确获取客户端传过来的 token。</p>
 <h2 id="请求路由">请求路由</h2>
-
 <p>我们前面已经介绍过了，<code>twirp</code>的<code>Server</code>实际上也就是一个<code>http.Handler</code>，如果我们知道了它的挂载路径，完全可以通过浏览器或者<code>curl</code>之类的工具去请求。我们启动<code>get-started</code>的服务器，然后用<code>curl</code>命令行工具去请求：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -978,32 +950,23 @@ greeting: hi,dj</code></pre></td></tr></table>
   --header <span class="s2">&#34;Content-Type:application/json&#34;</span> \
   --data &#39;{<span class="s2">&#34;text&#34;</span>:<span class="s2">&#34;hello world&#34;</span>}&#39;\
   --verbose
-{<span class="s2">&#34;text&#34;</span>:<span class="s2">&#34;hello world&#34;</span>}</code></pre></td></tr></table>
+{<span class="s2">&#34;text&#34;</span>:<span class="s2">&#34;hello world&#34;</span>}
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这在调试的时候非常有用。</p>
-
+</div><p>这在调试的时候非常有用。</p>
 <h2 id="总结">总结</h2>
-
 <p>本文介绍了 Go 的一个基于 Protobuf 生成代码的 RPC 框架，非常简单，小巧，实用。<code>twirp</code>对许多常用的编程语言都提供了支持。可以作为 gRPC 等的备选方案考虑。</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>twirp GitHub：<a href="https://github.com/twitchtv/twirp">https://github.com/twitchtv/twirp</a></li>
 <li>twirp 官方文档：<a href="https://twitchtv.github.io/twirp/docs/intro.html">https://twitchtv.github.io/twirp/docs/intro.html</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 

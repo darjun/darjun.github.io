@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.84.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/01/16/goweb/db/" />
@@ -64,21 +64,15 @@
 <meta property="og:title" content="Go Web 编程之 数据库" />
 <meta property="og:description" content="概述 数据库用来存储数据。只要不是玩具项目，每个项目都需要用到数据库。现在用的最多的还是 MySQL，PostgreSQL的使用也在快速增长中。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://darjun.github.io/2020/01/16/goweb/db/" />
-<meta property="article:published_time" content="2020-01-16T06:15:36+00:00" />
-<meta property="article:modified_time" content="2020-01-16T06:15:36+00:00" />
+<meta property="og:url" content="https://darjun.github.io/2020/01/16/goweb/db/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-01-16T06:15:36&#43;00:00" />
+<meta property="article:modified_time" content="2020-01-16T06:15:36&#43;00:00" />
+
 <meta itemprop="name" content="Go Web 编程之 数据库">
-<meta itemprop="description" content="概述 数据库用来存储数据。只要不是玩具项目，每个项目都需要用到数据库。现在用的最多的还是 MySQL，PostgreSQL的使用也在快速增长中。">
-
-
-<meta itemprop="datePublished" content="2020-01-16T06:15:36&#43;00:00" />
+<meta itemprop="description" content="概述 数据库用来存储数据。只要不是玩具项目，每个项目都需要用到数据库。现在用的最多的还是 MySQL，PostgreSQL的使用也在快速增长中。"><meta itemprop="datePublished" content="2020-01-16T06:15:36&#43;00:00" />
 <meta itemprop="dateModified" content="2020-01-16T06:15:36&#43;00:00" />
-<meta itemprop="wordCount" content="5710">
-
-
-
-<meta itemprop="keywords" content="Go Web 编程," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="wordCount" content="6271">
+<meta itemprop="keywords" content="Go Web 编程," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go Web 编程之 数据库"/>
 <meta name="twitter:description" content="概述 数据库用来存储数据。只要不是玩具项目，每个项目都需要用到数据库。现在用的最多的还是 MySQL，PostgreSQL的使用也在快速增长中。"/>
 
@@ -363,8 +357,8 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 5710 字 </span>
-          <span class="more-meta"> 预计阅读 12 分钟 </span>
+        <span class="more-meta"> 约 6271 字 </span>
+          <span class="more-meta"> 预计阅读 13 分钟 </span>
 
         
         
@@ -384,64 +378,45 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#数据库操作">数据库操作</a>
-<ul>
-<li><a href="#准备工作">准备工作</a></li>
-<li><a href="#连接数据库">连接数据库</a></li>
-<li><a href="#查询">查询</a>
-<ul>
-<li><a href="#prepare">Prepare</a></li>
-<li><a href="#单行查询">单行查询</a></li>
-</ul></li>
-<li><a href="#插入-修改-删除">插入/修改/删除</a></li>
-<li><a href="#事务">事务</a></li>
-<li><a href="#错误处理">错误处理</a>
-<ul>
-<li><a href="#遍历结果集">遍历结果集</a></li>
-<li><a href="#关闭结果集">关闭结果集</a></li>
-<li><a href="#queryrow">QueryRow</a></li>
-<li><a href="#特定的数据库错误">特定的数据库错误</a></li>
-</ul></li>
-<li><a href="#处理未知列">处理未知列</a></li>
-</ul></li>
-<li><a href="#连接池">连接池</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#数据库操作">数据库操作</a>
+      <ul>
+        <li><a href="#准备工作">准备工作</a></li>
+        <li><a href="#连接数据库">连接数据库</a></li>
+        <li><a href="#查询">查询</a></li>
+        <li><a href="#插入修改删除">插入/修改/删除</a></li>
+        <li><a href="#事务">事务</a></li>
+        <li><a href="#错误处理">错误处理</a></li>
+        <li><a href="#处理未知列">处理未知列</a></li>
+      </ul>
+    </li>
+    <li><a href="#连接池">连接池</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="概述">概述</h2>
-
+      <h2 id="概述">概述</h2>
 <p>数据库用来存储数据。只要不是玩具项目，每个项目都需要用到数据库。现在用的最多的还是 MySQL，<a href="https://www.postgresql.org/">PostgreSQL</a>的使用也在快速增长中。
 在 Web 开发中，数据库也是必须的。本文将介绍如何在 Go 语言中操作数据库，基于 MySQL。本文假定大家已经掌握了数据库和 MySQL 的基础知识。
-关于 MySQL 有一个非常详细的免费教程我放在<a href="#参考">参考</a>中了，需要的自取。</p>
-
+关于 MySQL 有一个非常详细的免费教程我放在<a href="#%E5%8F%82%E8%80%83">参考</a>中了，需要的自取。</p>
 <p>Go 语言标准库<code>database/sql</code>只是提供了一组查询和操作数据库的接口，没有提供任何实现。在 Go 中操作数据库只能使用第三方库。
 各种类型的数据库都有对应的第三方库。Go 中支持 MySQL 的驱动中最常见的是<a href="https://github.com/go-sql-driver/mysql">go-sql-driver/mysql</a>。
 该库支持<code>database/sql</code>，全部采用 go 实现。</p>
-
 <h2 id="数据库操作">数据库操作</h2>
-
 <h3 id="准备工作">准备工作</h3>
-
 <p>创建一个数据库<code>department</code>，表示公司中的某个部门。
 在该库中创建两张表<code>employees</code>和<code>teams</code>。<code>employees</code>记录员工信息，<code>teams</code>记录小组信息。
 每个员工都属于一个小组，每个小组都有若干名员工。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-department.sql" data-lang="department.sql"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -484,62 +459,64 @@ if (!doNotTrack) {
 </span><span class="lnt">41
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-department.sql" data-lang="department.sql"><span class="kt">SET</span> <span class="n">NAMES</span> <span class="n">utf8mb4</span><span class="p">;</span>
-
-<span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="o">`</span><span class="n">department</span><span class="o">`</span>
-<span class="k">CHARACTER</span> <span class="kt">SET</span> <span class="n">utf8mb4</span>
-<span class="k">COLLATE</span> <span class="n">utf8mb4_general_ci</span><span class="p">;</span>
-
-<span class="k">USE</span> <span class="o">`</span><span class="n">department</span><span class="o">`</span><span class="p">;</span>
-
-<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="o">`</span><span class="n">employees</span><span class="o">`</span> <span class="p">(</span>
-  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="kp">AUTO_INCREMENT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">name</span><span class="o">`</span> <span class="kt">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">age</span><span class="o">`</span> <span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="mi">0</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">salary</span><span class="o">`</span> <span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="mi">0</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">team_id</span><span class="o">`</span> <span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="mi">0</span>
-<span class="p">)</span> <span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="p">;</span>
-
-<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="o">`</span><span class="n">teams</span><span class="o">`</span> <span class="p">(</span>
-  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="kp">AUTO_INCREMENT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">name</span><span class="o">`</span> <span class="kt">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="s1">&#39;&#39;</span>
-<span class="p">)</span> <span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="p">;</span>
-
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">teams</span><span class="o">`</span><span class="p">(</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">)</span>
-<span class="k">VALUES</span>
-  <span class="p">(</span><span class="s1">&#39;策划&#39;</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;开发&#39;</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;运营&#39;</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;运维&#39;</span><span class="p">);</span>
-
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">employees</span><span class="o">`</span><span class="p">(</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="n">salary</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="n">team_id</span><span class="o">`</span><span class="p">)</span>
-<span class="k">VALUES</span>
-  <span class="p">(</span><span class="s1">&#39;张三&#39;</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;李四&#39;</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;王五&#39;</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">3500</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;赵六&#39;</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">3100</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;田七&#39;</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">2900</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;吴八&#39;</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">1500</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;朱九&#39;</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">1600</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;钱十&#39;</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;陶十一&#39;</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">1900</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;汪十二&#39;</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-  <span class="p">(</span><span class="s1">&#39;剑十三&#39;</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">30000</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-department.sql" data-lang="department.sql"><span class="kt">SET</span><span class="w"> </span><span class="n">NAMES</span><span class="w"> </span><span class="n">utf8mb4</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="o">`</span><span class="n">department</span><span class="o">`</span><span class="w">
+</span><span class="w"></span><span class="k">CHARACTER</span><span class="w"> </span><span class="kt">SET</span><span class="w"> </span><span class="n">utf8mb4</span><span class="w">
+</span><span class="w"></span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb4_general_ci</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">USE</span><span class="w"> </span><span class="o">`</span><span class="n">department</span><span class="o">`</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="o">`</span><span class="n">employees</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span><span class="w">  </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="kp">AUTO_INCREMENT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="w"> </span><span class="kt">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="w"> </span><span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="o">`</span><span class="n">salary</span><span class="o">`</span><span class="w"> </span><span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="o">`</span><span class="n">team_id</span><span class="o">`</span><span class="w"> </span><span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="o">`</span><span class="n">teams</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span><span class="w">  </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="kt">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="kp">AUTO_INCREMENT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="w"> </span><span class="kt">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="o">`</span><span class="n">teams</span><span class="o">`</span><span class="p">(</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="k">VALUES</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;策划&#39;</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;开发&#39;</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;运营&#39;</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;运维&#39;</span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="o">`</span><span class="n">employees</span><span class="o">`</span><span class="p">(</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">,</span><span class="w"> </span><span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="p">,</span><span class="w"> </span><span class="o">`</span><span class="n">salary</span><span class="o">`</span><span class="p">,</span><span class="w"> </span><span class="o">`</span><span class="n">team_id</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="k">VALUES</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;张三&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">28</span><span class="p">,</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;李四&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">38</span><span class="p">,</span><span class="w"> </span><span class="mi">4000</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;王五&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">36</span><span class="p">,</span><span class="w"> </span><span class="mi">3500</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;赵六&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">31</span><span class="p">,</span><span class="w"> </span><span class="mi">3100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;田七&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">29</span><span class="p">,</span><span class="w"> </span><span class="mi">2900</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;吴八&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">27</span><span class="p">,</span><span class="w"> </span><span class="mi">1500</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;朱九&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">26</span><span class="p">,</span><span class="w"> </span><span class="mi">1600</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;钱十&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">27</span><span class="p">,</span><span class="w"> </span><span class="mi">1800</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;陶十一&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">28</span><span class="p">,</span><span class="w"> </span><span class="mi">1900</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;汪十二&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="mi">2000</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="p">(</span><span class="s1">&#39;剑十三&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">30000</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span><span class="w">
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>插入一些测试数据。将这个<code>department.sql</code>文件保存到某个目录，然后在该目录打开命令行：</p>
+</div><p>插入一些测试数据。将这个<code>department.sql</code>文件保存到某个目录，然后在该目录打开命令行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ mysql -u root -p</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ mysql -u root -p
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输入密码连接到数据库，然后输入以下命令：</p>
+</div><p>输入密码连接到数据库，然后输入以下命令：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -558,9 +535,9 @@ if (!doNotTrack) {
 </span><span class="lnt">17
 </span><span class="lnt">18
 </span><span class="lnt">19
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">mysql&gt; source department.sql
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">mysql&gt; source department.sql
 Query OK, 0 rows affected (0.00 sec)
 
 Query OK, 2 rows affected (0.02 sec)
@@ -578,26 +555,24 @@ Records: 4  Duplicates: 0  Warnings: 0
 Query OK, 11 rows affected (0.00 sec)
 Records: 11  Duplicates: 0  Warnings: 0
 
-mysql&gt;</pre></td></tr></table>
+mysql&gt;
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这样数据库和表就创建好了。</p>
-
+</div><p>这样数据库和表就创建好了。</p>
 <h3 id="连接数据库">连接数据库</h3>
-
 <p><code>go-sql-driver/mysql</code>是第三方库，需要安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$ go get github.com/go-sql-driver/mysql</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/go-sql-driver/mysql
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用：</p>
+</div><p>使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -630,22 +605,22 @@ mysql&gt;</pre></td></tr></table>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;connect database failed: &#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们操作数据库并不是直接使用<code>mysql</code>库，而是通过<code>database/sql</code>的接口。</p>
+</div><p>我们操作数据库并不是直接使用<code>mysql</code>库，而是通过<code>database/sql</code>的接口。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">import</span> <span class="nx">_</span> <span class="s">&#34;github.com/go-sql-driver/mysql&#34;</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">import</span> <span class="nx">_</span> <span class="s">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码导入<code>mysql</code>，但并不直接使用，而是利用导入的副作用执行<code>mysql</code>库的<code>init</code>函数，将<code>mysql</code>驱动注册到<code>database/sql</code>中：</p>
+</div><p>上面代码导入<code>mysql</code>，但并不直接使用，而是利用导入的副作用执行<code>mysql</code>库的<code>init</code>函数，将<code>mysql</code>驱动注册到<code>database/sql</code>中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -654,32 +629,29 @@ mysql&gt;</pre></td></tr></table>
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// go-sql-driver/mysql/driver.go
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">sql</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">MySQLDriver</span><span class="p">{})</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后在程序中使用<code>sql.Open</code>创建一个<code>sql.DB</code>结构，参数一即为<code>mysql</code>库注册的名字，参数二实际上就是指定数据库连接信息的。
+</div><p>然后在程序中使用<code>sql.Open</code>创建一个<code>sql.DB</code>结构，参数一即为<code>mysql</code>库注册的名字，参数二实际上就是指定数据库连接信息的。
 每个数据库接受的连接信息是不同的。对于 MySQL 来说，连接信息实际上是一个 DSN （Data Source Name）。DSN 的一般格式为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">[username[:password]@][protocol[(address)]]/dbname[?param1=value1&amp;...&amp;paramN=valueN]</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[username[:password]@][protocol[(address)]]/dbname[?param1=value1&amp;...&amp;paramN=valueN]
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>示例中使用的就是一个 DSN，指定用户名为<code>root</code>，密码为<code>12345</code>，
+</div><p>示例中使用的就是一个 DSN，指定用户名为<code>root</code>，密码为<code>12345</code>，
 通过 tcp 协议连接到 ip 为<code>127.0.0.1</code>，端口为 3306 的 MySQL 的<code>department</code>数据库上。</p>
-
 <p>在使用完成后，需要调用<code>db.Close</code>关闭<code>sql.DB</code>。</p>
-
-<p><strong>需要特别注意的是，<code>sql.Open</code>并不会建立到数据库的连接，它也不会检测驱动的连接参数。它仅仅创建了一个数据库抽象层给后面使用。
-到数据库的连接实际上会在需要的时候惰性地创建。</strong>所以，我们使用一个非法的用户名或密码，连接一个主机上不存在的库，<code>sql.Open</code>也不会报错。
+<p>**需要特别注意的是，<code>sql.Open</code>并不会建立到数据库的连接，它也不会检测驱动的连接参数。它仅仅创建了一个数据库抽象层给后面使用。
+到数据库的连接实际上会在需要的时候惰性地创建。**所以，我们使用一个非法的用户名或密码，连接一个主机上不存在的库，<code>sql.Open</code>也不会报错。
 将上面的 DSN 改为<code>user:password@tcp(127.0.0.1:6666)/not_exist_department</code>，运行程序，没有报错。</p>
-
 <p>如果想要检测数据库是否可访问，可以使用<code>db.Ping()</code>函数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -688,28 +660,26 @@ mysql&gt;</pre></td></tr></table>
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Ping</span><span class="p">()</span>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;ping failed: &#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这时连接<code>not_exist_department</code>会报错：</p>
+</div><p>这时连接<code>not_exist_department</code>会报错：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">2020/01/20 22:16:12 ping failed: Error 1049: Unknown database &#39;not_exist_department&#39;
-exit status 1</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">2020/01/20 22:16:12 ping failed: Error 1049: Unknown database &#39;not_exist_department&#39;
+exit status 1
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>sql.DB</code>对象一般作为某种形式的全局变量长期存活。不要频繁打开、关闭该对象。这对性能会有非常大的影响。</p>
-
+</div><p><code>sql.DB</code>对象一般作为某种形式的全局变量长期存活。不要频繁打开、关闭该对象。这对性能会有非常大的影响。</p>
 <h3 id="查询">查询</h3>
-
 <p>先看一个简单示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -792,55 +762,44 @@ exit status 1</pre></td></tr></table>
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行程序，输出：</p>
+</div><p>运行程序，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">2020/01/20 22:27:21 id: 1 name:张三 age:28 salary:1200 teamId:1</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">2020/01/20 22:27:21 id: 1 name:张三 age:28 salary:1200 teamId:1
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>从上面程序中，我们看到一个查询操作的基本流程：</p>
-
+</div><p>从上面程序中，我们看到一个查询操作的基本流程：</p>
 <ul>
 <li>使用<code>db.Query()</code>查询数据库；</li>
 <li>在循环中遍历返回的行，<code>rows.Scan()</code>读取各列的值，<code>rows.Next()</code>将“指针”移动到下一行；</li>
 <li>遍历完所有行时，<code>rows.Next()</code>将返回 false，循环退出。</li>
 </ul>
-
 <p>数据库操作可能会遇到各种各样的错误，所以错误处理很重要。例如，在循环中调用<code>rows.Scan</code>可能产生错误。</p>
-
 <p>遍历结束后，一定要关闭<code>rows</code>。因为它持有连接的指针，不关闭会造成资源泄露。<code>rows.Next()</code>遇到最后一行时会返回一个 EOF 错误，并关闭连接。
 另外，如果<code>rows.Next()</code>由于产生错误返回 false，<code>rows</code>也会自动关闭。其它情况下，如果提前退出循环，可能会忘记关闭<code>rows</code>。
 所以一般使用<code>defer rows.Close()</code>确保正常关闭。</p>
-
 <p><strong>Tips:</strong></p>
-
 <p>调用<code>Scan</code>方法时，其内部会根据传入的参数类型执行相应的数据类型转换。利用这个特性可以简化代码。
 例如，MySQL 中某一列是<code>VARCHAR/CHAR</code>或类似的文本类型，但是我们知道它保存的是一个整数。
 那么就可以传入一个<code>int</code>类型的变量，<code>Scan</code>内部会帮助我们将字符串转为<code>int</code>。免除了我们手动调用<code>strconv</code>相关方法的麻烦。</p>
-
 <p><code>database/sql</code>中函数的命名特别讲究：</p>
-
 <ul>
 <li><code>Query*</code>这种以<code>Query</code>开头的函数，肯定返回若干行（可能为 0）数据；</li>
 <li>不返回行数据的语句，不能使用<code>Query*</code>函数，应该使用<code>Exec</code>。</li>
 </ul>
-
 <h4 id="prepare">Prepare</h4>
-
 <p>当我们需要多次执行同一条语句时，最好的做法是先创建一个<code>PreparedStatement</code>。这个<code>PreparedStatement</code>可以包含参数占位符，后续执行时再提供参数。</p>
-
 <p>每种数据库都有自己参数占位符，MySQL 使用的是<code>?</code>。使用参数占位符有一个明显的好处：能避免<strong>SQL 注入攻击</strong>。</p>
-
 <p>需要执行 SQL 时，传入参数调用<code>PreparedStatement</code>的<code>Query</code>方法即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -917,19 +876,16 @@ exit status 1</pre></td></tr></table>
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>实际上，在<code>db.Query()</code>函数内部，会先创建一个<code>PreparedStatement</code>，执行它，然后关闭。这会与数据库产生 3 次通信。所以尽量先创建<code>PreparedStatement</code>，再使用。</p>
-
+</div><p>实际上，在<code>db.Query()</code>函数内部，会先创建一个<code>PreparedStatement</code>，执行它，然后关闭。这会与数据库产生 3 次通信。所以尽量先创建<code>PreparedStatement</code>，再使用。</p>
 <h4 id="单行查询">单行查询</h4>
-
 <p>如果查询最多只返回一行数据，我们不用写循环处理，使用<code>QueryRow</code>可以简化代码编写。</p>
-
 <p>直接调用<code>db.QueryRow</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -942,13 +898,13 @@ exit status 1</pre></td></tr></table>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 <span class="p">}</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>也可以在<code>PreparedStatement</code>上调用<code>QueryRow</code>：</p>
+</div><p>也可以在<code>PreparedStatement</code>上调用<code>QueryRow</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -971,19 +927,16 @@ exit status 1</pre></td></tr></table>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 <span class="p">}</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>注意，<code>QueryRow</code>遇到的错误会延迟到调用<code>Scan</code>时才返回。</strong></p>
-
-<h3 id="插入-修改-删除">插入/修改/删除</h3>
-
+</div><p><strong>注意，<code>QueryRow</code>遇到的错误会延迟到调用<code>Scan</code>时才返回。</strong></p>
+<h3 id="插入修改删除">插入/修改/删除</h3>
 <p><code>INSERT/UPDATE/DELETE</code>这些操作，由于都不返回行，应该使用<code>Exec</code>函数。建议先创建<code>PreparedStatement</code>再执行。</p>
-
 <p>现在“策划组”新加入了一名员工：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1038,13 +991,13 @@ exit status 1</pre></td></tr></table>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;fetch rows affected failed: &#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;ID = %d, affected = %d\n&#34;</span><span class="p">,</span> <span class="nx">lastId</span><span class="p">,</span> <span class="nx">rowCnt</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>Exec</code>方法返回一个<code>sql.Result</code>接口类型的值：</p>
+</div><p><code>Exec</code>方法返回一个<code>sql.Result</code>接口类型的值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1055,29 +1008,27 @@ exit status 1</pre></td></tr></table>
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Result</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">LastInsertId</span><span class="p">()</span> <span class="p">(</span><span class="kt">int64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
   <span class="nf">RowsAffected</span><span class="p">()</span> <span class="p">(</span><span class="kt">int64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>有些表设置了自增的 id，插入时不需要设置 id，数据库会自动生成一个返回。<code>LastInsertId()</code>返回插入时生成的 id。
+</div><p>有些表设置了自增的 id，插入时不需要设置 id，数据库会自动生成一个返回。<code>LastInsertId()</code>返回插入时生成的 id。
 <code>RowsAffected()</code>返回受影响的行数。</p>
-
 <p>运行程序，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">2020/01/21 07:20:26 ID = 12, affected = 1</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">2020/01/21 07:20:26 ID = 12, affected = 1
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="事务">事务</h3>
-
+</div><h3 id="事务">事务</h3>
 <p>在 Go 中，事务本质上是一个对象，它持有一个到数据库的连接。通过该对象执行我们上面介绍的方法时，
 都会使用这个相同的连接。调用<code>db.Begin()</code>创建一个事务对象，然后在该对象上执行上面的方法，
 最后成功调用<code>Commit()</code>，失败调用<code>Rollback()</code>关闭事务。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1132,19 +1083,16 @@ exit status 1</pre></td></tr></table>
   <span class="p">}</span>
 
   <span class="nx">tx</span><span class="p">.</span><span class="nf">Commit</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意，在事务内部不能再直接调用<code>db</code>的方法了，因为<code>db</code>使用的是与事务不同的连接，可能会导致执行结果的不一致。</p>
-
+</div><p>注意，在事务内部不能再直接调用<code>db</code>的方法了，因为<code>db</code>使用的是与事务不同的连接，可能会导致执行结果的不一致。</p>
 <h3 id="错误处理">错误处理</h3>
-
 <p><code>database/sql</code>中几乎所有的操作最后一个返回值都是一个<code>error</code>类型。数据库会出现各种各样的错误，我们应该时刻检查是否出现了错误。下面介绍几种特殊情况产生的错误。</p>
-
 <h4 id="遍历结果集">遍历结果集</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1157,23 +1105,18 @@ exit status 1</pre></td></tr></table>
 </span><span class="c1"></span><span class="p">}</span>
 
 <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Err</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>`<code>rows.Err()</code>返回的错误可能是<code>rows.Next()</code>循环中的多种错误。循环可能由于某些原因提前退出了。我们应该检测循环是否正常退出。
-异常退出时，<code>database/sql</code>会自动调用<code>rows.Close()</code>。提前退出时，我们需要手动调用<code>rows.Close()</code>。<strong>可以多次调用<code>rows.Close()</code></strong>。</p>
-
+</div><p>``rows.Err()<code>返回的错误可能是</code>rows.Next()<code>循环中的多种错误。循环可能由于某些原因提前退出了。我们应该检测循环是否正常退出。 异常退出时，</code>database/sql<code>会自动调用</code>rows.Close()<code>。提前退出时，我们需要手动调用</code>rows.Close()<code>。**可以多次调用</code>rows.Close()`**。</p>
 <h4 id="关闭结果集">关闭结果集</h4>
-
 <p>实际上，<code>rows.Close()</code>也返回一个错误。但是，对于这个错误，我们能做的事情比较有限。通常就是记录日志。
 如果不需要记录日志，通常会忽略这个错误。</p>
-
 <h4 id="queryrow">QueryRow</h4>
-
 <p>考虑下面的代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1186,16 +1129,15 @@ exit status 1</pre></td></tr></table>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
   <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 <span class="p">}</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果没有<code>id = 1</code>的员工，<code>Scan()</code>要如何处理？</p>
-
+</div><p>如果没有<code>id = 1</code>的员工，<code>Scan()</code>要如何处理？</p>
 <p>Go 定义了一个特殊的错误常量，<code>sql.ErrNoRows</code>。如果没有符合要求的行，<code>QueryRow</code>将返回这个错误。
 这个错误在大多数情况下需要特殊处理，因为没有结果在应用层通常不认为是错误。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1214,19 +1156,16 @@ exit status 1</pre></td></tr></table>
 	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
 <span class="p">}</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>那为什么<code>QueryRow</code>在没有符合要求的行时返回一个错误？</p>
-
+</div><p>那为什么<code>QueryRow</code>在没有符合要求的行时返回一个错误？</p>
 <p>因为要区分是否返回了行，如果返回空结果集，由于<code>Scan()</code>不会做任何时间，我们就不能区分<code>name</code>读取到了空字符串，还是初始值。</p>
-
 <h4 id="特定的数据库错误">特定的数据库错误</h4>
-
 <p>为了辨别发生了何种错误，有一种做法是检查错误描述中是否有特定的文本：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1237,15 +1176,14 @@ exit status 1</pre></td></tr></table>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
   <span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Contains</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">(),</span> <span class="s">&#34;Access denied&#34;</span><span class="p">)</span> <span class="p">{</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>但是不推荐这种做法，因为不同的数据库版本，这些描述不一定能保持一致。</p>
-
+</div><p>但是不推荐这种做法，因为不同的数据库版本，这些描述不一定能保持一致。</p>
 <p>比较好的做法是将错误转成特定数据库驱动的错误，然后比较错误码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1254,13 +1192,13 @@ exit status 1</pre></td></tr></table>
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">if</span> <span class="nx">driverErr</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">err</span><span class="p">.(</span><span class="o">*</span><span class="nx">mysql</span><span class="p">.</span><span class="nx">MySQLError</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
   <span class="k">if</span> <span class="nx">driverErr</span><span class="p">.</span><span class="nx">Number</span> <span class="o">==</span> <span class="mi">1045</span> <span class="p">{</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>不同驱动间判断方法可能不同。另外，直接写数字<code>1045</code>也不太好，VividCortex 整理了 MySQL 错误码，GitHub 仓库为<a href="https://github.com/VividCortex/mysqlerr">mysqlerr</a>。使用库后续便于修改：</p>
+</div><p>不同驱动间判断方法可能不同。另外，直接写数字<code>1045</code>也不太好，VividCortex 整理了 MySQL 错误码，GitHub 仓库为<a href="https://github.com/VividCortex/mysqlerr">mysqlerr</a>。使用库后续便于修改：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1269,15 +1207,14 @@ exit status 1</pre></td></tr></table>
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">if</span> <span class="nx">driverErr</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">err</span><span class="p">.(</span><span class="o">*</span><span class="nx">mysql</span><span class="p">.</span><span class="nx">MySQLError</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
   <span class="k">if</span> <span class="nx">driverErr</span><span class="p">.</span><span class="nx">Number</span> <span class="o">==</span> <span class="nx">mysqlerr</span><span class="p">.</span><span class="nx">ER_ACCESS_DENIED_ERROR</span> <span class="p">{</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="处理未知列">处理未知列</h3>
-
+</div><h3 id="处理未知列">处理未知列</h3>
 <p>有时候，可能我们不能确定查询返回多少列。但是<code>Scan()</code>要求传入正确数量的参数。为此，我们可以先使用<code>rows.Columns()</code>返回所有列名，然后创建同样大小的字符串指针切片传给<code>Scan()</code>函数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1368,13 +1305,13 @@ exit status 1</pre></td></tr></table>
   <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Err</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行程序：</p>
+</div><p>运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1386,9 +1323,9 @@ exit status 1</pre></td></tr></table>
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">id: 1 name: 张三 age: 28 salary: 1200 team_id: 2 
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">id: 1 name: 张三 age: 28 salary: 1200 team_id: 2 
 id: 2 name: 李四 age: 38 salary: 4000 team_id: 1
 id: 3 name: 王五 age: 36 salary: 3500 team_id: 1
 id: 4 name: 赵六 age: 31 salary: 3100 team_id: 2
@@ -1399,13 +1336,11 @@ id: 8 name: 钱十 age: 27 salary: 1800 team_id: 3
 id: 9 name: 陶十一 age: 28 salary: 1900 team_id: 4
 id: 10 name: 汪十二 age: 25 salary: 2000 team_id: 4
 id: 11 name: 剑十三 age: 24 salary: 30000 team_id: 4
-id: 12 name: 柳十四 age: 32 salary: 5000 team_id: 1</pre></td></tr></table>
+id: 12 name: 柳十四 age: 32 salary: 5000 team_id: 1
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="连接池">连接池</h2>
-
+</div><h2 id="连接池">连接池</h2>
 <p><code>database/sql</code>实现了一个基本的连接池。连接池有一些有趣的特性，了解一下，避免踩坑：</p>
-
 <ul>
 <li>对同一个数据库连续执行两个语句，这两个语句可能在不同的数据库连接上进行的。结果可能让人误解。例如先<code>LOCK TABLES</code>，然后执行<code>INSERT</code>可能会阻塞；</li>
 <li>需要新的连接且池中没有空闲连接时，创建一个新连接；</li>
@@ -1414,26 +1349,18 @@ id: 12 name: 柳十四 age: 32 salary: 5000 team_id: 1</pre></td></tr></table>
 <li>一个连接很长时间不使用可能会出现问题，如果遇到连接超时，可以试试将最大空闲连接数设置为 0；</li>
 <li>重用长时间存活的连接可能会导致网络问题，可以调用<code>db.SetConnMaxLifeTime(duration)</code>设置连接最大存活时间。</li>
 </ul>
-
 <h2 id="总结">总结</h2>
-
 <p>本文介绍了如何在 Go 中查询和修改数据库，主要是<code>database/sql</code>和<code>go-sql-driver/mysql</code>库的用法。<code>database/sql</code>的接口并不复杂，但是很多细节需要注意。一不留神可能就有资源泄露。</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li><a href="https://www.mysqltutorial.org/">MySQL 教程</a>，非常详细的教程</li>
 <li><a href="http://go-database-sql.org/">Go database/sql 教程</a></li>
 <li><a href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/05.0.md">Build Web Application with Golang</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 

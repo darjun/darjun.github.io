@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.84.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/06/12/godailylib/casbin/" />
@@ -64,21 +64,15 @@
 <meta property="og:title" content="Go 每日一库之 casbin" />
 <meta property="og:description" content="简介 权限管理在几乎每个系统中都是必备的模块。如果项目开发每次都要实现一次权限管理，无疑会浪费开发时间，增加开发成本。因此，casbin库出现" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://darjun.github.io/2020/06/12/godailylib/casbin/" />
-<meta property="article:published_time" content="2020-06-12T23:06:23+00:00" />
-<meta property="article:modified_time" content="2020-06-12T23:06:23+00:00" />
+<meta property="og:url" content="https://darjun.github.io/2020/06/12/godailylib/casbin/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-06-12T23:06:23&#43;00:00" />
+<meta property="article:modified_time" content="2020-06-12T23:06:23&#43;00:00" />
+
 <meta itemprop="name" content="Go 每日一库之 casbin">
-<meta itemprop="description" content="简介 权限管理在几乎每个系统中都是必备的模块。如果项目开发每次都要实现一次权限管理，无疑会浪费开发时间，增加开发成本。因此，casbin库出现">
-
-
-<meta itemprop="datePublished" content="2020-06-12T23:06:23&#43;00:00" />
+<meta itemprop="description" content="简介 权限管理在几乎每个系统中都是必备的模块。如果项目开发每次都要实现一次权限管理，无疑会浪费开发时间，增加开发成本。因此，casbin库出现"><meta itemprop="datePublished" content="2020-06-12T23:06:23&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-12T23:06:23&#43;00:00" />
-<meta itemprop="wordCount" content="6098">
-
-
-
-<meta itemprop="keywords" content="Go 每日一库," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="wordCount" content="6049">
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 casbin"/>
 <meta name="twitter:description" content="简介 权限管理在几乎每个系统中都是必备的模块。如果项目开发每次都要实现一次权限管理，无疑会浪费开发时间，增加开发成本。因此，casbin库出现"/>
 
@@ -363,7 +357,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 6098 字 </span>
+        <span class="more-meta"> 约 6049 字 </span>
           <span class="more-meta"> 预计阅读 13 分钟 </span>
 
         
@@ -384,78 +378,64 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#rbac-模型">RBAC 模型</a>
-<ul>
-<li><a href="#多个-rbac">多个<code>RBAC</code></a></li>
-<li><a href="#多层角色">多层角色</a></li>
-<li><a href="#rbac-domain"><code>RBAC</code> domain</a></li>
-</ul></li>
-<li><a href="#abac">ABAC</a></li>
-<li><a href="#模型存储">模型存储</a></li>
-<li><a href="#策略存储">策略存储</a></li>
-<li><a href="#使用函数">使用函数</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#rbac-模型">RBAC 模型</a>
+      <ul>
+        <li><a href="#多个rbac">多个<code>RBAC</code></a></li>
+        <li><a href="#多层角色">多层角色</a></li>
+        <li><a href="#rbac-domain"><code>RBAC</code> domain</a></li>
+      </ul>
+    </li>
+    <li><a href="#abac">ABAC</a></li>
+    <li><a href="#模型存储">模型存储</a></li>
+    <li><a href="#策略存储">策略存储</a></li>
+    <li><a href="#使用函数">使用函数</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>权限管理在几乎每个系统中都是必备的模块。如果项目开发每次都要实现一次权限管理，无疑会浪费开发时间，增加开发成本。因此，<code>casbin</code>库出现了。<code>casbin</code>是一个强大、高效的访问控制库。支持常用的多种访问控制模型，如<code>ACL/RBAC/ABAC</code>等。可以实现灵活的访问权限控制。同时，<code>casbin</code>支持多种编程语言，<code>Go/Java/Node/PHP/Python/.NET/Rust</code>。我们只需要<strong>一次学习，多处运用</strong>。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>我们依然使用 Go Module 编写代码，先初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir casbin <span class="p">&amp;&amp;</span> <span class="k">cd</span> casbin
-$ go mod init github.com/darjun/go-daily-lib/casbin</code></pre></td></tr></table>
+$ go mod init github.com/darjun/go-daily-lib/casbin
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后安装<code>casbin</code>，目前是<code>v2</code>版本：</p>
+</div><p>然后安装<code>casbin</code>，目前是<code>v2</code>版本：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">casbin</span><span class="o">/</span><span class="nx">casbin</span><span class="o">/</span><span class="nx">v2</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">casbin</span><span class="o">/</span><span class="nx">casbin</span><span class="o">/</span><span class="nx">v2</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>权限实际上就是控制<strong>谁</strong>能对<strong>什么资源</strong>进行什么操作。<code>casbin</code>将访问控制模型抽象到一个基于 PERM（Policy，Effect，Request，Matchers） 元模型的配置文件（模型文件）中。因此切换或更新授权机制只需要简单地修改配置文件。</p>
-
+</div><p>权限实际上就是控制<strong>谁</strong>能对<strong>什么资源</strong>进行什么操作。<code>casbin</code>将访问控制模型抽象到一个基于 PERM（Policy，Effect，Request，Matchers） 元模型的配置文件（模型文件）中。因此切换或更新授权机制只需要简单地修改配置文件。</p>
 <p><code>policy</code>是策略或者说是规则的定义。它定义了具体的规则。</p>
-
 <p><code>request</code>是对访问请求的抽象，它与<code>e.Enforce()</code>函数的参数是一一对应的</p>
-
 <p><code>matcher</code>匹配器会将请求与定义的每个<code>policy</code>一一匹配，生成多个匹配结果。</p>
-
 <p><code>effect</code>根据对请求运用匹配器得出的所有结果进行汇总，来决定该请求是<strong>允许</strong>还是<strong>拒绝</strong>。</p>
-
 <p>下面这张图很好地描绘了这个过程：</p>
-
-<p><img src="/img/in-post/godailylib/casbin1.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/casbin1.png#center" alt=""></p>
 <p>我们首先编写模型文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -468,7 +448,7 @@ $ go mod init github.com/darjun/go-daily-lib/casbin</code></pre></td></tr></tabl
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf">[request_definition]
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[request_definition]
 r = sub, obj, act
 
 [policy_definition]
@@ -478,28 +458,26 @@ p = sub, obj, act
 m = r.sub == p.sub &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act
 
 [policy_effect]
-e = some(where (p.eft == allow))</code></pre></td></tr></table>
+e = some(where (p.eft == allow))
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面模型文件规定了权限由<code>sub,obj,act</code>三要素组成，只有在策略列表中有和它完全相同的策略时，该请求才能通过。匹配器的结果可以通过<code>p.eft</code>获取，<code>some(where (p.eft == allow))</code>表示只要有一条策略允许即可。</p>
-
+</div><p>上面模型文件规定了权限由<code>sub,obj,act</code>三要素组成，只有在策略列表中有和它完全相同的策略时，该请求才能通过。匹配器的结果可以通过<code>p.eft</code>获取，<code>some(where (p.eft == allow))</code>表示只要有一条策略允许即可。</p>
 <p>然后我们策略文件（即谁能对什么资源进行什么操作）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv">p, dajun, data1, read
-p, lizi, data2, write</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">p, dajun, data1, read
+p, lizi, data2, write
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面<code>policy.csv</code>文件的两行内容表示<code>dajun</code>对数据<code>data1</code>有<code>read</code>权限，<code>lizi</code>对数据<code>data2</code>有<code>write</code>权限。</p>
-
+</div><p>上面<code>policy.csv</code>文件的两行内容表示<code>dajun</code>对数据<code>data1</code>有<code>read</code>权限，<code>lizi</code>对数据<code>data2</code>有<code>write</code>权限。</p>
 <p>接下来就是使用的代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -558,13 +536,13 @@ p, lizi, data2, write</code></pre></td></tr></table>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data1&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>代码其实不复杂。首先创建一个<code>casbin.Enforcer</code>对象，加载模型文件<code>model.conf</code>和策略文件<code>policy.csv</code>，调用其<code>Enforce</code>方法来检查权限。运行程序：</p>
+</div><p>代码其实不复杂。首先创建一个<code>casbin.Enforcer</code>对象，加载模型文件<code>model.conf</code>和策略文件<code>policy.csv</code>，调用其<code>Enforce</code>方法来检查权限。运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -575,30 +553,27 @@ p, lizi, data2, write</code></pre></td></tr></table>
 dajun CAN read data1
 lizi CAN write data2
 dajun CANNOT write data1
-dajun CANNOT read data2</code></pre></td></tr></table>
+dajun CANNOT read data2
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>请求必须完全匹配某条策略才能通过。<code>(&quot;dajun&quot;, &quot;data1&quot;, &quot;read&quot;)</code>匹配<code>p, dajun, data1, read</code>，<code>(&quot;lizi&quot;, &quot;data2&quot;, &quot;write&quot;)</code>匹配<code>p, lizi, data2, write</code>，所以前两个检查通过。第 3 个因为<code>&quot;dajun&quot;</code>没有对<code>data1</code>的<code>write</code>权限，第 4 个因为<code>dajun</code>对<code>data2</code>没有<code>read</code>权限，所以检查都不能通过。输出结果符合预期。</p>
-
+</div><p>请求必须完全匹配某条策略才能通过。<code>(&quot;dajun&quot;, &quot;data1&quot;, &quot;read&quot;)</code>匹配<code>p, dajun, data1, read</code>，<code>(&quot;lizi&quot;, &quot;data2&quot;, &quot;write&quot;)</code>匹配<code>p, lizi, data2, write</code>，所以前两个检查通过。第 3 个因为<code>&quot;dajun&quot;</code>没有对<code>data1</code>的<code>write</code>权限，第 4 个因为<code>dajun</code>对<code>data2</code>没有<code>read</code>权限，所以检查都不能通过。输出结果符合预期。</p>
 <p><code>sub/obj/act</code>依次对应传给<code>Enforce</code>方法的三个参数。实际上这里的<code>sub/obj/act</code>和<code>read/write/data1/data2</code>是我自己随便取的，你完全可以使用其它的名字，只要能前后一致即可。</p>
-
 <p>上面例子中实现的就是<code>ACL</code>（access-control-list，访问控制列表）。<code>ACL</code>显示定义了每个主体对每个资源的权限情况，未定义的就没有权限。我们还可以加上超级管理员，超级管理员可以进行任何操作。假设超级管理员为<code>root</code>，我们只需要修改匹配器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf">[matchers]
-e = r.sub == p.sub &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act || r.sub == &#34;root&#34;</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[matchers]
+e = r.sub == p.sub &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act || r.sub == &#34;root&#34;
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只要访问主体是<code>root</code>一律放行。</p>
-
+</div><p>只要访问主体是<code>root</code>一律放行。</p>
 <p>验证：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -621,13 +596,13 @@ e = r.sub == p.sub &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act || r.sub 
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;root&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;root&#34;</span><span class="p">,</span> <span class="s">&#34;data1&#34;</span><span class="p">,</span> <span class="s">&#34;execute&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;root&#34;</span><span class="p">,</span> <span class="s">&#34;data3&#34;</span><span class="p">,</span> <span class="s">&#34;rwx&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因为<code>sub = &quot;root&quot;</code>时，匹配器一定能通过，运行结果：</p>
+</div><p>因为<code>sub = &quot;root&quot;</code>时，匹配器一定能通过，运行结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -638,51 +613,49 @@ e = r.sub == p.sub &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act || r.sub 
 root CAN read data1
 root CAN write data2
 root CAN execute data1
-root CAN rwx data3</code></pre></td></tr></table>
+root CAN rwx data3
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="rbac-模型">RBAC 模型</h2>
-
+</div><h2 id="rbac-模型">RBAC 模型</h2>
 <p><code>ACL</code>模型在用户和资源都比较少的情况下没什么问题，但是用户和资源量一大，<code>ACL</code>就会变得异常繁琐。想象一下，每次新增一个用户，都要把他需要的权限重新设置一遍是多么地痛苦。<code>RBAC</code>（role-based-access-control）模型通过引入角色（<code>role</code>）这个中间层来解决这个问题。每个用户都属于一个角色，例如开发者、管理员、运维等，每个角色都有其特定的权限，权限的增加和删除都通过角色来进行。这样新增一个用户时，我们只需要给他指派一个角色，他就能拥有该角色的所有权限。修改角色的权限时，属于这个角色的用户权限就会相应的修改。</p>
-
 <p>在<code>casbin</code>中使用<code>RBAC</code>模型需要在模型文件中添加<code>role_definition</code>模块：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf">[role_definition]
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[role_definition]
 g = _, _
 
 [matchers]
-m = g(r.sub, p.sub) &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act</code></pre></td></tr></table>
+m = g(r.sub, p.sub) &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>g = _,_</code>定义了用户——角色，角色——角色的映射关系，前者是后者的成员，拥有后者的权限。然后在匹配器中，我们不需要判断<code>r.sub</code>与<code>p.sub</code>完全相等，只需要使用<code>g(r.sub, p.sub)</code>来判断请求主体<code>r.sub</code>是否属于<code>p.sub</code>这个角色即可。最后我们修改策略文件添加用户——角色定义：</p>
+</div><p><code>g = _,_</code>定义了用户——角色，角色——角色的映射关系，前者是后者的成员，拥有后者的权限。然后在匹配器中，我们不需要判断<code>r.sub</code>与<code>p.sub</code>完全相等，只需要使用<code>g(r.sub, p.sub)</code>来判断请求主体<code>r.sub</code>是否属于<code>p.sub</code>这个角色即可。最后我们修改策略文件添加用户——角色定义：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv">p, admin, data, read
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">p, admin, data, read
 p, admin, data, write
 p, developer, data, read
 g, dajun, admin
-g, lizi, developer</code></pre></td></tr></table>
+g, lizi, developer
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面的<code>policy.csv</code>文件规定了，<code>dajun</code>属于<code>admin</code>管理员，<code>lizi</code>属于<code>developer</code>开发者，使用<code>g</code>来定义这层关系。另外<code>admin</code>对数据<code>data</code>用<code>read</code>和<code>write</code>权限，而<code>developer</code>对数据<code>data</code>只有<code>read</code>权限。</p>
+</div><p>上面的<code>policy.csv</code>文件规定了，<code>dajun</code>属于<code>admin</code>管理员，<code>lizi</code>属于<code>developer</code>开发者，使用<code>g</code>来定义这层关系。另外<code>admin</code>对数据<code>data</code>用<code>read</code>和<code>write</code>权限，而<code>developer</code>对数据<code>data</code>只有<code>read</code>权限。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -741,13 +714,13 @@ g, lizi, developer</code></pre></td></tr></table>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;data&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;data&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>很显然<code>lizi</code>所属角色没有<code>write</code>权限：</p>
+</div><p>很显然<code>lizi</code>所属角色没有<code>write</code>权限：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -756,15 +729,14 @@ g, lizi, developer</code></pre></td></tr></table>
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">dajun CAN read data
 dajun CAN write data
 lizi CAN read data
-lizi CANNOT write data</code></pre></td></tr></table>
+lizi CANNOT write data
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="多个-rbac">多个<code>RBAC</code></h3>
-
+</div><h3 id="多个rbac">多个<code>RBAC</code></h3>
 <p><code>casbin</code>支持同时存在多个<code>RBAC</code>系统，即用户和资源都有角色：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -772,20 +744,19 @@ lizi CANNOT write data</code></pre></td></tr></table>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf">[role_definition]
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[role_definition]
 g=_,_
 g2=_,_
 
 [matchers]
-m = g(r.sub, p.sub) &amp;&amp; g2(r.obj, p.obj) &amp;&amp; r.act == p.act</code></pre></td></tr></table>
+m = g(r.sub, p.sub) &amp;&amp; g2(r.obj, p.obj) &amp;&amp; r.act == p.act
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面的模型文件定义了两个<code>RBAC</code>系统<code>g</code>和<code>g2</code>，我们在匹配器中使用<code>g(r.sub, p.sub)</code>判断请求主体属于特定组，<code>g2(r.obj, p.obj)</code>判断请求资源属于特定组，且操作一致即可放行。</p>
-
+</div><p>上面的模型文件定义了两个<code>RBAC</code>系统<code>g</code>和<code>g2</code>，我们在匹配器中使用<code>g(r.sub, p.sub)</code>判断请求主体属于特定组，<code>g2(r.obj, p.obj)</code>判断请求资源属于特定组，且操作一致即可放行。</p>
 <p>策略文件:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -798,7 +769,7 @@ m = g(r.sub, p.sub) &amp;&amp; g2(r.obj, p.obj) &amp;&amp; r.act == p.act</code>
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv">p, admin, prod, read
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">p, admin, prod, read
 p, admin, prod, write
 p, admin, dev, read
 p, admin, dev, write
@@ -808,13 +779,13 @@ p, developer, prod, read
 g, dajun, admin
 g, lizi, developer
 g2, prod.data, prod
-g2, dev.data, dev</code></pre></td></tr></table>
+g2, dev.data, dev
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>先看角色关系，即最后 4 行，<code>dajun</code>属于<code>admin</code>角色，<code>lizi</code>属于<code>developer</code>角色，<code>prod.data</code>属于生产资源<code>prod</code>角色，<code>dev.data</code>属于开发资源<code>dev</code>角色。<code>admin</code>角色拥有对<code>prod</code>和<code>dev</code>类资源的读写权限，<code>developer</code>只能拥有对<code>dev</code>的读写权限和<code>prod</code>的读权限。</p>
+</div><p>先看角色关系，即最后 4 行，<code>dajun</code>属于<code>admin</code>角色，<code>lizi</code>属于<code>developer</code>角色，<code>prod.data</code>属于生产资源<code>prod</code>角色，<code>dev.data</code>属于开发资源<code>dev</code>角色。<code>admin</code>角色拥有对<code>prod</code>和<code>dev</code>类资源的读写权限，<code>developer</code>只能拥有对<code>dev</code>的读写权限和<code>prod</code>的读权限。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -825,13 +796,13 @@ g2, dev.data, dev</code></pre></td></tr></table>
 <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;prod.data&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
 <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;dev.data&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
 <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;dev.data&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
-<span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;prod.data&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;prod.data&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>第一个函数中<code>e.Enforce()</code>方法在实际执行的时候先获取<code>dajun</code>所属角色<code>admin</code>，再获取<code>prod.data</code>所属角色<code>prod</code>，根据文件中第一行<code>p, admin, prod, read</code>允许请求。最后一个函数中<code>lizi</code>属于角色<code>developer</code>，而<code>prod.data</code>属于角色<code>prod</code>，所有策略都不允许，故该请求被拒绝：</p>
+</div><p>第一个函数中<code>e.Enforce()</code>方法在实际执行的时候先获取<code>dajun</code>所属角色<code>admin</code>，再获取<code>prod.data</code>所属角色<code>prod</code>，根据文件中第一行<code>p, admin, prod, read</code>允许请求。最后一个函数中<code>lizi</code>属于角色<code>developer</code>，而<code>prod.data</code>属于角色<code>prod</code>，所有策略都不允许，故该请求被拒绝：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -842,53 +813,49 @@ g2, dev.data, dev</code></pre></td></tr></table>
 dajun CAN write prod.data
 lizi CAN read dev.data
 lizi CAN write dev.data
-lizi CANNOT write prod.data</code></pre></td></tr></table>
+lizi CANNOT write prod.data
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="多层角色">多层角色</h3>
-
+</div><h3 id="多层角色">多层角色</h3>
 <p><code>casbin</code>还能为角色定义所属角色，从而实现多层角色关系，这种权限关系是可以传递的。例如<code>dajun</code>属于高级开发者<code>senior</code>，<code>seinor</code>属于开发者，那么<code>dajun</code>也属于开发者，拥有开发者的所有权限。我们可以定义开发者共有的权限，然后额外为<code>senior</code>定义一些特殊的权限。</p>
-
 <p>模型文件不用修改，策略文件改动如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv">p, senior, data, write
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">p, senior, data, write
 p, developer, data, read
 g, dajun, senior
 g, senior, developer
-g, lizi, developer</code></pre></td></tr></table>
+g, lizi, developer
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面<code>policy.csv</code>文件定义了高级开发者<code>senior</code>对数据<code>data</code>有<code>write</code>权限，普通开发者<code>developer</code>对数据只有<code>read</code>权限。同时<code>senior</code>也是<code>developer</code>，所以<code>senior</code>也继承其<code>read</code>权限。<code>dajun</code>属于<code>senior</code>，所以<code>dajun</code>对<code>data</code>有<code>read</code>和<code>write</code>权限，而<code>lizi</code>只属于<code>developer</code>，对数据<code>data</code>只有<code>read</code>权限。</p>
+</div><p>上面<code>policy.csv</code>文件定义了高级开发者<code>senior</code>对数据<code>data</code>有<code>write</code>权限，普通开发者<code>developer</code>对数据只有<code>read</code>权限。同时<code>senior</code>也是<code>developer</code>，所以<code>senior</code>也继承其<code>read</code>权限。<code>dajun</code>属于<code>senior</code>，所以<code>dajun</code>对<code>data</code>有<code>read</code>和<code>write</code>权限，而<code>lizi</code>只属于<code>developer</code>，对数据<code>data</code>只有<code>read</code>权限。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-goland" data-lang="goland"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-goland" data-lang="goland">check(e, &#34;dajun&#34;, &#34;data&#34;, &#34;read&#34;)
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">check(e, &#34;dajun&#34;, &#34;data&#34;, &#34;read&#34;)
 check(e, &#34;dajun&#34;, &#34;data&#34;, &#34;write&#34;)
 check(e, &#34;lizi&#34;, &#34;data&#34;, &#34;read&#34;)
-check(e, &#34;lizi&#34;, &#34;data&#34;, &#34;write&#34;)</code></pre></td></tr></table>
+check(e, &#34;lizi&#34;, &#34;data&#34;, &#34;write&#34;)
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="rbac-domain"><code>RBAC</code> domain</h3>
-
+</div><h3 id="rbac-domain"><code>RBAC</code> domain</h3>
 <p>在<code>casbin</code>中，角色可以是全局的，也可以是特定<code>domain</code>（领域）或<code>tenant</code>（租户），可以简单理解为<strong>组</strong>。例如<code>dajun</code>在组<code>tenant1</code>中是管理员，拥有比较高的权限，在<code>tenant2</code>可能只是个弟弟。</p>
-
 <p>使用<code>RBAC domain</code>需要对模型文件做以下修改：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -901,7 +868,7 @@ check(e, &#34;lizi&#34;, &#34;data&#34;, &#34;write&#34;)</code></pre></td></tr>
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf">[request_definition]
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[request_definition]
 r = sub, dom, obj, act
 
 [policy_definition]
@@ -911,28 +878,28 @@ p = sub, dom, obj, act
 g = _,_,_
 
 [matchers]
-m = g(r.sub, p.sub, r.dom) &amp;&amp; r.dom == p.dom &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.obj</code></pre></td></tr></table>
+m = g(r.sub, p.sub, r.dom) &amp;&amp; r.dom == p.dom &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.obj
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>g=_,_,_</code>表示前者在后者中拥有中间定义的角色，在匹配器中使用<code>g</code>要带上<code>dom</code>。</p>
+</div><p><code>g=_,_,_</code>表示前者在后者中拥有中间定义的角色，在匹配器中使用<code>g</code>要带上<code>dom</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">p, admin, tenant1, data1, read
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">p, admin, tenant1, data1, read
 p, admin, tenant2, data2, read
 g, dajun, admin, tenant1
-g, dajun, developer, tenant2</pre></td></tr></table>
+g, dajun, developer, tenant2
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在<code>tenant1</code>中，只有<code>admin</code>可以读取数据<code>data1</code>。在<code>tenant2</code>中，只有<code>admin</code>可以读取数据<code>data2</code>。<code>dajun</code>在<code>tenant1</code>中是<code>admin</code>，但是在<code>tenant2</code>中不是。</p>
+</div><p>在<code>tenant1</code>中，只有<code>admin</code>可以读取数据<code>data1</code>。在<code>tenant2</code>中，只有<code>admin</code>可以读取数据<code>data2</code>。<code>dajun</code>在<code>tenant1</code>中是<code>admin</code>，但是在<code>tenant2</code>中不是。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -969,26 +936,25 @@ g, dajun, developer, tenant2</pre></td></tr></table>
 
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;tenant1&#34;</span><span class="p">,</span> <span class="s">&#34;data1&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;tenant2&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>结果不出意料：</p>
+</div><p>结果不出意料：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">dajun CAN read data1 in tenant1
-dajun CANNOT read data2 in tenant2</code></pre></td></tr></table>
+dajun CANNOT read data2 in tenant2
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="abac">ABAC</h2>
-
+</div><h2 id="abac">ABAC</h2>
 <p><code>RBAC</code>模型对于实现比较规则的、相对静态的权限管理非常有用。但是对于特殊的、动态的需求，<code>RBAC</code>就显得有点力不从心了。例如，我们在不同的时间段对数据<code>data</code>实现不同的权限控制。正常工作时间<code>9:00-18:00</code>所有人都可以读写<code>data</code>，其他时间只有数据所有者能读写。这种需求我们可以很方便地使用<code>ABAC</code>（attribute base access list）模型完成：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1001,7 +967,7 @@ dajun CANNOT read data2 in tenant2</code></pre></td></tr></table>
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf">[request_definition]
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[request_definition]
 r = sub, obj, act
 
 [policy_definition]
@@ -1011,13 +977,13 @@ p = sub, obj, act
 m = r.sub.Hour &gt;= 9 &amp;&amp; r.sub.Hour &lt; 18 || r.sub.Name == r.obj.Owner
 
 [policy_effect]
-e = some(where (p.eft == allow))</code></pre></td></tr></table>
+e = some(where (p.eft == allow))
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>该规则不需要策略文件：</p>
+</div><p>该规则不需要策略文件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1094,13 +1060,13 @@ e = some(where (p.eft == allow))</code></pre></td></tr></table>
 
   <span class="nx">s4</span> <span class="o">:=</span> <span class="nx">Subject</span><span class="p">{</span><span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="mi">20</span><span class="p">}</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">s4</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>显然<code>lizi</code>在<code>20:00</code>不能<code>read</code>数据<code>data</code>：</p>
+</div><p>显然<code>lizi</code>在<code>20:00</code>不能<code>read</code>数据<code>data</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1109,19 +1075,16 @@ e = some(where (p.eft == allow))</code></pre></td></tr></table>
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">dajun CAN read data at 10:00
 lizi CAN read data at 10:00
 dajun CAN read data at 20:00
-lizi CANNOT read data at 20:00</code></pre></td></tr></table>
+lizi CANNOT read data at 20:00
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们知道，在<code>model.conf</code>文件中可以通过<code>r.sub</code>和<code>r.obj</code>，<code>r.act</code>来访问传给<code>Enforce</code>方法的参数。实际上<code>sub/obj</code>可以是结构体对象，得益于<code>govaluate</code>库的强大功能，我们可以在<code>model.conf</code>文件中获取这些结构体的字段值。如上面的<code>r.sub.Name</code>、<code>r.Obj.Owner</code>等。<code>govaluate</code>库的内容可以参见我之前的一篇文章<a href="https://darjun.github.io/2020/04/01/godailylib/govaluate/">《Go 每日一库之 govaluate》</a>。</p>
-
+</div><p>我们知道，在<code>model.conf</code>文件中可以通过<code>r.sub</code>和<code>r.obj</code>，<code>r.act</code>来访问传给<code>Enforce</code>方法的参数。实际上<code>sub/obj</code>可以是结构体对象，得益于<code>govaluate</code>库的强大功能，我们可以在<code>model.conf</code>文件中获取这些结构体的字段值。如上面的<code>r.sub.Name</code>、<code>r.Obj.Owner</code>等。<code>govaluate</code>库的内容可以参见我之前的一篇文章<a href="https://darjun.github.io/2020/04/01/godailylib/govaluate/">《Go 每日一库之 govaluate》</a>。</p>
 <p>使用<code>ABAC</code>模型可以非常灵活的权限控制，但是一般情况下<code>RBAC</code>就已经够用了。</p>
-
 <h2 id="模型存储">模型存储</h2>
-
 <p>上面代码中，我们一直将模型存储在文件中。<code>casbin</code>也可以实现在代码中动态初始化模型，例如<code>get-started</code>的例子可以改写为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1158,13 +1121,13 @@ lizi CANNOT read data at 20:00</code></pre></td></tr></table>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data1&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>同样地，我们也可以从字符串中加载模型：</p>
+</div><p>同样地，我们也可以从字符串中加载模型：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1213,17 +1176,15 @@ lizi CANNOT read data at 20:00</code></pre></td></tr></table>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data1&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>但是这两种方式并不推荐。</p>
-
+</div><p>但是这两种方式并不推荐。</p>
 <h2 id="策略存储">策略存储</h2>
-
 <p>在前面的例子中，我们都是将策略存储在<code>policy.csv</code>文件中。一般在实际应用中，很少使用文件存储。<code>casbin</code>以第三方适配器的方式支持多种存储方式包括<code>MySQL/MongoDB/Redis/Etcd</code>等，还可以实现自己的存储。完整列表看这里<a href="https://casbin.org/docs/en/adapters">https://casbin.org/docs/en/adapters</a>。下面我们介绍使用<code>Gorm Adapter</code>。先连接到数据库，执行下面的<code>SQL</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1242,29 +1203,29 @@ lizi CANNOT read data at 20:00</code></pre></td></tr></table>
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">casbin</span><span class="p">;</span>
-
-<span class="n">USE</span> <span class="n">casbin</span><span class="p">;</span>
-
-<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">casbin_rule</span> <span class="p">(</span>
-  <span class="n">p_type</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-  <span class="n">v0</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-  <span class="n">v1</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-  <span class="n">v2</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-  <span class="n">v3</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-  <span class="n">v4</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-  <span class="n">v5</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="p">);</span>
-
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">casbin_rule</span> <span class="k">VALUES</span>
-<span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;dajun&#39;</span><span class="p">,</span> <span class="s1">&#39;data1&#39;</span><span class="p">,</span> <span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-<span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;lizi&#39;</span><span class="p">,</span> <span class="s1">&#39;data2&#39;</span><span class="p">,</span> <span class="s1">&#39;write&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">casbin</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="n">USE</span><span class="w"> </span><span class="n">casbin</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">casbin_rule</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span><span class="w">  </span><span class="n">p_type</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">v0</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="n">v1</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="n">v2</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="n">v3</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="n">v4</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w">
+</span><span class="w">  </span><span class="n">v5</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">casbin_rule</span><span class="w"> </span><span class="k">VALUES</span><span class="w">
+</span><span class="w"></span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;dajun&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;data1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;read&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">),</span><span class="w">
+</span><span class="w"></span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;lizi&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;data2&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;write&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span><span class="w">
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>然后使用<code>Gorm Adapter</code>加载<code>policy</code>，<code>Gorm Adapter</code>默认使用<code>casbin</code>库中的<code>casbin_rule</code>表：</p>
+</div><p>然后使用<code>Gorm Adapter</code>加载<code>policy</code>，<code>Gorm Adapter</code>默认使用<code>casbin</code>库中的<code>casbin_rule</code>表：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1321,13 +1282,13 @@ lizi CANNOT read data at 20:00</code></pre></td></tr></table>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data1&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data2&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行：</p>
+</div><p>运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1336,35 +1297,35 @@ lizi CANNOT read data at 20:00</code></pre></td></tr></table>
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">dajun CAN read data1
 lizi CAN write data2
 dajun CANNOT write data1
-dajun CANNOT read data2</code></pre></td></tr></table>
+dajun CANNOT read data2
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="使用函数">使用函数</h2>
-
+</div><h2 id="使用函数">使用函数</h2>
 <p>我们可以在匹配器中使用函数。<code>casbin</code>内置了一些函数<code>keyMatch/keyMatch2/keyMatch3/keyMatch4</code>都是匹配 URL 路径的，<code>regexMatch</code>使用正则匹配，<code>ipMatch</code>匹配 IP 地址。参见<a href="https://casbin.org/docs/en/function">https://casbin.org/docs/en/function</a>。使用内置函数我们能很容易对路由进行权限划分：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf">[matchers]
-m = r.sub == p.sub &amp;&amp; keyMatch(r.obj, p.obj) &amp;&amp; r.act == p.act</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[matchers]
+m = r.sub == p.sub &amp;&amp; keyMatch(r.obj, p.obj) &amp;&amp; r.act == p.act
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv">p, dajun, user/dajun/*, read
-p, lizi, user/lizi/*, read</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">p, dajun, user/dajun/*, read
+p, lizi, user/lizi/*, read
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>不同用户只能访问其对应路由下的 URL：</p>
+</div><p>不同用户只能访问其对应路由下的 URL：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1385,26 +1346,26 @@ p, lizi, user/lizi/*, read</code></pre></td></tr></table>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;user/dajun/1&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;lizi&#34;</span><span class="p">,</span> <span class="s">&#34;user/lizi/2&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;user/lizi/1&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>输出：</p>
+</div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">dajun CAN read user/dajun/1
 lizi CAN read user/lizi/2
-dajun CANNOT read user/lizi/1</code></pre></td></tr></table>
+dajun CANNOT read user/lizi/1
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们当然也可以定义自己的函数。先定义一个函数，返回 bool：</p>
+</div><p>我们当然也可以定义自己的函数。先定义一个函数，返回 bool：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1429,15 +1390,14 @@ dajun CANNOT read user/lizi/1</code></pre></td></tr></table>
   <span class="p">}</span>
 
   <span class="k">return</span> <span class="nx">key1</span> <span class="o">==</span> <span class="nx">key2</span><span class="p">[:</span><span class="nx">i</span><span class="p">]</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这里实现了一个简单的正则匹配，只处理<code>*</code>。</p>
-
+</div><p>这里实现了一个简单的正则匹配，只处理<code>*</code>。</p>
 <p>然后将这个函数用<code>interface{}</code>类型包装一层：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1450,44 +1410,43 @@ dajun CANNOT read user/lizi/1</code></pre></td></tr></table>
   <span class="nx">name2</span> <span class="o">:=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
 
   <span class="k">return</span> <span class="p">(</span><span class="kt">bool</span><span class="p">)(</span><span class="nf">KeyMatch</span><span class="p">(</span><span class="nx">name1</span><span class="p">,</span> <span class="nx">name2</span><span class="p">)),</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后添加到权限认证器中：</p>
+</div><p>然后添加到权限认证器中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">e</span><span class="p">.</span><span class="nf">AddFunction</span><span class="p">(</span><span class="s">&#34;my_func&#34;</span><span class="p">,</span> <span class="nx">KeyMatchFunc</span><span class="p">)</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">e</span><span class="p">.</span><span class="nf">AddFunction</span><span class="p">(</span><span class="s">&#34;my_func&#34;</span><span class="p">,</span> <span class="nx">KeyMatchFunc</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这样我们就可以在匹配器中使用该函数实现正则匹配了：</p>
+</div><p>这样我们就可以在匹配器中使用该函数实现正则匹配了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-model.conf" data-lang="model.conf">[matchers]
-m = r.sub == p.sub &amp;&amp; my_func(r.obj, p.obj) &amp;&amp; r.act == p.act</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[matchers]
+m = r.sub == p.sub &amp;&amp; my_func(r.obj, p.obj) &amp;&amp; r.act == p.act
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>接下来我们在策略文件中为<code>dajun</code>赋予权限：</p>
+</div><p>接下来我们在策略文件中为<code>dajun</code>赋予权限：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-policy.csv" data-lang="policy.csv">p, dajun, data/*, read</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">p, dajun, data/*, read
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>dajun</code>对匹配模式<code>data/*</code>的文件都有<code>read</code>权限。</p>
-
+</div><p><code>dajun</code>对匹配模式<code>data/*</code>的文件都有<code>read</code>权限。</p>
 <p>验证一下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1496,13 +1455,13 @@ m = r.sub == p.sub &amp;&amp; my_func(r.obj, p.obj) &amp;&amp; r.act == p.act</c
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data/1&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
 <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data/2&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
 <span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;data/1&#34;</span><span class="p">,</span> <span class="s">&#34;write&#34;</span><span class="p">)</span>
-<span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;mydata&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="nf">check</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s">&#34;dajun&#34;</span><span class="p">,</span> <span class="s">&#34;mydata&#34;</span><span class="p">,</span> <span class="s">&#34;read&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>dajun</code>对<code>data/1</code>没有<code>write</code>权限，<code>mydata</code>不符合<code>data/*</code>模式，也没有<code>read</code>权限：</p>
+</div><p><code>dajun</code>对<code>data/1</code>没有<code>write</code>权限，<code>mydata</code>不符合<code>data/*</code>模式，也没有<code>read</code>权限：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1511,31 +1470,23 @@ m = r.sub == p.sub &amp;&amp; my_func(r.obj, p.obj) &amp;&amp; r.act == p.act</c
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">dajun CAN read data/1
 dajun CAN read data/2
 dajun CANNOT write data/1
-dajun CANNOT read mydata</code></pre></td></tr></table>
+dajun CANNOT read mydata
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="总结">总结</h2>
-
+</div><h2 id="总结">总结</h2>
 <p><code>casbin</code>功能强大，简单高效，且多语言通用。值得学习。</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>casbin GitHub：<a href="https://github.com/casbin/casbin">https://github.com/casbin/casbin</a></li>
 <li>casbin 官网：<a href="https://casbin.org/">https://casbin.org/</a></li>
 <li>一种基于元模型的访问控制策略描述语言：<a href="http://www.jos.org.cn/html/2020/2/5624.htm">http://www.jos.org.cn/html/2020/2/5624.htm</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 

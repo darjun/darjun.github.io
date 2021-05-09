@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.84.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/26/godailylib/message-bus/" />
@@ -64,21 +64,15 @@
 <meta property="og:title" content="Go 每日一库之 message-bus" />
 <meta property="og:description" content="简介 在一个涉及多模块交互的系统中，如果模块的交互需要手动去调用对方的方法，那么代码的耦合度就太高了。所以产生了异步消息通信。实际上，各种各样" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://darjun.github.io/2020/02/26/godailylib/message-bus/" />
-<meta property="article:published_time" content="2020-02-26T14:40:23+00:00" />
-<meta property="article:modified_time" content="2020-02-26T14:40:23+00:00" />
+<meta property="og:url" content="https://darjun.github.io/2020/02/26/godailylib/message-bus/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-02-26T14:40:23&#43;00:00" />
+<meta property="article:modified_time" content="2020-02-26T14:40:23&#43;00:00" />
+
 <meta itemprop="name" content="Go 每日一库之 message-bus">
-<meta itemprop="description" content="简介 在一个涉及多模块交互的系统中，如果模块的交互需要手动去调用对方的方法，那么代码的耦合度就太高了。所以产生了异步消息通信。实际上，各种各样">
-
-
-<meta itemprop="datePublished" content="2020-02-26T14:40:23&#43;00:00" />
+<meta itemprop="description" content="简介 在一个涉及多模块交互的系统中，如果模块的交互需要手动去调用对方的方法，那么代码的耦合度就太高了。所以产生了异步消息通信。实际上，各种各样"><meta itemprop="datePublished" content="2020-02-26T14:40:23&#43;00:00" />
 <meta itemprop="dateModified" content="2020-02-26T14:40:23&#43;00:00" />
 <meta itemprop="wordCount" content="3180">
-
-
-
-<meta itemprop="keywords" content="Go 每日一库," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 message-bus"/>
 <meta name="twitter:description" content="简介 在一个涉及多模块交互的系统中，如果模块的交互需要手动去调用对方的方法，那么代码的耦合度就太高了。所以产生了异步消息通信。实际上，各种各样"/>
 
@@ -384,46 +378,38 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#更复杂的例子">更复杂的例子</a></li>
-<li><a href="#缺点">缺点</a></li>
-<li><a href="#源码分析">源码分析</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#更复杂的例子">更复杂的例子</a></li>
+    <li><a href="#缺点">缺点</a></li>
+    <li><a href="#源码分析">源码分析</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
-<p>在一个涉及多模块交互的系统中，如果模块的交互需要手动去调用对方的方法，那么代码的耦合度就太高了。所以产生了异步消息通信。实际上，各种各样的消息队列都是基于异步消息的。不过它们大部分都有着非常复杂的设计，很多被设计成一个独立的软件来使用。今天我们介绍一个非常小巧的异步消息通信库<code>[message-bus]</code>(<a href="https://github.com/vardius/message-bus)，它只能在一个进程中使用。源代码只有一个文件，我们也简单看一下实现。">https://github.com/vardius/message-bus)，它只能在一个进程中使用。源代码只有一个文件，我们也简单看一下实现。</a></p>
-
+      <h2 id="简介">简介</h2>
+<p>在一个涉及多模块交互的系统中，如果模块的交互需要手动去调用对方的方法，那么代码的耦合度就太高了。所以产生了异步消息通信。实际上，各种各样的消息队列都是基于异步消息的。不过它们大部分都有着非常复杂的设计，很多被设计成一个独立的软件来使用。今天我们介绍一个非常小巧的异步消息通信库<code>[message-bus]</code>(<a href="https://github.com/vardius/message-bus">https://github.com/vardius/message-bus</a>)，它只能在一个进程中使用。源代码只有一个文件，我们也简单看一下实现。</p>
 <h2 id="快速使用">快速使用</h2>
-
 <p>安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/vardius/message-bus</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/vardius/message-bus
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用：</p>
+</div><p>使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -482,25 +468,21 @@ if (!doNotTrack) {
 
   <span class="nx">bus</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;topic&#34;</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
   <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这是官网提供的例子，<code>message-bus</code>承担了模块间消息分发的角色。模块 A 和 模块 B 先向<code>message-bus</code>订阅主题（<strong>topic</strong>），即告诉<code>message-bus</code>对什么样的消息感兴趣。其他模块 C 产生某个主题的消息，通知<code>message-bus</code>，由<code>message-bus</code>分发到对此感兴趣的模块。这样就实现了模块之间的解耦，模块 A、B 和 C 之间不需要知道彼此。</p>
-
+</div><p>这是官网提供的例子，<code>message-bus</code>承担了模块间消息分发的角色。模块 A 和 模块 B 先向<code>message-bus</code>订阅主题（<strong>topic</strong>），即告诉<code>message-bus</code>对什么样的消息感兴趣。其他模块 C 产生某个主题的消息，通知<code>message-bus</code>，由<code>message-bus</code>分发到对此感兴趣的模块。这样就实现了模块之间的解耦，模块 A、B 和 C 之间不需要知道彼此。</p>
 <p>上面的例子中：</p>
-
 <ul>
 <li>首先，调用<code>messagebuss.New()</code>创建一个消息管理器；</li>
 <li>其次调用<code>Subscribe()</code>方法向管理器订阅主题；</li>
 <li>调用<code>Publish()</code>向管理器发布主题消息，这样订阅该主题的模块就会收到通知。</li>
 </ul>
-
 <h2 id="更复杂的例子">更复杂的例子</h2>
-
 <p>其实很多人会对何时使用这个库产生疑问，<code>message-bus</code> GitHub 仓库中 issue 中至今还躺着这个问题，<a href="https://github.com/vardius/message-bus/issues/4">https://github.com/vardius/message-bus/issues/4</a>。我是做游戏后端开发的，在一个游戏中会涉及各种各样的功能模块，它们需要了解其他模块产生的事件。例如每日任务有玩家升多少级的任务、成就系统有等级的成就、其他系统还可能根据玩家等级执行其他操作&hellip;如果硬写的话，最后可能是这样：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -513,15 +495,14 @@ if (!doNotTrack) {
 </span><span class="c1"></span>  <span class="nx">p</span><span class="p">.</span><span class="nx">DailyMission</span><span class="p">.</span><span class="nf">OnPlayerLevelUp</span><span class="p">(</span><span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">newLevel</span><span class="p">)</span>
   <span class="nx">p</span><span class="p">.</span><span class="nx">Achievement</span><span class="p">.</span><span class="nf">OnPlayerLevelUp</span><span class="p">(</span><span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">newLevel</span><span class="p">)</span>
   <span class="nx">p</span><span class="p">.</span><span class="nx">OtherSystem</span><span class="p">.</span><span class="nf">OnPlayerLevelUp</span><span class="p">(</span><span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">newLevel</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>需求一直在新增和迭代，如果新增一个模块，也需要在玩家升级时进行一些处理，除了实现模块自身的<code>OnPlayerLevelUp</code>方法，还必须在玩家的<code>LevelUp()</code>方法调用。这样玩家模块必须清楚地知道其他模块的情况。如果功能模块再多一点，而且由不同的人开发的，那么情况会更复杂。使用异步消息可有效解决这个问题：在升级时我们只需要向消息管理器发布这个升级“消息”，由消息管理器通知订阅该消息的模块。</p>
-
+</div><p>需求一直在新增和迭代，如果新增一个模块，也需要在玩家升级时进行一些处理，除了实现模块自身的<code>OnPlayerLevelUp</code>方法，还必须在玩家的<code>LevelUp()</code>方法调用。这样玩家模块必须清楚地知道其他模块的情况。如果功能模块再多一点，而且由不同的人开发的，那么情况会更复杂。使用异步消息可有效解决这个问题：在升级时我们只需要向消息管理器发布这个升级“消息”，由消息管理器通知订阅该消息的模块。</p>
 <p>我们设计的目录结构如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-tree" data-lang="tree"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -529,18 +510,18 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-tree" data-lang="tree">game
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">game
 ├── achievement.go
 ├── daily_mission.go
 ├── main.go
 ├── manager.go
-└── player.go</code></pre></td></tr></table>
+└── player.go
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>其中<code>manager.go</code>负责<code>message-bus</code>的创建：</p>
+</div><p>其中<code>manager.go</code>负责<code>message-bus</code>的创建：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -555,13 +536,13 @@ if (!doNotTrack) {
   <span class="nx">messagebus</span> <span class="s">&#34;github.com/vardius/message-bus&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">var</span> <span class="nx">bus</span> <span class="p">=</span> <span class="nx">messagebus</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="kd">var</span> <span class="nx">bus</span> <span class="p">=</span> <span class="nx">messagebus</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>player.go</code>对应玩家结构（为了简便起见，很多字段省略了）：</p>
+</div><p><code>player.go</code>对应玩家结构（为了简便起见，很多字段省略了）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -596,13 +577,13 @@ if (!doNotTrack) {
   <span class="nx">p</span><span class="p">.</span><span class="nx">level</span><span class="o">++</span>
 
   <span class="nx">bus</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;UserLevelUp&#34;</span><span class="p">,</span> <span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">newLevel</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>achievement.go</code>和<code>daily_mission.go</code>分别是成就和每日任务（也是省略了很多无关细节）：</p>
+</div><p><code>achievement.go</code>和<code>daily_mission.go</code>分别是成就和每日任务（也是省略了很多无关细节）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -639,11 +620,12 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Achievement</span><span class="p">)</span> <span class="nf">OnUserLevelUp</span><span class="p">(</span><span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">newLevel</span> <span class="kt">uint32</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;daily mission old level:%d new level:%d\n&#34;</span><span class="p">,</span> <span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">newLevel</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -680,15 +662,14 @@ if (!doNotTrack) {
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DailyMission</span><span class="p">)</span> <span class="nf">OnUserLevelUp</span><span class="p">(</span><span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">newLevel</span> <span class="kt">uint32</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;daily mission old level:%d new level:%d\n&#34;</span><span class="p">,</span> <span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">newLevel</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在创建这两个功能的对象时，我们订阅了<code>UserLevelUp</code>主题。玩家在升级时会发布这个主题。</p>
-
+</div><p>在创建这两个功能的对象时，我们订阅了<code>UserLevelUp</code>主题。玩家在升级时会发布这个主题。</p>
 <p>最后<code>main.go</code>驱动整个程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -719,30 +700,26 @@ if (!doNotTrack) {
   <span class="nx">p</span><span class="p">.</span><span class="nf">LevelUp</span><span class="p">()</span>
 
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意，由于<code>message-bus</code>是异步通信，为了能看到结果我特意加了<code>time.Sleep</code>，实际开发中不太可能使用<code>Sleep</code>。</p>
-
+</div><p>注意，由于<code>message-bus</code>是异步通信，为了能看到结果我特意加了<code>time.Sleep</code>，实际开发中不太可能使用<code>Sleep</code>。</p>
 <p>最后我们运行整个程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="p">.</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="p">.</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因为要运行的是一个多文件程序，不能使用<code>go run main.go</code>！</p>
-
+</div><p>因为要运行的是一个多文件程序，不能使用<code>go run main.go</code>！</p>
 <p>实际上，当年我因为苦于模块之间调来调去太麻烦了，自己用 C++ 撸了一个<code>event-manager</code>，<a href="https://github.com/darjun/event-manager">https://github.com/darjun/event-manager</a>。思路是一样的。</p>
-
 <h2 id="缺点">缺点</h2>
-
 <p><code>message-bus</code>订阅主题时传入一个函数，函数的参数可任意设置，发布时必须使用相同数量的参数，这个限制感觉有点勉强。如果我们传入的参数个数不一致，程序就<code>panic</code>了。我认为可以只用一个参数<code>interface{}</code>，传入对象即可。例如，上面的升级事件可以使用<code>EventUserLevelUp</code>的对象：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -751,13 +728,13 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">EventUserLevelUp</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">oldLevel</span> <span class="kt">uint32</span>
   <span class="nx">newLevel</span> <span class="kt">uint32</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>对应地修改一下<code>Player</code>的<code>LevelUp</code>方法：</p>
+</div><p>对应地修改一下<code>Player</code>的<code>LevelUp</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -776,13 +753,13 @@ if (!doNotTrack) {
   <span class="nx">p</span><span class="p">.</span><span class="nx">level</span><span class="o">++</span>
 
   <span class="nx">bus</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;UserLevelUp&#34;</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>和处理方法：</p>
+</div><p>和处理方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -791,19 +768,16 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DailyMission</span><span class="p">)</span> <span class="nf">OnUserLevelUp</span><span class="p">(</span><span class="nx">arg</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
   <span class="nx">event</span> <span class="o">:=</span> <span class="nx">arg</span><span class="p">.(</span><span class="o">*</span><span class="nx">EventUserLevelUp</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;daily mission old level:%d new level:%d\n&#34;</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">oldLevel</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">newLevel</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这样一来，我们似乎用不上反射了，订阅者都是<code>func (interface{})</code>类型的函数或方法。感兴趣的可自己实现一下，我 fork 了<code>message-bus</code>，做了这个修改。改动在这里：<a href="https://github.com/darjun/message-bus/commit/045ad9bd50acb7ef709dac35babe3e7d8ecf9749">https://github.com/darjun/message-bus</a>，<code>message-bus</code>有测试和性能用例，改完跑一下😄。</p>
-
+</div><p>这样一来，我们似乎用不上反射了，订阅者都是<code>func (interface{})</code>类型的函数或方法。感兴趣的可自己实现一下，我 fork 了<code>message-bus</code>，做了这个修改。改动在这里：<a href="https://github.com/darjun/message-bus/commit/045ad9bd50acb7ef709dac35babe3e7d8ecf9749">https://github.com/darjun/message-bus</a>，<code>message-bus</code>有测试和性能用例，改完跑一下😄。</p>
 <h2 id="源码分析">源码分析</h2>
-
 <p><code>message-bus</code>的源码只有一个文件，加上注释还不到 130 行，我们简单来看一下。</p>
-
 <p><code>MessageBus</code>就是一个简单的接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -816,15 +790,14 @@ if (!doNotTrack) {
   <span class="nf">Close</span><span class="p">(</span><span class="nx">topic</span> <span class="kt">string</span><span class="p">)</span>
   <span class="nf">Subscribe</span><span class="p">(</span><span class="nx">topic</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">fn</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
   <span class="nf">Unsubscribe</span><span class="p">(</span><span class="nx">topic</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">fn</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>Publish</code>和<code>Subscribe</code>都讲过了，<code>Unsubscribe</code>表示对某个主题不感兴趣了，取消订阅，<code>Close</code>直接关闭某个主题的队列，删除所有订阅者。</p>
-
+</div><p><code>Publish</code>和<code>Subscribe</code>都讲过了，<code>Unsubscribe</code>表示对某个主题不感兴趣了，取消订阅，<code>Close</code>直接关闭某个主题的队列，删除所有订阅者。</p>
 <p>在<code>message-bus</code>内部，每个主题对应一组订阅者。每个订阅者使用<code>handler</code>结构存储回调和参数通道：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -833,13 +806,13 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">handler</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">callback</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span>
   <span class="nx">queue</span>    <span class="kd">chan</span> <span class="p">[]</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>所有订阅者都存储在一个 map 中：</p>
+</div><p>所有订阅者都存储在一个 map 中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -854,13 +827,13 @@ if (!doNotTrack) {
   <span class="nx">handlerQueueSize</span> <span class="kt">int</span>
   <span class="nx">mtx</span>              <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
   <span class="nx">handlers</span>         <span class="nx">handlersMap</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>messageBus</code>是<code>MessageBus</code>接口的实现。我们来看看各个方法是如何实现的。</p>
+</div><p><code>messageBus</code>是<code>MessageBus</code>接口的实现。我们来看看各个方法是如何实现的。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -891,14 +864,14 @@ if (!doNotTrack) {
 
   <span class="nx">b</span><span class="p">.</span><span class="nx">handlers</span><span class="p">[</span><span class="nx">topic</span><span class="p">]</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">handlers</span><span class="p">[</span><span class="nx">topic</span><span class="p">],</span> <span class="nx">h</span><span class="p">)</span>
   <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>调用<code>Subscribe</code>时传入一个函数，<code>message-bus</code>为每个订阅者创建一个<code>handler</code>对象，在该对象中创建一个带缓冲的参数通道，缓冲大小由<code>message-bus</code>创建时的参数指定。
+</div><p>调用<code>Subscribe</code>时传入一个函数，<code>message-bus</code>为每个订阅者创建一个<code>handler</code>对象，在该对象中创建一个带缓冲的参数通道，缓冲大小由<code>message-bus</code>创建时的参数指定。
 同时启动一个<code>goroutine</code>，监听通道，每当有参数到来时就执行注册的回调。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -915,13 +888,13 @@ if (!doNotTrack) {
       <span class="nx">h</span><span class="p">.</span><span class="nx">queue</span> <span class="o">&lt;-</span> <span class="nx">rArgs</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>Publish</code>发布主题，<code>buildHandlerArgs</code>将传入的参数转为<code>[]reflect.Value</code>，以便反射调用回调时传入。发送参数到该主题下所有<code>handler</code>的通道中。由<code>Subscribe</code>时创建的<code>goroutine</code>读取并触发回调。</p>
+</div><p><code>Publish</code>发布主题，<code>buildHandlerArgs</code>将传入的参数转为<code>[]reflect.Value</code>，以便反射调用回调时传入。发送参数到该主题下所有<code>handler</code>的通道中。由<code>Subscribe</code>时创建的<code>goroutine</code>读取并触发回调。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -956,13 +929,13 @@ if (!doNotTrack) {
   <span class="p">}</span>
 
   <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;topic %s doesn&#39;t exist&#34;</span><span class="p">,</span> <span class="nx">topic</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>Unsubscribe</code>将某个订阅者从<code>message-bus</code>中移除，移除时需要关闭通道，否则会造成订阅者的 goroutine 泄露。</p>
+</div><p><code>Unsubscribe</code>将某个订阅者从<code>message-bus</code>中移除，移除时需要关闭通道，否则会造成订阅者的 goroutine 泄露。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -985,37 +958,25 @@ if (!doNotTrack) {
 
     <span class="k">return</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>Close</code>关闭某主题下所有的订阅者参数通道，并删除该主题。</p>
-
+</div><p><code>Close</code>关闭某主题下所有的订阅者参数通道，并删除该主题。</p>
 <p>注意，为了保证并发安全，每个方法都加了锁，分析实现时先忽略锁和错误处理。</p>
-
 <p>为了更直观的理解，我画了一个<code>message-bus</code>内部结构图：</p>
-
-<p><img src="/img/in-post/godailylib/message-bus1.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/message-bus1.png#center" alt=""></p>
 <h2 id="总结">总结</h2>
-
 <p><code>message-bus</code>是一个小巧的异步通信库，实际使用可能不多，但却是学习源码的好资源。</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>message-bus GitHub：<a href="https://github.com/vardius/message-bus">https://github.com/vardius/message-bus</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p><a href="https://darjun.github.io">我的博客</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 

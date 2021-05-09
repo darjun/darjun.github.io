@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.84.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/04/04/godailylib/validator/" />
@@ -64,21 +64,15 @@
 <meta property="og:title" content="Go 每日一库之 validator" />
 <meta property="og:description" content="简介 今天我们来介绍一个非常实用的库——validator。validator用于对数据进行校验。在 Web 开发中，对用户传过来的数据我们都需要进行" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://darjun.github.io/2020/04/04/godailylib/validator/" />
-<meta property="article:published_time" content="2020-04-04T20:40:23+00:00" />
-<meta property="article:modified_time" content="2020-04-04T20:40:23+00:00" />
+<meta property="og:url" content="https://darjun.github.io/2020/04/04/godailylib/validator/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-04-04T20:40:23&#43;00:00" />
+<meta property="article:modified_time" content="2020-04-04T20:40:23&#43;00:00" />
+
 <meta itemprop="name" content="Go 每日一库之 validator">
-<meta itemprop="description" content="简介 今天我们来介绍一个非常实用的库——validator。validator用于对数据进行校验。在 Web 开发中，对用户传过来的数据我们都需要进行">
-
-
-<meta itemprop="datePublished" content="2020-04-04T20:40:23&#43;00:00" />
+<meta itemprop="description" content="简介 今天我们来介绍一个非常实用的库——validator。validator用于对数据进行校验。在 Web 开发中，对用户传过来的数据我们都需要进行"><meta itemprop="datePublished" content="2020-04-04T20:40:23&#43;00:00" />
 <meta itemprop="dateModified" content="2020-04-04T20:40:23&#43;00:00" />
 <meta itemprop="wordCount" content="4726">
-
-
-
-<meta itemprop="keywords" content="Go 每日一库," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 validator"/>
 <meta name="twitter:description" content="简介 今天我们来介绍一个非常实用的库——validator。validator用于对数据进行校验。在 Web 开发中，对用户传过来的数据我们都需要进行"/>
 
@@ -384,56 +378,49 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#约束">约束</a>
-<ul>
-<li><a href="#范围约束">范围约束</a></li>
-<li><a href="#跨字段约束">跨字段约束</a></li>
-<li><a href="#字符串">字符串</a></li>
-<li><a href="#唯一性">唯一性</a></li>
-<li><a href="#邮件">邮件</a></li>
-<li><a href="#特殊">特殊</a></li>
-<li><a href="#其他">其他</a></li>
-</ul></li>
-<li><a href="#varwithvalue-方法"><code>VarWithValue</code>方法</a></li>
-<li><a href="#自定义约束">自定义约束</a></li>
-<li><a href="#错误处理">错误处理</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#约束">约束</a>
+      <ul>
+        <li><a href="#范围约束">范围约束</a></li>
+        <li><a href="#跨字段约束">跨字段约束</a></li>
+        <li><a href="#字符串">字符串</a></li>
+        <li><a href="#唯一性">唯一性</a></li>
+        <li><a href="#邮件">邮件</a></li>
+        <li><a href="#特殊">特殊</a></li>
+        <li><a href="#其他">其他</a></li>
+      </ul>
+    </li>
+    <li><a href="#varwithvalue方法"><code>VarWithValue</code>方法</a></li>
+    <li><a href="#自定义约束">自定义约束</a></li>
+    <li><a href="#错误处理">错误处理</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>今天我们来介绍一个非常实用的库——<a href="https://github.com/go-playground/validator"><code>validator</code></a>。<code>validator</code>用于对数据进行校验。在 Web 开发中，对用户传过来的数据我们都需要进行严格校验，防止用户的恶意请求。例如日期格式，用户年龄，性别等必须是正常的值，不能随意设置。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">gopkg</span><span class="p">.</span><span class="nx">in</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">playground</span><span class="o">/</span><span class="nx">validator</span><span class="p">.</span><span class="nx">v10</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">gopkg</span><span class="p">.</span><span class="nx">in</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">playground</span><span class="o">/</span><span class="nx">validator</span><span class="p">.</span><span class="nx">v10</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>后使用：</p>
+</div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -482,51 +469,40 @@ if (!doNotTrack) {
   <span class="nx">u2</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">101</span><span class="p">}</span>
   <span class="nx">err</span> <span class="p">=</span> <span class="nx">validate</span><span class="p">.</span><span class="nf">Struct</span><span class="p">(</span><span class="nx">u2</span><span class="p">)</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>validator</code>在结构体标签（<code>struct tag</code>）中定义字段的<strong>约束</strong>。使用<code>validator</code>验证数据之前，我们需要调用<code>validator.New()</code>创建一个<strong>验证器</strong>，这个验证器可以指定选项、添加自定义约束，然后通过调用它的<code>Struct()</code>方法来验证各种结构对象的字段是否符合定义的约束。</p>
-
+</div><p><code>validator</code>在结构体标签（<code>struct tag</code>）中定义字段的<strong>约束</strong>。使用<code>validator</code>验证数据之前，我们需要调用<code>validator.New()</code>创建一个<strong>验证器</strong>，这个验证器可以指定选项、添加自定义约束，然后通过调用它的<code>Struct()</code>方法来验证各种结构对象的字段是否符合定义的约束。</p>
 <p>在上面代码中，我们定义了一个结构体<code>User</code>，<code>User</code>有名称<code>Name</code>字段和年龄<code>Age</code>字段。通过<code>min</code>和<code>max</code>约束，我们设置<code>Name</code>的字符串长度为<code>[6,10]</code>之间，<code>Age</code>的范围为<code>[1,100]</code>。</p>
-
 <p>第一个对象<code>Name</code>和<code>Age</code>字段都满足约束，故<code>Struct()</code>方法返回<code>nil</code>错误。第二个对象的<code>Name</code>字段值为<code>dj</code>，长度 2，小于最小值<code>min</code>，<code>Age</code>字段值为 101，大于最大值<code>max</code>，故返回错误：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
 <span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Name</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Name</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">min</span><span class="err">&#39;</span> <span class="nx">tag</span>
-<span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Age</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Age</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">max</span><span class="err">&#39;</span> <span class="nx">tag</span></code></pre></td></tr></table>
+<span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Age</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Age</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">max</span><span class="err">&#39;</span> <span class="nx">tag</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>错误信息比较好理解，<code>User.Name</code>违反了<code>min</code>约束，<code>User.Age</code>违反了<code>max</code>约束，一眼就能看出问题所在。</p>
-
+</div><p>错误信息比较好理解，<code>User.Name</code>违反了<code>min</code>约束，<code>User.Age</code>违反了<code>max</code>约束，一眼就能看出问题所在。</p>
 <p>注意：</p>
-
 <ul>
 <li><code>validator</code>已经更新迭代了很多版本，当前最新的版本是<code>v10</code>，各个版本之间有一些差异，大家平时在使用和阅读代码时要注意区分。我这里使用最新的版本<code>v10</code>作为演示版本；</li>
 <li>字符串长度和数值的范围都可以通过<code>min</code>和<code>max</code>来约束。</li>
 </ul>
-
 <h2 id="约束">约束</h2>
-
 <p><code>validator</code>提供了非常丰富的约束可供使用，下面依次来介绍。</p>
-
 <h3 id="范围约束">范围约束</h3>
-
 <p>我们上面已经看到了使用<code>min</code>和<code>max</code>来约束字符串的长度或数值的范围，下面再介绍其它的范围约束。范围约束的字段类型有以下几种：</p>
-
 <ul>
 <li>对于数值，则约束其值；</li>
 <li>对于字符串，则约束其长度；</li>
 <li>对于切片、数组和<code>map</code>，则约束其长度。</li>
 </ul>
-
 <p>下面如未特殊说明，则是根据上面各个类型对应的值与参数值比较。</p>
-
 <ul>
 <li><code>len</code>：等于参数值，例如<code>len=10</code>；</li>
 <li><code>max</code>：小于等于参数值，例如<code>max=10</code>；</li>
@@ -539,11 +515,10 @@ if (!doNotTrack) {
 <li><code>lte</code>：小于等于参数值，例如<code>lte=10</code>；</li>
 <li><code>oneof</code>：只能是列举出的值其中一个，这些值必须是数值或字符串，以空格分隔，如果字符串中有空格，将字符串用单引号包围，例如<code>oneof=red green</code>。</li>
 </ul>
-
 <p>大部分还是比较直观的，我们通过一个例子看看其中几个约束如何使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -588,22 +563,20 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面例子中，我们定义了<code>User</code>对象，为它的 4 个字段分别设置了约束：</p>
-
+</div><p>上面例子中，我们定义了<code>User</code>对象，为它的 4 个字段分别设置了约束：</p>
 <ul>
 <li><code>Name</code>：字符串不能是<code>admin</code>；</li>
 <li><code>Age</code>：必须大于等于 18，<strong>未成年人禁止入内</strong>；</li>
 <li><code>Sex</code>：性别必须是<code>male</code>和<code>female</code>其中一个；</li>
 <li><code>RegTime</code>：注册时间必须小于当前的 UTC 时间，注意如果字段类型是<code>time.Time</code>，使用<code>gt/gte/lt/lte</code>等约束时不用指定参数值，默认与当前的 UTC 时间比较。</li>
 </ul>
-
 <p>同样地，第一个对象的字段都是合法的，校验通过。第二个对象的 4 个字段都非法，通过输出信息很好定错误位置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -612,26 +585,25 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Name</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Name</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">ne</span><span class="err">&#39;</span> <span class="nx">tag</span>
 <span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Age</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Age</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">gte</span><span class="err">&#39;</span> <span class="nx">tag</span>
 <span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Sex</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Sex</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">oneof</span><span class="err">&#39;</span> <span class="nx">tag</span>
-<span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">RegTime</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">RegTime</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">lte</span><span class="err">&#39;</span> <span class="nx">tag</span></code></pre></td></tr></table>
+<span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">RegTime</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">RegTime</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">lte</span><span class="err">&#39;</span> <span class="nx">tag</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="跨字段约束">跨字段约束</h3>
-
+</div><h3 id="跨字段约束">跨字段约束</h3>
 <p><code>validator</code>允许定义跨字段的约束，即该字段与其他字段之间的关系。这种约束实际上分为两种，一种是参数字段就是同一个结构中的平级字段，另一种是参数字段为结构中其他字段的字段。约束语法很简单，要想使用上面的约束语义，只需要稍微修改一下。例如<strong>相等约束</strong>（<code>eq</code>），如果是约束同一个结构中的字段，则在后面添加一个<code>field</code>，使用<code>eqfield</code>定义字段间的相等约束。如果是更深层次的字段，在<code>field</code>之前还需要加上<code>cs</code>（可以理解为<code>cross-struct</code>），<code>eq</code>就变为<code>eqcsfield</code>。它们的参数值都是需要比较的字段名，内层的还需要加上字段的类型：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">eqfield</span><span class="p">=</span><span class="nx">ConfirmPassword</span>
-<span class="nx">eqcsfield</span><span class="p">=</span><span class="nx">InnerStructField</span><span class="p">.</span><span class="nx">Field</span></code></pre></td></tr></table>
+<span class="nx">eqcsfield</span><span class="p">=</span><span class="nx">InnerStructField</span><span class="p">.</span><span class="nx">Field</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>看示例：</p>
+</div><p>看示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -696,22 +668,20 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们定义了一个简单的注册表单结构，使用<code>eqfield</code>约束其两次输入的密码必须相等。第一个对象满足约束，第二个对象两次密码明显不等。程序输出：</p>
+</div><p>我们定义了一个简单的注册表单结构，使用<code>eqfield</code>约束其两次输入的密码必须相等。第一个对象满足约束，第二个对象两次密码明显不等。程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">RegisterForm</span><span class="p">.</span><span class="nx">Password2</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Password2</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">eqfield</span><span class="err">&#39;</span> <span class="nx">tag</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">RegisterForm</span><span class="p">.</span><span class="nx">Password2</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Password2</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">eqfield</span><span class="err">&#39;</span> <span class="nx">tag</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="字符串">字符串</h3>
-
+</div><h3 id="字符串">字符串</h3>
 <p><code>validator</code>中关于字符串的约束有很多，这里介绍几个：</p>
-
 <ul>
 <li><code>contains=</code>：包含参数子串，例如<code>contains=email</code>；</li>
 <li><code>containsany</code>：包含参数中任意的 UNICODE 字符，例如<code>containsany=abcd</code>；</li>
@@ -722,11 +692,10 @@ if (!doNotTrack) {
 <li><code>startswith</code>：以参数子串为前缀，例如<code>startswith=hello</code>；</li>
 <li><code>endswith</code>：以参数子串为后缀，例如<code>endswith=bye</code>。</li>
 </ul>
-
 <p>看示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -767,25 +736,21 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>限制<code>Name</code>字段必须包含 UNICODE 字符<code>☻</code>。</p>
-
+</div><p>限制<code>Name</code>字段必须包含 UNICODE 字符<code>☻</code>。</p>
 <h3 id="唯一性">唯一性</h3>
-
 <p>使用<code>unqiue</code>来指定唯一性约束，对不同类型的处理如下：</p>
-
 <ul>
 <li>对于数组和切片，<code>unique</code>约束没有重复的元素；</li>
 <li>对于<code>map</code>，<code>unique</code>约束没有重复的<strong>值</strong>；</li>
 <li>对于元素类型为结构体的切片，<code>unique</code>约束结构体对象的某个字段不重复，通过<code>unqiue=field</code>指定这个字段名。</li>
 </ul>
-
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -868,26 +833,25 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们限制爱好<code>Hobbies</code>中不能有重复元素，好友<code>Friends</code>的各个元素不能有同样的名字<code>Name</code>。第一个对象满足约束，第二个对象的<code>Hobbies</code>字段包含了重复的<code>&quot;programming&quot;</code>，<code>Friends</code>字段中两个元素的<code>Name</code>字段都是<code>dj2</code>。程序输出：</p>
+</div><p>我们限制爱好<code>Hobbies</code>中不能有重复元素，好友<code>Friends</code>的各个元素不能有同样的名字<code>Name</code>。第一个对象满足约束，第二个对象的<code>Hobbies</code>字段包含了重复的<code>&quot;programming&quot;</code>，<code>Friends</code>字段中两个元素的<code>Name</code>字段都是<code>dj2</code>。程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Hobbies</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Hobbies</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">unique</span><span class="err">&#39;</span> <span class="nx">tag</span>
-<span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Friends</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Friends</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">unique</span><span class="err">&#39;</span> <span class="nx">tag</span></code></pre></td></tr></table>
+<span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Friends</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Friends</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">unique</span><span class="err">&#39;</span> <span class="nx">tag</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="邮件">邮件</h3>
-
+</div><h3 id="邮件">邮件</h3>
 <p>通过<code>email</code>限制字段必须是邮件格式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -946,39 +910,33 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面我们约束<code>Email</code>字段必须是邮件的格式，第一个对象满足约束，第二个对象不满足，程序输出：</p>
+</div><p>上面我们约束<code>Email</code>字段必须是邮件的格式，第一个对象满足约束，第二个对象不满足，程序输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Email</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Email</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">email</span><span class="err">&#39;</span> <span class="nx">tag</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">User</span><span class="p">.</span><span class="nx">Email</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Email</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">email</span><span class="err">&#39;</span> <span class="nx">tag</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="特殊">特殊</h3>
-
+</div><h3 id="特殊">特殊</h3>
 <p>有一些比较特殊的约束：</p>
-
 <ul>
 <li><code>-</code>：跳过该字段，不检验；</li>
 <li><code>|</code>：使用多个约束，只需要满足其中一个，例如<code>rgb|rgba</code>；</li>
 <li><code>required</code>：字段必须设置，不能为默认值；</li>
 <li><code>omitempty</code>：如果字段未设置，则忽略它。</li>
 </ul>
-
 <h3 id="其他">其他</h3>
-
 <p><code>validator</code>提供了大量的、各个方面的、丰富的约束，如<code>ASCII/UNICODE</code>字母、数字、十六进制、十六进制颜色值、大小写、RBG 颜色值，HSL 颜色值、HSLA 颜色值、JSON 格式、文件路径、URL、base64 编码串、ip 地址、ipv4、ipv6、UUID、经纬度等等等等等等等等等等等。限于篇幅这里就不一一介绍了。感兴趣自行去文档中挖掘。</p>
-
-<h2 id="varwithvalue-方法"><code>VarWithValue</code>方法</h2>
-
+<h2 id="varwithvalue方法"><code>VarWithValue</code>方法</h2>
 <p>在一些很简单的情况下，我们仅仅想对两个变量进行比较，如果每次都要先定义结构和<code>tag</code>就太繁琐了。<code>validator</code>提供了<code>VarWithValue()</code>方法，我们只需要传入要验证的两个变量和约束即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -997,15 +955,14 @@ if (!doNotTrack) {
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">validate</span><span class="p">.</span><span class="nf">VarWithValue</span><span class="p">(</span><span class="nx">name1</span><span class="p">,</span> <span class="nx">name2</span><span class="p">,</span> <span class="s">&#34;eqfield&#34;</span><span class="p">))</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">validate</span><span class="p">.</span><span class="nf">VarWithValue</span><span class="p">(</span><span class="nx">name1</span><span class="p">,</span> <span class="nx">name2</span><span class="p">,</span> <span class="s">&#34;nefield&#34;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="自定义约束">自定义约束</h2>
-
+</div><h2 id="自定义约束">自定义约束</h2>
 <p>除了使用<code>validator</code>提供的约束外，还可以定义自己的约束。例如现在有个奇葩的需求，产品同学要求用户必须使用回文串作为用户名，我们可以自定义这个约束：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1088,24 +1045,23 @@ if (!doNotTrack) {
   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>首先定义一个类型为<code>func (validator.FieldLevel) bool</code>的函数检查约束是否满足，可以通过<code>FieldLevel</code>取出要检查的字段的信息。然后，调用验证器的<code>RegisterValidation()</code>方法将该约束注册到指定的名字上。最后我们就可以在结构体中使用该约束。上面程序中，第二个对象不满足约束<code>palindrome</code>，输出：</p>
+</div><p>首先定义一个类型为<code>func (validator.FieldLevel) bool</code>的函数检查约束是否满足，可以通过<code>FieldLevel</code>取出要检查的字段的信息。然后，调用验证器的<code>RegisterValidation()</code>方法将该约束注册到指定的名字上。最后我们就可以在结构体中使用该约束。上面程序中，第二个对象不满足约束<code>palindrome</code>，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">RegisterForm</span><span class="p">.</span><span class="nx">Name</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Name</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">palindrome</span><span class="err">&#39;</span> <span class="nx">tag</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Key</span><span class="p">:</span> <span class="err">&#39;</span><span class="nx">RegisterForm</span><span class="p">.</span><span class="nx">Name</span><span class="err">&#39;</span> <span class="nx">Error</span><span class="p">:</span><span class="nx">Field</span> <span class="nx">validation</span> <span class="k">for</span> <span class="err">&#39;</span><span class="nx">Name</span><span class="err">&#39;</span> <span class="nx">failed</span> <span class="nx">on</span> <span class="nx">the</span> <span class="err">&#39;</span><span class="nx">palindrome</span><span class="err">&#39;</span> <span class="nx">tag</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="错误处理">错误处理</h2>
-
+</div><h2 id="错误处理">错误处理</h2>
 <p>在上面的例子中，校验失败时我们仅仅只是输出返回的错误。其实，我们可以进行更精准的处理。<code>validator</code>返回的错误实际上只有两种，一种是参数错误，一种是校验错误。参数错误时，返回<code>InvalidValidationError</code>类型；校验错误时返回<code>ValidationErrors</code>，它们都实现了<code>error</code>接口。而且<code>ValidationErrors</code>是一个错误切片，它保存了每个字段违反的每个约束信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1160,21 +1116,19 @@ if (!doNotTrack) {
     <span class="nx">buff</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;\n&#34;</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">buff</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>所以<code>validator</code>校验返回的结果只有 3 种情况：</p>
-
+</div><p>所以<code>validator</code>校验返回的结果只有 3 种情况：</p>
 <ul>
 <li><code>nil</code>：没有错误；</li>
 <li><code>InvalidValidationError</code>：输入参数错误；</li>
 <li><code>ValidationErrors</code>：字段违反约束。</li>
 </ul>
-
 <p>我们可以在程序中判断<code>err != nil</code>时，依次将<code>err</code>转换为<code>InvalidValidationError</code>和<code>ValidationErrors</code>以获取更详细的信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1227,29 +1181,21 @@ if (!doNotTrack) {
 
   <span class="nx">err</span> <span class="p">=</span> <span class="nx">validate</span><span class="p">.</span><span class="nf">VarWithValue</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#34;eqfield&#34;</span><span class="p">)</span>
   <span class="nf">processErr</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="总结">总结</h2>
-
+</div><h2 id="总结">总结</h2>
 <p><code>validator</code>功能非常丰富，使用较为简单方便。本文介绍的约束只是其中的冰山一角。它的应用非常广泛，建议了解一下。</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>validator GitHub：<a href="https://github.com/go-playground/validator">https://github.com/go-playground/validator</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 

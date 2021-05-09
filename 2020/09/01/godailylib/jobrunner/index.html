@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.84.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/09/01/godailylib/jobrunner/" />
@@ -64,21 +64,15 @@
 <meta property="og:title" content="Go 每日一库之 jobrunner" />
 <meta property="og:description" content="简介 我们在 Web 开发中时常会遇到这样的需求，执行一个操作之后，需要给用户一定形式的通知。例如，用户下单之后通过邮件发送电子发票，网上购票支付后通" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://darjun.github.io/2020/09/01/godailylib/jobrunner/" />
-<meta property="article:published_time" content="2020-09-01T20:07:09+00:00" />
-<meta property="article:modified_time" content="2020-09-01T20:07:09+00:00" />
+<meta property="og:url" content="https://darjun.github.io/2020/09/01/godailylib/jobrunner/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-09-01T20:07:09&#43;00:00" />
+<meta property="article:modified_time" content="2020-09-01T20:07:09&#43;00:00" />
+
 <meta itemprop="name" content="Go 每日一库之 jobrunner">
-<meta itemprop="description" content="简介 我们在 Web 开发中时常会遇到这样的需求，执行一个操作之后，需要给用户一定形式的通知。例如，用户下单之后通过邮件发送电子发票，网上购票支付后通">
-
-
-<meta itemprop="datePublished" content="2020-09-01T20:07:09&#43;00:00" />
+<meta itemprop="description" content="简介 我们在 Web 开发中时常会遇到这样的需求，执行一个操作之后，需要给用户一定形式的通知。例如，用户下单之后通过邮件发送电子发票，网上购票支付后通"><meta itemprop="datePublished" content="2020-09-01T20:07:09&#43;00:00" />
 <meta itemprop="dateModified" content="2020-09-01T20:07:09&#43;00:00" />
 <meta itemprop="wordCount" content="1575">
-
-
-
-<meta itemprop="keywords" content="Go 每日一库," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 jobrunner"/>
 <meta name="twitter:description" content="简介 我们在 Web 开发中时常会遇到这样的需求，执行一个操作之后，需要给用户一定形式的通知。例如，用户下单之后通过邮件发送电子发票，网上购票支付后通"/>
 
@@ -384,58 +378,49 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#与-web-框架整合">与 web 框架整合</a></li>
-<li><a href="#监控">监控</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#与-web-框架整合">与 web 框架整合</a></li>
+    <li><a href="#监控">监控</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>我们在 Web 开发中时常会遇到这样的需求，执行一个操作之后，需要给用户一定形式的通知。例如，用户下单之后通过邮件发送电子发票，网上购票支付后通过短信发送车次信息。但是这类需求并不需要非常及时，如果放在请求流程中处理，会影响请求的响应时间。这类任务我们一般使用异步的方式来执行。<a href="https://github.com/bamzi/jobrunner"><code>jobrunner</code></a>就是其中一个用来执行异步任务的 Go 语言库。得益于强大的<a href="https://github.com/robfig/cron"><code>cron</code></a>库，再搭配<code>jobrunner</code>的任务状态监控，<code>jobrunner</code>非常易于使用。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>本文使用 Go Modules。</p>
-
 <p>创建目录并初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir jobrunner <span class="p">&amp;&amp;</span> <span class="k">cd</span> jobrunner
-$ go mod init github.com/darjun/go-daily-lib/jobrunner</code></pre></td></tr></table>
+$ go mod init github.com/darjun/go-daily-lib/jobrunner
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>安装<code>jobrunner</code>：</p>
+</div><p>安装<code>jobrunner</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/bamzi/jobrunner</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/bamzi/jobrunner
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用：</p>
+</div><p>使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -482,34 +467,29 @@ $ go mod init github.com/darjun/go-daily-lib/jobrunner</code></pre></td></tr></t
   <span class="nx">jobrunner</span><span class="p">.</span><span class="nf">Schedule</span><span class="p">(</span><span class="s">&#34;@every 5s&#34;</span><span class="p">,</span> <span class="nx">GreetingJob</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">})</span>
 
   <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们创建一个任务，每隔 5s 打印一条欢迎信息。任务的创建和执行与<code>cron</code>完全相同，详细使用见我前面的<a href="https://darjun.github.io/2020/06/25/godailylib/cron/">一篇博文</a>。</p>
-
+</div><p>我们创建一个任务，每隔 5s 打印一条欢迎信息。任务的创建和执行与<code>cron</code>完全相同，详细使用见我前面的<a href="https://darjun.github.io/2020/06/25/godailylib/cron/">一篇博文</a>。</p>
 <p>注意，<code>jobrunner</code>需要先<code>Start()</code>，然后再添加任务。因为在<code>Start()</code>中创建<code>MainCron</code>对象，先添加任务会<code>panic</code>！！！</p>
-
 <p>注意<code>main</code>函数尾的<code>time.Sleep(10 * time.Second)</code>，因为主 goroutine 结束之后整个程序就退出了，<code>jobrunner</code>中的任务就没有机会被执行了。加上<code>time.Sleep</code>是为了让大家能看到输出，实际使用中不会这样做。</p>
-
 <h2 id="与-web-框架整合">与 web 框架整合</h2>
-
 <p><code>jobrunner</code>能很方便地与当前常见的 Web 框架整合，如<code>Gin/Echo/Martini/Beego/Revel</code>等。下面通过一个简单的例子演示如何在 Gin 中使用<code>jobrunner</code>：用户登录时给他的邮箱发送一封邮件。</p>
-
 <p>首先需要安装相应的库：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/gin-gonic/gin
-$ github.com/jordan-wright/email</code></pre></td></tr></table>
+$ github.com/jordan-wright/email
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>编写代码：</p>
+</div><p>编写代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -620,21 +600,17 @@ $ github.com/jordan-wright/email</code></pre></td></tr></table>
   <span class="nx">r</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
   <span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">,</span> <span class="nx">login</span><span class="p">)</span>
   <span class="nx">r</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;:8888&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这里只是为了简单演示，我们编写了一个简陋的<code>login</code>函数处理登录，传入<code>name</code>和<code>email</code>，然后给该<code>email</code>发送邮件。<code>email</code>库的详细使用可以查看我之前的<a href="https://darjun.github.io/2020/02/16/godailylib/email">博文</a>了解。</p>
-
+</div><p>这里只是为了简单演示，我们编写了一个简陋的<code>login</code>函数处理登录，传入<code>name</code>和<code>email</code>，然后给该<code>email</code>发送邮件。<code>email</code>库的详细使用可以查看我之前的<a href="https://darjun.github.io/2020/02/16/godailylib/email">博文</a>了解。</p>
 <p>只需要在浏览器中输入<code>http://localhost:8888/login?name=dj&amp;email=935653229@qq.com</code>，我的 QQ 邮箱就能收到邮件：</p>
-
-<p><img src="/img/in-post/godailylib/jobrunner1.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/jobrunner1.png#center" alt=""></p>
 <h2 id="监控">监控</h2>
-
 <p><code>jobrunner</code>内置了一个监控模块，可以很方便地通过网页或者 API 获取当前的任务状态数据：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -739,37 +715,25 @@ $ github.com/jordan-wright/email</code></pre></td></tr></table>
     <span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s">&#34;error&#34;</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="nx">t</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">jobrunner</span><span class="p">.</span><span class="nf">StatusPage</span><span class="p">())</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行之后，在浏览器中输入<code>http://localhost:8888/jobrunner/html</code>查看任务状态：</p>
-
-<p><img src="/img/in-post/godailylib/jobrunner2.png#center" alt="" /></p>
-
+</div><p>运行之后，在浏览器中输入<code>http://localhost:8888/jobrunner/html</code>查看任务状态：</p>
+<p><img src="/img/in-post/godailylib/jobrunner2.png#center" alt=""></p>
 <p>这里显示任务名、任务 ID、状态、上次运行时间、下次运行时间以及处理延迟。</p>
-
 <p>我们还可以通过<code>http://localhost:8888/jobrunner/json</code>获取原始 JSON 格式的数据自己处理：</p>
-
-<p><img src="/img/in-post/godailylib/jobrunner3.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/jobrunner3.png#center" alt=""></p>
 <h2 id="总结">总结</h2>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>jobrunner GitHub：<a href="https://github.com/bamzi/jobrunner">https://github.com/bamzi/jobrunner</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 

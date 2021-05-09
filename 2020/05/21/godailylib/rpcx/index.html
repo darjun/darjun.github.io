@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.60.0-DEV" />
+<meta name="generator" content="Hugo 0.84.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/05/21/godailylib/rpcx/" />
@@ -64,21 +64,15 @@
 <meta property="og:title" content="Go 每日一库之 rpcx" />
 <meta property="og:description" content="简介 在之前的两篇文章rpc和json-rpc中，我们介绍了 Go 标准库提供的rpc实现。在实际开发中，rpc库的功能还是有所欠缺。今天我们介绍一" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://darjun.github.io/2020/05/21/godailylib/rpcx/" />
-<meta property="article:published_time" content="2020-05-21T23:04:23+00:00" />
-<meta property="article:modified_time" content="2020-05-21T23:04:23+00:00" />
+<meta property="og:url" content="https://darjun.github.io/2020/05/21/godailylib/rpcx/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-05-21T23:04:23&#43;00:00" />
+<meta property="article:modified_time" content="2020-05-21T23:04:23&#43;00:00" />
+
 <meta itemprop="name" content="Go 每日一库之 rpcx">
-<meta itemprop="description" content="简介 在之前的两篇文章rpc和json-rpc中，我们介绍了 Go 标准库提供的rpc实现。在实际开发中，rpc库的功能还是有所欠缺。今天我们介绍一">
-
-
-<meta itemprop="datePublished" content="2020-05-21T23:04:23&#43;00:00" />
+<meta itemprop="description" content="简介 在之前的两篇文章rpc和json-rpc中，我们介绍了 Go 标准库提供的rpc实现。在实际开发中，rpc库的功能还是有所欠缺。今天我们介绍一"><meta itemprop="datePublished" content="2020-05-21T23:04:23&#43;00:00" />
 <meta itemprop="dateModified" content="2020-05-21T23:04:23&#43;00:00" />
 <meta itemprop="wordCount" content="3770">
-
-
-
-<meta itemprop="keywords" content="Go 每日一库," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 rpcx"/>
 <meta name="twitter:description" content="简介 在之前的两篇文章rpc和json-rpc中，我们介绍了 Go 标准库提供的rpc实现。在实际开发中，rpc库的功能还是有所欠缺。今天我们介绍一"/>
 
@@ -384,50 +378,40 @@ if (!doNotTrack) {
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#快速使用">快速使用</a></li>
-<li><a href="#传输">传输</a></li>
-<li><a href="#注册函数">注册函数</a></li>
-<li><a href="#注册中心">注册中心</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
-<li><a href="#我">我</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#传输">传输</a></li>
+    <li><a href="#注册函数">注册函数</a></li>
+    <li><a href="#注册中心">注册中心</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h2 id="简介">简介</h2>
-
+      <h2 id="简介">简介</h2>
 <p>在之前的两篇文章<a href="https://darjun.github.io/2020/05/08/godailylib/rpc"><code>rpc</code></a>和<a href="https://darjun.github.io/2020/05/10/godailylib/jsonrpc"><code>json-rpc</code></a>中，我们介绍了 Go 标准库提供的<code>rpc</code>实现。在实际开发中，<code>rpc</code>库的功能还是有所欠缺。今天我们介绍一个非常优秀的 Go RPC 库——<code>rpcx</code>。<code>rpcx</code>是一位国人大牛开发的，详细开发历程可以在<a href="https://blog.rpcx.io/"><code>rpcx</code>官方博客</a>了解。<code>rpcx</code>拥有媲美，甚至某种程度上超越<code>gRPC</code>的性能，有完善的中文文档，提供服务发现和治理的插件。</p>
-
 <h2 id="快速使用">快速使用</h2>
-
 <p>本文示例使用<code>go modules</code>。</p>
-
 <p>首先是安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">v</span> <span class="o">-</span><span class="nx">tags</span> <span class="s">&#34;reuseport quic kcp zookeeper etcd consul ping&#34;</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">smallnest</span><span class="o">/</span><span class="nx">rpcx</span><span class="o">/...</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">v</span> <span class="o">-</span><span class="nx">tags</span> <span class="s">&#34;reuseport quic kcp zookeeper etcd consul ping&#34;</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">smallnest</span><span class="o">/</span><span class="nx">rpcx</span><span class="o">/...</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出<code>rpcx</code>的安装有点特殊。使用<code>go get -v github.com/smallnest/rpcx/...</code>命令只会安装<code>rpcx</code>的基础功能。扩展功能都是通过<code>build tags</code>指定。为了使用方便，一般安装所有的<code>tags</code>，如上面命令所示。这也是官方推荐的安装方式。</p>
-
+</div><p>可以看出<code>rpcx</code>的安装有点特殊。使用<code>go get -v github.com/smallnest/rpcx/...</code>命令只会安装<code>rpcx</code>的基础功能。扩展功能都是通过<code>build tags</code>指定。为了使用方便，一般安装所有的<code>tags</code>，如上面命令所示。这也是官方推荐的安装方式。</p>
 <p>我们先编写服务端程序，实际上这个程序与用<code>rpc</code>标准库编写的程序几乎一模一样：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -506,22 +490,22 @@ if (!doNotTrack) {
   <span class="nx">s</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
   <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">),</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
   <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>首先创建一个<code>Server</code>对象，调用它的<code>RegisterName()</code>方法在服务路径<code>Arith</code>下注册<code>Mul</code>和<code>Div</code>方法。与标准库相比，<code>rpcx</code>要求注册方法的第一个参数必须为<code>context.Context</code>类型。最后调用<code>s.Serve(&quot;tcp&quot;, &quot;:8972&quot;)</code>监听 TCP 端口 8972。是不是很简单？启动服务器：</p>
+</div><p>首先创建一个<code>Server</code>对象，调用它的<code>RegisterName()</code>方法在服务路径<code>Arith</code>下注册<code>Mul</code>和<code>Div</code>方法。与标准库相比，<code>rpcx</code>要求注册方法的第一个参数必须为<code>context.Context</code>类型。最后调用<code>s.Serve(&quot;tcp&quot;, &quot;:8972&quot;)</code>监听 TCP 端口 8972。是不是很简单？启动服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后是客户端程序：</p>
+</div><p>然后是客户端程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -602,28 +586,25 @@ if (!doNotTrack) {
   <span class="p">}</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>rpcx</code>支持多种服务发现的方式让客户端找到服务器。上面代码中我们使用的是最简单的点到点的方式，也就是<strong>直连</strong>。要调用服务端的方法，必须先创建一个<code>Client</code>对象。使用<code>Client</code>对象来调用远程方法。运行客户端：</p>
+</div><p><code>rpcx</code>支持多种服务发现的方式让客户端找到服务器。上面代码中我们使用的是最简单的点到点的方式，也就是<strong>直连</strong>。要调用服务端的方法，必须先创建一个<code>Client</code>对象。使用<code>Client</code>对象来调用远程方法。运行客户端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
 10 * 20 = 200
-50 * 20 = 2...10</code></pre></td></tr></table>
+50 * 20 = 2...10
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注意到，创建<code>Client</code>对象的参数有<code>client.Failtry</code>和<code>client.RandomSelect</code>。这两个参数分别为<strong>失败模式</strong>和<strong>如何选择服务器</strong>。</p>
-
+</div><p>注意到，创建<code>Client</code>对象的参数有<code>client.Failtry</code>和<code>client.RandomSelect</code>。这两个参数分别为<strong>失败模式</strong>和<strong>如何选择服务器</strong>。</p>
 <h2 id="传输">传输</h2>
-
 <p><code>rpcx</code>支持多种传输协议：</p>
-
 <ul>
 <li><code>TCP</code>：TCP 协议，网络名称为<code>tcp</code>；</li>
 <li><code>HTTP</code>：HTTP 协议，网络名称为<code>http</code>；</li>
@@ -631,31 +612,29 @@ if (!doNotTrack) {
 <li><code>QUIC</code>：是 Quick UDP Internet Connections 的缩写，意为<strong>快速UDP网络连接</strong>。HTTP/3 底层就是 QUIC 协议，Google 出品。网络名称为<code>quic</code>；</li>
 <li><code>KCP</code>：快速并且可靠的 ARQ 协议，网络名称为<code>kcp</code>。</li>
 </ul>
-
 <p><code>rpcx</code>对这些协议做了非常好的封装。除了在创建服务器和客户端连接时需要指定协议名称，其它时候的使用基本是透明的。我们将上面的例子改装成使用<code>http</code>协议的：</p>
-
 <p>服务端改动：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;http&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;http&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>客户端改动：</p>
+</div><p>客户端改动：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">d</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewPeer2PeerDiscovery</span><span class="p">(</span><span class="s">&#34;http@&#34;</span><span class="o">+*</span><span class="nx">addr</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">d</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewPeer2PeerDiscovery</span><span class="p">(</span><span class="s">&#34;http@&#34;</span><span class="o">+*</span><span class="nx">addr</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>QUIC</code>和<code>KCP</code>的使用有点特殊，<code>QUIC</code>必须与 TLS 一起使用，<code>KCP</code>也需要做传输加密。使用 Go 语言我们能很方便地生成一个证书和私钥：</p>
+</div><p><code>QUIC</code>和<code>KCP</code>的使用有点特殊，<code>QUIC</code>必须与 TLS 一起使用，<code>KCP</code>也需要做传输加密。使用 Go 语言我们能很方便地生成一个证书和私钥：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -744,13 +723,13 @@ if (!doNotTrack) {
   <span class="nx">keyOut</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;server.key&#34;</span><span class="p">)</span>
   <span class="nx">pem</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">keyOut</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pem</span><span class="p">.</span><span class="nx">Block</span><span class="p">{</span><span class="nx">Type</span><span class="p">:</span> <span class="s">&#34;RSA PRIVATE KEY&#34;</span><span class="p">,</span> <span class="nx">Bytes</span><span class="p">:</span> <span class="nx">x509</span><span class="p">.</span><span class="nf">MarshalPKCS1PrivateKey</span><span class="p">(</span><span class="nx">pk</span><span class="p">)})</span>
   <span class="nx">keyOut</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>上面代码生成了一个证书和私钥，有效期为 1 年。运行程序，得到两个文件<code>server.pem</code>和<code>server.key</code>。然后我们就可以编写使用<code>QUIC</code>协议的程序了。服务端：</p>
+</div><p>上面代码生成了一个证书和私钥，有效期为 1 年。运行程序，得到两个文件<code>server.pem</code>和<code>server.key</code>。然后我们就可以编写使用<code>QUIC</code>协议的程序了。服务端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -767,13 +746,13 @@ if (!doNotTrack) {
   <span class="nx">s</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">(</span><span class="nx">server</span><span class="p">.</span><span class="nf">WithTLSConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">))</span>
   <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">),</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
   <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;quic&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:8972&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>实际上就是加载证书和密钥，然后在创建<code>Server</code>对象时作为选项传入。客户端改动：</p>
+</div><p>实际上就是加载证书和密钥，然后在创建<code>Server</code>对象时作为选项传入。客户端改动：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -792,33 +771,32 @@ if (!doNotTrack) {
 <span class="nx">option</span><span class="p">.</span><span class="nx">TLSConfig</span> <span class="p">=</span> <span class="nx">conf</span>
 <span class="nx">d</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewPeer2PeerDiscovery</span><span class="p">(</span><span class="s">&#34;quic@&#34;</span><span class="o">+*</span><span class="nx">addr</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
 <span class="nx">xclient</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewXClient</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Failtry</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">RandomSelect</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">option</span><span class="p">)</span>
-<span class="k">defer</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span></code></pre></td></tr></table>
+<span class="k">defer</span> <span class="nx">xclient</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>客户端也需要配置 TLS。</p>
-
+</div><p>客户端也需要配置 TLS。</p>
 <p>有一点需要注意，<code>rpcx</code>对<code>quic/kcp</code>这些协议的支持是通过<code>build tags</code>实现的。默认不会编译<code>quic/kcp</code>相关文件。如果要使用，必须自己手动指定<code>tags</code>。先启动服务端程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
-<td class="lntd">
-<pre class="chroma">$ go run -tags quic main.go</pre></td></tr></table>
-</div>
-</div>
-<p>然后切换到客户端程序目录，执行下面命令：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="o">-</span><span class="nx">tags</span> <span class="nx">quic</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go run -tags quic main.go
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>还有一点需要注意，在使用<code>tcp</code>和<code>http</code>（底层也是<code>tcp</code>）协议的时候，我们可以将地址简写为<code>:8972</code>，因为默认就是本地地址。但是<code>quic</code>不行，必须把地址写完整：</p>
+</div><p>然后切换到客户端程序目录，执行下面命令：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="o">-</span><span class="nx">tags</span> <span class="nx">quic</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>还有一点需要注意，在使用<code>tcp</code>和<code>http</code>（底层也是<code>tcp</code>）协议的时候，我们可以将地址简写为<code>:8972</code>，因为默认就是本地地址。但是<code>quic</code>不行，必须把地址写完整：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -827,15 +805,14 @@ if (!doNotTrack) {
 <pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// 服务端
 </span><span class="c1"></span><span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;quic&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:8972&#34;</span><span class="p">)</span>
 <span class="c1">// 客户端
-</span><span class="c1"></span><span class="nx">addr</span> <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;addr&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:8972&#34;</span><span class="p">,</span> <span class="s">&#34;service address&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</span><span class="c1"></span><span class="nx">addr</span> <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;addr&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:8972&#34;</span><span class="p">,</span> <span class="s">&#34;service address&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="注册函数">注册函数</h2>
-
+</div><h2 id="注册函数">注册函数</h2>
 <p>上面的例子都是调用对象的方法，我们也可以调用函数。函数的类型与对象方法相比只是没有<strong>接收者</strong>。注册函数需要指定一个服务路径。服务端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -896,13 +873,13 @@ if (!doNotTrack) {
   <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterFunction</span><span class="p">(</span><span class="s">&#34;function&#34;</span><span class="p">,</span> <span class="nx">Mul</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
   <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterFunction</span><span class="p">(</span><span class="s">&#34;function&#34;</span><span class="p">,</span> <span class="nx">Div</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
   <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:8972&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只是注册方法由<code>RegisterName</code>变为了<code>RegisterFunction</code>，参数由一个对象变为一个函数。我们需要为注册的函数指定一个服务路径，客户端调用时会根据这个路径查找对应方法。客户端：</p>
+</div><p>只是注册方法由<code>RegisterName</code>变为了<code>RegisterFunction</code>，参数由一个对象变为一个函数。我们需要为注册的函数指定一个服务路径，客户端调用时会根据这个路径查找对应方法。客户端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -955,13 +932,11 @@ if (!doNotTrack) {
   <span class="p">}</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="注册中心">注册中心</h2>
-
+</div><h2 id="注册中心">注册中心</h2>
 <p><code>rpcx</code>支持多种注册中心：</p>
-
 <ul>
 <li>点对点：其实就是直连，没有注册中心；</li>
 <li>点对多：可以配置多个服务器；</li>
@@ -970,11 +945,10 @@ if (!doNotTrack) {
 <li>进程内调用：方便调试功能，在同一个进程内查找服务；</li>
 <li><code>Consul/mDNS</code>等。</li>
 </ul>
-
 <p>我们之前演示的都是<strong>点对点</strong>的连接，接下来我们介绍如何使用<code>zookeeper</code>作为注册中心。在<code>rpcx</code>中，注册中心是通过插件的方式集成的。使用<code>ZooKeeperRegisterPlugin</code>这个插件来集成<code>Zookeeper</code>。服务端代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1081,15 +1055,14 @@ if (!doNotTrack) {
 
   <span class="nx">s</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;Arith&#34;</span><span class="p">,</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">),</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
   <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="o">*</span><span class="nx">addr</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在<code>ZooKeeperRegisterPlugin</code>中，我们指定了本服务地址，zookeeper 集群地址（可以是多个），起始路径等。服务器启动时自动向 zookeeper 注册本服务的信息，客户端可直接从 zookeeper 拉取可用的服务列表。</p>
-
+</div><p>在<code>ZooKeeperRegisterPlugin</code>中，我们指定了本服务地址，zookeeper 集群地址（可以是多个），起始路径等。服务器启动时自动向 zookeeper 注册本服务的信息，客户端可直接从 zookeeper 拉取可用的服务列表。</p>
 <p>首先启动 zookeeper 服务器，zookeeper 的安装与启动可以参考我的上一篇文章。分别在 3 个控制台中启动 3 个服务器，指定不同的端口（注意需要指定<code>-tags zookeeper</code>）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1102,19 +1075,16 @@ $ go run -tags zookeeper main.go -addr 127.0.0.1:8971
 // 控制台2
 $ go run -tags zookeeper main.go -addr 127.0.0.1:8972
 // 控制台3
-$ go run -tags zookeeper main.go -addr 127.0.0.1:8973</code></pre></td></tr></table>
+$ go run -tags zookeeper main.go -addr 127.0.0.1:8973
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>启动之后，我们观察 zookeeper 路径<code>/services/math</code>中的内容：</p>
-
-<p><img src="/img/in-post/godailylib/rpcx1.png#center" alt="" /></p>
-
+</div><p>启动之后，我们观察 zookeeper 路径<code>/services/math</code>中的内容：</p>
+<p><img src="/img/in-post/godailylib/rpcx1.png#center" alt=""></p>
 <p>非常棒，可用的服务地址不用我们手动维护了！</p>
-
 <p>接下来是客户端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1177,13 +1147,13 @@ $ go run -tags zookeeper main.go -addr 127.0.0.1:8973</code></pre></td></tr></ta
   <span class="p">}</span>
 
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d * %d = %d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们通过 zookeeper 读取可用的<code>Arith</code>服务列表，然后随机选择一个服务发送请求：</p>
+</div><p>我们通过 zookeeper 读取可用的<code>Arith</code>服务列表，然后随机选择一个服务发送请求：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1196,25 +1166,17 @@ $ go run -tags zookeeper main.go -addr 127.0.0.1:8973</code></pre></td></tr></ta
 2020/05/26 23:03:40 authenticated: id=72057658440744975, timeout=10000
 2020/05/26 23:03:40 re-submitting `0` credentials after reconnect
 10 * 20 = 200
-50 * 20 = 2...10</code></pre></td></tr></table>
+50 * 20 = 2...10
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>我们的客户端发送了两条请求。由于使用了<code>client.RandomSelect</code>策略，所以这两个请求随机发送到某个服务端。我在<code>Mul</code>和<code>Div</code>方法中增加了一个打印，可以观察一下各个控制台的输出！</p>
-
+</div><p>我们的客户端发送了两条请求。由于使用了<code>client.RandomSelect</code>策略，所以这两个请求随机发送到某个服务端。我在<code>Mul</code>和<code>Div</code>方法中增加了一个打印，可以观察一下各个控制台的输出！</p>
 <p>如果我们关闭了某个服务器，对应的服务地址会从 zookeeper 中移除。我关闭了服务器 1，zookeeper 服务列表变为：</p>
-
-<p><img src="/img/in-post/godailylib/rpcx2.png#center" alt="" /></p>
-
+<p><img src="/img/in-post/godailylib/rpcx2.png#center" alt=""></p>
 <p>相比上一篇文章中需要手动维护 zookeeper 的内容，<code>rpcx</code>的自动注册和维护明显要方便太多了！</p>
-
 <h2 id="总结">总结</h2>
-
 <p><code>rpcx</code>是 Go 语言中首屈一指的 rpc 库，功能丰富，性能出众，文档丰富，已经被不少公司和个人采用。本文介绍的只是最基础的功能，<code>rpcx</code>支持各种路由选择策略、分组、限流、身份认证等高级功能，推荐深入学习！</p>
-
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
-
 <h2 id="参考">参考</h2>
-
 <ol>
 <li>rpcx GitHub：<a href="https://github.com/jordan-wright/rpcx">https://github.com/smallnest/rpcx</a></li>
 <li>rpcx 博客：<a href="https://blog.rpcx.io/">https://blog.rpcx.io/</a></li>
@@ -1222,14 +1184,10 @@ $ go run -tags zookeeper main.go -addr 127.0.0.1:8973</code></pre></td></tr></ta
 <li>rpcx 文档：<a href="https://doc.rpcx.io/">https://doc.rpcx.io/</a></li>
 <li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
 </ol>
-
 <h2 id="我">我</h2>
-
 <p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
-
 <p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
-
-<p><img src="/img/wxgzh8.jpg#center" alt="" /></p>
+<p><img src="/img/wxgzh8.jpg#center" alt=""></p>
 
     </div>
 
