@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>你不知道的 Go 之 const - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 常量可以说在每个代码文件中都存在，使用常量有很多好处： 避免魔法字面量，即直接出现在代码中的数字，字符串等。阅读代码的时候无法一眼看出它的" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2021/05/30/youdontknowgo/const/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="你不知道的 Go 之 const" />
+<meta property="og:description" content="简介 常量可以说在每个代码文件中都存在，使用常量有很多好处： 避免魔法字面量，即直接出现在代码中的数字，字符串等。阅读代码的时候无法一眼看出它的" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2021/05/30/youdontknowgo/const/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-05-30T16:38:23&#43;00:00" />
+<meta property="article:modified_time" content="2021-05-30T16:38:23&#43;00:00" />
+
+<meta itemprop="name" content="你不知道的 Go 之 const">
+<meta itemprop="description" content="简介 常量可以说在每个代码文件中都存在，使用常量有很多好处： 避免魔法字面量，即直接出现在代码中的数字，字符串等。阅读代码的时候无法一眼看出它的"><meta itemprop="datePublished" content="2021-05-30T16:38:23&#43;00:00" />
+<meta itemprop="dateModified" content="2021-05-30T16:38:23&#43;00:00" />
+<meta itemprop="wordCount" content="3121">
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="你不知道的 Go 之 const"/>
+<meta name="twitter:description" content="简介 常量可以说在每个代码文件中都存在，使用常量有很多好处： 避免魔法字面量，即直接出现在代码中的数字，字符串等。阅读代码的时候无法一眼看出它的"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">你不知道的 Go 之 const</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-05-30" class="post-time">
+          2021-05-30
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 3121 字 </span>
+          <span class="more-meta"> 预计阅读 7 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#常量基础">常量基础</a></li>
+    <li><a href="#iota"><code>iota</code></a></li>
+    <li><a href="#无类型常量">无类型常量</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="简介">简介</h2>
+<p>常量可以说在每个代码文件中都存在，使用常量有很多好处：</p>
+<ul>
+<li>避免魔法字面量，即直接出现在代码中的数字，字符串等。阅读代码的时候无法一眼看出它的含义。另外可以避免使用字面量可能出现的不一致，当它们的值需要修改时，常量只需修改一处，而字面量要修改多处，容易遗漏造成不一致；</li>
+<li>相对于变量，常量可以执行编译期优化。</li>
+</ul>
+<p>Go 语言也提供了常量的语法支持，与其他语言提供的常量基本一致。但是 Go 中的常量有几个有用的特性值得了解一下。</p>
+<h2 id="常量基础">常量基础</h2>
+<p>Go 语言中使用<code>const</code>关键字定义常量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+
+<span class="kd">const</span> <span class="nx">PI</span> <span class="kt">float64</span> <span class="p">=</span> <span class="mf">3.1415926</span>
+<span class="kd">const</span> <span class="nx">MaxAge</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">150</span>
+<span class="kd">const</span> <span class="nx">Greeting</span> <span class="kt">string</span> <span class="p">=</span> <span class="s">&#34;hello world&#34;</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">PI</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">MaxAge</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">Greeting</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>多个常量定义可以合并在一起，如上面的几个常量定义可以写成下面的形式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">PI</span>       <span class="kt">float64</span> <span class="p">=</span> <span class="mf">3.1415926</span>
+  <span class="nx">MaxAge</span>   <span class="kt">int</span>     <span class="p">=</span> <span class="mi">150</span>
+  <span class="nx">Greeting</span> <span class="kt">string</span>  <span class="p">=</span> <span class="s">&#34;hello world&#34;</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>不过通常建议将相同类型的，相关联的常量定义在一个组里面。</p>
+<p>Go 语言中常量有一个很大的限制：只能定义基本类型的常量，即布尔类型（<code>bool</code>），整数（无符号<code>uint/uint8/uint16/uint32/uint64/uintptr</code>，有符号<code>int/int8/int16/int32/int64</code>），浮点数（单精度<code>float32</code>，双精度<code>float64</code>），或者底层类型是这些基本类型的类型。不能定义切片，数组，指针，结构体等这些类型的常量。例如，<code>byte</code>底层类型为<code>uint8</code>，<code>rune</code>底层类型为<code>int32</code>，见 Go 源码<code>builtin.go</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/builtin/builtin.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="kt">byte</span> <span class="p">=</span> <span class="kt">uint8</span>
+<span class="kd">type</span> <span class="kt">rune</span> <span class="p">=</span> <span class="kt">int32</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>故可以定义类为<code>byte</code>或<code>rune</code>的常量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="nx">b</span> <span class="kt">byte</span> <span class="p">=</span> <span class="mi">128</span>
+<span class="kd">const</span> <span class="nx">r</span> <span class="kt">rune</span> <span class="p">=</span> <span class="sc">&#39;c&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>定义其他类型的变量会在编译期报错：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+  <span class="nx">Age</span>  <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">u</span> <span class="nx">User</span> <span class="p">=</span> <span class="nx">User</span><span class="p">{}</span> <span class="c1">// invalid const type User
+</span><span class="c1"></span>
+<span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">1</span>
+<span class="kd">const</span> <span class="nx">p</span> <span class="o">*</span><span class="kt">int</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">i</span> <span class="c1">// invalid const type *int
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="iota"><code>iota</code></h2>
+<p>Go 语言的代码中常量定义经常使用<code>iota</code>，下面看几个 Go 的源码。</p>
+<p>标准库<code>time</code>源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/time/time.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Month</span> <span class="kt">int</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">January</span> <span class="nx">Month</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="kc">iota</span>
+  <span class="nx">February</span>
+  <span class="nx">March</span>
+  <span class="nx">April</span>
+  <span class="nx">May</span>
+  <span class="nx">June</span>
+  <span class="nx">July</span>
+  <span class="nx">August</span>
+  <span class="nx">September</span>
+  <span class="nx">October</span>
+  <span class="nx">November</span>
+  <span class="nx">December</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Weekday</span> <span class="kt">int</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">Sunday</span> <span class="nx">Weekday</span> <span class="p">=</span> <span class="kc">iota</span>
+  <span class="nx">Monday</span>
+  <span class="nx">Tuesday</span>
+  <span class="nx">Wednesday</span>
+  <span class="nx">Thursday</span>
+  <span class="nx">Friday</span>
+  <span class="nx">Saturday</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>标准库<code>net/http</code>源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/http/server.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ConnState</span> <span class="kt">int</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">StateNew</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="kc">iota</span>
+  <span class="nx">StateActive</span>
+  <span class="nx">StateIdle</span>
+  <span class="nx">StateHijacked</span>
+  <span class="nx">StateClosed</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>iota</code>是方便我们定义常量的一个机制。简单来说，<code>iota</code>独立作用于每一个常量定义组中（单独出现的每个<code>const</code>语句都算作一个组），<code>iota</code>出现在用于初始化常量值的常量表达式中，<strong><code>iota</code>的值为它在常量组中的第几行（从 0 开始）</strong>。使用<code>iota</code>定义的常量下面可以省略类型和初始化表达式，这时会沿用上一个定义的类型和初始化表达式。我们看几组例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">One</span> <span class="kt">int</span> <span class="p">=</span> <span class="kc">iota</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="nx">Two</span>
+  <span class="nx">Three</span>
+  <span class="nx">Four</span>
+  <span class="nx">Five</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个也是最常使用的方式，<code>iota</code>出现在第几行，它的值就是多少。上面常量定义组中，<code>One</code>在第 0 行（注意从 0 开始计数），<code>iota</code>为 0，所以<code>One = 0 + 1 = 1</code>。
+下一行<code>Two</code>省略了类型和初始化表达式，因此<code>Two</code>沿用上面的类型<code>int</code>，初始化表达式也是<code>iota + 1</code>。但是此时是定义组中的第 1 行，<code>iota</code>的值为 1，所以<code>Two = 1 + 1 = 2</code>。
+再下一行<code>Three</code>也省略了类型和初始化表达式，因此<code>Three</code>沿用了<code>Two</code>进而沿用了<code>One</code>的类型<code>int</code>，初始化表达式也是<code>iota + 1</code>，但是此时是定义的第 2 行，所以<code>Three = 2 + 1 = 3</code>。以此类推。</p>
+<p>我们可以在非常复杂的初始化表达式中使用<code>iota</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">Mask1</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">1</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="kc">iota</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="nx">Mask2</span>
+  <span class="nx">Mask3</span>
+  <span class="nx">Mask4</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>按照上面的分析<code>Mask1~4</code>依次为 1, 3, 7, 15。</p>
+<p>另外还有奇数，偶数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">Odd1</span> <span class="p">=</span> <span class="mi">2</span><span class="o">*</span><span class="kc">iota</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="nx">Odd2</span>
+  <span class="nx">Odd3</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">Even1</span> <span class="p">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="kc">iota</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="nx">Even2</span>
+  <span class="nx">Even3</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在一个组中，<code>iota</code>不一定出现在第 0 行，<strong>但是它出现在第几行，值就为多少</strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">A</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">1</span>
+  <span class="nx">B</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">2</span>
+  <span class="nx">C</span> <span class="kt">int</span> <span class="p">=</span> <span class="kc">iota</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="nx">D</span>
+  <span class="nx">E</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面<code>iota</code>出现在第 2 行（从 0 开始），<code>C</code>的值为<code>2 + 1 = 3</code>。<code>D</code>和<code>E</code>分别为 4, 5。</p>
+<p><strong>一定要注意<code>iota</code>的值等于它出现在组中的第几行，而非它的第几次出现。</strong></p>
+<p>可以通过赋值给空标识符来忽略值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">_</span> <span class="kt">int</span> <span class="p">=</span> <span class="kc">iota</span>
+  <span class="nx">A</span> <span class="c1">// 1
+</span><span class="c1"></span>  <span class="nx">B</span> <span class="c1">// 2
+</span><span class="c1"></span>  <span class="nx">C</span> <span class="c1">// 3
+</span><span class="c1"></span>  <span class="nx">D</span> <span class="c1">// 4
+</span><span class="c1"></span>  <span class="nx">E</span> <span class="c1">// 5
+</span><span class="c1"></span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>说了这么多<code>iota</code>的用法，那么为什么要用<code>iota</code>呢？换句话说，<code>iota</code>有什么优点？我觉得有两点：</p>
+<ul>
+<li>方便定义，在模式比较固定的时候，我们可以只写出第一个，后面的常量不需要写出类型和初始化表达式了；</li>
+<li>方便调整顺序，增加和删除常量定义，如果我们定义了一组常量之后，想要调整顺序，使用<code>iota</code>的定义，只需要调整位置即可，不需要修改初始化式，因为就没有写。增加和删除也是一样的，如果我们一个个写出了初始化式，删除中间某个，后续的值就必须做调整。</li>
+</ul>
+<p>例如，<code>net/http</code>中的源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">ConnState</span> <span class="kt">int</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">StateNew</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="kc">iota</span>
+  <span class="nx">StateActive</span>
+  <span class="nx">StateIdle</span>
+  <span class="nx">StateHijacked</span>
+  <span class="nx">StateClosed</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果我们需要增加一个常量，表示正在关闭的状态。现在只需要写出新增的状态名：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">ConnState</span> <span class="kt">int</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">StateNew</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="kc">iota</span>
+  <span class="nx">StateActive</span>
+  <span class="nx">StateIdle</span>
+  <span class="nx">StateHijacked</span>
+  <span class="nx">StateClosing</span> <span class="c1">// 新增的状态
+</span><span class="c1"></span>  <span class="nx">StateClosed</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果是显式写出初始化式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">ConnState</span> <span class="kt">int</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">StateNew</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">0</span>
+  <span class="nx">StateActive</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">1</span>
+  <span class="nx">StateIdle</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">2</span>
+  <span class="nx">StateHijacked</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">3</span>
+  <span class="nx">StateClosed</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">4</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这时新增需要改动后续的值。另外需要键入的字符也多了不少😊：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">StateNew</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">0</span>
+  <span class="nx">StateActive</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">1</span>
+  <span class="nx">StateIdle</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">2</span>
+  <span class="nx">StateHijacked</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">3</span>
+  <span class="nx">StateClosing</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">4</span>
+  <span class="nx">StateClosed</span> <span class="nx">ConnState</span> <span class="p">=</span> <span class="mi">5</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="无类型常量">无类型常量</h2>
+<p>Go 语言中有一种特殊的常量，即无类型常量。即在定义时，我们不显式指定类型。这种常量可以存储超过常规的类型范围的值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;fmt&#34;</span>
+  <span class="s">&#34;math&#34;</span>
+  <span class="s">&#34;reflect&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">Integer1</span> <span class="p">=</span> <span class="mi">1000</span>
+  <span class="nx">Integer2</span> <span class="p">=</span> <span class="nx">math</span><span class="p">.</span><span class="nx">MaxUint64</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="nx">Float1</span>   <span class="p">=</span> <span class="mf">1.23</span>
+  <span class="nx">Float2</span>   <span class="p">=</span> <span class="mf">1e100</span>
+  <span class="nx">Float3</span>   <span class="p">=</span> <span class="mf">1e400</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;integer1=&#34;</span><span class="p">,</span> <span class="nx">Integer1</span><span class="p">,</span> <span class="s">&#34;type&#34;</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">Integer1</span><span class="p">).</span><span class="nf">Name</span><span class="p">())</span>
+  <span class="c1">// 编译错误
+</span><span class="c1"></span>  <span class="c1">// fmt.Println(&#34;integer2=&#34;, Integer2, &#34;type&#34;, reflect.TypeOf(Integer2).Name())
+</span><span class="c1"></span>  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;integer2/10=&#34;</span><span class="p">,</span> <span class="nx">Integer2</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="s">&#34;type&#34;</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">Integer2</span><span class="o">/</span><span class="mi">10</span><span class="p">).</span><span class="nf">Name</span><span class="p">())</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;float1=&#34;</span><span class="p">,</span> <span class="nx">Float1</span><span class="p">,</span> <span class="s">&#34;type&#34;</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">Float1</span><span class="p">).</span><span class="nf">Name</span><span class="p">())</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;float2=&#34;</span><span class="p">,</span> <span class="nx">Float2</span><span class="p">,</span> <span class="s">&#34;type&#34;</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">Float2</span><span class="p">).</span><span class="nf">Name</span><span class="p">())</span>
+  <span class="c1">// 编译错误
+</span><span class="c1"></span>  <span class="c1">// fmt.Println(&#34;float3=&#34;, Float3, &#34;type&#34;, reflect.TypeOf(Float3).Name())
+</span><span class="c1"></span>  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;float3/float2=&#34;</span><span class="p">,</span> <span class="nx">Float3</span><span class="o">/</span><span class="nx">Float2</span><span class="p">,</span> <span class="s">&#34;type&#34;</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">Float3</span><span class="o">/</span><span class="nx">Float2</span><span class="p">).</span><span class="nf">Name</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>虽然无类型常量可以存储超出正常类型范围的值，并且可以相互之间做算术运算，但是它在使用时（赋值给变量，作为参数传递）还是需要转回正常类型。如果值超过正常类型的范围，编译就会报错。每个无类型常量都有一个默认类型，整数的默认类型为<code>int</code>，浮点数（有小数点或者使用科学计数法表示的都被当成浮点数）的默认类型为<code>float64</code>。所以上面例子中，我们定义<code>Integer2</code>为无类型常量，值为<code>uint64</code>的最大值 + 1，这是允许的。但是如果我们直接输出<code>Integer2</code>的值，就会导致编译报错，因为<code>Integer2</code>默认会转为<code>int</code>类型，而它存储的值超过了<code>int</code>的范围了。另一方面，我们可以用<code>Integer2</code>做运算，例如除以 10，得到的值在<code>int</code>范围内，可以输出。（我使用的是 64 位机器）</p>
+<p>下面的浮点数类型也是类似的，<code>Float3</code>超出了<code>float64</code>的表示范围，故不能直接输出。但是<code>Float3/Float2</code>的结果在<code>float64</code>的范围内，可以使用。</p>
+<p>上面程序输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">integer1</span><span class="p">=</span> <span class="mi">1000</span> <span class="kd">type</span> <span class="kt">int</span>
+<span class="nx">integer2</span><span class="o">/</span><span class="mi">10</span><span class="p">=</span> <span class="mi">1844674407370955161</span> <span class="kd">type</span> <span class="kt">int</span>
+<span class="nx">float1</span><span class="p">=</span> <span class="mf">1.23</span> <span class="kd">type</span> <span class="kt">float64</span>
+<span class="nx">float2</span><span class="p">=</span> <span class="mf">1e+100</span> <span class="kd">type</span> <span class="kt">float64</span>
+<span class="nx">float3</span><span class="o">/</span><span class="nx">float2</span><span class="p">=</span> <span class="mf">1e+300</span> <span class="kd">type</span> <span class="kt">float64</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>由输出也可以看出整数和浮点的默认类型分别为<code>int</code>和<code>float64</code>。</p>
+<p>结合<code>iota</code>和无类型常量我们可以定义一组存储单位：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">_</span>  <span class="p">=</span> <span class="kc">iota</span>
+  <span class="nx">KB</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="kc">iota</span><span class="p">)</span>
+  <span class="nx">MB</span> <span class="c1">// 2 ^ 20
+</span><span class="c1"></span>  <span class="nx">GB</span> <span class="c1">// 2 ^ 30
+</span><span class="c1"></span>  <span class="nx">TB</span> <span class="c1">// 2 ^ 40
+</span><span class="c1"></span>  <span class="nx">PB</span> <span class="c1">// 2 ^ 50
+</span><span class="c1"></span>  <span class="nx">EB</span> <span class="c1">// 2 ^ 60
+</span><span class="c1"></span>  <span class="nx">ZB</span> <span class="c1">// 2 ^ 70，1180591620717411303424
+</span><span class="c1"></span>  <span class="nx">YB</span> <span class="c1">// 2 ^ 80
+</span><span class="c1"></span><span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">YB</span> <span class="o">/</span> <span class="nx">ZB</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;1180591620717411303424 B = &#34;</span><span class="p">,</span> <span class="mi">1180591620717411303424</span><span class="o">/</span><span class="nx">ZB</span><span class="p">,</span> <span class="s">&#34;ZB&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>ZB</code>实际上已经达到 1180591620717411303424，超过了<code>int</code>的表示范围了，但是我们仍然可以定义<code>ZB</code>和<code>YB</code>，还能在使用时对他们进行运算，只要最终要使用的值在正常类型的范围内即可。</p>
+<h2 id="总结">总结</h2>
+<p>本文介绍了常量的相关知识，记住两个要点即可：</p>
+<ul>
+<li><code>iota</code>的值等于它出现在常量定义组的第几行（从 0 开始）；</li>
+<li>无类型常量可以定义超过存储范围的值，但是使用时必须能转回正常类型的范围，否则会报错。</li>
+</ul>
+<p>利用无类型常量，我们可以在编译期对大数进行算术运算。</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>《Go 程序设计语言》</li>
+<li>你不知道的Go GitHub：<a href="https://github.com/darjun/you-dont-know-go">https://github.com/darjun/you-dont-know-go</a></li>
+</ol>
+<h2 id="我">我</h2>
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-05-30
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2021/05/24/godailylib/fasttemplate/">
+            <span class="next-text nav-default">Go 每日一库之 fasttemplate</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
