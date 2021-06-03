@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 ants - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 处理大量并发是 Go 语言的一大优势。语言内置了方便的并发语法，可以非常方便的创建很多个轻量级的 goroutine 并发处理任务。相比于创建多个线程，gorou" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2021/06/03/godailylib/ants/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 ants" />
+<meta property="og:description" content="简介 处理大量并发是 Go 语言的一大优势。语言内置了方便的并发语法，可以非常方便的创建很多个轻量级的 goroutine 并发处理任务。相比于创建多个线程，gorou" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2021/06/03/godailylib/ants/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-06-03T07:16:23&#43;00:00" />
+<meta property="article:modified_time" content="2021-06-03T07:16:23&#43;00:00" />
+
+<meta itemprop="name" content="Go 每日一库之 ants">
+<meta itemprop="description" content="简介 处理大量并发是 Go 语言的一大优势。语言内置了方便的并发语法，可以非常方便的创建很多个轻量级的 goroutine 并发处理任务。相比于创建多个线程，gorou"><meta itemprop="datePublished" content="2021-06-03T07:16:23&#43;00:00" />
+<meta itemprop="dateModified" content="2021-06-03T07:16:23&#43;00:00" />
+<meta itemprop="wordCount" content="5308">
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 ants"/>
+<meta name="twitter:description" content="简介 处理大量并发是 Go 语言的一大优势。语言内置了方便的并发语法，可以非常方便的创建很多个轻量级的 goroutine 并发处理任务。相比于创建多个线程，gorou"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 ants</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-06-03" class="post-time">
+          2021-06-03
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 5308 字 </span>
+          <span class="more-meta"> 预计阅读 11 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#函数作为任务">函数作为任务</a></li>
+    <li><a href="#执行流程">执行流程</a></li>
+    <li><a href="#选项">选项</a>
+      <ul>
+        <li><a href="#最大等待队列长度">最大等待队列长度</a></li>
+        <li><a href="#非阻塞">非阻塞</a></li>
+        <li><a href="#panic-处理器">panic 处理器</a></li>
+      </ul>
+    </li>
+    <li><a href="#默认池">默认池</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="简介">简介</h2>
+<p>处理大量并发是 Go 语言的一大优势。语言内置了方便的并发语法，可以非常方便的创建很多个轻量级的 goroutine 并发处理任务。相比于创建多个线程，goroutine 更轻量、资源占用更少、切换速度更快、无线程上下文切换开销更少。但是受限于资源总量，系统中能够创建的 goroutine 数量也是受限的。默认每个 goroutine 占用 8KB 内存，一台 8GB 内存的机器满打满算也只能创建 8GB/8KB = 1000000 个 goroutine，更何况系统还需要保留一部分内存运行日常管理任务，go 运行时需要内存运行 gc、处理 goroutine 切换等。使用的内存超过机器内存容量，系统会使用交换区（swap），导致性能急速下降。我们可以简单验证一下创建过多 goroutine 会发生什么：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">10000000</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10000000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Minute</span><span class="p">)</span>
+    <span class="p">}()</span>
+  <span class="p">}</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在我的机器上（8G内存）运行上面的程序会报<code>errno 1455</code>，即<code>Out of Memory</code>错误，这很好理解。<strong>谨慎运行</strong>。</p>
+<p>另一方面，goroutine 的管理也是一个问题。goroutine 只能自己运行结束，外部没有任何手段可以强制j结束一个 goroutine。如果一个 goroutine 因为某种原因没有自行结束，就会出现 goroutine 泄露。此外，频繁创建 goroutine 也是一个开销。</p>
+<p>鉴于上述原因，自然出现了与线程池一样的需求，即 goroutine 池。一般的 goroutine 池自动管理 goroutine 的生命周期，可以按需创建，动态缩容。向 goroutine 池提交一个任务，goroutine 池会自动安排某个 goroutine 来处理。</p>
+<p><a href="https://github.com/panjf2000/ants"><code>ants</code></a>就是其中一个实现 goroutine 池的库。</p>
+<h2 id="快速使用">快速使用</h2>
+<p>本文代码使用 Go Modules。</p>
+<p>创建目录并初始化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir ants <span class="p">&amp;&amp;</span> <span class="k">cd</span> ants
+$ go mod init github.com/darjun/go-daily-lib/ants
+</code></pre></td></tr></table>
+</div>
+</div><p>安装<code>ants</code>库，使用<code>v2</code>版本：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/panjf2000/ants/v2
+</code></pre></td></tr></table>
+</div>
+</div><p>我们接下来要实现一个计算大量整数和的程序。首先创建基础的任务结构，并实现其执行任务方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Task</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">index</span> <span class="kt">int</span>
+  <span class="nx">nums</span>  <span class="p">[]</span><span class="kt">int</span>
+  <span class="nx">sum</span>   <span class="kt">int</span>
+  <span class="nx">wg</span>    <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Task</span><span class="p">)</span> <span class="nf">Do</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">num</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">t</span><span class="p">.</span><span class="nx">nums</span> <span class="p">{</span>
+    <span class="nx">t</span><span class="p">.</span><span class="nx">sum</span> <span class="o">+=</span> <span class="nx">num</span>
+  <span class="p">}</span>
+
+  <span class="nx">t</span><span class="p">.</span><span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>很简单，就是将一个切片中的所有整数相加。</p>
+<p>然后我们创建 goroutine 池，注意池使用完后需要手动关闭，这里使用<code>defer</code>关闭：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">p</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">NewPoolWithFunc</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="nx">taskFunc</span><span class="p">)</span>
+<span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Release</span><span class="p">()</span>
+
+<span class="kd">func</span> <span class="nf">taskFunc</span><span class="p">(</span><span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+  <span class="nx">task</span> <span class="o">:=</span> <span class="nx">data</span><span class="p">.(</span><span class="o">*</span><span class="nx">Task</span><span class="p">)</span>
+  <span class="nx">task</span><span class="p">.</span><span class="nf">Do</span><span class="p">()</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;task:%d sum:%d\n&#34;</span><span class="p">,</span> <span class="nx">task</span><span class="p">.</span><span class="nx">index</span><span class="p">,</span> <span class="nx">task</span><span class="p">.</span><span class="nx">sum</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面调用了<code>ants.NewPoolWithFunc()</code>创建了一个 goroutine 池。第一个参数是池容量，即池中最多有 10 个 goroutine。第二个参数为每次执行任务的函数。当我们调用<code>p.Invoke(data)</code>的时候，<code>ants</code>池会在其管理的 goroutine 中找出一个空闲的，让它执行函数<code>taskFunc</code>，并将<code>data</code>作为参数。</p>
+<p>接着，我们模拟数据，做数据切分，生成任务，交给 <code>ants</code> 处理：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">DataSize</span>    <span class="p">=</span> <span class="mi">10000</span>
+  <span class="nx">DataPerTask</span> <span class="p">=</span> <span class="mi">100</span>
+<span class="p">)</span>
+
+<span class="nx">nums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="p">,</span> <span class="nx">DataSize</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
+  <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">DataSize</span> <span class="o">/</span> <span class="nx">DataPerTask</span><span class="p">)</span>
+<span class="nx">tasks</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">Task</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+  <span class="nx">task</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Task</span><span class="p">{</span>
+    <span class="nx">index</span><span class="p">:</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">nums</span><span class="p">:</span>  <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="o">*</span><span class="nx">DataPerTask</span> <span class="p">:</span> <span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">DataPerTask</span><span class="p">],</span>
+    <span class="nx">wg</span><span class="p">:</span>    <span class="o">&amp;</span><span class="nx">wg</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">tasks</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">tasks</span><span class="p">,</span> <span class="nx">task</span><span class="p">)</span>
+  <span class="nx">p</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">task</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;running goroutines: %d\n&#34;</span><span class="p">,</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">Running</span><span class="p">())</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>随机生成 10000 个整数，将这些整数分为 100 份，每份 100 个，生成<code>Task</code>结构，调用<code>p.Invoke(task)</code>处理。<code>wg.Wait()</code>等待处理完成，然后输出<code>ants</code>正在运行的 goroutine 数量，这时应该是 0。</p>
+<p>最后我们将结果汇总，并验证一下结果，与直接相加得到的结果做一个比较：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">task</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">tasks</span> <span class="p">{</span>
+  <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">task</span><span class="p">.</span><span class="nx">sum</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">expect</span> <span class="kt">int</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">num</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
+  <span class="nx">expect</span> <span class="o">+=</span> <span class="nx">num</span>
+<span class="p">}</span>
+
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;finish all tasks, result is %d expect:%d\n&#34;</span><span class="p">,</span> <span class="nx">sum</span><span class="p">,</span> <span class="nx">expect</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
+...
+task:96 sum:53275
+task:88 sum:50090
+task:62 sum:57114
+task:45 sum:48041
+task:82 sum:45269
+running goroutines: 0
+finish all tasks, result is 5010172 expect:5010172
+</code></pre></td></tr></table>
+</div>
+</div><p>确实，任务完成之后，正在运行的 goroutine 数量变为 0。而且我们验证了，结果没有偏差。另外需要注意，<strong>goroutine 池中任务的执行顺序是随机的，与提交任务的先后没有关系</strong>。由上面运行打印的任务标识我们也能发现这一点。</p>
+<h2 id="函数作为任务">函数作为任务</h2>
+<p><code>ants</code>支持将一个不接受任何参数的函数作为任务提交给 goroutine 运行。由于不接受参数，我们提交的函数要么不需要外部数据，只需要处理自身逻辑，否则就必须用某种方式将需要的数据传递进去，例如闭包。</p>
+<p>提交函数作为任务的 goroutine 池使用<code>ants.NewPool()</code>创建，它只接受一个参数表示池子的容量。调用池子对象的<code>Submit()</code>方法来提交任务，将一个不接受任何参数的函数传入。</p>
+<p>最开始的例子可以改写一下。增加一个任务包装函数，将任务需要的参数作为包装函数的参数。包装函数返回实际的任务函数，该任务函数就可以通过闭包访问它需要的数据了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">taskFunc</span> <span class="kd">func</span><span class="p">()</span>
+
+<span class="kd">func</span> <span class="nf">taskFuncWrapper</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">sum</span> <span class="o">*</span><span class="kt">int</span><span class="p">,</span> <span class="nx">wg</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nx">taskFunc</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">num</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="o">*</span><span class="nx">DataPerTask</span> <span class="p">:</span> <span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">DataPerTask</span><span class="p">]</span> <span class="p">{</span>
+      <span class="o">*</span><span class="nx">sum</span> <span class="o">+=</span> <span class="nx">num</span>
+    <span class="p">}</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;task:%d sum:%d\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="nx">sum</span><span class="p">)</span>
+    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用<code>ants.NewPool(10)</code>创建 goroutine 池，同样池子用完需要释放，这里使用<code>defer</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">p</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">NewPool</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Release</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>生成模拟数据，切分任务。提交任务给<code>ants</code>池执行，这里使用<code>taskFuncWrapper()</code>包装函数生成具体的任务，然后调用<code>p.Submit()</code>提交：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">nums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="p">,</span> <span class="nx">DataSize</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
+  <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">DataSize</span> <span class="o">/</span> <span class="nx">DataPerTask</span><span class="p">)</span>
+<span class="nx">partSums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">,</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+  <span class="nx">p</span><span class="p">.</span><span class="nf">Submit</span><span class="p">(</span><span class="nf">taskFuncWrapper</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">partSums</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">))</span>
+<span class="p">}</span>
+<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>汇总结果，验证：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">partSum</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">partSums</span> <span class="p">{</span>
+  <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">partSum</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">expect</span> <span class="kt">int</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">num</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
+  <span class="nx">expect</span> <span class="o">+=</span> <span class="nx">num</span>
+<span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;running goroutines: %d\n&#34;</span><span class="p">,</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">Running</span><span class="p">())</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;finish all tasks, result is %d expect is %d\n&#34;</span><span class="p">,</span> <span class="nx">sum</span><span class="p">,</span> <span class="nx">expect</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个程序的功能与最开始的完全相同。</p>
+<h2 id="执行流程">执行流程</h2>
+<p>GitHub 仓库中有个执行流程图，我重新绘制了一下：</p>
+<p><img src="/img/in-post/godailylib/ants1.png#center" alt=""></p>
+<p>执行流程如下：</p>
+<ul>
+<li>初始化 goroutine 池；</li>
+<li>提交任务给 goroutine 池，检查是否有空闲的 goroutine：
+<ul>
+<li>有，获取空闲 goroutine</li>
+<li>无，检查池中的 goroutine 数量是否已到池容量上限：
+<ul>
+<li>已到上限，检查 goroutine 池是否是非阻塞的：
+<ul>
+<li>非阻塞，直接返回<code>nil</code>表示执行失败</li>
+<li>阻塞，等待 goroutine 空闲</li>
+</ul>
+</li>
+<li>未到上限，创建一个新的 goroutine 处理任务</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>任务处理完成，将 goroutine 交还给池，以待处理下一个任务</li>
+</ul>
+<h2 id="选项">选项</h2>
+<p><code>ants</code>提供了一些选项可以定制 goroutine 池的行为。选项使用<code>Options</code>结构定义：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/panjf2000/ants/options.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Options</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ExpiryDuration</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span>
+  <span class="nx">PreAlloc</span> <span class="kt">bool</span>
+  <span class="nx">MaxBlockingTasks</span> <span class="kt">int</span>
+  <span class="nx">Nonblocking</span> <span class="kt">bool</span>
+  <span class="nx">PanicHandler</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span>
+  <span class="nx">Logger</span> <span class="nx">Logger</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>各个选项含义如下：</p>
+<ul>
+<li><code>ExpiryDuration</code>：过期时间。表示 goroutine 空闲多长时间之后会被<code>ants</code>池回收</li>
+<li><code>PreAlloc</code>：预分配。调用<code>NewPool()/NewPoolWithFunc()</code>之后预分配<code>worker</code>（管理一个工作 goroutine 的结构体）切片。而且使用预分配与否会直接影响池中管理<code>worker</code>的结构。见下面源码</li>
+<li><code>MaxBlockingTasks</code>：最大阻塞任务数量。即池中 goroutine 数量已到池容量，且所有 goroutine 都处理繁忙状态，这时到来的任务会在阻塞列表等待。这个选项设置的是列表的最大长度。阻塞的任务数量达到这个值后，后续任务提交直接返回失败</li>
+<li><code>Nonblocking</code>：池是否阻塞，默认阻塞。提交任务时，如果<code>ants</code>池中 goroutine 已到上限且全部繁忙，阻塞的池会将任务添加的阻塞列表等待（当然受限于阻塞列表长度，见上一个选项）。非阻塞的池直接返回失败</li>
+<li><code>PanicHandler</code>：panic 处理。遇到 panic 会调用这里设置的处理函数</li>
+<li><code>Logger</code>：指定日志记录器</li>
+</ul>
+<p><code>NewPool()</code>部分源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PreAlloc</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidPreAllocSize</span>
+  <span class="p">}</span>
+  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">loopQueueType</span><span class="p">,</span> <span class="nx">size</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">stackType</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用预分配时，创建<code>loopQueueType</code>类型的结构，反之创建<code>stackType</code>类型。这是<code>ants</code>定义的两种管理<code>worker</code>的数据结构。</p>
+<p><code>ants</code>定义了一些<code>With*</code>函数来设置这些选项：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">WithOptions</span><span class="p">(</span><span class="nx">options</span> <span class="nx">Options</span><span class="p">)</span> <span class="nx">Option</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opts</span> <span class="o">*</span><span class="nx">Options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">*</span><span class="nx">opts</span> <span class="p">=</span> <span class="nx">options</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">WithExpiryDuration</span><span class="p">(</span><span class="nx">expiryDuration</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="nx">Option</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opts</span> <span class="o">*</span><span class="nx">Options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">ExpiryDuration</span> <span class="p">=</span> <span class="nx">expiryDuration</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">WithPreAlloc</span><span class="p">(</span><span class="nx">preAlloc</span> <span class="kt">bool</span><span class="p">)</span> <span class="nx">Option</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opts</span> <span class="o">*</span><span class="nx">Options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">PreAlloc</span> <span class="p">=</span> <span class="nx">preAlloc</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">WithMaxBlockingTasks</span><span class="p">(</span><span class="nx">maxBlockingTasks</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">Option</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opts</span> <span class="o">*</span><span class="nx">Options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">MaxBlockingTasks</span> <span class="p">=</span> <span class="nx">maxBlockingTasks</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">WithNonblocking</span><span class="p">(</span><span class="nx">nonblocking</span> <span class="kt">bool</span><span class="p">)</span> <span class="nx">Option</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opts</span> <span class="o">*</span><span class="nx">Options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">Nonblocking</span> <span class="p">=</span> <span class="nx">nonblocking</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">WithPanicHandler</span><span class="p">(</span><span class="nx">panicHandler</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{}))</span> <span class="nx">Option</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opts</span> <span class="o">*</span><span class="nx">Options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">PanicHandler</span> <span class="p">=</span> <span class="nx">panicHandler</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">WithLogger</span><span class="p">(</span><span class="nx">logger</span> <span class="nx">Logger</span><span class="p">)</span> <span class="nx">Option</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opts</span> <span class="o">*</span><span class="nx">Options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">Logger</span> <span class="p">=</span> <span class="nx">logger</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里使用了 Go 语言中非常常见的一种模式，我称之为选项模式，非常方便地构造有大量参数，且大部分有默认值或一般不需要显式设置的对象。</p>
+<p>我们来验证几个选项。</p>
+<h3 id="最大等待队列长度">最大等待队列长度</h3>
+<p><code>ants</code>池设置容量之后，如果所有的 goroutine 都在处理任务。这时提交的任务默认会进入等待队列，<code>WithMaxBlockingTasks(maxBlockingTasks int)</code>可以设置等待队列的最大长度。超过这个长度，提交任务直接返回错误：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">wrapper</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">wg</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;hello from task:%d\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+    <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">p</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">NewPool</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">WithMaxBlockingTasks</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Release</span><span class="p">()</span>
+
+  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">8</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Submit</span><span class="p">(</span><span class="nf">wrapper</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">))</span>
+      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;task:%d err:%v\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+      <span class="p">}</span>
+    <span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，我们设置 goroutine 池的容量为 4，最大阻塞队列长度为 2。然后一个 for 提交 8 个任务，期望结果是：4 个任务在执行，2 个任务在等待，2 个任务提交失败。运行结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">hello from task:8
+hello from task:5
+hello from task:4
+hello from task:6
+task:7 err:too many goroutines blocked on submit or Nonblocking is set
+task:3 err:too many goroutines blocked on submit or Nonblocking is set
+hello from task:1
+hello from task:2
+</code></pre></td></tr></table>
+</div>
+</div><p>我们看到提交任务失败，打印<code>too many goroutines blocked ...</code>。</p>
+<p>代码中有 4 点需要注意：</p>
+<ul>
+<li><strong>提交任务必须并行进行。如果是串行提交，第 5 个任务提交时由于池中没有空闲的 goroutine 处理该任务，<code>Submit()</code>方法会被阻塞，后续任务就都不能提交了。也就达不到验证的目的了</strong></li>
+<li><strong>由于任务可能提交失败，失败的任务不会实际执行，所以实际上<code>wg.Done()</code>次数会小于 8。因而在<code>err != nil</code>分支中我们需要调用一次<code>wg.Done()</code>。否则<code>wg.Wait()</code>会永远阻塞</strong></li>
+<li><strong>为了避免任务执行过快，空出了 goroutine，观察不到现象，每个任务中我使用<code>time.Sleep(1 * time.Second)</code>休眠 1s</strong></li>
+<li><strong>由于 goroutine 之间的执行顺序未显式同步，故每次执行的顺序不确定</strong></li>
+</ul>
+<p>由于简单起见，前面的例子中<code>Submit()</code>方法的返回值都被我们忽略了。实际开发中一定不要忽略。</p>
+<h3 id="非阻塞">非阻塞</h3>
+<p><code>ants</code>池默认是阻塞的，我们可以使用<code>WithNonblocking(nonblocking bool)</code>设置其为非阻塞。非阻塞的<code>ants</code>池中，在所有 goroutine 都在处理任务时，提交新任务会直接返回错误：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">p</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">NewPool</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">WithNonblocking</span><span class="p">(</span><span class="kc">true</span><span class="p">))</span>
+  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Release</span><span class="p">()</span>
+
+  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Submit</span><span class="p">(</span><span class="nf">wrapper</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;task:%d err:%v\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+      <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用上个例子中的<code>wrapper()</code>函数，<code>ants</code>池容量设置为 2。连续提交 3 个任务，期望结果前两个任务正常执行，第 3 个任务提交时返回错误：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">hello from task:2
+task:3 err:too many goroutines blocked on submit or Nonblocking is set
+hello from task:1
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="panic-处理器">panic 处理器</h3>
+<p>一个鲁棒性强的库一定不会忽视错误的处理，特别是宕机相关的错误。在 Go 语言中就是 panic，也被称为运行时恐慌，在程序运行的过程中产生的严重性错误，例如索引越界，空指针解引用等，都会触发 panic。如果不处理 panic，程序会直接意外退出，可能造成数据丢失的严重后果。</p>
+<p><code>ants</code>中如果 goroutine 在执行任务时发生<code>panic</code>，会终止当前任务的执行，将发生错误的堆栈输出到<code>os.Stderr</code>。<strong>注意，该 goroutine 还是会被放回池中，下次可以取出执行新的任务</strong>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">wrapper</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">wg</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;hello from task:%d\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">i</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+      <span class="nb">panic</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;panic from task:%d&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">p</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">NewPool</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Release</span><span class="p">()</span>
+
+  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nf">Submit</span><span class="p">(</span><span class="nf">wrapper</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">))</span>
+  <span class="p">}</span>
+
+  <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+  <span class="nx">p</span><span class="p">.</span><span class="nf">Submit</span><span class="p">(</span><span class="nf">wrapper</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">))</span>
+  <span class="nx">p</span><span class="p">.</span><span class="nf">Submit</span><span class="p">(</span><span class="nf">wrapper</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">))</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们让偶数个任务触发<code>panic</code>。提交两个任务，第二个任务一定会触发<code>panic</code>。触发<code>panic</code>之后，我们还可以继续提交任务 3、5。注意这里没有 4，提交任务 4 还是会触发<code>panic</code>。</p>
+<p>上面的程序需要注意 2 点：</p>
+<ul>
+<li><strong>任务函数中<code>wg.Done()</code>是在<code>panic</code>方法之后，如果触发了<code>panic</code>，函数中的其他正常逻辑就不会再继续执行了。所以我们虽然<code>wg.Add(3)</code>，但是一共提交了 4 个任务，其中一个任务触发了<code>panic</code>，<code>wg.Done()</code>没有正确执行</strong>。实际开发中，我们一般使用<code>defer</code>语句来确保<code>wg.Done()</code>一定会执行</li>
+<li><strong>在 for 循环之后，我添加了一行代码<code>time.Sleep(1 * time.Second)</code>。如果没有这一行，后续的两条<code>Submit()</code>方法可以直接执行，可能会导致任务很快就完成了，<code>wg.Wait()</code>直接返回了，这时<code>panic</code>的堆栈还没有输出</strong>。你可以尝试注释掉这行代码运行看看结果</li>
+</ul>
+<p>除了<code>ants</code>提供的默认 panic 处理器，我们还可以使用<code>WithPanicHandler(paincHandler func(interface{}))</code>指定我们自己编写的 panic 处理器。处理器的参数就是传给<code>panic</code>的值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">panicHandler</span><span class="p">(</span><span class="nx">err</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">p</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">NewPool</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">WithPanicHandler</span><span class="p">(</span><span class="nx">panicHandler</span><span class="p">))</span>
+<span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Release</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其余代码与上面的完全相同，指定了<code>panicHandler</code>后触发<code>panic</code>就会执行它。运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">hello from task:2
+panic from task:2
+hello from task:1
+hello from task:5
+hello from task:3
+</code></pre></td></tr></table>
+</div>
+</div><p>看到输出了传给<code>panic</code>函数的字符串（第二行输出）。</p>
+<h2 id="默认池">默认池</h2>
+<p>为了方便使用，很多 Go 库都喜欢提供其核心功能类型的一个默认实现。可以直接通过库提供的接口调用。例如<code>net/http</code>，例如<code>ants</code>。<code>ants</code>库中定义了一个默认的池，默认容量为<code>MaxInt32</code>。goroutine 池的各个方法都可以直接通过<code>ants</code>包直接访问：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/panjf2000/ants/ants.go
+</span><span class="c1"></span><span class="nx">defaultAntsPool</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nf">NewPool</span><span class="p">(</span><span class="nx">DefaultAntsPoolSize</span><span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">Submit</span><span class="p">(</span><span class="nx">task</span> <span class="kd">func</span><span class="p">())</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">defaultAntsPool</span><span class="p">.</span><span class="nf">Submit</span><span class="p">(</span><span class="nx">task</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Running</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">defaultAntsPool</span><span class="p">.</span><span class="nf">Running</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Cap</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">defaultAntsPool</span><span class="p">.</span><span class="nf">Cap</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Free</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">defaultAntsPool</span><span class="p">.</span><span class="nf">Free</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Release</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">defaultAntsPool</span><span class="p">.</span><span class="nf">Release</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Reboot</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">defaultAntsPool</span><span class="p">.</span><span class="nf">Reboot</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>直接使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">defer</span> <span class="nx">ants</span><span class="p">.</span><span class="nf">Release</span><span class="p">()</span>
+
+  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">ants</span><span class="p">.</span><span class="nf">Submit</span><span class="p">(</span><span class="nf">wrapper</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">))</span>
+  <span class="p">}</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>默认池也需要<code>Release()</code>。</p>
+<h2 id="总结">总结</h2>
+<p>本文介绍了 goroutine 池的由来，并借由<code>ants</code>库介绍了基本的使用方法，和一些细节。<code>ants</code>源码不多，去掉测试的核心代码只有 1k 行左右，建议有时间、感兴趣的童鞋深入阅读。</p>
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>ants GitHub：<a href="https://github.com/panjf2000/ants">github.com/valyala/ants</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+<h2 id="我">我</h2>
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-06-03
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2021/05/30/youdontknowgo/const/">
+            <span class="next-text nav-default">你不知道的 Go 之 const</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
