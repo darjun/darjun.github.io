@@ -71,7 +71,7 @@
 <meta itemprop="name" content="Go 每日一库之 ants（源码赏析）">
 <meta itemprop="description" content="简介 继上一篇Go 每日一库之 ants，这篇文章我们来一起看看ants的源码。 Pool 通过上篇文章，我们知道ants池有两种创建方式： p, _ := ants."><meta itemprop="datePublished" content="2021-06-04T07:26:23&#43;00:00" />
 <meta itemprop="dateModified" content="2021-06-04T07:26:23&#43;00:00" />
-<meta itemprop="wordCount" content="8755">
+<meta itemprop="wordCount" content="8842">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 ants（源码赏析）"/>
 <meta name="twitter:description" content="简介 继上一篇Go 每日一库之 ants，这篇文章我们来一起看看ants的源码。 Pool 通过上篇文章，我们知道ants池有两种创建方式： p, _ := ants."/>
@@ -357,7 +357,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 8755 字 </span>
+        <span class="more-meta"> 约 8842 字 </span>
           <span class="more-meta"> 预计阅读 18 分钟 </span>
 
         
@@ -1250,7 +1250,7 @@ if (!doNotTrack) {
 </div><p>这里设置了<code>goWorker</code>的<code>recycleTime</code>字段，用于判定过期。然后将<code>goWorker</code>放回池。<code>workers</code>的<code>insert()</code>方法前面也已经分析过了。</p>
 <p>接着调用<code>p.cond.Signal()</code>唤醒之前<code>retrieveWorker()</code>方法中的等待。<code>retrieveWorker()</code>方法继续执行，阻塞等待数量 -1，这里判断当前<code>goWorker</code>的数量（也即 goroutine 数量）。如果数量等于 0，很有可能池子刚刚执行了<code>Release()</code>关闭，这时需要判断池是否处于关闭状态，如果是则直接返回。否则，调用<code>spawnWorker()</code>创建一个新的<code>goWorker</code>并执行其<code>run()</code>方法。</p>
 <p>如果当前<code>goWorker</code>数量不为 0，则调用<code>p.workers.detach()</code>取出一个空闲的<code>goWorker</code>返回。这个操作有可能失败，因为可能同时有多个 goroutine 在等待，唤醒的时候只有部分 goroutine 能获取到<code>goWorker</code>。如果失败了，其容量还未用完，直接创建新的<code>goWorker</code>，反之重新执行阻塞等待逻辑。</p>
-<p>这里有很多加锁和解锁的逻辑，再加上和信号量混在一起很难看明白。其实只需要知道一点就很简单了，那就是<code>p.cond.Wait()</code>内部会将当前 goroutine 挂起，然后解开它持有的锁，即会调用<code>p.lock.Unlock()</code>。这也是为什么<code>revertWorker()</code>中<code>p.lock.Lock()</code>加锁能成功的原因。然后<code>p.cond.Signal()</code>或<code>p.cond.Broadcast()</code>会唤醒因为<code>p.cond.Wait()</code>而挂起的 goroutine，但是需要<code>Signal()/Broadcast()</code>所在 goroutine 调用解锁方法。</p>
+<p>这里有很多加锁和解锁的逻辑，再加上和信号量混在一起很难看明白。其实只需要知道一点就很简单了，那就是<code>p.cond.Wait()</code>内部会将当前 goroutine 挂起，然后解开它持有的锁，即会调用<code>p.lock.Unlock()</code>。这也是为什么<code>revertWorker()</code>中<code>p.lock.Lock()</code>加锁能成功的原因。然后<code>p.cond.Signal()</code>或<code>p.cond.Broadcast()</code>会唤醒因为<code>p.cond.Wait()</code>而挂起的 goroutine，但是需要<code>Signal()/Broadcast()</code>所在 goroutine 调用解锁方法。而调用<code>p.cond.Wait()</code>的 goroutine 被唤醒之后，内部会重新执行加锁操作（即调用<code>p.lock.Lock()</code>），所以<code>p.cond.Wait()</code>之后的逻辑还是在有锁的状态下执行的。</p>
 <p>最后，放上整体流程图：</p>
 <p><img src="/img/in-post/godailylib/ants1.png#center" alt=""></p>
 <h2 id="清理过期goworker">清理过期<code>goWorker</code></h2>
