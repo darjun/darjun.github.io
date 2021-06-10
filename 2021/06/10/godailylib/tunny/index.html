@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 tunny - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 之前写过一篇文章介绍了ants这个 goroutine 池实现。当时在网上查看相关资料的时候，发现了另外一个实现tunny。趁着时间相近，正好研究一番。也好" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2021/06/10/godailylib/tunny/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 tunny" />
+<meta property="og:description" content="简介 之前写过一篇文章介绍了ants这个 goroutine 池实现。当时在网上查看相关资料的时候，发现了另外一个实现tunny。趁着时间相近，正好研究一番。也好" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2021/06/10/godailylib/tunny/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-06-10T11:08:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-06-10T11:08:00&#43;00:00" />
+
+<meta itemprop="name" content="Go 每日一库之 tunny">
+<meta itemprop="description" content="简介 之前写过一篇文章介绍了ants这个 goroutine 池实现。当时在网上查看相关资料的时候，发现了另外一个实现tunny。趁着时间相近，正好研究一番。也好"><meta itemprop="datePublished" content="2021-06-10T11:08:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-06-10T11:08:00&#43;00:00" />
+<meta itemprop="wordCount" content="5895">
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 tunny"/>
+<meta name="twitter:description" content="简介 之前写过一篇文章介绍了ants这个 goroutine 池实现。当时在网上查看相关资料的时候，发现了另外一个实现tunny。趁着时间相近，正好研究一番。也好"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 tunny</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-06-10" class="post-time">
+          2021-06-10
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 5895 字 </span>
+          <span class="more-meta"> 预计阅读 12 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速开始">快速开始</a></li>
+    <li><a href="#超时">超时</a></li>
+    <li><a href="#context">context</a></li>
+    <li><a href="#源码">源码</a></li>
+    <li><a href="#tunny-vs-ants"><code>tunny</code> vs <code>ants</code></a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="简介">简介</h2>
+<p>之前写过一篇文章介绍了<code>ants</code>这个 goroutine 池实现。当时在网上查看相关资料的时候，发现了另外一个实现<a href="https://github.com/Jeffail/tunny"><code>tunny</code></a>。趁着时间相近，正好研究一番。也好比较一下这两个库。那就让我们开始吧。</p>
+<h2 id="快速开始">快速开始</h2>
+<p>本文代码使用 Go Modules。</p>
+<p>创建目录并初始化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir tunny <span class="p">&amp;&amp;</span> <span class="k">cd</span> tunny
+$ go mod init github.com/darjun/go-daily-lib/tunny
+</code></pre></td></tr></table>
+</div>
+</div><p>使用<code>go get</code>从 GitHub 获取<code>tunny</code>库：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/Jeffail/tunny
+</code></pre></td></tr></table>
+</div>
+</div><p>为了方便地和<code>ants</code>做一个对比，我们将<code>ants</code>中的示例重新用<code>tunny</code>实现一遍：还是那个分段求和的例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">DataSize</span>    <span class="p">=</span> <span class="mi">10000</span>
+  <span class="nx">DataPerTask</span> <span class="p">=</span> <span class="mi">100</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">numCPUs</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">NumCPU</span><span class="p">()</span>
+  <span class="nx">p</span> <span class="o">:=</span> <span class="nx">tunny</span><span class="p">.</span><span class="nf">NewFunc</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">n</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">payload</span><span class="p">.([]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">n</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">sum</span>
+  <span class="p">})</span>
+  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+  <span class="c1">// ...
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用也非常简单，首先创建一个<code>Pool</code>，这里使用<code>tunny.NewFunc()</code>。</p>
+<p>第一个参数为池子大小，即同时有多少个 worker （也即 goroutine）在工作，这里设置成逻辑 CPU 个数，对于 CPU 密集型任务，这个值设置太大无意义，反而有可能导致 goroutine 切换频繁而降低性能。</p>
+<p>第二个参数传入一个<code>func(interface{})interface{}</code>的参数作为任务处理函数。后续传入数据就会调用这个函数处理。</p>
+<p>池子使用完需要关闭，这里使用<code>defer p.Close()</code>在程序退出前关闭。</p>
+<p>然后，生成测试数据，还是 10000 个随机数，分成 100 组：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">nums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
+  <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>处理每组数据：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">DataSize</span> <span class="o">/</span> <span class="nx">DataPerTask</span><span class="p">)</span>
+<span class="nx">partialSums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+  <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">partialSums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="o">*</span><span class="nx">DataPerTask</span> <span class="p">:</span> <span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">DataPerTask</span><span class="p">]).(</span><span class="kt">int</span><span class="p">)</span>
+    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+  <span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用<code>p.Process()</code>方法，传入任务数据，池子中会选择空闲的 goroutine 来处理这个数据。由于我们上面设置了处理函数，goroutine 会直接调用该函数，将这个切片作为参数传入。</p>
+<p><code>tunny</code>与<code>ants</code>不同的是，<code>tunny</code>的任务处理是同步的，即调用<code>p.Process()</code>方法之后，当前 goroutine 会挂起，直到任务处理完成之后才会被唤醒。由于是同步的，所以<code>p.Process()</code>方法可以直接返回处理结果。这也是上面程序在分发任务的时候，启动多个 goroutine 的原因。如果不是每个任务都启动一个 goroutine，<code>p.Process()</code>方法会一直等待任务完成，那么后面的任务要等到前面的任务全部执行完之后才能执行。这样就发挥不了并发的优势了。</p>
+<p>这里注意一个小细节，我将<code>for</code>循环变量作为参数传给 goroutine 函数了。如果不这样做，所有 goroutine 都共用外层的<code>i</code>，而且 goroutine 开始运行时，<code>for</code>循环大概率已经结束了，这时<code>i = DataSize/DataPerTask</code>，索引<code>nums[i*DataPerTask : (i+1)*DataPerTask]</code>会越界触发 panic。</p>
+<p>最后统计数据，验证结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">s</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">partialSums</span> <span class="p">{</span>
+  <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">s</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">expect</span> <span class="kt">int</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">num</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
+  <span class="nx">expect</span> <span class="o">+=</span> <span class="nx">num</span>
+<span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;finish all tasks, result is %d expect:%d\n&#34;</span><span class="p">,</span> <span class="nx">sum</span><span class="p">,</span> <span class="nx">expect</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
+finish all tasks, result is 5010172 expect:5010172
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="超时">超时</h2>
+<p>默认情况下，<code>p.Process()</code>会一直阻塞直到任务完成，即使当前没有空闲 worker 也会阻塞。我们也可以使用带超时的<code>Process()</code>方法：<code>ProcessTimed()</code>。传入一个超时时间间隔，如果超过这个时间还没有空闲 worker，或者任务还没有处理完成，就会终止，并返回一个错误。</p>
+<p>超时有 2 种情况：</p>
+<ul>
+<li>等不到空闲的 worker：所有 worker 一直处理繁忙状态，正在处理的任务比较耗时，无法短时间内完成；</li>
+<li>任务本身比较耗时。</li>
+</ul>
+<p>下面我们编写一个计算斐波那契的函数，使用递归这种低效的实现方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">1</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们先看任务比较耗时的情况，创建<code>Pool</code>对象。为了观察更明显，在处理函数中添加了<code>time.Sleep()</code>语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">p</span> <span class="o">:=</span> <span class="nx">tunny</span><span class="p">.</span><span class="nf">NewFunc</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">payload</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
+  <span class="nx">result</span> <span class="o">:=</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
+  <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">result</span>
+<span class="p">})</span>
+<span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>生成与池容量相等的任务数，调用<code>p.ProcessTimed()</code>方法，设置超时为 1s：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">numCPUs</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+  <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">n</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+    <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ProcessTimed</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+    <span class="nx">nowStr</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;[%s]task(%d) failed:%v\n&#34;</span><span class="p">,</span> <span class="nx">nowStr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;[%s]fib(%d) = %d\n&#34;</span><span class="p">,</span> <span class="nx">nowStr</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+  <span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>因为处理函数中 sleep 5s，所以任务在执行过程中就超时了。运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go 
+[2021-06-10 16:36:26]task(7) failed:job request timed out
+[2021-06-10 16:36:26]task(4) failed:job request timed out
+[2021-06-10 16:36:26]task(1) failed:job request timed out
+[2021-06-10 16:36:26]task(6) failed:job request timed out
+[2021-06-10 16:36:26]task(5) failed:job request timed out
+[2021-06-10 16:36:26]task(0) failed:job request timed out
+[2021-06-10 16:36:26]task(3) failed:job request timed out
+[2021-06-10 16:36:26]task(2) failed:job request timed out
+</code></pre></td></tr></table>
+</div>
+</div><p>都在同一秒中超时。</p>
+<p>我们将任务数量翻倍，再将处理函数中的 sleep 改为 990ms，保证前一批任务能顺利完成，后续任务或者由于等不到空闲 worker，或者由于执行时间过长而超时返回。运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
+[2021-06-10 16:42:46]fib(11) = 144
+[2021-06-10 16:42:46]fib(25) = 121393
+[2021-06-10 16:42:46]fib(27) = 317811
+[2021-06-10 16:42:46]fib(1) = 1
+[2021-06-10 16:42:46]fib(18) = 4181
+[2021-06-10 16:42:46]fib(29) = 832040
+[2021-06-10 16:42:46]fib(17) = 2584
+[2021-06-10 16:42:46]fib(20) = 10946
+[2021-06-10 16:42:46]task(5) failed:job request timed out
+[2021-06-10 16:42:46]task(14) failed:job request timed out
+[2021-06-10 16:42:46]task(8) failed:job request timed out
+[2021-06-10 16:42:46]task(7) failed:job request timed out
+[2021-06-10 16:42:46]task(13) failed:job request timed out
+[2021-06-10 16:42:46]task(12) failed:job request timed out
+[2021-06-10 16:42:46]task(11) failed:job request timed out
+[2021-06-10 16:42:46]task(6) failed:job request timed out
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="context">context</h2>
+<p>context 是协调 goroutine 的工具。<code>tunny</code>支持带<code>context.Context</code>参数的方法：<code>ProcessCtx()</code>。当前 context 状态变为<code>Done</code>之后，任务也会停止执行。context 会由于超时、取消等原因切换为<code>Done</code>状态。还是拿上面的例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+  <span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithCancel</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
+  <span class="k">if</span> <span class="nx">i</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">500</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
+      <span class="nf">cancel</span><span class="p">()</span>
+    <span class="p">}()</span>
+  <span class="p">}</span>
+
+  <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ProcessCtx</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;task(%d) failed:%v\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;fib(%d) = %d\n&#34;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其他代码都一样，我们调用<code>p.ProcessCtx()</code>方法来执行任务。参数是一个可取消的<code>Context</code>。对于序号为偶数的任务，我们启动一个 goroutine 在 500ms 之后<code>cancel()</code>掉这个<code>Context</code>。代码运行结果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
+task(4) failed:context canceled
+task(6) failed:context canceled
+task(0) failed:context canceled
+task(2) failed:context canceled
+fib(27) = 317811
+fib(25) = 121393
+fib(1) = 1
+fib(18) = 4181
+</code></pre></td></tr></table>
+</div>
+</div><p>我们看到偶数序号的任务都被取消了。</p>
+<h2 id="源码">源码</h2>
+<p><code>tunny</code>的源码更少，除去测试代码和注释，连 500 行都不到。那么就一起来看一下吧。<code>Pool</code>结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/Jeffail/tunny.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">queuedJobs</span> <span class="kt">int64</span>
+
+  <span class="nx">ctor</span>    <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span>
+  <span class="nx">workers</span> <span class="p">[]</span><span class="o">*</span><span class="nx">workerWrapper</span>
+  <span class="nx">reqChan</span> <span class="kd">chan</span> <span class="nx">workRequest</span>
+
+  <span class="nx">workerMut</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>Pool</code>结构中有一个<code>ctor</code>字段，这是一个函数对象，用于返回一个实现<code>Worker</code>接口的值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Worker</span> <span class="kd">interface</span> <span class="p">{</span>
+  <span class="nf">Process</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
+  <span class="nf">BlockUntilReady</span><span class="p">()</span>
+  <span class="nf">Interrupt</span><span class="p">()</span>
+  <span class="nf">Terminate</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个接口不同的方法在任务执行的不同阶段调用。最重要的当属<code>Process(interface{}) interface{}</code>方法了。这个就是执行任务的函数。<code>tunny</code>提供<code>New()</code>方法创建<code>Pool</code>对象，这个方法需要我们自己构造<code>ctor</code>函数对象，使用多有不便。<code>tunny</code>提供了另外两个默认实现<code>closureWorker</code>和<code>callbackWorker</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">closureWorker</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">processor</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">w</span><span class="p">.</span><span class="nf">processor</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">BlockUntilReady</span><span class="p">()</span> <span class="p">{}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Interrupt</span><span class="p">()</span>       <span class="p">{}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Terminate</span><span class="p">()</span>       <span class="p">{}</span>
+
+<span class="kd">type</span> <span class="nx">callbackWorker</span> <span class="kd">struct</span><span class="p">{}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+  <span class="nx">f</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">payload</span><span class="p">.(</span><span class="kd">func</span><span class="p">())</span>
+  <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">ErrJobNotFunc</span>
+  <span class="p">}</span>
+  <span class="nf">f</span><span class="p">()</span>
+  <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">BlockUntilReady</span><span class="p">()</span> <span class="p">{}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Interrupt</span><span class="p">()</span>       <span class="p">{}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Terminate</span><span class="p">()</span>       <span class="p">{}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>tunny.NewFunc()</code>方法使用的就是<code>closureWorker</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewFunc</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Pool</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">closureWorker</span><span class="p">{</span>
+      <span class="nx">processor</span><span class="p">:</span> <span class="nx">f</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>创建的<code>closureWorker</code>直接将参数<code>f</code>作为任务处理函数。</p>
+<p><code>tunny.NewCallback()</code>方法使用<code>callbackWorker</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewCallback</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Pool</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">callbackWorker</span><span class="p">{}</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>callbackWorker</code>结构中没有处理函数，只能给它发送无参无返回值的函数对象作为任务，它的<code>Process()</code>方法就是执行这个函数。</p>
+<p>创建<code>Pool</code>对象后，都是调用它的<code>SetSize()</code>方法，设置 worker 数量。在这个方法中会启动相应数量的 goroutine：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">SetSize</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">p</span><span class="p">.</span><span class="nx">workerMut</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workerMut</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+
+  <span class="nx">lWorkers</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">lWorkers</span> <span class="o">==</span> <span class="nx">n</span> <span class="p">{</span>
+    <span class="k">return</span>
+  <span class="p">}</span>
+
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">,</span> <span class="nf">newWorkerWrapper</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ctor</span><span class="p">()))</span>
+  <span class="p">}</span>
+
+  <span class="c1">// 停止过多的 worker
+</span><span class="c1"></span>  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">stop</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="c1">// 等待 worker 停止
+</span><span class="c1"></span>  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">join</span><span class="p">()</span>
+    <span class="c1">// -----------------
+</span><span class="c1"></span>  <span class="p">}</span>
+  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[:</span><span class="nx">n</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>SetSize()</code>其实在扩容和缩容的时候也会调用。对于扩容，它会创建相应数量的 worker。对于缩容，它会将多余的 worker 停掉。与<code>ants</code>不同，<code>tunny</code>的扩容缩容都是即时生效的。</p>
+<p>代码中，我用<code>-----------------</code>标出来的地方我觉得有点问题。对于缩容，因为底层的数组没有变化，<code>workers</code>切片长度缩小之后，数组中后面的元素实际上就访问不到了，但是数组还持有它的引用，算是一种内存泄漏吧。所以稳妥起见最好加上<code>p.workers[i] = nil</code>？</p>
+<p>这里创建的 worker 实际上是包装了一层的<code>workerWrapper</code>结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/Jeffail/worker.go
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">workerWrapper</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">worker</span>        <span class="nx">Worker</span>
+  <span class="nx">interruptChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+  <span class="nx">reqChan</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">workRequest</span>
+  <span class="nx">closeChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+  <span class="nx">closedChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">newWorkerWrapper</span><span class="p">(</span>
+  <span class="nx">reqChan</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">workRequest</span><span class="p">,</span>
+  <span class="nx">worker</span> <span class="nx">Worker</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">*</span><span class="nx">workerWrapper</span> <span class="p">{</span>
+  <span class="nx">w</span> <span class="o">:=</span> <span class="nx">workerWrapper</span><span class="p">{</span>
+    <span class="nx">worker</span><span class="p">:</span>        <span class="nx">worker</span><span class="p">,</span>
+    <span class="nx">interruptChan</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
+    <span class="nx">reqChan</span><span class="p">:</span>       <span class="nx">reqChan</span><span class="p">,</span>
+    <span class="nx">closeChan</span><span class="p">:</span>     <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
+    <span class="nx">closedChan</span><span class="p">:</span>    <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
+  <span class="p">}</span>
+
+  <span class="k">go</span> <span class="nx">w</span><span class="p">.</span><span class="nf">run</span><span class="p">()</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">w</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>workerWrapper</code>结构创建之后会立刻调用<code>run()</code>方法启动一个 goroutine：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">jobChan</span><span class="p">,</span> <span class="nx">retChan</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}),</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span>
+  <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Terminate</span><span class="p">()</span>
+    <span class="nb">close</span><span class="p">(</span><span class="nx">retChan</span><span class="p">)</span>
+    <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span><span class="p">)</span>
+  <span class="p">}()</span>
+
+  <span class="k">for</span> <span class="p">{</span>
+    <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">BlockUntilReady</span><span class="p">()</span>
+    <span class="k">select</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nx">w</span><span class="p">.</span><span class="nx">reqChan</span> <span class="o">&lt;-</span> <span class="nx">workRequest</span><span class="p">{</span>
+      <span class="nx">jobChan</span><span class="p">:</span>       <span class="nx">jobChan</span><span class="p">,</span>
+      <span class="nx">retChan</span><span class="p">:</span>       <span class="nx">retChan</span><span class="p">,</span>
+      <span class="nx">interruptFunc</span><span class="p">:</span> <span class="nx">w</span><span class="p">.</span><span class="nx">interrupt</span><span class="p">,</span>
+    <span class="p">}:</span>
+      <span class="k">select</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="nx">payload</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">jobChan</span><span class="p">:</span>
+        <span class="nx">result</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
+        <span class="k">select</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nx">retChan</span> <span class="o">&lt;-</span> <span class="nx">result</span><span class="p">:</span>
+        <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
+          <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+        <span class="p">}</span>
+      <span class="k">case</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
+        <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+      <span class="p">}</span>
+    <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">closeChan</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>每个 worker goroutine 都在尝试向<code>w.reqChan</code>通道中发送一个<code>workRequest</code>结构数据，发送成功之后，从<code>jobChan</code>中获取任务数据，然后调用<code>Worker.Process()</code>方法执行任务，最后将结果发送到<code>retChan</code>通道中。这里其实有好几个交互。需要结合<code>Process()</code>方法来看才更清晰：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+  <span class="nx">request</span><span class="p">,</span> <span class="nx">open</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span>
+  <span class="nx">request</span><span class="p">.</span><span class="nx">jobChan</span> <span class="o">&lt;-</span> <span class="nx">payload</span>
+  <span class="nx">payload</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">request</span><span class="p">.</span><span class="nx">retChan</span>
+  <span class="k">return</span> <span class="nx">payload</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>删掉无相关的代码，最后就是上面这样。我们在调用池对象的<code>Process()</code>方法时，尝试从通道<code>reqChan</code>中接收数据，然后将任务数据发送到<code>jobChan</code>通道中，最后从<code>retChan</code>通道中接收结果。与上面的<code>run</code>流程结合来看，实际上在正常执行一个任务时，<code>Pool</code>与<code>workerWrapper</code>有 3 次交互。</p>
+<p>观察<code>Pool</code>创建到<code>workerWrapper</code>创建的流程，我们可以看到实际上<code>Pool</code>结构中的<code>reqChan</code>与<code>workerWrapper</code>结构中的<code>reqChan</code>是同一个通道。即<code>workerWrapper</code>启动后，会阻塞在向<code>reqChan</code>通道发送数据上，直到调用了<code>Pool</code>的<code>Process*()</code>方法，从通道<code>reqChan</code>取出数据。<code>Process()</code>方法得到<code>workRequest</code>会向它的<code>jobChan</code>通道中发送任务数据。而<code>workerWrapper.run()</code>方法成功发送数据到<code>reqChan</code>之后就开始等待从<code>jobChan</code>通道中接收数据，这时接收到<code>Process()</code>方法发送过来的数据。开始执行<code>w.worker.Process()</code>方法，然后向<code>retChan</code>通道发送结果数据，<code>Process()</code>方法在成功发送数据到<code>jobChan</code>之后，就开始等待从<code>retChan</code>通道中接收数据。接收成功之后，<code>Process()</code>方法返回，<code>workerWrapper.run()</code>继续阻塞在<code>w.reqChan &lt;-</code>这条语句上，等待处理下一个任务。注意<code>jobChan</code>和<code>retChan</code>都是<code>workerWrapper.run()</code>方法中创建的通道。</p>
+<p>那么超时是怎么实现的呢？看方法<code>ProcessTimed()</code>的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">ProcessTimed</span><span class="p">(</span>
+  <span class="nx">payload</span> <span class="kd">interface</span><span class="p">{},</span>
+  <span class="nx">timeout</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">tout</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="nx">timeout</span><span class="p">)</span>
+  <span class="kd">var</span> <span class="nx">request</span> <span class="nx">workRequest</span>
+  <span class="k">select</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="nx">request</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span><span class="p">:</span>
+  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
+  <span class="p">}</span>
+
+  <span class="k">select</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="nx">request</span><span class="p">.</span><span class="nx">jobChan</span> <span class="o">&lt;-</span> <span class="nx">payload</span><span class="p">:</span>
+  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nf">interruptFunc</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
+  <span class="p">}</span>
+
+  <span class="k">select</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="nx">payload</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">request</span><span class="p">.</span><span class="nx">retChan</span><span class="p">:</span>
+  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nf">interruptFunc</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
+  <span class="p">}</span>
+
+  <span class="nx">tout</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+  <span class="k">return</span> <span class="nx">payload</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同样地，删除不相干的代码。首先，创建一个<code>timer</code>，超时时间由传入参数指定。后面有 3 个<code>select</code>语句：</p>
+<ul>
+<li>等待从<code>p.reqChan</code>取数据，即等待有 worker 空闲；</li>
+<li>等待发送数据到<code>jobChan</code>，即等待 worker 从<code>jobChan</code>取出任务数据；</li>
+<li>等待从<code>retChan</code>取数据，即等待 worker 将结果发送到<code>retChan</code>。</li>
+</ul>
+<p>第一种情况，如果超时了，说明 worker 都处于繁忙状态，直接返回任务超时。后面两种情况实际上是任务已经开始执行了，但是在规定的时间内没有完成。这两种情况，需要终止任务的执行。我们看到上面调用了<code>workerRequest.interruptFunc()</code>方法，也就是<code>workerWrapper.interrupt()</code>方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">interrupt</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">)</span>
+  <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Interrupt</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个方法就是简单关闭了<code>interrupteChan</code>通道，然后调用<code>worker</code>对象的<code>Interrupt()</code>方法，默认实现中这个方法都是空的。</p>
+<p><code>interruptChan</code>通道关闭后，goroutine 中等待从<code>jobChan</code>接收数据和等待向<code>retChan</code>发送数据的操作都会取消：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">select</span> <span class="p">{</span>
+<span class="k">case</span> <span class="nx">payload</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">jobChan</span><span class="p">:</span>
+  <span class="nx">result</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
+  <span class="k">select</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="nx">retChan</span> <span class="o">&lt;-</span> <span class="nx">result</span><span class="p">:</span>
+  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
+    <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+  <span class="p">}</span>
+<span class="k">case</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
+  <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>ProcessCtx()</code>实现也是类似的。</p>
+<p>最后调用<code>workerWrapper.stop()</code>会关闭<code>closeChan</code>通道，这会导致<code>workerWrapper.run()</code>方法中的<code>for</code>循环跳出，进而执行<code>defer</code>函数中的<code>close(retChan)</code>和<code>close(closedChan)</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Terminate</span><span class="p">()</span>
+  <span class="nb">close</span><span class="p">(</span><span class="nx">retChan</span><span class="p">)</span>
+  <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span><span class="p">)</span>
+<span class="p">}()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里需要关闭<code>retChan</code>通道是为了防止<code>Process*()</code>方法在等待<code>retChan</code>数据。</p>
+<p><code>closedChan</code>通道关闭后，<code>workerWrapper.join()</code>方法就返回了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">join</span><span class="p">()</span> <span class="p">{</span>
+  <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>Worker</code>几个方法的调用时机：</p>
+<ul>
+<li><code>Process()</code>：执行任务时；</li>
+<li><code>Interrupt()</code>：任务因为超时会被 context 取消时；</li>
+<li><code>BlockUntilReady()</code>：每次执行新任务前，可能需要准备一些资源；</li>
+<li><code>Terminate()</code>：<code>workerWrapper.run()</code>中的 defer 函数中，即停止 worker 后。</li>
+</ul>
+<p>这些时机在代码中都能清晰地看到。</p>
+<p>基于源码，我画了一个流程图：</p>
+<p><img src="/img/in-post/godailylib/tunny1.png#center" alt=""></p>
+<p>图中省略了中断的流程。</p>
+<h2 id="tunny-vs-ants"><code>tunny</code> vs <code>ants</code></h2>
+<p><code>tunny</code>设计的思路与<code>ants</code>有较大的区别：</p>
+<p><code>tunny</code>只支持同步的方式执行任务，虽然任务在另一个 goroutine 执行，但是提交任务的 goroutine 必须等待结果返回或超时。不能做其他事情。正是由于这一点，导致<code>tunny</code>的设计稍微一点复杂，而且为了支持超时和取消，设计了多个通道用于和执行任务的 goroutine 通信。一次任务执行的过程涉及多次通信，性能是有损失的。从另一方面说，同步的编程方式更符合人类的直觉。</p>
+<p><code>ants</code>完全是异步的任务执行流程，相比<code>tunny</code>性能是稍高一些的。但是也因为它的异步特性，导致没有任务超时、取消这些机制。而且如果需要收集结果，必须要自己编写额外的代码。</p>
+<h2 id="总结">总结</h2>
+<p>本文介绍了另一个 goroutine 池的实现<code>tunny</code>。它以同步的方式来处理任务，编写代码更加直观，对任务的执行流程有更强的控制，如超时、取消等。当然实现也复杂一些。<code>tunny</code>代码不走 500 行，非常建议读一读。</p>
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>tunny GitHub：<a href="https://https://github.com/Jeffail/tunny">https://github.com/Jeffail/tunny</a></li>
+<li>ants GitHub：<a href="https://github.com/panjf2000/ants">github.com/panjf2000/ants</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+<h2 id="我">我</h2>
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-06-10
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2021/06/09/youdontknowgo/pprof/">
+            <span class="next-text nav-default">你不知道的 Go 之 pprof</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
