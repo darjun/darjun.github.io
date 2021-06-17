@@ -405,7 +405,7 @@ if (!doNotTrack) {
 <p>上一篇文章<a href="https://darjun.github.io/2021/06/11/godailylib/bubbletea/">Go 每日一库之 bubbletea</a>我们介绍了炫酷的 TUI 程序框架 — <a href="https://github.com/charmbracelet/bubbletea"><code>bubbletea</code></a>。最后实现了一个拉取 GitHub Trending 仓库，并显示在控制台的程序。由于 GitHub 没有提供官方的 Trending API，我们用<code>goquery</code>自己实现了一个。上篇文章由于篇幅关系，没有介绍如何实现。本文我整理了一下代码，并以单独的代码库形式开放出来。</p>
 <h2 id="先观察">先观察</h2>
 <p>首先，我们来观察一下 GitHub Trending 的结构：</p>
-<p><img src="/img/in-post/go-github-trending/1.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending1.png#center" alt=""></p>
 <p>左上角可以切换仓库（Repositories）和开发者（Developers）。右边可以选择语言（Spoken Language，本地语言，汉语、英文等）、语言（Language，编程语言，Golang、C++等）和时间范围（Date Range，支持 3 个维度，Today、This week、This month）。</p>
 <p>然后下面是每个仓库的信息：</p>
 <p>① 仓库作者和名字</p>
@@ -416,7 +416,7 @@ if (!doNotTrack) {
 <p>⑥ 贡献者列表</p>
 <p>⑦ 选定的时间范围内（Today、This week、This month）新增多少星数</p>
 <p>开发者页面也是类似的，只不过信息少了很多：</p>
-<p><img src="/img/in-post/go-github-trending/2.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending2.png#center" alt=""></p>
 <p>① 作者信息</p>
 <p>② 最火的仓库信息</p>
 <p>注意到切换的开发者页面后，URL 变成为<code>github.com/trending/developers</code>。另外当我们选择本地语言为中文、开发语言为 Go 和时间范围为 Today 后，URL 变为<code>https://github.com/trending/go?since=daily&amp;spoken_language_code=zh</code>，通过在 query-string 中增加相应的键值对表示这种选择。</p>
@@ -484,11 +484,11 @@ if (!doNotTrack) {
 </div>
 </div><h2 id="开爬">开爬</h2>
 <p>要想使用<code>goquery</code>获取相应的信息，我们首先要直到，对应的网页结构。按 F12 打开 chrome 开发者工具，选择<code>Elements</code>页签，即可看到网页结构：</p>
-<p><img src="/img/in-post/go-github-trending/3.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending3.png#center" alt=""></p>
 <p>使用左上角的按钮就可以很快速的查看网页上任何内容的结构，我们点击单个仓库条目：</p>
-<p><img src="/img/in-post/go-github-trending/4.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending4.png#center" alt=""></p>
 <p>右边<code>Elements</code>窗口显示每个仓库条目对应一个<code>article</code>元素：</p>
-<p><img src="/img/in-post/go-github-trending/5.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending5.png#center" alt=""></p>
 <p>可以使用标准库<code>net/http</code>获取整个网页的内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -519,9 +519,9 @@ if (!doNotTrack) {
 </code></pre></td></tr></table>
 </div>
 </div><p>接下来我们看看如何提取各个部分。在<code>Elements</code>窗口中移动，可以很直观的看到每个元素对应页面的哪个部分：</p>
-<p><img src="/img/in-post/go-github-trending/6.gif#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending6.gif#center" alt=""></p>
 <p>我们找到仓库名和作者对应的结构：</p>
-<p><img src="/img/in-post/go-github-trending/7.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending7.png#center" alt=""></p>
 <p>它被包在<code>article</code>元素下的<code>h1</code>元素下的<code>a</code>元素内，作者名在<code>span</code>元素内，仓库名直接在<code>a</code>下，另外仓库的 URL 链接是<code>a</code>元素的<code>href</code>属性。我们来获取它们：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -986,7 +986,7 @@ $ go mod init github/darjun/demo/ghtrending
 </code></pre></td></tr></table>
 </div>
 </div><p>下载包：</p>
-<p><img src="/img/in-post/go-github-trending/9.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending9.png#center" alt=""></p>
 <p>编写代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1051,10 +1051,10 @@ $ go mod init github/darjun/demo/ghtrending
 </code></pre></td></tr></table>
 </div>
 </div><p>运行效果：</p>
-<p><img src="/img/in-post/go-github-trending/10.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending10.png#center" alt=""></p>
 <h3 id="文档">文档</h3>
 <p>最后，我们加点文档：</p>
-<p><img src="/img/in-post/go-github-trending/8.png#center" alt=""></p>
+<p><img src="/img/in-post/opensource/trending8.png#center" alt=""></p>
 <p>一个小开源库就完成了。</p>
 <h2 id="总结">总结</h2>
 <p>本文介绍如何使用<code>goquery</code>爬取网页。着重介绍了<code>ghtrending</code>的接口设计。在编写一个库的时候，应该提供易用的、最小化的接口。用户不需要了解库的实现细节就可以使用。<code>ghtrending</code>使用函数式选项就是一个例子，有需要才传递，无需要可不提供。</p>
