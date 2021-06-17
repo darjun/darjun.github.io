@@ -71,7 +71,7 @@
 <meta itemprop="name" content="用 Go 实现一个 GitHub Trending API">
 <meta itemprop="description" content="背景 上一篇文章Go 每日一库之 bubbletea我们介绍了炫酷的 TUI 程序框架 — bubbletea。最后实现了一个拉取 GitHub Trending 仓库，并显示在控制台的程"><meta itemprop="datePublished" content="2021-06-16T07:35:23&#43;00:00" />
 <meta itemprop="dateModified" content="2021-06-16T07:35:23&#43;00:00" />
-<meta itemprop="wordCount" content="3329">
+<meta itemprop="wordCount" content="3478">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="用 Go 实现一个 GitHub Trending API"/>
 <meta name="twitter:description" content="背景 上一篇文章Go 每日一库之 bubbletea我们介绍了炫酷的 TUI 程序框架 — bubbletea。最后实现了一个拉取 GitHub Trending 仓库，并显示在控制台的程"/>
@@ -357,7 +357,7 @@ if (!doNotTrack) {
             <a href="https://darjun.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 3329 字 </span>
+        <span class="more-meta"> 约 3478 字 </span>
           <span class="more-meta"> 预计阅读 7 分钟 </span>
 
         
@@ -387,6 +387,8 @@ if (!doNotTrack) {
       <ul>
         <li><a href="#选项">选项</a></li>
         <li><a href="#简单方法">简单方法</a></li>
+        <li><a href="#使用效果">使用效果</a></li>
+        <li><a href="#文档">文档</a></li>
       </ul>
     </li>
     <li><a href="#总结">总结</a></li>
@@ -971,7 +973,90 @@ if (!doNotTrack) {
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h2 id="总结">总结</h2>
+</div><h3 id="使用效果">使用效果</h3>
+<p>新建目录并初始化 Go Modules：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir -p demo/ghtrending <span class="p">&amp;&amp;</span> <span class="k">cd</span> demo/ghtrending
+$ go mod init github/darjun/demo/ghtrending
+</code></pre></td></tr></table>
+</div>
+</div><p>下载包：</p>
+<p><img src="/img/in-post/go-github-trending/9.png#center" alt=""></p>
+<p>编写代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;fmt&#34;</span>
+  <span class="s">&#34;log&#34;</span>
+
+  <span class="s">&#34;github.com/darjun/ghtrending&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">t</span> <span class="o">:=</span> <span class="nx">ghtrending</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+
+  <span class="nx">repos</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchRepos</span><span class="p">()</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d repos\n&#34;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">repos</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;first repo:%#v\n&#34;</span><span class="p">,</span> <span class="nx">repos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+  <span class="nx">developers</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchDevelopers</span><span class="p">()</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d developers\n&#34;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">developers</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;first developer:%#v\n&#34;</span><span class="p">,</span> <span class="nx">developers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行效果：</p>
+<p><img src="/img/in-post/go-github-trending/10.png#center" alt=""></p>
+<h3 id="文档">文档</h3>
+<p>最后，我们加点文档：</p>
+<p><img src="/img/in-post/go-github-trending/8.png#center" alt=""></p>
+<p>一个小开源库就完成了。</p>
+<h2 id="总结">总结</h2>
 <p>本文介绍如何使用<code>goquery</code>爬取网页。着重介绍了<code>ghtrending</code>的接口设计。在编写一个库的时候，应该提供易用的、最小化的接口。用户不需要了解库的实现细节就可以使用。<code>ghtrending</code>使用函数式选项就是一个例子，有需要才传递，无需要可不提供。</p>
 <p>自己通过爬取网页的方式来获取 Trending 列表比较容易受限制，例如过段时间 GitHub 网页结构变了，代码就不得不做适配。在官方没有提供 API 的情况下，目前也只能这么做了。</p>
 <p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
