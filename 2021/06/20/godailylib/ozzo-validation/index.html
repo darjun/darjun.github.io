@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 ozzo-validation - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 ozzo-validation是一个非常强大的，灵活的数据校验库。与其他基于 struct tag 的数据校验库不同，ozzo-validation认为 struct tag" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.83.1" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2021/06/20/godailylib/ozzo-validation/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 ozzo-validation" />
+<meta property="og:description" content="简介 ozzo-validation是一个非常强大的，灵活的数据校验库。与其他基于 struct tag 的数据校验库不同，ozzo-validation认为 struct tag" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2021/06/20/godailylib/ozzo-validation/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-06-20T15:18:30&#43;00:00" />
+<meta property="article:modified_time" content="2021-06-20T15:18:30&#43;00:00" />
+
+<meta itemprop="name" content="Go 每日一库之 ozzo-validation">
+<meta itemprop="description" content="简介 ozzo-validation是一个非常强大的，灵活的数据校验库。与其他基于 struct tag 的数据校验库不同，ozzo-validation认为 struct tag"><meta itemprop="datePublished" content="2021-06-20T15:18:30&#43;00:00" />
+<meta itemprop="dateModified" content="2021-06-20T15:18:30&#43;00:00" />
+<meta itemprop="wordCount" content="5026">
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 ozzo-validation"/>
+<meta name="twitter:description" content="简介 ozzo-validation是一个非常强大的，灵活的数据校验库。与其他基于 struct tag 的数据校验库不同，ozzo-validation认为 struct tag"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 ozzo-validation</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-06-20" class="post-time">
+          2021-06-20
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 5026 字 </span>
+          <span class="more-meta"> 预计阅读 11 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#结构体">结构体</a></li>
+    <li><a href="#map">Map</a></li>
+    <li><a href="#可校验类型">可校验类型</a>
+      <ul>
+        <li><a href="#可校验类型的集合">可校验类型的集合</a></li>
+      </ul>
+    </li>
+    <li><a href="#条件规则">条件规则</a></li>
+    <li><a href="#自定义规则">自定义规则</a></li>
+    <li><a href="#规则组">规则组</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="简介">简介</h2>
+<p><a href="https://github.com/go-ozzo/ozzo-validation"><code>ozzo-validation</code></a>是一个非常强大的，灵活的数据校验库。与其他基于 struct tag 的数据校验库不同，<code>ozzo-validation</code>认为 struct tag 在使用过程中比较容易出错。因为 struct tag 本质上就是字符串，完全基于字符串的解析，无法利用语言的静态检查机制，很容易在不知不觉中写错而不易察觉，实际代码中出现错误也很难排查。</p>
+<p><code>ozzo-validation</code>提倡用代码指定规则来进行校验。实际上<code>ozzo</code>是辅助开发 Web 应用程序的一套框架，包括 ORM 库<a href="https://github.com/go-ozzo/ozzo-dbx"><code>ozzo-dbx</code></a>，路由库<a href="https://github.com/go-ozzo/ozzo-routing"><code>ozzo-routing</code></a>，日志库<a href="https://github.com/go-ozzo/ozzo-log"><code>ozzo-log</code></a>，配置库<a href="https://github.com/go-ozzo/ozzo-config"><code>ozzo-config</code></a>以及最出名的，使用最为广泛的数据校验库<a href="https://github.com/go-ozzo/ozzo-validation"><code>ozzo-validation</code></a>。作者甚至还搞出了一个开发 Web 应用程序的模版<a href="https://github.com/qiangxue/go-rest-api"><code>go-rest-api</code></a>。</p>
+<h2 id="快速使用">快速使用</h2>
+<p>本文代码使用 Go Modules。</p>
+<p>创建目录并初始化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir ozzo-validation <span class="p">&amp;&amp;</span> <span class="k">cd</span> ozzo-validation
+$ go mod init github.com/darjun/go-daily-lib/ozzo-validation
+</code></pre></td></tr></table>
+</div>
+</div><p>安装<code>ozzo-validation</code>库：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/go-ozzo/ozzo-validation/v4
+</code></pre></td></tr></table>
+</div>
+</div><p><code>ozzo-validation</code>的程序写起来都比较直观：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;fmt&#34;</span>
+
+  <span class="s">&#34;github.com/go-ozzo/ozzo-validation/v4/is&#34;</span>
+  <span class="s">&#34;github.com/go-ozzo/ozzo-validation/v4&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">name</span> <span class="o">:=</span> <span class="s">&#34;darjun&#34;</span>
+
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="nx">is</span><span class="p">.</span><span class="nx">URL</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>ozzo-validation</code>使用函数<code>Validate()</code>对基本类型值进行校验，传入的第一个参数就是要校验的数据，后面以可变参数传入一个或多个校验规则。上例中对一个字符串做校验。我们用代码来表达规则：</p>
+<ul>
+<li><code>validation.Required</code>：表示值必须设置，对于字符串来说就是不能为空；</li>
+<li><code>validation.Length(2, 10)</code>：指定长度的范围；</li>
+<li><code>is.URL</code>：<code>is</code>子包中内置了大量的辅助方法，<code>is.URL</code>限制值必须是 URL 格式。</li>
+</ul>
+<p><code>Validate()</code>函数根据传入的规则按顺序依次对数据进行校验，直到遇到某个规则校验失败，或所有规则都校验成功。如果一个规则返回失败，则跳过后面的规则直接返回错误。如果数据通过了所有规则，则返回一个<code>nil</code>。</p>
+<p>运行上面程序输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">must</span> <span class="nx">be</span> <span class="nx">a</span> <span class="nx">valid</span> <span class="nx">URL</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>因为字符串&quot;darjun&quot;明显不是一个合法的 URL。如果去掉<code>is.URL</code>规则，则运行输出<code>nil</code>。</p>
+<h2 id="结构体">结构体</h2>
+<p>使用<code>ValidateStruct()</code>函数可以对一个结构体对象进行校验。我们需要依次指定结构体中各个字段的校验规则：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span>  <span class="kt">string</span>
+  <span class="nx">Age</span>   <span class="kt">int</span>
+  <span class="nx">Email</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">validateUser</span><span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">ValidateStruct</span><span class="p">(</span><span class="nx">u</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Min</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Max</span><span class="p">(</span><span class="mi">200</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Email</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="nx">is</span><span class="p">.</span><span class="nx">Email</span><span class="p">))</span>
+
+  <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>ValidateStruct()</code>接受一个结构体的指针作为第一个参数，后面依次指定各个字段的规则。字段规则使用<code>validation.Field()</code>函数指定，该函数接受一个指向具体字段的指针，后跟一个或多个规则。上面我们限制，名字长度在[2, 10]之间，年龄在[1, 200]之间（姑且认为现在人类最多能活 200 年），电子邮箱长度在[10, 50]之间，并且使用<code>is.Email</code>限制它必须是一个合法的邮箱地址。同时这 3 个字段都是必填的（用<code>validation.Required</code>限制的）。</p>
+<p>然后我们构造一个合法的<code>User</code>对象和一个非法的<code>User</code>对象，分别校验：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">u1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span> <span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;darjun&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+    <span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;darjun@126.com&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user1:&#34;</span><span class="p">,</span> <span class="nf">validateUser</span><span class="p">(</span><span class="nx">u1</span><span class="p">))</span>
+
+  <span class="nx">u2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span> <span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;lidajun12345&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span> <span class="mi">201</span><span class="p">,</span>
+    <span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;lidajun&#39;s email&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user2:&#34;</span><span class="p">,</span> <span class="nf">validateUser</span><span class="p">(</span><span class="nx">u2</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>程序运行输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">user1</span><span class="p">:</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
+<span class="nx">user2</span><span class="p">:</span> <span class="nx">Age</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">no</span> <span class="nx">greater</span> <span class="nx">than</span> <span class="mi">200</span><span class="p">;</span> <span class="nx">Email</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">a</span> <span class="nx">valid</span> <span class="nx">email</span> <span class="nx">address</span><span class="p">;</span> <span class="nx">Name</span><span class="p">:</span> <span class="nx">the</span> <span class="nx">length</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">between</span> <span class="mi">2</span> <span class="nx">and</span> <span class="mf">10.</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>对于结构体来说，<code>validation</code>依次对每个字段检验传入的规则。对于某个字段，如果一条规则校验失败了，则跳过后面的规则，<strong>继续校验下一个字段</strong>。如果某个字段校验失败，会在结果中包含关于该字段的错误信息，如上例。</p>
+<h2 id="map">Map</h2>
+<p>有时数据保存在一个<code>map</code>中，而非一个结构体中。这时可以使用<code>validation.Map()</code>指定校验<code>map</code>的规则，<code>validation.Map()</code>规则中需要使用<code>validation.Key()</code>依次指定各个键对应的一个或多个规则。最后将<code>map</code>类型的数据和<code>validation.Map()</code>规则传给<code>validation.Validate()</code>函数校验：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">validateUser</span><span class="p">(</span><span class="nx">u</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Min</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Max</span><span class="p">(</span><span class="mi">200</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;email&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="nx">is</span><span class="p">.</span><span class="nx">Email</span><span class="p">),</span>
+  <span class="p">))</span>
+
+  <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">u1</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+    <span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="s">&#34;darjun&#34;</span><span class="p">,</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+    <span class="s">&#34;email&#34;</span><span class="p">:</span> <span class="s">&#34;darjun@126.com&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user1:&#34;</span><span class="p">,</span> <span class="nf">validateUser</span><span class="p">(</span><span class="nx">u1</span><span class="p">))</span>
+
+  <span class="nx">u2</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+    <span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="s">&#34;lidajun12345&#34;</span><span class="p">,</span>
+    <span class="s">&#34;age&#34;</span><span class="p">:</span> <span class="mi">201</span><span class="p">,</span>
+    <span class="s">&#34;email&#34;</span><span class="p">:</span> <span class="s">&#34;lidajun&#39;s email&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user2:&#34;</span><span class="p">,</span> <span class="nf">validateUser</span><span class="p">(</span><span class="nx">u2</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们改造了上面的例子，改用<code>map[string]interface{}</code>存储<code>User</code>信息。<code>map</code>的校验与结构体类似，根据<code>validation.Map()</code>中指定的键的顺序依次校验。如果某个键校验失败，记录错误信息。最终汇总所有键的错误信息返回。运行程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">user1</span><span class="p">:</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
+<span class="nx">user2</span><span class="p">:</span> <span class="nx">age</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">no</span> <span class="nx">greater</span> <span class="nx">than</span> <span class="mi">200</span><span class="p">;</span> <span class="nx">email</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">a</span> <span class="nx">valid</span> <span class="nx">email</span> <span class="nx">address</span><span class="p">;</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">the</span> <span class="nx">length</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">between</span> <span class="mi">2</span> <span class="nx">and</span> <span class="mf">10.</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="可校验类型">可校验类型</h2>
+<p><code>ozzo-validation</code>库提供了一个接口<code>Validatable</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Validatable</span> <span class="kd">interface</span> <span class="p">{</span>
+  <span class="c1">// Validate validates the data and returns an error if validation fails.
+</span><span class="c1"></span>  <span class="nf">Validate</span><span class="p">()</span> <span class="kt">error</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>凡是实现了<code>Validatable</code>接口的类型都是可校验的类型。<code>validation.Validate()</code>函数在校验某个类型的数据时，先校验传入该函数的所有规则。如果这些规则都通过了，那么<code>Validate()</code>函数判断该类型有没有实现<code>Validatbale</code>接口。如果实现了，则调用其<code>Validate()</code>方法进行校验。我们让上例中<code>User</code>类型实现<code>Validatable</code>接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span>   <span class="kt">string</span>
+  <span class="nx">Age</span>    <span class="kt">int</span>
+  <span class="nx">Gender</span> <span class="kt">string</span>
+  <span class="nx">Email</span>  <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="nf">Validate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">ValidateStruct</span><span class="p">(</span><span class="nx">u</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Min</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Max</span><span class="p">(</span><span class="mi">200</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Gender</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">In</span><span class="p">(</span><span class="s">&#34;male&#34;</span><span class="p">,</span> <span class="s">&#34;female&#34;</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Email</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="nx">is</span><span class="p">.</span><span class="nx">Email</span><span class="p">))</span>
+
+  <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>由于<code>User</code>实现了<code>Validatable</code>接口，我们可以直接调用<code>Validate()</code>函数校验：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">u1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span>   <span class="s">&#34;darjun&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span>    <span class="mi">18</span><span class="p">,</span>
+    <span class="nx">Gender</span><span class="p">:</span> <span class="s">&#34;male&#34;</span><span class="p">,</span>
+    <span class="nx">Email</span><span class="p">:</span>  <span class="s">&#34;darjun@126.com&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user1:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u1</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">NotNil</span><span class="p">))</span>
+
+  <span class="nx">u2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span>  <span class="s">&#34;lidajun12345&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span>   <span class="mi">201</span><span class="p">,</span>
+    <span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;lidajun&#39;s email&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user2:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u2</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">NotNil</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在通过了<code>NotNil</code>校验后，<code>Validate()</code>函数还会调用<code>User.Validate()</code>方法进行校验。</p>
+<p>需要注意的是，在实现了<code>Validatable</code>接口的类型的<code>Validate()</code>方法内部，不能直接对该类型的值调用<code>validation.Validate()</code>函数，这会导致无限递归：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">UserName</span> <span class="kt">string</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="nx">UserName</span><span class="p">)</span> <span class="nf">Validate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">n1</span><span class="p">,</span> <span class="nx">n2</span> <span class="nx">UserName</span> <span class="p">=</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="s">&#34;lidajun12345&#34;</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;username1:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">n1</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;username2:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">n2</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们基于<code>string</code>定义了一个新类型<code>UserName</code>，规定<code>UserName</code>非空，并且长度在[2, 10]范围内。但是上面的<code>Validate()</code>方法中将<code>UserName</code>类型的变量<code>n</code>传入了函数<code>validation.Validate()</code>。该函数内部检查发现<code>UserName</code>实现了<code>Validatable</code>接口，又会调用它的<code>Validate()</code>方法，导致无限递归。</p>
+<p>我们只需要简单地将<code>n</code>转为<code>string</code>类型即可：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">n</span> <span class="nx">UserName</span><span class="p">)</span> <span class="nf">Validate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">n</span><span class="p">),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="可校验类型的集合">可校验类型的集合</h3>
+<p><code>Validate()</code>函数对元素为可校验类型（即实现了<code>Validatable</code>接口）的集合（切片/数组/map等）进行校验时，会依次调用其元素的<code>Validate()</code>方法，最后校验返回一个<code>validation.Errors</code>类型。这实际上是一个<code>map[string]error</code>类型。键为元素的键（对于切片和数组就是索引，对于<code>map</code>就是键），值为错误值。例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">u1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span>   <span class="s">&#34;darjun&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span>    <span class="mi">18</span><span class="p">,</span>
+    <span class="nx">Gender</span><span class="p">:</span> <span class="s">&#34;male&#34;</span><span class="p">,</span>
+    <span class="nx">Email</span><span class="p">:</span>  <span class="s">&#34;darjun@126.com&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="nx">u2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span>  <span class="s">&#34;lidajun12345&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span>   <span class="mi">201</span><span class="p">,</span>
+    <span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;lidajun&#39;s email&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">userSlice</span> <span class="o">:=</span> <span class="p">[]</span><span class="o">*</span><span class="nx">User</span><span class="p">{</span><span class="nx">u1</span><span class="p">,</span> <span class="nx">u2</span><span class="p">}</span>
+  <span class="nx">userMap</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">User</span><span class="p">{</span>
+    <span class="s">&#34;user1&#34;</span><span class="p">:</span> <span class="nx">u1</span><span class="p">,</span>
+    <span class="s">&#34;user2&#34;</span><span class="p">:</span> <span class="nx">u2</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user slice:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">userSlice</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user map:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">userMap</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>userSlice</code>切片中第二个元素的校验错误会在结果的键<code>1</code>（索引）中返回，<code>userMap</code>中键<code>user2</code>校验的错误会在结果的键<code>user2</code>中返回。运行结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">user</span> <span class="nx">slice</span><span class="p">:</span> <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="nx">Age</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">no</span> <span class="nx">greater</span> <span class="nx">than</span> <span class="mi">200</span><span class="p">;</span> <span class="nx">Email</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">a</span> <span class="nx">valid</span> <span class="nx">email</span> <span class="nx">address</span><span class="p">;</span> <span class="nx">Gender</span><span class="p">:</span> <span class="nx">cannot</span> <span class="nx">be</span> <span class="nx">blank</span><span class="p">;</span> <span class="nx">Name</span><span class="p">:</span> <span class="nx">the</span> <span class="nx">length</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">between</span> <span class="mi">2</span> <span class="nx">and</span> <span class="mf">10.</span><span class="p">).</span>
+<span class="nx">user</span> <span class="kd">map</span><span class="p">:</span> <span class="nx">user2</span><span class="p">:</span> <span class="p">(</span><span class="nx">Age</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">no</span> <span class="nx">greater</span> <span class="nx">than</span> <span class="mi">200</span><span class="p">;</span> <span class="nx">Email</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">a</span> <span class="nx">valid</span> <span class="nx">email</span> <span class="nx">address</span><span class="p">;</span> <span class="nx">Gender</span><span class="p">:</span> <span class="nx">cannot</span> <span class="nx">be</span> <span class="nx">blank</span><span class="p">;</span> <span class="nx">Name</span><span class="p">:</span> <span class="nx">the</span> <span class="nx">length</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">between</span> <span class="mi">2</span> <span class="nx">and</span> <span class="mf">10.</span><span class="p">).</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果需要集合中每个元素都满足某些规则，我们可以使用<code>validation.Each()</code>函数。例如，我们的<code>User</code>对象有多个邮箱，要求每个邮箱地址的格式都合法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span>   <span class="kt">string</span>
+  <span class="nx">Age</span>    <span class="kt">int</span>
+  <span class="nx">Emails</span> <span class="p">[]</span><span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="nf">Validate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">ValidateStruct</span><span class="p">(</span><span class="nx">u</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Emails</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Each</span><span class="p">(</span><span class="nx">is</span><span class="p">.</span><span class="nx">Email</span><span class="p">)))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">u</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
+    <span class="nx">Emails</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
+      <span class="s">&#34;darjun@126.com&#34;</span><span class="p">,</span>
+      <span class="s">&#34;don&#39;t know&#34;</span><span class="p">,</span>
+    <span class="p">},</span>
+  <span class="p">}</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>错误消息中会指出哪个位置数据不合法了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">Emails</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">a</span> <span class="nx">valid</span> <span class="nx">email</span> <span class="nx">address</span><span class="p">.).</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="条件规则">条件规则</h2>
+<p>我们可以根据某个字段的值来给另一个字段设置规则。例如我们的<code>User</code>对象有两个字段：布尔值<code>Student</code>表示是否还是学生，字符串<code>School</code>表示学校。在<code>Student</code>为<code>true</code>时，字段<code>School</code>必须存在并且长度在[10, 20]范围内：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span>    <span class="kt">string</span>
+  <span class="nx">Age</span>     <span class="kt">int</span>
+  <span class="nx">Student</span> <span class="kt">bool</span>
+  <span class="nx">School</span>  <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="nf">Validate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">ValidateStruct</span><span class="p">(</span><span class="nx">u</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Min</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Max</span><span class="p">(</span><span class="mi">200</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">School</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">When</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Student</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">))))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">u1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span>    <span class="s">&#34;dj&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span>     <span class="mi">18</span><span class="p">,</span>
+    <span class="nx">Student</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">u2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;lidajun&#34;</span><span class="p">,</span>
+    <span class="nx">Age</span><span class="p">:</span>  <span class="mi">31</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user1:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u1</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user2:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u2</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们使用<code>validation.When()</code>函数，该函数接受一个布尔值作为第一个参数，一个或多个规则作为后面的可变参数。只有在第一个参数为<code>true</code>是才执行后面的规则校验。</p>
+<p><code>u1</code>因为设置了字段<code>Student</code>为<code>true</code>，所以<code>School</code>字段不能为空。<code>u2</code>因为<code>Student=false</code>，<code>School</code>字段可有可无。运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">user1</span><span class="p">:</span> <span class="nx">School</span><span class="p">:</span> <span class="nx">cannot</span> <span class="nx">be</span> <span class="nx">blank</span><span class="p">.</span>
+<span class="nx">user2</span><span class="p">:</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在检查注册用户信息时，我们确保用户必须设置了邮箱或手机号也可以用条件规则：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Email</span> <span class="kt">string</span>
+  <span class="nx">Phone</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="nf">Validate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">ValidateStruct</span><span class="p">(</span><span class="nx">u</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Email</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">When</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Phone</span> <span class="o">==</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Either email or phone is required.&#34;</span><span class="p">),</span> <span class="nx">is</span><span class="p">.</span><span class="nx">Email</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">u</span><span class="p">.</span><span class="nx">Phone</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">When</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Email</span> <span class="o">==</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;Either email or phone is required.&#34;</span><span class="p">),</span> <span class="nx">is</span><span class="p">.</span><span class="nx">Alphanumeric</span><span class="p">)))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">u1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{}</span>
+
+  <span class="nx">u2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;darjun@126.com&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">u3</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Phone</span><span class="p">:</span> <span class="s">&#34;17301251652&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">u4</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+    <span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;darjun@126.com&#34;</span><span class="p">,</span>
+    <span class="nx">Phone</span><span class="p">:</span> <span class="s">&#34;17301251652&#34;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user1:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u1</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user2:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u2</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user3:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u3</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;user4:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">u4</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果<code>Phone</code>字段为空，<code>Email</code>必须设置。反之，如果<code>Email</code>字段为空，<code>Phone</code>必须设置。所有的规则都可以调用<code>Error()</code>方法设置自定义错误信息。运行输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">user1</span><span class="p">:</span> <span class="nx">Email</span><span class="p">:</span> <span class="nx">Either</span> <span class="nx">email</span> <span class="nx">or</span> <span class="nx">phone</span> <span class="nx">is</span> <span class="nx">required</span><span class="p">.;</span> <span class="nx">Phone</span><span class="p">:</span> <span class="nx">Either</span> <span class="nx">email</span> <span class="nx">or</span> <span class="nx">phone</span> <span class="nx">is</span> <span class="nx">required</span><span class="p">..</span>
+<span class="nx">user2</span><span class="p">:</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
+<span class="nx">user3</span><span class="p">:</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
+<span class="nx">user4</span><span class="p">:</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="自定义规则">自定义规则</h2>
+<p>除了库提供的规则之外，我们还可以定义自己的规则。规则实现为一个如下类型的函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">Validate</span><span class="p">(</span><span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>下面我们实现一个检查 IP 地址是否合法的函数。这里我们介绍一个库<a href="https://github.com/mingrammer/commonregex"><code>commonregex</code></a>。这个库收录了绝大部分常用的正则表达式。我之前也写过一篇文章介绍这个库的使用，<a href="https://darjun.github.io/2020/09/05/godailylib/commonregex/">Go 每日一库之 commonregex</a>，感兴趣可以过去看看。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">checkIP</span><span class="p">(</span><span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="nx">ip</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">value</span><span class="p">.(</span><span class="kt">string</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;ip must be string&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">ipList</span> <span class="o">:=</span> <span class="nx">commonregex</span><span class="p">.</span><span class="nf">IPs</span><span class="p">(</span><span class="nx">ip</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">ipList</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">ipList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">ip</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;invalid ip format&#34;</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后定义一个网络地址结构及校验方法，通过<code>validation.By()</code>函数使用自定义的校验函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Addr</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">IP</span>   <span class="kt">string</span>
+  <span class="nx">Port</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Addr</span><span class="p">)</span> <span class="nf">Validate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">ValidateStruct</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">.</span><span class="nx">IP</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">By</span><span class="p">(</span><span class="nx">checkIP</span><span class="p">)),</span>
+    <span class="nx">validation</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">.</span><span class="nx">Port</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Min</span><span class="p">(</span><span class="mi">1024</span><span class="p">),</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Max</span><span class="p">(</span><span class="mi">65536</span><span class="p">)))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>验证：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">a1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Addr</span><span class="p">{</span>
+    <span class="nx">IP</span><span class="p">:</span>   <span class="s">&#34;127.0.0.1&#34;</span><span class="p">,</span>
+    <span class="nx">Port</span><span class="p">:</span> <span class="mi">6666</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">a2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Addr</span><span class="p">{</span>
+    <span class="nx">IP</span><span class="p">:</span>   <span class="s">&#34;xxx.yyy.zzz.hhh&#34;</span><span class="p">,</span>
+    <span class="nx">Port</span><span class="p">:</span> <span class="mi">7777</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;addr1:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">a1</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;addr2:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">a2</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">addr1</span><span class="p">:</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
+<span class="nx">addr2</span><span class="p">:</span> <span class="nx">IP</span><span class="p">:</span> <span class="nx">invalid</span> <span class="nx">ip</span> <span class="nx">format</span><span class="p">.</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="规则组">规则组</h2>
+<p>每次指定规则都一个一个地来指定有点不方便，这时我们可以将常用的校验规则组成一个规则组，需要时直接使用这个组即可。例如，我们项目中约定合法的用户名必须是 ASCII 字母加数字，长度为 10-20，用户名肯定不能为空。规则组没什么特殊的，它只是一个规则的切片：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">NameRule</span> <span class="p">=</span> <span class="p">[]</span><span class="nx">validation</span><span class="p">.</span><span class="nx">Rule</span><span class="p">{</span>
+  <span class="nx">validation</span><span class="p">.</span><span class="nx">Required</span><span class="p">,</span>
+  <span class="nx">is</span><span class="p">.</span><span class="nx">Alphanumeric</span><span class="p">,</span>
+  <span class="nx">validation</span><span class="p">.</span><span class="nf">Length</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">name1</span> <span class="o">:=</span> <span class="s">&#34;lidajun12345&#34;</span>
+  <span class="nx">name2</span> <span class="o">:=</span> <span class="s">&#34;lidajun@!#$%&#34;</span>
+  <span class="nx">name3</span> <span class="o">:=</span> <span class="s">&#34;short&#34;</span>
+  <span class="nx">name4</span> <span class="o">:=</span> <span class="s">&#34;looooooooooooooooooong&#34;</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name1:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">name1</span><span class="p">,</span> <span class="nx">NameRule</span><span class="o">...</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name2:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">name2</span><span class="p">,</span> <span class="nx">NameRule</span><span class="o">...</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name3:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">name3</span><span class="p">,</span> <span class="nx">NameRule</span><span class="o">...</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;name4:&#34;</span><span class="p">,</span> <span class="nx">validation</span><span class="p">.</span><span class="nf">Validate</span><span class="p">(</span><span class="nx">name4</span><span class="p">,</span> <span class="nx">NameRule</span><span class="o">...</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">name1</span><span class="p">:</span> <span class="p">&lt;</span><span class="kc">nil</span><span class="p">&gt;</span>
+<span class="nx">name2</span><span class="p">:</span> <span class="nx">must</span> <span class="nx">contain</span> <span class="nx">English</span> <span class="nx">letters</span> <span class="nx">and</span> <span class="nx">digits</span> <span class="nx">only</span>
+<span class="nx">name3</span><span class="p">:</span> <span class="nx">the</span> <span class="nx">length</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">between</span> <span class="mi">10</span> <span class="nx">and</span> <span class="mi">20</span>
+<span class="nx">name4</span><span class="p">:</span> <span class="nx">the</span> <span class="nx">length</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">between</span> <span class="mi">10</span> <span class="nx">and</span> <span class="mi">20</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p><code>ozzo-validation</code>提倡以代码指定规则代替容易出错的<code>struct tag</code>，并提供了大量的内置规则。使用<code>ozzo-validation</code>编写的代码清晰，易读，而且对编译器友好（很多错误都暴露在编译期）。本文介绍了<code>ozzo-validation</code>库的基本使用，核心就两个函数<code>Validate()</code>和<code>ValidateStruct()</code>，前者用于校验基本类型或可校验的类型，后者用于校验结构体。实际编码过程中，一般都会让结构体实现<code>Validatbale</code>接口将它变为可校验类型，再调用<code>Validate()</code>函数校验。</p>
+<p><code>ozzo-validation</code>还可以对集合进行校验，可以自定义校验规则，可以定义通用的校验组。除此之外，<code>ozzo-validation</code>还有很多高级特性，如自定义错误，基于<code>context.Context</code>的校验，使用正则表达式定义规则等，感兴趣可自行探索。</p>
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>ozzo-validation GitHub：<a href="https://github.com/go-ozzo/ozzo-validation">github.com/go-ozzo/ozzo-validation</a></li>
+<li>go-rest-api GitHub：<a href="https://github.com/qiangxue/go-rest-api">github.com/qiangxue/go-rest-api</a></li>
+<li>Go 每日一库之 commonregex：<a href="https://darjun.github.io/2020/09/05/godailylib/commonregex/">https://darjun.github.io/2020/09/05/godailylib/commonregex/</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+<h2 id="我">我</h2>
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-06-20
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2021/06/16/github-trending-api/">
+            <span class="next-text nav-default">用 Go 实现一个 GitHub Trending API</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
