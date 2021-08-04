@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 每日一库之 testing - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 testing是 Go 语言标准库自带的测试库。在 Go 语言中编写测试很简单，只需要遵循 Go 测试的几个约定，与编写正常的 Go 代码没有什么区别。Go 语言" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2021/08/03/godailylib/testing/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="Go 每日一库之 testing" />
+<meta property="og:description" content="简介 testing是 Go 语言标准库自带的测试库。在 Go 语言中编写测试很简单，只需要遵循 Go 测试的几个约定，与编写正常的 Go 代码没有什么区别。Go 语言" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2021/08/03/godailylib/testing/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-08-03T23:30:23&#43;00:00" />
+<meta property="article:modified_time" content="2021-08-03T23:30:23&#43;00:00" />
+
+<meta itemprop="name" content="Go 每日一库之 testing">
+<meta itemprop="description" content="简介 testing是 Go 语言标准库自带的测试库。在 Go 语言中编写测试很简单，只需要遵循 Go 测试的几个约定，与编写正常的 Go 代码没有什么区别。Go 语言"><meta itemprop="datePublished" content="2021-08-03T23:30:23&#43;00:00" />
+<meta itemprop="dateModified" content="2021-08-03T23:30:23&#43;00:00" />
+<meta itemprop="wordCount" content="5362">
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 testing"/>
+<meta name="twitter:description" content="简介 testing是 Go 语言标准库自带的测试库。在 Go 语言中编写测试很简单，只需要遵循 Go 测试的几个约定，与编写正常的 Go 代码没有什么区别。Go 语言"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 testing</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-08-03" class="post-time">
+          2021-08-03
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 5362 字 </span>
+          <span class="more-meta"> 预计阅读 11 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#单元测试">单元测试</a>
+      <ul>
+        <li><a href="#表格驱动测试">表格驱动测试</a></li>
+        <li><a href="#分组和并行">分组和并行</a></li>
+        <li><a href="#主测试函数">主测试函数</a></li>
+        <li><a href="#其他">其他</a></li>
+      </ul>
+    </li>
+    <li><a href="#性能测试">性能测试</a>
+      <ul>
+        <li><a href="#其他选项">其他选项</a></li>
+      </ul>
+    </li>
+    <li><a href="#示例测试">示例测试</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="简介">简介</h2>
+<p><a href="https://golang.google.cn/pkg/testing/"><code>testing</code></a>是 Go 语言标准库自带的测试库。在 Go 语言中编写测试很简单，只需要遵循 Go 测试的<strong>几个约定</strong>，与编写正常的 Go 代码没有什么区别。Go 语言中有 3 种类型的测试：单元测试，性能测试，示例测试。下面依次来介绍。</p>
+<h2 id="单元测试">单元测试</h2>
+<p>单元测试又称为功能性测试，是为了测试函数、模块等代码的逻辑是否正确。接下来我们编写一个库，用于将表示罗马数字的字符串和整数互转。罗马数字是由<code>M/D/C/L/X/V/I</code>这几个字符根据一定的规则组合起来表示一个正整数：</p>
+<ul>
+<li>M=1000，D=500，C=100，L=50，X=10，V=5，I=1；</li>
+<li>只能表示 1-3999 范围内的整数，不能表示 0 和负数，不能表示 4000 及以上的整数，不能表示分数和小数（当然有其他复杂的规则来表示这些数字，这里暂不考虑）；</li>
+<li>每个整数只有一种表示方式，一般情况下，连写的字符表示对应整数相加，例如<code>I=1</code>，<code>II=2</code>，<code>III=3</code>。但是，<strong>十位字符</strong>（<code>I/X/C/M</code>）最多出现 3 次，所以不能用<code>IIII</code>表示 4，需要在<code>V</code>左边添加一个<code>I</code>（即<code>IV</code>）来表示，不能用<code>VIIII</code>表示 9，需要使用<code>IX</code>代替。另外<strong>五位字符</strong>（<code>V/L/D</code>）不能连续出现 2 次，所以不能出现<code>VV</code>，需要用<code>X</code>代替。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// roman.go
+</span><span class="c1"></span><span class="kn">package</span> <span class="nx">roman</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;bytes&#34;</span>
+  <span class="s">&#34;errors&#34;</span>
+  <span class="s">&#34;regexp&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">romanNumPair</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Roman</span> <span class="kt">string</span>
+  <span class="nx">Num</span>   <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">romanNumParis</span> <span class="p">[]</span><span class="nx">romanNumPair</span>
+  <span class="nx">romanRegex</span>    <span class="o">*</span><span class="nx">regexp</span><span class="p">.</span><span class="nx">Regexp</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">ErrOutOfRange</span>   <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;out of range&#34;</span><span class="p">)</span>
+  <span class="nx">ErrInvalidRoman</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;invalid roman&#34;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">romanNumParis</span> <span class="p">=</span> <span class="p">[]</span><span class="nx">romanNumPair</span><span class="p">{</span>
+    <span class="p">{</span><span class="s">&#34;M&#34;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;CM&#34;</span><span class="p">,</span> <span class="mi">900</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;D&#34;</span><span class="p">,</span> <span class="mi">500</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;CD&#34;</span><span class="p">,</span> <span class="mi">400</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;C&#34;</span><span class="p">,</span> <span class="mi">100</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;XC&#34;</span><span class="p">,</span> <span class="mi">90</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;L&#34;</span><span class="p">,</span> <span class="mi">50</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;XL&#34;</span><span class="p">,</span> <span class="mi">40</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;X&#34;</span><span class="p">,</span> <span class="mi">10</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;IX&#34;</span><span class="p">,</span> <span class="mi">9</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;V&#34;</span><span class="p">,</span> <span class="mi">5</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;IV&#34;</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#34;I&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="p">}</span>
+
+  <span class="nx">romanRegex</span> <span class="p">=</span> <span class="nx">regexp</span><span class="p">.</span><span class="nf">MustCompile</span><span class="p">(</span><span class="s">`^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$`</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">ToRoman</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">n</span> <span class="o">&gt;=</span> <span class="mi">4000</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">ErrOutOfRange</span>
+  <span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">buf</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pair</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">romanNumParis</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">n</span> <span class="p">&gt;</span> <span class="nx">pair</span><span class="p">.</span><span class="nx">Num</span> <span class="p">{</span>
+      <span class="nx">buf</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="nx">pair</span><span class="p">.</span><span class="nx">Roman</span><span class="p">)</span>
+      <span class="nx">n</span> <span class="o">-=</span> <span class="nx">pair</span><span class="p">.</span><span class="nx">Num</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">buf</span><span class="p">.</span><span class="nf">String</span><span class="p">(),</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">FromRoman</span><span class="p">(</span><span class="nx">roman</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">!</span><span class="nx">romanRegex</span><span class="p">.</span><span class="nf">MatchString</span><span class="p">(</span><span class="nx">roman</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ErrInvalidRoman</span>
+  <span class="p">}</span>
+
+  <span class="kd">var</span> <span class="nx">result</span> <span class="kt">int</span>
+  <span class="kd">var</span> <span class="nx">index</span> <span class="kt">int</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pair</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">romanNumParis</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">roman</span><span class="p">[</span><span class="nx">index</span><span class="p">:</span><span class="nx">index</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="nx">pair</span><span class="p">.</span><span class="nx">Roman</span><span class="p">)]</span> <span class="o">==</span> <span class="nx">pair</span><span class="p">.</span><span class="nx">Roman</span> <span class="p">{</span>
+      <span class="nx">result</span> <span class="o">+=</span> <span class="nx">pair</span><span class="p">.</span><span class="nx">Num</span>
+      <span class="nx">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pair</span><span class="p">.</span><span class="nx">Roman</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">result</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 Go 中编写测试很简单，只需要在待测试功能所在文件的同级目录中创建一个以<code>_test.go</code>结尾的文件。在该文件中，我们可以编写一个个测试函数。测试函数名必须是<code>TestXxxx</code>这个形式，而且<code>Xxxx</code>必须以大写字母开头，另外函数带有一个<code>*testing.T</code>类型的参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// roman_test.go
+</span><span class="c1"></span><span class="kn">package</span> <span class="nx">roman</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;testing&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">TestToRoman</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err1</span> <span class="o">:=</span> <span class="nf">ToRoman</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err1</span> <span class="o">!=</span> <span class="nx">ErrOutOfRange</span> <span class="p">{</span>
+    <span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;ToRoman(0) expect error:%v got:%v&#34;</span><span class="p">,</span> <span class="nx">ErrOutOfRange</span><span class="p">,</span> <span class="nx">err1</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">roman2</span><span class="p">,</span> <span class="nx">err2</span> <span class="o">:=</span> <span class="nf">ToRoman</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err2</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;ToRoman(1) expect nil error, got:%v&#34;</span><span class="p">,</span> <span class="nx">err2</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">roman2</span> <span class="o">!=</span> <span class="s">&#34;I&#34;</span> <span class="p">{</span>
+    <span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;ToRoman(1) expect:%s got:%s&#34;</span><span class="p">,</span> <span class="s">&#34;I&#34;</span><span class="p">,</span> <span class="nx">roman2</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在测试函数中编写的代码与正常的代码没有什么不同，调用相应的函数，返回结果，判断结果与预期是否一致，如果不一致则调用<code>testing.T</code>的<code>Errorf()</code>输出错误信息。运行测试时，这些错误信息会被收集起来，运行结束后统一输出。</p>
+<p>测试编写完成之后，使用<code>go test</code>命令运行测试，输出结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span>
+<span class="o">---</span> <span class="nx">FAIL</span><span class="p">:</span> <span class="nf">TestToRoman</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+    <span class="nx">roman_test</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">18</span><span class="p">:</span> <span class="nf">ToRoman</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="nx">expect</span><span class="p">:</span><span class="nx">I</span> <span class="nx">got</span><span class="p">:</span>
+<span class="nx">FAIL</span>
+<span class="nx">exit</span> <span class="nx">status</span> <span class="mi">1</span>
+<span class="nx">FAIL</span>    <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span>  <span class="mf">0.172</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我故意将<code>ToRoman()</code>函数中写错了一行代码，<code>n &gt; pair.Num</code>中<code>&gt;</code>应该为<code>&gt;=</code>，单元测试成功找出了错误。修改之后重新运行测试：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>      <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span>  <span class="mf">0.178</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这次测试都通过了！</p>
+<p>我们还可以给<code>go test</code>命令传入<code>-v</code>选项，输出详细的测试信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">v</span>
+<span class="o">==</span><span class="p">=</span> <span class="nx">RUN</span>   <span class="nx">TestToRoman</span>
+<span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nf">TestToRoman</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>      <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span>  <span class="mf">0.174</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在运行每个测试函数前，都输出一行<code>=== RUN</code>，运行结束之后输出<code>--- PASS</code>或<code>--- FAIL</code>信息。</p>
+<h3 id="表格驱动测试">表格驱动测试</h3>
+<p>在上面的例子中，我们实际上只测试了两种情况，0 和 1。按照这种方式将每种情况都写出来就太繁琐了，Go 中流行使用<strong>表格</strong>的方式将各个测试数据和结果列举出来：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">TestToRoman</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">testCases</span> <span class="o">:=</span> <span class="p">[]</span><span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">num</span>    <span class="kt">int</span>
+    <span class="nx">expect</span> <span class="kt">string</span>
+    <span class="nx">err</span>    <span class="kt">error</span>
+  <span class="p">}{</span>
+    <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">ErrOutOfRange</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#34;I&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#34;II&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#34;III&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="s">&#34;IV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">5</span><span class="p">,</span> <span class="s">&#34;V&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">6</span><span class="p">,</span> <span class="s">&#34;VI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="s">&#34;VII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">8</span><span class="p">,</span> <span class="s">&#34;VIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">9</span><span class="p">,</span> <span class="s">&#34;IX&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="s">&#34;X&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">50</span><span class="p">,</span> <span class="s">&#34;L&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">100</span><span class="p">,</span> <span class="s">&#34;C&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">500</span><span class="p">,</span> <span class="s">&#34;D&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1000</span><span class="p">,</span> <span class="s">&#34;M&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">31</span><span class="p">,</span> <span class="s">&#34;XXXI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">148</span><span class="p">,</span> <span class="s">&#34;CXLVIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">294</span><span class="p">,</span> <span class="s">&#34;CCXCIV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">312</span><span class="p">,</span> <span class="s">&#34;CCCXII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">421</span><span class="p">,</span> <span class="s">&#34;CDXXI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">528</span><span class="p">,</span> <span class="s">&#34;DXXVIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">621</span><span class="p">,</span> <span class="s">&#34;DCXXI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">782</span><span class="p">,</span> <span class="s">&#34;DCCLXXXII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">870</span><span class="p">,</span> <span class="s">&#34;DCCCLXX&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">941</span><span class="p">,</span> <span class="s">&#34;CMXLI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1043</span><span class="p">,</span> <span class="s">&#34;MXLIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1110</span><span class="p">,</span> <span class="s">&#34;MCX&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1226</span><span class="p">,</span> <span class="s">&#34;MCCXXVI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1301</span><span class="p">,</span> <span class="s">&#34;MCCCI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1485</span><span class="p">,</span> <span class="s">&#34;MCDLXXXV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1509</span><span class="p">,</span> <span class="s">&#34;MDIX&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1607</span><span class="p">,</span> <span class="s">&#34;MDCVII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1754</span><span class="p">,</span> <span class="s">&#34;MDCCLIV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1832</span><span class="p">,</span> <span class="s">&#34;MDCCCXXXII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">1993</span><span class="p">,</span> <span class="s">&#34;MCMXCIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2074</span><span class="p">,</span> <span class="s">&#34;MMLXXIV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2152</span><span class="p">,</span> <span class="s">&#34;MMCLII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2212</span><span class="p">,</span> <span class="s">&#34;MMCCXII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2343</span><span class="p">,</span> <span class="s">&#34;MMCCCXLIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2499</span><span class="p">,</span> <span class="s">&#34;MMCDXCIX&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2574</span><span class="p">,</span> <span class="s">&#34;MMDLXXIV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2646</span><span class="p">,</span> <span class="s">&#34;MMDCXLVI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2723</span><span class="p">,</span> <span class="s">&#34;MMDCCXXIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2892</span><span class="p">,</span> <span class="s">&#34;MMDCCCXCII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">2975</span><span class="p">,</span> <span class="s">&#34;MMCMLXXV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3051</span><span class="p">,</span> <span class="s">&#34;MMMLI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3185</span><span class="p">,</span> <span class="s">&#34;MMMCLXXXV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3250</span><span class="p">,</span> <span class="s">&#34;MMMCCL&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3313</span><span class="p">,</span> <span class="s">&#34;MMMCCCXIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3408</span><span class="p">,</span> <span class="s">&#34;MMMCDVIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3501</span><span class="p">,</span> <span class="s">&#34;MMMDI&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3610</span><span class="p">,</span> <span class="s">&#34;MMMDCX&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3743</span><span class="p">,</span> <span class="s">&#34;MMMDCCXLIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3844</span><span class="p">,</span> <span class="s">&#34;MMMDCCCXLIV&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3888</span><span class="p">,</span> <span class="s">&#34;MMMDCCCLXXXVIII&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3940</span><span class="p">,</span> <span class="s">&#34;MMMCMXL&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3999</span><span class="p">,</span> <span class="s">&#34;MMMCMXCIX&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">4000</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">ErrOutOfRange</span><span class="p">},</span>
+  <span class="p">}</span>
+
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">testCase</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">testCases</span> <span class="p">{</span>
+    <span class="nx">got</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">ToRoman</span><span class="p">(</span><span class="nx">testCase</span><span class="p">.</span><span class="nx">num</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">got</span> <span class="o">!=</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">expect</span> <span class="p">{</span>
+      <span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;ToRoman(%d) expect:%s got:%s&#34;</span><span class="p">,</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">num</span><span class="p">,</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">expect</span><span class="p">,</span> <span class="nx">got</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">err</span> <span class="p">{</span>
+      <span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;ToRoman(%d) expect error:%v got:%v&#34;</span><span class="p">,</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">num</span><span class="p">,</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">err</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面将要测试的每种情况列举出来，然后针对每个整数调用<code>ToRoman()</code>函数，比较返回的罗马数字字符串和错误值是否与预期的相符。后续要添加新的测试用例也很方便。</p>
+<h3 id="分组和并行">分组和并行</h3>
+<p>有时候对同一个函数有不同维度的测试，将这些组合在一起有利于维护。例如上面对<code>ToRoman()</code>函数的测试可以分为非法值，单个罗马字符和普通 3 种情况。</p>
+<p>为了分组，我对代码做了一定程度的重构，首先抽象一个<code>toRomanCase</code>结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">toRomanCase</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">num</span>    <span class="kt">int</span>
+  <span class="nx">expect</span> <span class="kt">string</span>
+  <span class="nx">err</span>    <span class="kt">error</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>将所有的测试数据划分到 3 个组中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">toRomanInvalidCases</span> <span class="p">[]</span><span class="nx">toRomanCase</span>
+  <span class="nx">toRomanSingleCases</span>  <span class="p">[]</span><span class="nx">toRomanCase</span>
+  <span class="nx">toRomanNormalCases</span>  <span class="p">[]</span><span class="nx">toRomanCase</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">toRomanInvalidCases</span> <span class="p">=</span> <span class="p">[]</span><span class="nx">toRomanCase</span><span class="p">{</span>
+    <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">roman</span><span class="p">.</span><span class="nx">ErrOutOfRange</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">4000</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">roman</span><span class="p">.</span><span class="nx">ErrOutOfRange</span><span class="p">},</span>
+  <span class="p">}</span>
+
+  <span class="nx">toRomanSingleCases</span> <span class="p">=</span> <span class="p">[]</span><span class="nx">toRomanCase</span><span class="p">{</span>
+    <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#34;I&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">5</span><span class="p">,</span> <span class="s">&#34;V&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>  <span class="p">}</span>
+
+  <span class="nx">toRomanNormalCases</span> <span class="p">=</span> <span class="p">[]</span><span class="nx">toRomanCase</span><span class="p">{</span>
+    <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#34;II&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#34;III&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">},</span>
+    <span class="c1">// ...
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后为了避免代码重复，抽象一个运行多个<code>toRomanCase</code>的函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">testToRomanCases</span><span class="p">(</span><span class="nx">cases</span> <span class="p">[]</span><span class="nx">toRomanCase</span><span class="p">,</span> <span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">testCase</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">cases</span> <span class="p">{</span>
+    <span class="nx">got</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">roman</span><span class="p">.</span><span class="nf">ToRoman</span><span class="p">(</span><span class="nx">testCase</span><span class="p">.</span><span class="nx">num</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">got</span> <span class="o">!=</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">expect</span> <span class="p">{</span>
+      <span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;ToRoman(%d) expect:%s got:%s&#34;</span><span class="p">,</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">num</span><span class="p">,</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">expect</span><span class="p">,</span> <span class="nx">got</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">err</span> <span class="p">{</span>
+      <span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;ToRoman(%d) expect error:%v got:%v&#34;</span><span class="p">,</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">num</span><span class="p">,</span> <span class="nx">testCase</span><span class="p">.</span><span class="nx">err</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>为每个分组定义一个测试函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">testToRomanInvalid</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nf">testToRomanCases</span><span class="p">(</span><span class="nx">toRomanInvalidCases</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">testToRomanSingle</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nf">testToRomanCases</span><span class="p">(</span><span class="nx">toRomanSingleCases</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">testToRomanNormal</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nf">testToRomanCases</span><span class="p">(</span><span class="nx">toRomanNormalCases</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在原来的测试函数中，调用<code>t.Run()</code>运行不同分组的测试函数，<code>t.Run()</code>第一个参数为子测试名，第二个参数为子测试函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">TestToRoman</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">t</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;Invalid&#34;</span><span class="p">,</span> <span class="nx">testToRomanInvalid</span><span class="p">)</span>
+  <span class="nx">t</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;Single&#34;</span><span class="p">,</span> <span class="nx">testToRomanSingle</span><span class="p">)</span>
+  <span class="nx">t</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;Normal&#34;</span><span class="p">,</span> <span class="nx">testToRomanNormal</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">v</span>
+<span class="o">==</span><span class="p">=</span> <span class="nx">RUN</span>   <span class="nx">TestToRoman</span>
+<span class="o">==</span><span class="p">=</span> <span class="nx">RUN</span>   <span class="nx">TestToRoman</span><span class="o">/</span><span class="nx">Invalid</span>
+<span class="o">==</span><span class="p">=</span> <span class="nx">RUN</span>   <span class="nx">TestToRoman</span><span class="o">/</span><span class="nx">Single</span>
+<span class="o">==</span><span class="p">=</span> <span class="nx">RUN</span>   <span class="nx">TestToRoman</span><span class="o">/</span><span class="nx">Normal</span>
+<span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nf">TestToRoman</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+    <span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nx">TestToRoman</span><span class="o">/</span><span class="nf">Invalid</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+    <span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nx">TestToRoman</span><span class="o">/</span><span class="nf">Single</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+    <span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nx">TestToRoman</span><span class="o">/</span><span class="nf">Normal</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>      <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span>  <span class="mf">0.188</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，依次运行 3 个子测试，子测试名是父测试名和<code>t.Run()</code>指定的名字组合而成的，如<code>TestToRoman/Invalid</code>。</p>
+<p>默认情况下，这些测试都是依次顺序执行的。如果各个测试之间没有联系，我们可以让他们并行以加快测试速度。方法也很简单，在<code>testToRomanInvalid/testToRomanSingle/testToRomanNormal</code>这 3 个函数开始处调用<code>t.Parallel()</code>，由于这 3 个函数直接调用了<code>testToRomanCases</code>，也可以只在<code>testToRomanCases</code>函数开头出添加：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">testToRomanCases</span><span class="p">(</span><span class="nx">cases</span> <span class="p">[]</span><span class="nx">toRomanCase</span><span class="p">,</span> <span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">t</span><span class="p">.</span><span class="nf">Parallel</span><span class="p">()</span>
+  <span class="c1">// ...
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">v</span>
+<span class="o">...</span>
+<span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nf">TestToRoman</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+    <span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nx">TestToRoman</span><span class="o">/</span><span class="nf">Invalid</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+    <span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nx">TestToRoman</span><span class="o">/</span><span class="nf">Normal</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+    <span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nx">TestToRoman</span><span class="o">/</span><span class="nf">Single</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>      <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span>  <span class="mf">0.182</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们发现测试完成的顺序并不是我们指定的顺序。</p>
+<p>另外，这个示例中我将<code>roman_test.go</code>文件移到了<code>roman_test</code>包中，所以需要<code>import &quot;github.com/darjun/go-daily-lib/testing/roman&quot;</code>。这种方式在测试包有循环依赖的情况下非常有用，例如标准库中<code>net/http</code>依赖<code>net/url</code>，<code>url</code>的测试函数依赖<code>net/http</code>，如果把测试放在<code>net/url</code>包中，那么就会导致循环依赖<code>url_test(net/url)</code>-&gt;<code>net/http</code>-&gt;<code>net/url</code>。这时可以将<code>url_test</code>放在一个独立的包中。</p>
+<h3 id="主测试函数">主测试函数</h3>
+<p>有一种特殊的测试函数，函数名为<code>TestMain()</code>，接受一个<code>*testing.M</code>类型的参数。这个函数一般用于在运行<strong>所有测试</strong>前执行一些初始化逻辑（如创建数据库链接），或<strong>所有测试</strong>都运行结束之后执行一些清理逻辑（释放数据库链接）。如果测试文件中定义了这个函数，则<code>go test</code>命令会直接运行这个函数，否者<code>go test</code>会创建一个默认的<code>TestMain()</code>函数。这个函数的默认行为就是运行文件中定义的测试。<strong>我们自定义<code>TestMain()</code>函数时，也需要手动调用<code>m.Run()</code>方法运行测试函数，否则测试函数不会运行</strong>。默认的<code>TestMain()</code>类似下面代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">TestMain</span><span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">M</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nf">Run</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>下面自定义一个<code>TestMain()</code>函数，打印<code>go test</code>支持的选项：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">TestMain</span><span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">M</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">flag</span><span class="p">.</span><span class="nf">Parse</span><span class="p">()</span>
+  <span class="nx">flag</span><span class="p">.</span><span class="nf">VisitAll</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">flag</span><span class="p">.</span><span class="nx">Flag</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name:%s usage:%s value:%v\n&#34;</span><span class="p">,</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Usage</span><span class="p">,</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Value</span><span class="p">)</span>
+  <span class="p">})</span>
+  <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nf">Run</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">v</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">bench</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">run</span> <span class="nx">only</span> <span class="nx">benchmarks</span> <span class="nx">matching</span> <span class="s">`regexp`</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">benchmem</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">print</span> <span class="nx">memory</span> <span class="nx">allocations</span> <span class="k">for</span> <span class="nx">benchmarks</span> <span class="nx">value</span><span class="p">:</span><span class="kc">false</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">benchtime</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">run</span> <span class="nx">each</span> <span class="nx">benchmark</span> <span class="k">for</span> <span class="nx">duration</span> <span class="s">`d`</span> <span class="nx">value</span><span class="p">:</span><span class="mi">1</span><span class="nx">s</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">blockprofile</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">write</span> <span class="nx">a</span> <span class="nx">goroutine</span> <span class="nx">blocking</span> <span class="nx">profile</span> <span class="nx">to</span> <span class="s">`file`</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">blockprofilerate</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">set</span> <span class="nx">blocking</span> <span class="nx">profile</span> <span class="s">`rate`</span> <span class="p">(</span><span class="nx">see</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">SetBlockProfileRate</span><span class="p">)</span> <span class="nx">value</span><span class="p">:</span><span class="mi">1</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">count</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">run</span> <span class="nx">tests</span> <span class="nx">and</span> <span class="nx">benchmarks</span> <span class="s">`n`</span> <span class="nx">times</span> <span class="nx">value</span><span class="p">:</span><span class="mi">1</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">coverprofile</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">write</span> <span class="nx">a</span> <span class="nx">coverage</span> <span class="nx">profile</span> <span class="nx">to</span> <span class="s">`file`</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">cpu</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">comma</span><span class="o">-</span><span class="nx">separated</span> <span class="s">`list`</span> <span class="nx">of</span> <span class="nx">cpu</span> <span class="nx">counts</span> <span class="nx">to</span> <span class="nx">run</span> <span class="nx">each</span> <span class="nx">test</span> <span class="nx">with</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">cpuprofile</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">write</span> <span class="nx">a</span> <span class="nx">cpu</span> <span class="nx">profile</span> <span class="nx">to</span> <span class="s">`file`</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">failfast</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">do</span> <span class="nx">not</span> <span class="nx">start</span> <span class="nx">new</span> <span class="nx">tests</span> <span class="nx">after</span> <span class="nx">the</span> <span class="nx">first</span> <span class="nx">test</span> <span class="nx">failure</span> <span class="nx">value</span><span class="p">:</span><span class="kc">false</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">list</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">list</span> <span class="nx">tests</span><span class="p">,</span> <span class="nx">examples</span><span class="p">,</span> <span class="nx">and</span> <span class="nx">benchmarks</span> <span class="nx">matching</span> <span class="s">`regexp`</span> <span class="nx">then</span> <span class="nx">exit</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">memprofile</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">write</span> <span class="nx">an</span> <span class="nx">allocation</span> <span class="nx">profile</span> <span class="nx">to</span> <span class="s">`file`</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">memprofilerate</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">set</span> <span class="nx">memory</span> <span class="nx">allocation</span> <span class="nx">profiling</span> <span class="s">`rate`</span> <span class="p">(</span><span class="nx">see</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">MemProfileRate</span><span class="p">)</span> <span class="nx">value</span><span class="p">:</span><span class="mi">0</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">mutexprofile</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">write</span> <span class="nx">a</span> <span class="nx">mutex</span> <span class="nx">contention</span> <span class="nx">profile</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">named</span> <span class="nx">file</span> <span class="nx">after</span> <span class="nx">execution</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">mutexprofilefraction</span> <span class="nx">usage</span><span class="p">:</span><span class="k">if</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">calls</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">SetMutexProfileFraction</span><span class="p">()</span> <span class="nx">value</span><span class="p">:</span><span class="mi">1</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">outputdir</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">write</span> <span class="nx">profiles</span> <span class="nx">to</span> <span class="s">`dir`</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">paniconexit0</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">panic</span> <span class="nx">on</span> <span class="nx">call</span> <span class="nx">to</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="nx">value</span><span class="p">:</span><span class="kc">true</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">parallel</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">run</span> <span class="nx">at</span> <span class="nx">most</span> <span class="s">`n`</span> <span class="nx">tests</span> <span class="nx">in</span> <span class="nx">parallel</span> <span class="nx">value</span><span class="p">:</span><span class="mi">8</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">run</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">run</span> <span class="nx">only</span> <span class="nx">tests</span> <span class="nx">and</span> <span class="nx">examples</span> <span class="nx">matching</span> <span class="s">`regexp`</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">short</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">run</span> <span class="nx">smaller</span> <span class="nx">test</span> <span class="nx">suite</span> <span class="nx">to</span> <span class="nx">save</span> <span class="nx">time</span> <span class="nx">value</span><span class="p">:</span><span class="kc">false</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">testlogfile</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">write</span> <span class="nx">test</span> <span class="nx">action</span> <span class="nx">log</span> <span class="nx">to</span> <span class="s">`file`</span> <span class="p">(</span><span class="k">for</span> <span class="nx">use</span> <span class="nx">only</span> <span class="nx">by</span> <span class="nx">cmd</span><span class="o">/</span><span class="k">go</span><span class="p">)</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">timeout</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">panic</span> <span class="nx">test</span> <span class="nx">binary</span> <span class="nx">after</span> <span class="nx">duration</span> <span class="s">`d`</span> <span class="p">(</span><span class="k">default</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">timeout</span> <span class="nx">disabled</span><span class="p">)</span> <span class="nx">value</span><span class="p">:</span><span class="mi">10</span><span class="nx">m0s</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">trace</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">write</span> <span class="nx">an</span> <span class="nx">execution</span> <span class="nx">trace</span> <span class="nx">to</span> <span class="s">`file`</span> <span class="nx">value</span><span class="p">:</span>
+<span class="nx">name</span><span class="p">:</span><span class="nx">test</span><span class="p">.</span><span class="nx">v</span> <span class="nx">usage</span><span class="p">:</span><span class="nx">verbose</span><span class="p">:</span> <span class="nx">print</span> <span class="nx">additional</span> <span class="nx">output</span> <span class="nx">value</span><span class="p">:</span><span class="nx">tru</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这些选项也可以通过<code>go help testflag</code>查看。</p>
+<h3 id="其他">其他</h3>
+<p><strong>另一个函数<code>FromRoman()</code>我没有写任何测试，就交给大家了😀</strong></p>
+<h2 id="性能测试">性能测试</h2>
+<p>性能测试是为了对函数的运行性能进行评测。性能测试也必须在<code>_test.go</code>文件中编写，且函数名必须是<code>BenchmarkXxxx</code>开头。性能测试函数接受一个<code>*testing.B</code>的参数。下面我们编写 3 个计算第 n 个斐波那契数的函数。</p>
+<p>第一种方式：递归</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">Fib1</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">n</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="nf">Fib1</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">Fib1</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>第二种方式：备忘录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">fibHelper</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">m</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">n</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">[</span><span class="nx">n</span><span class="p">];</span> <span class="nx">ok</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">v</span>
+  <span class="p">}</span>
+  
+  <span class="nx">v</span> <span class="o">:=</span> <span class="nf">fibHelper</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span> <span class="o">+</span> <span class="nf">fibHelper</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span>
+  <span class="nx">m</span><span class="p">[</span><span class="nx">n</span><span class="p">]</span> <span class="p">=</span> <span class="nx">v</span>
+  <span class="k">return</span> <span class="nx">v</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Fib2</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="nx">m</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">int</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nf">fibHelper</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>第三种方式：迭代</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">Fib3</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">n</span>
+  <span class="p">}</span>
+  
+  <span class="nx">f1</span><span class="p">,</span> <span class="nx">f2</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">f1</span><span class="p">,</span> <span class="nx">f2</span> <span class="p">=</span> <span class="nx">f2</span><span class="p">,</span> <span class="nx">f1</span><span class="o">+</span><span class="nx">f2</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="nx">f2</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>下面我们来测试这 3 个函数的执行效率：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// fib_test.go
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">BenchmarkFib1</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nf">Fib1</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">BenchmarkFib2</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nf">Fib2</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">BenchmarkFib3</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nf">Fib3</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>需要特别注意的是<code>N</code>，<code>go test</code>会一直调整这个数值，直到测试时间能得出可靠的性能数据为止。运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">bench</span><span class="p">=.</span>
+<span class="nx">goos</span><span class="p">:</span> <span class="nx">windows</span>
+<span class="nx">goarch</span><span class="p">:</span> <span class="nx">amd64</span>
+<span class="nx">pkg</span><span class="p">:</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span><span class="o">/</span><span class="nx">fib</span>
+<span class="nx">cpu</span><span class="p">:</span> <span class="nf">Intel</span><span class="p">(</span><span class="nx">R</span><span class="p">)</span> <span class="nf">Core</span><span class="p">(</span><span class="nx">TM</span><span class="p">)</span> <span class="nx">i7</span><span class="o">-</span><span class="mi">7700</span> <span class="nx">CPU</span> <span class="err">@</span> <span class="mf">3.60</span><span class="nx">GHz</span>
+<span class="nx">BenchmarkFib1</span><span class="o">-</span><span class="mi">8</span>            <span class="mi">31110</span>             <span class="mi">39144</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">BenchmarkFib2</span><span class="o">-</span><span class="mi">8</span>           <span class="mi">582637</span>              <span class="mi">3127</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">BenchmarkFib3</span><span class="o">-</span><span class="mi">8</span>         <span class="mi">191600582</span>            <span class="mf">5.588</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>      <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span><span class="o">/</span><span class="nx">fib</span>      <span class="mf">5.225</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>性能测试默认不会执行，需要通过<code>-bench=.</code>指定运行。<code>-bench</code>选项的值是一个简单的模式，<code>.</code>表示匹配所有的，<code>Fib</code>表示运行名字中有<code>Fib</code>的。</p>
+<p>上面的测试结果表示<code>Fib1</code>在指定时间内执行了 31110 次，平均每次 39144 ns，<code>Fib2</code>在指定时间内运行了 582637 次，平均每次耗时 3127 ns，<code>Fib3</code>在指定时间内运行了 191600582 次，平均每次耗时 5.588 ns。</p>
+<h3 id="其他选项">其他选项</h3>
+<p>有一些选项可以控制性能测试的执行。</p>
+<p><code>-benchtime</code>：设置每个测试的运行时间。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">bench</span><span class="p">=.</span> <span class="o">-</span><span class="nx">benchtime</span><span class="p">=</span><span class="mi">30</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行了更长的时间：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">bench</span><span class="p">=.</span> <span class="o">-</span><span class="nx">benchtime</span><span class="p">=</span><span class="mi">30</span><span class="nx">s</span>
+<span class="nx">goos</span><span class="p">:</span> <span class="nx">windows</span>
+<span class="nx">goarch</span><span class="p">:</span> <span class="nx">amd64</span>
+<span class="nx">pkg</span><span class="p">:</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span><span class="o">/</span><span class="nx">fib</span>
+<span class="nx">cpu</span><span class="p">:</span> <span class="nf">Intel</span><span class="p">(</span><span class="nx">R</span><span class="p">)</span> <span class="nf">Core</span><span class="p">(</span><span class="nx">TM</span><span class="p">)</span> <span class="nx">i7</span><span class="o">-</span><span class="mi">7700</span> <span class="nx">CPU</span> <span class="err">@</span> <span class="mf">3.60</span><span class="nx">GHz</span>
+<span class="nx">BenchmarkFib1</span><span class="o">-</span><span class="mi">8</span>           <span class="mi">956464</span>             <span class="mi">38756</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">BenchmarkFib2</span><span class="o">-</span><span class="mi">8</span>         <span class="mi">17862495</span>              <span class="mi">2306</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">BenchmarkFib3</span><span class="o">-</span><span class="mi">8</span>       <span class="mi">1000000000</span>             <span class="mf">5.591</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>      <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="nx">daily</span><span class="o">-</span><span class="nx">lib</span><span class="o">/</span><span class="nx">testing</span><span class="o">/</span><span class="nx">fib</span>      <span class="mf">113.498</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>-benchmem</code>：输出性能测试函数的内存分配情况。</p>
+<p><code>-memprofile file</code>：将内存分配数据写入文件。</p>
+<p><code>-cpuprofile file</code>：将 CPU 采样数据写入文件，方便使用<code>go tool pprof</code>工具分析，详见我的另一篇文章<a href="https://darjun.github.io/2021/05/18/youdontknowgo/string/">《你不知道的 Go 之 pprof》</a></p>
+<p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">bench</span><span class="p">=.</span> <span class="o">-</span><span class="nx">benchtime</span><span class="p">=</span><span class="mi">10</span><span class="nx">s</span> <span class="o">-</span><span class="nx">cpuprofile</span><span class="p">=.</span><span class="o">/</span><span class="nx">cpu</span><span class="p">.</span><span class="nx">prof</span> <span class="o">-</span><span class="nx">memprofile</span><span class="p">=.</span><span class="o">/</span><span class="nx">mem</span><span class="p">.</span><span class="nx">prof</span>
+<span class="nx">goos</span><span class="p">:</span> <span class="nx">windows</span>
+<span class="nx">goarch</span><span class="p">:</span> <span class="nx">amd64</span>
+<span class="nx">pkg</span><span class="p">:</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span>
+<span class="nx">BenchmarkFib1</span><span class="o">-</span><span class="mi">16</span>          <span class="mi">356006</span>             <span class="mi">33423</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">BenchmarkFib2</span><span class="o">-</span><span class="mi">16</span>         <span class="mi">8958194</span>              <span class="mi">1340</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">BenchmarkFib3</span><span class="o">-</span><span class="mi">16</span>        <span class="mi">1000000000</span>               <span class="mf">6.60</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>      <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span>   <span class="mf">33.321</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同时生成了 CPU 采样数据和内存分配数据，通过<code>go tool pprof</code>分析：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">tool</span> <span class="nx">pprof</span> <span class="p">.</span><span class="o">/</span><span class="nx">cpu</span><span class="p">.</span><span class="nx">prof</span>
+<span class="nx">Type</span><span class="p">:</span> <span class="nx">cpu</span>
+<span class="nx">Time</span><span class="p">:</span> <span class="nx">Aug</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2021</span> <span class="nx">at</span> <span class="mi">10</span><span class="p">:</span><span class="mi">21</span><span class="nf">am</span> <span class="p">(</span><span class="nx">CST</span><span class="p">)</span>
+<span class="nx">Duration</span><span class="p">:</span> <span class="mf">32.48</span><span class="nx">s</span><span class="p">,</span> <span class="nx">Total</span> <span class="nx">samples</span> <span class="p">=</span> <span class="mf">36.64</span><span class="nf">s</span> <span class="p">(</span><span class="mf">112.81</span><span class="o">%</span><span class="p">)</span>
+<span class="nx">Entering</span> <span class="nx">interactive</span> <span class="nf">mode</span> <span class="p">(</span><span class="kd">type</span> <span class="s">&#34;help&#34;</span> <span class="k">for</span> <span class="nx">commands</span><span class="p">,</span> <span class="s">&#34;o&#34;</span> <span class="k">for</span> <span class="nx">options</span><span class="p">)</span>
+<span class="p">(</span><span class="nx">pprof</span><span class="p">)</span> <span class="nx">top10</span>
+<span class="nx">Showing</span> <span class="nx">nodes</span> <span class="nx">accounting</span> <span class="k">for</span> <span class="mi">29640</span><span class="nx">ms</span><span class="p">,</span> <span class="mf">80.90</span><span class="o">%</span> <span class="nx">of</span> <span class="mi">36640</span><span class="nx">ms</span> <span class="nx">total</span>
+<span class="nx">Dropped</span> <span class="mi">153</span> <span class="nf">nodes</span> <span class="p">(</span><span class="nx">cum</span> <span class="o">&lt;=</span> <span class="mf">183.20</span><span class="nx">ms</span><span class="p">)</span>
+<span class="nx">Showing</span> <span class="nx">top</span> <span class="mi">10</span> <span class="nx">nodes</span> <span class="nx">out</span> <span class="nx">of</span> <span class="mi">74</span>
+      <span class="nx">flat</span>  <span class="nx">flat</span><span class="o">%</span>   <span class="nx">sum</span><span class="o">%</span>        <span class="nx">cum</span>   <span class="nx">cum</span><span class="o">%</span>
+   <span class="mi">11610</span><span class="nx">ms</span> <span class="mf">31.69</span><span class="o">%</span> <span class="mf">31.69</span><span class="o">%</span>    <span class="mi">11620</span><span class="nx">ms</span> <span class="mf">31.71</span><span class="o">%</span>  <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span><span class="p">.</span><span class="nx">Fib1</span>
+    <span class="mi">6490</span><span class="nx">ms</span> <span class="mf">17.71</span><span class="o">%</span> <span class="mf">49.40</span><span class="o">%</span>     <span class="mi">6680</span><span class="nx">ms</span> <span class="mf">18.23</span><span class="o">%</span>  <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span><span class="p">.</span><span class="nx">Fib3</span>
+    <span class="mi">2550</span><span class="nx">ms</span>  <span class="mf">6.96</span><span class="o">%</span> <span class="mf">56.36</span><span class="o">%</span>     <span class="mi">8740</span><span class="nx">ms</span> <span class="mf">23.85</span><span class="o">%</span>  <span class="nx">runtime</span><span class="p">.</span><span class="nx">mapassign_fast64</span>
+    <span class="mi">2050</span><span class="nx">ms</span>  <span class="mf">5.59</span><span class="o">%</span> <span class="mf">61.95</span><span class="o">%</span>     <span class="mi">2060</span><span class="nx">ms</span>  <span class="mf">5.62</span><span class="o">%</span>  <span class="nx">runtime</span><span class="p">.</span><span class="nx">stdcall2</span>
+    <span class="mi">1620</span><span class="nx">ms</span>  <span class="mf">4.42</span><span class="o">%</span> <span class="mf">66.38</span><span class="o">%</span>     <span class="mi">2140</span><span class="nx">ms</span>  <span class="mf">5.84</span><span class="o">%</span>  <span class="nx">runtime</span><span class="p">.</span><span class="nx">mapaccess2_fast64</span>
+    <span class="mi">1480</span><span class="nx">ms</span>  <span class="mf">4.04</span><span class="o">%</span> <span class="mf">70.41</span><span class="o">%</span>    <span class="mi">12350</span><span class="nx">ms</span> <span class="mf">33.71</span><span class="o">%</span>  <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span><span class="p">.</span><span class="nx">fibHelper</span>
+    <span class="mi">1480</span><span class="nx">ms</span>  <span class="mf">4.04</span><span class="o">%</span> <span class="mf">74.45</span><span class="o">%</span>     <span class="mi">2960</span><span class="nx">ms</span>  <span class="mf">8.08</span><span class="o">%</span>  <span class="nx">runtime</span><span class="p">.</span><span class="nx">evacuate_fast64</span>
+    <span class="mi">1050</span><span class="nx">ms</span>  <span class="mf">2.87</span><span class="o">%</span> <span class="mf">77.32</span><span class="o">%</span>     <span class="mi">1050</span><span class="nx">ms</span>  <span class="mf">2.87</span><span class="o">%</span>  <span class="nx">runtime</span><span class="p">.</span><span class="nx">memhash64</span>
+     <span class="mi">760</span><span class="nx">ms</span>  <span class="mf">2.07</span><span class="o">%</span> <span class="mf">79.39</span><span class="o">%</span>      <span class="mi">760</span><span class="nx">ms</span>  <span class="mf">2.07</span><span class="o">%</span>  <span class="nx">runtime</span><span class="p">.</span><span class="nx">stdcall7</span>
+     <span class="mi">550</span><span class="nx">ms</span>  <span class="mf">1.50</span><span class="o">%</span> <span class="mf">80.90</span><span class="o">%</span>     <span class="mi">7230</span><span class="nx">ms</span> <span class="mf">19.73</span><span class="o">%</span>  <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span><span class="p">.</span><span class="nf">BenchmarkFib3</span>
+<span class="p">(</span><span class="nx">pprof</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>内存：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">tool</span> <span class="nx">pprof</span> <span class="p">.</span><span class="o">/</span><span class="nx">mem</span><span class="p">.</span><span class="nx">prof</span>
+<span class="nx">Type</span><span class="p">:</span> <span class="nx">alloc_space</span>
+<span class="nx">Time</span><span class="p">:</span> <span class="nx">Aug</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2021</span> <span class="nx">at</span> <span class="mi">10</span><span class="p">:</span><span class="mi">30</span><span class="nf">am</span> <span class="p">(</span><span class="nx">CST</span><span class="p">)</span>
+<span class="nx">Entering</span> <span class="nx">interactive</span> <span class="nf">mode</span> <span class="p">(</span><span class="kd">type</span> <span class="s">&#34;help&#34;</span> <span class="k">for</span> <span class="nx">commands</span><span class="p">,</span> <span class="s">&#34;o&#34;</span> <span class="k">for</span> <span class="nx">options</span><span class="p">)</span>
+<span class="p">(</span><span class="nx">pprof</span><span class="p">)</span> <span class="nx">top10</span>
+<span class="nx">Showing</span> <span class="nx">nodes</span> <span class="nx">accounting</span> <span class="k">for</span> <span class="mf">8.69</span><span class="nx">GB</span><span class="p">,</span> <span class="mi">100</span><span class="o">%</span> <span class="nx">of</span> <span class="mf">8.69</span><span class="nx">GB</span> <span class="nx">total</span>
+<span class="nx">Dropped</span> <span class="mi">12</span> <span class="nf">nodes</span> <span class="p">(</span><span class="nx">cum</span> <span class="o">&lt;=</span> <span class="mf">0.04</span><span class="nx">GB</span><span class="p">)</span>
+      <span class="nx">flat</span>  <span class="nx">flat</span><span class="o">%</span>   <span class="nx">sum</span><span class="o">%</span>        <span class="nx">cum</span>   <span class="nx">cum</span><span class="o">%</span>
+    <span class="mf">8.69</span><span class="nx">GB</span>   <span class="mi">100</span><span class="o">%</span>   <span class="mi">100</span><span class="o">%</span>     <span class="mf">8.69</span><span class="nx">GB</span>   <span class="mi">100</span><span class="o">%</span>  <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span><span class="p">.</span><span class="nx">fibHelper</span>
+         <span class="mi">0</span>     <span class="mi">0</span><span class="o">%</span>   <span class="mi">100</span><span class="o">%</span>     <span class="mf">8.69</span><span class="nx">GB</span>   <span class="mi">100</span><span class="o">%</span>  <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span><span class="p">.</span><span class="nx">BenchmarkFib2</span>
+         <span class="mi">0</span>     <span class="mi">0</span><span class="o">%</span>   <span class="mi">100</span><span class="o">%</span>     <span class="mf">8.69</span><span class="nx">GB</span>   <span class="mi">100</span><span class="o">%</span>  <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">fib</span><span class="p">.</span><span class="nf">Fib2</span> <span class="p">(</span><span class="nx">inline</span><span class="p">)</span>
+         <span class="mi">0</span>     <span class="mi">0</span><span class="o">%</span>   <span class="mi">100</span><span class="o">%</span>     <span class="mf">8.69</span><span class="nx">GB</span>   <span class="mi">100</span><span class="o">%</span>  <span class="nx">testing</span><span class="p">.(</span><span class="o">*</span><span class="nx">B</span><span class="p">).</span><span class="nx">launch</span>
+         <span class="mi">0</span>     <span class="mi">0</span><span class="o">%</span>   <span class="mi">100</span><span class="o">%</span>     <span class="mf">8.69</span><span class="nx">GB</span>   <span class="mi">100</span><span class="o">%</span>  <span class="nx">testing</span><span class="p">.(</span><span class="o">*</span><span class="nx">B</span><span class="p">).</span><span class="nf">runN</span>
+<span class="p">(</span><span class="nx">pprof</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="示例测试">示例测试</h2>
+<p>示例测试用于演示模块或函数的使用。同样地，示例测试也在文件<code>_test.go</code>中编写，并且示例测试函数名必须是<code>ExampleXxx</code>的形式。在<code>Example*</code>函数中编写代码，然后在注释中编写期望的输出，<code>go test</code>会运行该函数，然后将实际输出与期望的做比较。下面摘取自 Go 源码<code>net/url/example_test.go</code>文件中的代码演示了<code>url.Values</code>的用法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">ExampleValuesGet</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">v</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">Values</span><span class="p">{}</span>
+  <span class="nx">v</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;Ava&#34;</span><span class="p">)</span>
+  <span class="nx">v</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;friend&#34;</span><span class="p">,</span> <span class="s">&#34;Jess&#34;</span><span class="p">)</span>
+  <span class="nx">v</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;friend&#34;</span><span class="p">,</span> <span class="s">&#34;Sarah&#34;</span><span class="p">)</span>
+  <span class="nx">v</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;friend&#34;</span><span class="p">,</span> <span class="s">&#34;Zoe&#34;</span><span class="p">)</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;friend&#34;</span><span class="p">))</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">v</span><span class="p">[</span><span class="s">&#34;friend&#34;</span><span class="p">])</span>
+  <span class="c1">// Output:
+</span><span class="c1"></span>  <span class="c1">// Ava
+</span><span class="c1"></span>  <span class="c1">// Jess
+</span><span class="c1"></span>  <span class="c1">// [Jess Sarah Zoe]
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>注释中<code>Output:</code>后是期望的输出结果，<code>go test</code>会运行这些函数并与期望的结果做比较，比较会忽略空格。</p>
+<p>有时候我们输出的顺序是不确定的，这时就需要使用<code>Unordered Output</code>。我们知道<code>url.Values</code>底层类型为<code>map[string][]string</code>，所以可以遍历输出所有的键值，但是输出顺序不确定：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">ExampleValuesAll</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">v</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">Values</span><span class="p">{}</span>
+  <span class="nx">v</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;Ava&#34;</span><span class="p">)</span>
+  <span class="nx">v</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;friend&#34;</span><span class="p">,</span> <span class="s">&#34;Jess&#34;</span><span class="p">)</span>
+  <span class="nx">v</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;friend&#34;</span><span class="p">,</span> <span class="s">&#34;Sarah&#34;</span><span class="p">)</span>
+  <span class="nx">v</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;friend&#34;</span><span class="p">,</span> <span class="s">&#34;Zoe&#34;</span><span class="p">)</span>
+  <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">values</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">v</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="c1">// Unordered Output:
+</span><span class="c1"></span>  <span class="c1">// name [Ava]
+</span><span class="c1"></span>  <span class="c1">// friend [Jess Sarah Zoe]
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">v</span>
+<span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">v</span>
+<span class="o">==</span><span class="p">=</span> <span class="nx">RUN</span>   <span class="nx">ExampleValuesGet</span>
+<span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nf">ExampleValuesGet</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+<span class="o">==</span><span class="p">=</span> <span class="nx">RUN</span>   <span class="nx">ExampleValuesAll</span>
+<span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nf">ExampleValuesAll</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>      <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">darjun</span><span class="o">/</span><span class="nx">url</span>   <span class="mf">0.172</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>没有注释，或注释中无<code>Output/Unordered Output</code>的函数会被忽略。</p>
+<h2 id="总结">总结</h2>
+<p>本文介绍了 Go 中的 3 种测试：单元测试，性能测试和示例测试。为了让程序更可靠，让以后的重构更安全、更放心，单元测试必不可少。排查程序中的性能问题，性能测试能派上大用场。示例测试主要是为了演示如何使用某个功能。</p>
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>testing 官方文档: <a href="https://golang.google.cn/pkg/testing/">https://golang.google.cn/pkg/testing/</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+<h2 id="我">我</h2>
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+<p><img src="/img/wxsearch.png#center" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-08-03
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/2021/07/26/godailylib/goth/">
+            <span class="next-text nav-default">Go 每日一库之 goth</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
