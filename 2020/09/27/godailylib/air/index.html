@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/09/27/godailylib/air/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 air是 Go 语言的热加载工具，它可以监听文件或目录的变化，自动编译，重启程序。大大提高开发期的工作效率。 快速使用 本文代码使用 Go Module" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2020/09/27/godailylib/air/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2020-09-27T22:24:52&#43;00:00" />
-<meta property="article:modified_time" content="2020-09-27T22:24:52&#43;00:00" />
+<meta property="article:published_time" content="2020-09-27T22:24:52+00:00" />
+<meta property="article:modified_time" content="2020-09-27T22:24:52+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 air">
-<meta itemprop="description" content="简介 air是 Go 语言的热加载工具，它可以监听文件或目录的变化，自动编译，重启程序。大大提高开发期的工作效率。 快速使用 本文代码使用 Go Module"><meta itemprop="datePublished" content="2020-09-27T22:24:52&#43;00:00" />
-<meta itemprop="dateModified" content="2020-09-27T22:24:52&#43;00:00" />
+<meta itemprop="description" content="简介 air是 Go 语言的热加载工具，它可以监听文件或目录的变化，自动编译，重启程序。大大提高开发期的工作效率。 快速使用 本文代码使用 Go Module"><meta itemprop="datePublished" content="2020-09-27T22:24:52+00:00" />
+<meta itemprop="dateModified" content="2020-09-27T22:24:52+00:00" />
 <meta itemprop="wordCount" content="1084">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 air"/>
@@ -400,28 +400,28 @@ if (!doNotTrack) {
 <p>先创建目录并初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir air <span class="p">&amp;&amp;</span> <span class="k">cd</span> air
-$ go mod init github.com/darjun/go-daily-lib/air
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ mkdir air <span class="p">&amp;&amp;</span> <span class="k">cd</span> air
+</span></span><span class="line"><span class="cl">$ go mod init github.com/darjun/go-daily-lib/air
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>执行下面的命令安装<code>air</code>工具：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/cosmtrek/air
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go get -u github.com/cosmtrek/air
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面的命令会在<code>$GOPATH/bin</code>目录下生成<code>air</code>命令。我一般会将<code>$GOPATH/bin</code>加入系统<code>PATH</code>中，所以可以方便地在任何地方执行<code>air</code>命令。</p>
 <p>下面我们使用标准库<code>net/http</code>编写一个简单的 Web 服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -446,50 +446,50 @@ $ go mod init github.com/darjun/go-daily-lib/air
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net/http&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">index</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Hello, world!&#34;</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewServeMux</span><span class="p">()</span>
-  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
-
-  <span class="nx">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
-    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">mux</span><span class="p">,</span>
-    <span class="nx">Addr</span><span class="p">:</span>    <span class="s">&#34;:8080&#34;</span><span class="p">,</span>
-  <span class="p">}</span>
-
-  <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">())</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">index</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Hello, world!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewServeMux</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">mux</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Addr</span><span class="p">:</span>    <span class="s">&#34;:8080&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在浏览器中访问<code>localhost:8080</code>即可看到<code>Hello, world!</code>。</p>
 <p>如果现在要求把<code>Hello, world!</code>改为<code>Hello, dj!</code>，如果不用<code>air</code>只能修改代码，执行<code>go build</code>编译，然后重启。</p>
 <p>使用<code>air</code>，我们只需要执行下面的命令就可以运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ air
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ air
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>air</code>会自动编译，启动程序，并监听当前目录中的文件修改：</p>
 <p><img src="/img/in-post/godailylib/air1.png#center" alt=""></p>
@@ -500,7 +500,7 @@ $ go mod init github.com/darjun/go-daily-lib/air
 <p>直接执行<code>air</code>命令，使用的就是默认的配置。一般建议将<code>air</code>项目中提供的<a href="https://github.com/cosmtrek/air/blob/master/air_example.toml"><code>air_example.toml</code></a>配置文件复制一份，根据自己的需求做修改和定制：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -530,35 +530,35 @@ $ go mod init github.com/darjun/go-daily-lib/air
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-toml" data-lang="toml"><span class="nx">root</span> <span class="p">=</span> <span class="s2">&#34;.&#34;</span>
-<span class="nx">tmp_dir</span> <span class="p">=</span> <span class="s2">&#34;tmp&#34;</span>
-
-<span class="p">[</span><span class="nx">build</span><span class="p">]</span>
-<span class="nx">cmd</span> <span class="p">=</span> <span class="s2">&#34;go build -o ./tmp/main .&#34;</span>
-<span class="nx">bin</span> <span class="p">=</span> <span class="s2">&#34;tmp/main&#34;</span>
-<span class="nx">full_bin</span> <span class="p">=</span> <span class="s2">&#34;APP_ENV=dev APP_USER=air ./tmp/main&#34;</span>
-<span class="nx">include_ext</span> <span class="p">=</span> <span class="p">[</span><span class="s2">&#34;go&#34;</span><span class="p">,</span> <span class="s2">&#34;tpl&#34;</span><span class="p">,</span> <span class="s2">&#34;tmpl&#34;</span><span class="p">,</span> <span class="s2">&#34;html&#34;</span><span class="p">]</span>
-<span class="nx">exclude_dir</span> <span class="p">=</span> <span class="p">[</span><span class="s2">&#34;assets&#34;</span><span class="p">,</span> <span class="s2">&#34;tmp&#34;</span><span class="p">,</span> <span class="s2">&#34;vendor&#34;</span><span class="p">,</span> <span class="s2">&#34;frontend/node_modules&#34;</span><span class="p">]</span>
-<span class="nx">include_dir</span> <span class="p">=</span> <span class="p">[]</span>
-<span class="nx">exclude_file</span> <span class="p">=</span> <span class="p">[]</span>
-<span class="nx">log</span> <span class="p">=</span> <span class="s2">&#34;air.log&#34;</span>
-<span class="nx">delay</span> <span class="p">=</span> <span class="mi">1000</span> <span class="c"># ms</span>
-<span class="nx">stop_on_error</span> <span class="p">=</span> <span class="kc">true</span>
-<span class="nx">send_interrupt</span> <span class="p">=</span> <span class="kc">false</span>
-<span class="nx">kill_delay</span> <span class="p">=</span> <span class="mi">500</span> <span class="c"># ms</span>
-
-<span class="p">[</span><span class="nx">log</span><span class="p">]</span>
-<span class="nx">time</span> <span class="p">=</span> <span class="kc">false</span>
-
-<span class="p">[</span><span class="nx">color</span><span class="p">]</span>
-<span class="nx">main</span> <span class="p">=</span> <span class="s2">&#34;magenta&#34;</span>
-<span class="nx">watcher</span> <span class="p">=</span> <span class="s2">&#34;cyan&#34;</span>
-<span class="nx">build</span> <span class="p">=</span> <span class="s2">&#34;yellow&#34;</span>
-<span class="nx">runner</span> <span class="p">=</span> <span class="s2">&#34;green&#34;</span>
-
-<span class="p">[</span><span class="nx">misc</span><span class="p">]</span>
-<span class="nx">clean_on_exit</span> <span class="p">=</span> <span class="kc">true</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">root</span> <span class="p">=</span> <span class="s2">&#34;.&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tmp_dir</span> <span class="p">=</span> <span class="s2">&#34;tmp&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">build</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">cmd</span> <span class="p">=</span> <span class="s2">&#34;go build -o ./tmp/main .&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">bin</span> <span class="p">=</span> <span class="s2">&#34;tmp/main&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">full_bin</span> <span class="p">=</span> <span class="s2">&#34;APP_ENV=dev APP_USER=air ./tmp/main&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">include_ext</span> <span class="p">=</span> <span class="p">[</span><span class="s2">&#34;go&#34;</span><span class="p">,</span> <span class="s2">&#34;tpl&#34;</span><span class="p">,</span> <span class="s2">&#34;tmpl&#34;</span><span class="p">,</span> <span class="s2">&#34;html&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">exclude_dir</span> <span class="p">=</span> <span class="p">[</span><span class="s2">&#34;assets&#34;</span><span class="p">,</span> <span class="s2">&#34;tmp&#34;</span><span class="p">,</span> <span class="s2">&#34;vendor&#34;</span><span class="p">,</span> <span class="s2">&#34;frontend/node_modules&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">include_dir</span> <span class="p">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">exclude_file</span> <span class="p">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">log</span> <span class="p">=</span> <span class="s2">&#34;air.log&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">delay</span> <span class="p">=</span> <span class="mi">1000</span> <span class="c"># ms</span>
+</span></span><span class="line"><span class="cl"><span class="nx">stop_on_error</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="nx">send_interrupt</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="nx">kill_delay</span> <span class="p">=</span> <span class="mi">500</span> <span class="c"># ms</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">log</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">time</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">color</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">main</span> <span class="p">=</span> <span class="s2">&#34;magenta&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">watcher</span> <span class="p">=</span> <span class="s2">&#34;cyan&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">build</span> <span class="p">=</span> <span class="s2">&#34;yellow&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">runner</span> <span class="p">=</span> <span class="s2">&#34;green&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">misc</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">clean_on_exit</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以配置项目根目录，临时文件目录，编译和执行的命令，监听文件目录，监听后缀名，甚至控制台日志颜色都可以配置。</p>
 <h2 id="调试模式">调试模式</h2>
@@ -675,6 +675,8 @@ $ go mod init github.com/darjun/go-daily-lib/air
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -714,7 +716,7 @@ $ go mod init github.com/darjun/go-daily-lib/air
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -778,7 +780,7 @@ $ go mod init github.com/darjun/go-daily-lib/air
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -801,6 +803,8 @@ $ go mod init github.com/darjun/go-daily-lib/air
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/11/23/javascript-callstack-eventloop/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="1.概述 众所周知，Javascript是一个单线程的语言。这意味着，在Javascript中，同一时间只能做一件事情。 这样的设计有一些优点，" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2018/11/23/javascript-callstack-eventloop/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2018-11-23T20:57:00&#43;00:00" />
-<meta property="article:modified_time" content="2018-11-23T20:57:00&#43;00:00" />
+<meta property="article:published_time" content="2018-11-23T20:57:00+00:00" />
+<meta property="article:modified_time" content="2018-11-23T20:57:00+00:00" />
 
 <meta itemprop="name" content="深入理解Javascript之CallStack&amp;EventLoop">
-<meta itemprop="description" content="1.概述 众所周知，Javascript是一个单线程的语言。这意味着，在Javascript中，同一时间只能做一件事情。 这样的设计有一些优点，"><meta itemprop="datePublished" content="2018-11-23T20:57:00&#43;00:00" />
-<meta itemprop="dateModified" content="2018-11-23T20:57:00&#43;00:00" />
+<meta itemprop="description" content="1.概述 众所周知，Javascript是一个单线程的语言。这意味着，在Javascript中，同一时间只能做一件事情。 这样的设计有一些优点，"><meta itemprop="datePublished" content="2018-11-23T20:57:00+00:00" />
+<meta itemprop="dateModified" content="2018-11-23T20:57:00+00:00" />
 <meta itemprop="wordCount" content="8228">
 <meta itemprop="keywords" content="深入理解JavaScript," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="深入理解Javascript之CallStack&amp;EventLoop"/>
@@ -406,7 +406,7 @@ if (!doNotTrack) {
 <p>Javascript启动时，从文件或标准输入加载程序。加载完成时，Javascript运行时会生成一个匿名的函数，函数体就是输入的代码。这个函数就有点类似于C/C++中的<code>main()</code>函数，是我们的入口函数。我们姑且称之为<code>&lt;main&gt;</code>函数。Javascript启动时，首先调用就是<code>&lt;main&gt;</code>函数。看下面代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -423,22 +423,22 @@ if (!doNotTrack) {
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">function func1() {
-    console.log(&#39;in function1&#39;);
-}
-
-function func2() {
-    func1();
-    console.log(&#39;in function2&#39;);
-}
-
-function func3() {
-    func2();
-    console.log(&#39;in function3&#39;);
-}
-
-func3();
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">function func1() {
+</span></span><span class="line"><span class="cl">    console.log(&#39;in function1&#39;);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">function func2() {
+</span></span><span class="line"><span class="cl">    func1();
+</span></span><span class="line"><span class="cl">    console.log(&#39;in function2&#39;);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">function func3() {
+</span></span><span class="line"><span class="cl">    func2();
+</span></span><span class="line"><span class="cl">    console.log(&#39;in function3&#39;);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func3();
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面代码很好理解，我们来看看Javascript是如何运行这段代码的。</p>
 <p>Javascript首先加载代码，创建一个匿名<code>&lt;main&gt;</code>包裹这段代码并调用该函数。<code>&lt;main&gt;</code>函数执行，依次定义函数<code>func1</code>、<code>func2</code>、<code>func3</code>，然后调用函数<code>func3</code>。为<code>func3</code>创建调用结构并压栈。函数<code>func3</code>中调用<code>func2</code>，为<code>func2</code>创建调用结构并压栈。函数<code>func2</code>中调用<code>func1</code>，为<code>func1</code>创建调用结构并压栈。这个过程中，CallStack的变化如下。</p>
@@ -467,20 +467,20 @@ func3();
 <p>其实，Javascript引擎中维护着一个任务队列。当CallStack中没有任务在执行时，引擎会从任务队列中取出任务压入CallStack处理。我们通过代码来具体看看（引用<a href="https://gist.github.com/jesstelford/9a35d20a2aa044df8bf241e00d7bc2d0">jesstelford</a>）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">setTimeout(() =&gt; {
-    console.log(&#39;hi&#39;);
-}, 1000);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">setTimeout(() =&gt; {
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;);
+</span></span><span class="line"><span class="cl">}, 1000);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们的Js代码，call stack，task queue和Web APIs（浏览器中实现）关系如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -488,18 +488,18 @@ func3();
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |    [Web APIs] |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  |                   |              | |               |
-    console.log(&#39;hi&#39;) |                   |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |    [Web APIs] |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  |                   |              | |               |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) |                   |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>开始时，代码未执行，所有都是空的。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -507,18 +507,18 @@ func3();
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  | &lt;main&gt;            |              | |               |
-    console.log(&#39;hi&#39;) |                   |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  | &lt;main&gt;            |              | |               |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) |                   |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>开始执行代码，压入我们的<code>&lt;main&gt;</code>函数。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -526,18 +526,18 @@ func3();
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-&gt; setTimeout(() =&gt; {  | &lt;main&gt;            |              | |               |
-    console.log(&#39;hi&#39;) | setTimeout        |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">&gt; setTimeout(() =&gt; {  | &lt;main&gt;            |              | |               |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) | setTimeout        |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>执行第一行代码，调用函数<code>setTimeout</code>。我们前面说过，每个函数调用都会创建一个新的调用记录压到栈上。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -545,18 +545,18 @@ func3();
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  | &lt;main&gt;            |              | | timeout, 1000 |
-    console.log(&#39;hi&#39;) |                   |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  | &lt;main&gt;            |              | | timeout, 1000 |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) |                   |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>setTimeout</code>执行完成，从栈中移除对应调用记录。<code>Web APIs</code>记录超时和回调，超时机制由浏览器实现。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -564,18 +564,18 @@ func3();
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  |                   |              | | timeout, 1000 |
-    console.log(&#39;hi&#39;) |                   |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  |                   |              | | timeout, 1000 |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) |                   |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>代码中没有其他逻辑，<code>&lt;main&gt;</code>函数结束，从栈移除调用信息。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -583,18 +583,18 @@ func3();
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  |                   | function   &lt;-----timeout, 1000 |
-    console.log(&#39;hi&#39;) |                   |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  |                   | function   &lt;-----timeout, 1000 |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) |                   |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>超时时间到了，<code>Web APIs</code>将回调放入task queue中。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -602,18 +602,18 @@ func3();
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  | function        &lt;---function     | |               |
-    console.log(&#39;hi&#39;) |                   |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  | function        &lt;---function     | |               |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) |                   |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>EventLoop检测到Javascript没有任务处理，从task queue中取出任务执行。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -621,18 +621,18 @@ func3();
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  | function          |              | |               |
-&gt;   console.log(&#39;hi&#39;) | console.log       |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  | function          |              | |               |
+</span></span><span class="line"><span class="cl">&gt;   console.log(&#39;hi&#39;) | console.log       |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>执行该回调函数，回调函数中又调用了<code>console.log</code>函数。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -641,19 +641,19 @@ func3();
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  | function          |              | |               |
-    console.log(&#39;hi&#39;) |                   |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-&gt; hi
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  | function          |              | |               |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) |                   |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span><span class="line"><span class="cl">&gt; hi
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>console.log</code>执行完成，输出&quot;hi&quot;。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -662,21 +662,21 @@ func3();
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
-  --------------------|-------------------|--------------| |---------------|
-  setTimeout(() =&gt; {  |                   |              | |               |
-    console.log(&#39;hi&#39;) |                   |              | |               |
-  }, 1000)            |                   |              | |               |
-                      |                   |              | |               |
-&gt; hi
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]        |   [call stack]    | [task queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------|-------------------|--------------| |---------------|
+</span></span><span class="line"><span class="cl">  setTimeout(() =&gt; {  |                   |              | |               |
+</span></span><span class="line"><span class="cl">    console.log(&#39;hi&#39;) |                   |              | |               |
+</span></span><span class="line"><span class="cl">  }, 1000)            |                   |              | |               |
+</span></span><span class="line"><span class="cl">                      |                   |              | |               |
+</span></span><span class="line"><span class="cl">&gt; hi
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>回调函数执行完成，CallStack再次为空。</p>
 <p>上面就是<code>setTimeout</code>的执行过程，从中开始看出EventLoop在幕后做的工作。</p>
 <p>下面我们再来看一段代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -693,41 +693,41 @@ func3();
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">console.log(&#34;start&#34;);
-
-setTimeout(() =&gt; {
-    console.log(&#34;timeout&#34;);
-}, 0);
-
-Promise.resolve()
-  .then(() =&gt; {
-      console.log(&#34;promise1&#34;);
-  })
-  .then(() =&gt; {
-      console.log(&#34;promise2&#34;);
-  });
-
-console.log(&#34;end&#34;);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">console.log(&#34;start&#34;);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">setTimeout(() =&gt; {
+</span></span><span class="line"><span class="cl">    console.log(&#34;timeout&#34;);
+</span></span><span class="line"><span class="cl">}, 0);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Promise.resolve()
+</span></span><span class="line"><span class="cl">  .then(() =&gt; {
+</span></span><span class="line"><span class="cl">      console.log(&#34;promise1&#34;);
+</span></span><span class="line"><span class="cl">  })
+</span></span><span class="line"><span class="cl">  .then(() =&gt; {
+</span></span><span class="line"><span class="cl">      console.log(&#34;promise2&#34;);
+</span></span><span class="line"><span class="cl">  });
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">console.log(&#34;end&#34;);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这段程序的输出是什么？建议大家先思考一下，最好能动笔画一画图😎。</p>
 <h2 id="span-idmicrotaskqueue4微任务队列span"><!-- raw HTML omitted -->4.微任务队列<!-- raw HTML omitted --></h2>
 <p>接着上一节的代码，<strong>符合标准</strong>（很多旧版本的浏览器实现都是不符合标准的，具体参见参考链接）的输出应该是：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">start
-end
-promise1
-promise2
-timeout
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">start
+</span></span><span class="line"><span class="cl">end
+</span></span><span class="line"><span class="cl">promise1
+</span></span><span class="line"><span class="cl">promise2
+</span></span><span class="line"><span class="cl">timeout
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>但是，为？什？么？</p>
 <p>实际上，Javascript中有另外一种队列。<code>Promise</code>的回调是被放入这个队列的。这个队列叫做<strong>microtask queue</strong>（微任务队列），ES6标准中叫<a href="http://www.ecma-international.org/ecma-262/6.0/#sec-jobs-and-job-queues">Job Queue</a>。microTask的优先级是比task高的，也就是说microtask队列中的任务要先处理。</p>
@@ -743,7 +743,7 @@ timeout
 <p>（<strong>为方便起见我们称<code>setTimeout</code>回调为<code>timeoutcb</code>，称第一个<code>then</code>成功回调为<code>promisecb1</code>，第二个<code>then</code>回调为<code>promisecb2</code></strong>）</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -762,29 +762,29 @@ timeout
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                    |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  --------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);        |                   |              | |                   | |               |
-  2.                              |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {           |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);  |                   |              | |                   | |               |
-  5. }, 0);                       |                   |              | |                   | |               |
-  6.                              |                   |              | |                   | |               |
-  7. Promise.resolve()            |                   |              | |                   | |               |
-  8. .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;); |                   |              | |                   | |               |
-  10.})                           |                   |              | |                   | |               |
-  11..then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;); |                   |              | |                   | |               |
-  13.});                          |                   |              | |                   | |               |
-  14.                             |                   |              | |                   | |               |
-  15.console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                    |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  --------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                       |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;); |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10.})                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11..then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;); |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13.});                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15.console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>开始时，call stack、task queue、microtask queue都为空。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -803,29 +803,29 @@ timeout
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-&gt; 1. console.log(&#34;start&#34;);         |     &lt;main&gt;        |              | |                   | |               |
-  2.                               |     console.log   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">&gt; 1. console.log(&#34;start&#34;);         |     &lt;main&gt;        |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |     console.log   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>程序开始运行，压入<code>&lt;main&gt;</code>函数。首先执行第一行代码，<code>console.log(&quot;start&quot;)</code>，将<code>console.log</code>压栈。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -845,30 +845,30 @@ timeout
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-&gt; 1. console.log(&#34;start&#34;);         |     &lt;main&gt;        |              | |                   | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">&gt; 1. console.log(&#34;start&#34;);         |     &lt;main&gt;        |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>console.log</code>执行完成，输出&quot;start&quot;。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -888,30 +888,30 @@ timeout
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |              | |                   | |               |
-  2.                               |    setTimeout     |              | |                   | |               |
-&gt; 3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |    setTimeout     |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; 3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>第二行为空跳过，开始执行第三行代码，<code>setTimeout</code>压栈。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -931,30 +931,30 @@ timeout
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |   timeoutcb &lt;------------------------~~timeoutcb, 0~~|
-  2.                               |                   |              | |                   | |               |
-&gt; 3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |   timeoutcb &lt;------------------------~~timeoutcb, 0~~|
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; 3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>setTimeout</code>执行完成，由于超时是0，所以立即回调立即进入task queue中。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -974,25 +974,25 @@ timeout
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |  timeoutcb   | |     promisecb1    | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-&gt; 7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |  timeoutcb   | |     promisecb1    | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; 7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>代码执行到第7行：</p>
 <ul>
@@ -1008,7 +1008,7 @@ timeout
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1028,30 +1028,30 @@ timeout
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |    timeout   | |     promisecb1    | |               |
-  2.                               |    console.log    |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-&gt; 15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |    timeout   | |     promisecb1    | |               |
+</span></span><span class="line"><span class="cl">  2.                               |    console.log    |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; 15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>代码执行到第15行，<code>console.log</code>压栈。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1072,31 +1072,31 @@ timeout
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |    timeout   | |     promisecb1    | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-&gt; 15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-&gt; end
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |    &lt;main&gt;         |    timeout   | |     promisecb1    | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; 15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span><span class="line"><span class="cl">&gt; end
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>console.log(&quot;end&quot;)</code>执行完成，输出&quot;end&quot;，出栈。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1117,31 +1117,31 @@ timeout
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |                   |    timeout   | |     promisecb1    | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-&gt; 15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-&gt; end
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |                   |    timeout   | |     promisecb1    | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; 15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span><span class="line"><span class="cl">&gt; end
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>&lt;main&gt;</code>函数没有逻辑需要执行了，出栈。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1162,31 +1162,31 @@ timeout
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |    promisecb1     |    timeout   | |                   | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-&gt; 15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-&gt; end
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |    promisecb1     |    timeout   | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; 15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span><span class="line"><span class="cl">&gt; end
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>EventLoop检查到microtask队列中有任务需要执行，将<code>promisecb1</code>取出压入call stack。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1208,33 +1208,33 @@ timeout
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |                   |    timeout   | |      promisecb2   | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-&gt; end
-&gt; promise1
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |                   |    timeout   | |      promisecb2   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span><span class="line"><span class="cl">&gt; end
+</span></span><span class="line"><span class="cl">&gt; promise1
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>promisecb1</code>执行完成，输出&quot;promise1&quot;，并且返回<code>undefined</code>。（其实在这里还有一个<code>console.log</code>压栈出栈的过程，我就不画了，下同）</p>
 <p>在<a href="https://darjun.github.io/2018/11/08/javascript-promise-intro">深入理解Javascript之Promise</a>中看到，如果返回一个值，那么对象立刻变为<code>resolved</code>。<strong>所以第二个<code>then</code>的回调需要安排执行，进入microtask队列</strong>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1256,32 +1256,32 @@ timeout
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |     promisecb2    |    timeout   | |                   | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-&gt; end
-&gt; promise1
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |     promisecb2    |    timeout   | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span><span class="line"><span class="cl">&gt; end
+</span></span><span class="line"><span class="cl">&gt; promise1
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>EventLoop检测到call stack中没有正在执行的任务，同时microtask队列不为空。从microtask队列取出任务压入call stack。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1304,33 +1304,33 @@ timeout
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |                   |    timeout   | |                   | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-&gt; end
-&gt; promise1
-&gt; promise2
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |                   |    timeout   | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span><span class="line"><span class="cl">&gt; end
+</span></span><span class="line"><span class="cl">&gt; promise1
+</span></span><span class="line"><span class="cl">&gt; promise2
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>promisecb2</code>执行完成，输出&quot;promise2&quot;。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1353,33 +1353,33 @@ timeout
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |    timeoutcb      |              | |                   | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-&gt; end
-&gt; promise1
-&gt; promise2
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |    timeoutcb      |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span><span class="line"><span class="cl">&gt; end
+</span></span><span class="line"><span class="cl">&gt; promise1
+</span></span><span class="line"><span class="cl">&gt; promise2
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>接着,EventLoop检测到call stack和microtask队列都为空，从task队列中取出<code>timeoutcb</code>压入栈。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1403,29 +1403,29 @@ timeout
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
-  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
-  1. console.log(&#34;start&#34;);         |                   |              | |                   | |               |
-  2.                               |                   |              | |                   | |               |
-  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
-  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
-  5. }, 0);                        |                   |              | |                   | |               |
-  6.                               |                   |              | |                   | |               |
-  7. Promise.resolve()             |                   |              | |                   | |               |
-  8.  .then(() =&gt; {                |                   |              | |                   | |               |
-  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
-  10. })                           |                   |              | |                   | |               |
-  11. .then(() =&gt; {                |                   |              | |                   | |               |
-  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
-  13. });                          |                   |              | |                   | |               |
-  14.                              |                   |              | |                   | |               |
-  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
-&gt; start
-&gt; end
-&gt; promise1
-&gt; promise2
-&gt; timeout
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        [code]                     |   [call stack]    | [task queue] | | [microtask queue] | |   [Web APIs]  |
+</span></span><span class="line"><span class="cl">  ---------------------------------|-------------------|--------------| |-------------------| |---------------|
+</span></span><span class="line"><span class="cl">  1. console.log(&#34;start&#34;);         |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  2.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  3. setTimeout(() =&gt; {            |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  4.     console.log(&#34;timeout&#34;);   |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  5. }, 0);                        |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  6.                               |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  7. Promise.resolve()             |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  8.  .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  9.     console.log(&#34;promise1&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  10. })                           |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  11. .then(() =&gt; {                |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  12.    console.log(&#34;promise2&#34;);  |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  13. });                          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  14.                              |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">  15. console.log(&#34;end&#34;);          |                   |              | |                   | |               |
+</span></span><span class="line"><span class="cl">&gt; start
+</span></span><span class="line"><span class="cl">&gt; end
+</span></span><span class="line"><span class="cl">&gt; promise1
+</span></span><span class="line"><span class="cl">&gt; promise2
+</span></span><span class="line"><span class="cl">&gt; timeout
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>timeoutcb</code>执行完成，输出&quot;timeout&quot;。</p>
 <h2 id="span-id总结5总结span"><!-- raw HTML omitted -->5.总结<!-- raw HTML omitted --></h2>
@@ -1556,6 +1556,8 @@ timeout
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1595,7 +1597,7 @@ timeout
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1659,7 +1661,7 @@ timeout
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1682,6 +1684,8 @@ timeout
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

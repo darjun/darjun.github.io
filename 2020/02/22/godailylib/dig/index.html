@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/22/godailylib/dig/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 今天我们来介绍 Go 语言的一个依赖注入（DI）库——dig。dig 是 uber 开源的库。Java 依赖注入的库有很多，相信即使不是做 Java 开发的童鞋也听过" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2020/02/22/godailylib/dig/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2020-02-22T12:40:23&#43;00:00" />
-<meta property="article:modified_time" content="2020-02-22T12:40:23&#43;00:00" />
+<meta property="article:published_time" content="2020-02-22T12:40:23+00:00" />
+<meta property="article:modified_time" content="2020-02-22T12:40:23+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 dig">
-<meta itemprop="description" content="简介 今天我们来介绍 Go 语言的一个依赖注入（DI）库——dig。dig 是 uber 开源的库。Java 依赖注入的库有很多，相信即使不是做 Java 开发的童鞋也听过"><meta itemprop="datePublished" content="2020-02-22T12:40:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-02-22T12:40:23&#43;00:00" />
+<meta itemprop="description" content="简介 今天我们来介绍 Go 语言的一个依赖注入（DI）库——dig。dig 是 uber 开源的库。Java 依赖注入的库有很多，相信即使不是做 Java 开发的童鞋也听过"><meta itemprop="datePublished" content="2020-02-22T12:40:23+00:00" />
+<meta itemprop="dateModified" content="2020-02-22T12:40:23+00:00" />
 <meta itemprop="wordCount" content="3810">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 dig"/>
@@ -403,20 +403,20 @@ if (!doNotTrack) {
 <p>第三方库需要先安装，由于我们的示例中使用了前面介绍的<a href="https://darjun.github.io/2020/01/15/godailylib/go-ini/">go-ini</a>和<a href="https://darjun.github.io/2020/01/10/godailylib/go-flags/">go-flags</a>，这两个库也需要安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get go.uber.org/dig
-$ go get gopkg.in/ini.v1
-$ go get github.com/jessevdk/go-flags
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go get go.uber.org/dig
+</span></span><span class="line"><span class="cl">$ go get gopkg.in/ini.v1
+</span></span><span class="line"><span class="cl">$ go get github.com/jessevdk/go-flags
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>下面看看如何使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -457,51 +457,51 @@ $ go get github.com/jessevdk/go-flags
 </span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-
-  <span class="s">&#34;github.com/jessevdk/go-flags&#34;</span>
-  <span class="s">&#34;go.uber.org/dig&#34;</span>
-  <span class="s">&#34;gopkg.in/ini.v1&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">ConfigFile</span> <span class="kt">string</span> <span class="s">`short:&#34;c&#34; long:&#34;config&#34; description:&#34;Name of config file.&#34;`</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">InitOption</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Option</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
-  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">)</span>
-
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">opt</span><span class="p">,</span> <span class="nx">err</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">InitConf</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">Option</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ini</span><span class="p">.</span><span class="nf">Load</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">ConfigFile</span><span class="p">)</span>
-  <span class="k">return</span> <span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;App Name:&#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;app_name&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">())</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Log Level:&#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;log_level&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">())</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitOption</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConf</span><span class="p">)</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/jessevdk/go-flags&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;go.uber.org/dig&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;gopkg.in/ini.v1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ConfigFile</span> <span class="kt">string</span> <span class="s">`short:&#34;c&#34; long:&#34;config&#34; description:&#34;Name of config file.&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">InitOption</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Option</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">opt</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">InitConf</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">Option</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ini</span><span class="p">.</span><span class="nf">Load</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">ConfigFile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;App Name:&#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;app_name&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Log Level:&#34;</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;log_level&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitOption</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在同一目录下创建配置文件<code>my.ini</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -516,33 +516,33 @@ $ go get github.com/jessevdk/go-flags
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-ini" data-lang="ini"><span class="na">app_name</span> <span class="o">=</span> <span class="s">awesome web</span>
-<span class="na">log_level</span> <span class="o">=</span> <span class="s">DEBUG</span>
-
-<span class="k">[mysql]</span>
-<span class="na">ip</span> <span class="o">=</span> <span class="s">127.0.0.1</span>
-<span class="na">port</span> <span class="o">=</span> <span class="s">3306</span>
-<span class="na">user</span> <span class="o">=</span> <span class="s">dj</span>
-<span class="na">password</span> <span class="o">=</span> <span class="s">123456</span>
-<span class="na">database</span> <span class="o">=</span> <span class="s">awesome</span>
-
-<span class="k">[redis]</span>
-<span class="na">ip</span> <span class="o">=</span> <span class="s">127.0.0.1</span>
-<span class="na">port</span> <span class="o">=</span> <span class="s">6381</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="na">app_name</span> <span class="o">=</span> <span class="s">awesome web</span>
+</span></span><span class="line"><span class="cl"><span class="na">log_level</span> <span class="o">=</span> <span class="s">DEBUG</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">[mysql]</span>
+</span></span><span class="line"><span class="cl"><span class="na">ip</span> <span class="o">=</span> <span class="s">127.0.0.1</span>
+</span></span><span class="line"><span class="cl"><span class="na">port</span> <span class="o">=</span> <span class="s">3306</span>
+</span></span><span class="line"><span class="cl"><span class="na">user</span> <span class="o">=</span> <span class="s">dj</span>
+</span></span><span class="line"><span class="cl"><span class="na">password</span> <span class="o">=</span> <span class="s">123456</span>
+</span></span><span class="line"><span class="cl"><span class="na">database</span> <span class="o">=</span> <span class="s">awesome</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">[redis]</span>
+</span></span><span class="line"><span class="cl"><span class="na">ip</span> <span class="o">=</span> <span class="s">127.0.0.1</span>
+</span></span><span class="line"><span class="cl"><span class="na">port</span> <span class="o">=</span> <span class="s">6381</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>运行程序，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go -c=my.ini
-App Name: awesome web
-Log Level: DEBUG
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go -c=my.ini
+</span></span><span class="line"><span class="cl">App Name: awesome web
+</span></span><span class="line"><span class="cl">Log Level: DEBUG
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>dig</code>库帮助开发者管理这些对象的创建和维护，每种类型的对象会<strong>创建且只创建一次</strong>。<code>dig</code>库使用的一般流程：</p>
 <ul>
@@ -554,20 +554,20 @@ Log Level: DEBUG
 <p>有时候，创建对象有很多依赖，或者编写函数时有多个参数依赖。如果将这些依赖都作为参数传入，那么代码将变得非常难以阅读：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">arg1</span> <span class="o">*</span><span class="nx">Arg1</span><span class="p">,</span> <span class="nx">arg2</span> <span class="o">*</span><span class="nx">Arg2</span><span class="p">,</span> <span class="nx">arg3</span> <span class="o">*</span><span class="nx">Arg3</span><span class="p">,</span> <span class="o">...</span><span class="p">.)</span> <span class="p">{</span>
-  <span class="c1">// ...
-</span><span class="c1"></span><span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">arg1</span> <span class="o">*</span><span class="nx">Arg1</span><span class="p">,</span> <span class="nx">arg2</span> <span class="o">*</span><span class="nx">Arg2</span><span class="p">,</span> <span class="nx">arg3</span> <span class="o">*</span><span class="nx">Arg3</span><span class="p">,</span> <span class="o">...</span><span class="p">.)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>dig</code>支持将所有参数打包进一个对象中，唯一需要的就是将<code>dig.In</code>内嵌到该类型中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -581,24 +581,24 @@ Log Level: DEBUG
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Params</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
-
-  <span class="nx">Arg1</span> <span class="o">*</span><span class="nx">Arg1</span>
-  <span class="nx">Arg2</span> <span class="o">*</span><span class="nx">Arg2</span>
-  <span class="nx">Arg3</span> <span class="o">*</span><span class="nx">Arg3</span>
-  <span class="nx">Arg4</span> <span class="o">*</span><span class="nx">Arg4</span>
-<span class="p">}</span>
-
-<span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">params</span> <span class="nx">Params</span><span class="p">)</span> <span class="o">*</span><span class="nx">Object</span> <span class="p">{</span>
-  <span class="c1">// ...
-</span><span class="c1"></span><span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Params</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">Arg1</span> <span class="o">*</span><span class="nx">Arg1</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Arg2</span> <span class="o">*</span><span class="nx">Arg2</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Arg3</span> <span class="o">*</span><span class="nx">Arg3</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Arg4</span> <span class="o">*</span><span class="nx">Arg4</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">params</span> <span class="nx">Params</span><span class="p">)</span> <span class="o">*</span><span class="nx">Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>内嵌了<code>dig.In</code>之后，<code>dig</code>会将该类型中的其它字段看成<code>Object</code>的依赖，创建<code>Object</code>类型的对象时，会先将依赖的<code>Arg1/Arg2/Arg3/Arg4</code>创建好。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -710,123 +710,123 @@ Log Level: DEBUG
 </span><span class="lnt">110
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-
-  <span class="s">&#34;github.com/jessevdk/go-flags&#34;</span>
-  <span class="s">&#34;go.uber.org/dig&#34;</span>
-  <span class="s">&#34;gopkg.in/ini.v1&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">ConfigFile</span> <span class="kt">string</span> <span class="s">`short:&#34;c&#34; long:&#34;config&#34; description:&#34;Name of config file.&#34;`</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">RedisConfig</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">IP</span>   <span class="kt">string</span>
-  <span class="nx">Port</span> <span class="kt">int</span>
-  <span class="nx">DB</span>   <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">MySQLConfig</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">IP</span>       <span class="kt">string</span>
-  <span class="nx">Port</span>     <span class="kt">int</span>
-  <span class="nx">User</span>     <span class="kt">string</span>
-  <span class="nx">Password</span> <span class="kt">string</span>
-  <span class="nx">Database</span> <span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
-
-  <span class="nx">Redis</span> <span class="o">*</span><span class="nx">RedisConfig</span>
-  <span class="nx">MySQL</span> <span class="o">*</span><span class="nx">MySQLConfig</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">InitOption</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Option</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
-  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">)</span>
-
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">opt</span><span class="p">,</span> <span class="nx">err</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">InitConfig</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">Option</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ini</span><span class="p">.</span><span class="nf">Load</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">ConfigFile</span><span class="p">)</span>
-  <span class="k">return</span> <span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">InitRedisConfig</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">RedisConfig</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">port</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;redis&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;port&#34;</span><span class="p">).</span><span class="nf">Int</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-  <span class="p">}</span>
-
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;redis&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;db&#34;</span><span class="p">).</span><span class="nf">Int</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">RedisConfig</span><span class="p">{</span>
-    <span class="nx">IP</span><span class="p">:</span>   <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;redis&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;ip&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
-    <span class="nx">Port</span><span class="p">:</span> <span class="nx">port</span><span class="p">,</span>
-    <span class="nx">DB</span><span class="p">:</span>   <span class="nx">db</span><span class="p">,</span>
-  <span class="p">},</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">InitMySQLConfig</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">MySQLConfig</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">port</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;port&#34;</span><span class="p">).</span><span class="nf">Int</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">MySQLConfig</span><span class="p">{</span>
-    <span class="nx">IP</span><span class="p">:</span>       <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;ip&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
-    <span class="nx">Port</span><span class="p">:</span>     <span class="nx">port</span><span class="p">,</span>
-    <span class="nx">User</span><span class="p">:</span>     <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
-    <span class="nx">Password</span><span class="p">:</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;password&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
-    <span class="nx">Database</span><span class="p">:</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;database&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
-  <span class="p">},</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">config</span> <span class="nx">Config</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;=========== redis section ===========&#34;</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis ip:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis port:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span><span class="p">.</span><span class="nx">Port</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis db:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span>
-
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;=========== mysql section ===========&#34;</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql ip:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql port:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">Port</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql user:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql password:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">Password</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql db:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">Database</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitOption</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConfig</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitRedisConfig</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitMySQLConfig</span><span class="p">)</span>
-
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/jessevdk/go-flags&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;go.uber.org/dig&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;gopkg.in/ini.v1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Option</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ConfigFile</span> <span class="kt">string</span> <span class="s">`short:&#34;c&#34; long:&#34;config&#34; description:&#34;Name of config file.&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">RedisConfig</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">IP</span>   <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Port</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DB</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MySQLConfig</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">IP</span>       <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Port</span>     <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">User</span>     <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Password</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Database</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">Redis</span> <span class="o">*</span><span class="nx">RedisConfig</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">MySQL</span> <span class="o">*</span><span class="nx">MySQLConfig</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">InitOption</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Option</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">opt</span> <span class="nx">Option</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">flags</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">opt</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">opt</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">InitConfig</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">Option</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ini</span><span class="p">.</span><span class="nf">Load</span><span class="p">(</span><span class="nx">opt</span><span class="p">.</span><span class="nx">ConfigFile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">InitRedisConfig</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">RedisConfig</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">port</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;redis&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;port&#34;</span><span class="p">).</span><span class="nf">Int</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;redis&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;db&#34;</span><span class="p">).</span><span class="nf">Int</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">RedisConfig</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">IP</span><span class="p">:</span>   <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;redis&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;ip&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Port</span><span class="p">:</span> <span class="nx">port</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">DB</span><span class="p">:</span>   <span class="nx">db</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">InitMySQLConfig</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">MySQLConfig</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">port</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;port&#34;</span><span class="p">).</span><span class="nf">Int</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">MySQLConfig</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">IP</span><span class="p">:</span>       <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;ip&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Port</span><span class="p">:</span>     <span class="nx">port</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">User</span><span class="p">:</span>     <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Password</span><span class="p">:</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;password&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Database</span><span class="p">:</span> <span class="nx">cfg</span><span class="p">.</span><span class="nf">Section</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">).</span><span class="nf">Key</span><span class="p">(</span><span class="s">&#34;database&#34;</span><span class="p">).</span><span class="nf">String</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">config</span> <span class="nx">Config</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;=========== redis section ===========&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis ip:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis port:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span><span class="p">.</span><span class="nx">Port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis db:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;=========== mysql section ===========&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql ip:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql port:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">Port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql user:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql password:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">Password</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql db:&#34;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span><span class="p">.</span><span class="nx">Database</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitOption</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitRedisConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitMySQLConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面代码中，类型<code>Config</code>内嵌了<code>dig.In</code>，<code>PrintInfo</code>接受一个<code>Config</code>类型的参数。调用<code>Invoke</code>时，<code>dig</code>自动调用<code>InitRedisConfig</code>和<code>InitMySQLConfig</code>，并将生成的<code>*RedisConfig</code>和<code>*MySQLConfig</code>“打包”成一个<code>Config</code>对象传给<code>PrintInfo</code>。</p>
 <p>运行结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -839,24 +839,24 @@ Log Level: DEBUG
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go -c=my.ini
-=========== redis section ===========
-redis ip: 127.0.0.1
-redis port: 6381
-redis db: 1
-=========== mysql section ===========
-mysql ip: 127.0.0.1
-mysql port: 3306
-mysql user: dj
-mysql password: 123456
-mysql db: awesome
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go -c=my.ini
+</span></span><span class="line"><span class="cl">=========== redis section ===========
+</span></span><span class="line"><span class="cl">redis ip: 127.0.0.1
+</span></span><span class="line"><span class="cl">redis port: 6381
+</span></span><span class="line"><span class="cl">redis db: 1
+</span></span><span class="line"><span class="cl">=========== mysql section ===========
+</span></span><span class="line"><span class="cl">mysql ip: 127.0.0.1
+</span></span><span class="line"><span class="cl">mysql port: 3306
+</span></span><span class="line"><span class="cl">mysql user: dj
+</span></span><span class="line"><span class="cl">mysql password: 123456
+</span></span><span class="line"><span class="cl">mysql db: awesome
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="结果对象">结果对象</h2>
 <p>前面说过，如果构造函数返回多个值，这些不同类型的值都会存储到<code>dig</code>容器中。参数过多会影响代码的可读性和可维护性，返回值过多同样也是如此。为此，<code>dig</code>提供了返回值对象，返回一个包含多个类型对象的对象。返回的类型，必须内嵌<code>dig.Out</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -866,32 +866,32 @@ mysql db: awesome
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Results</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">Out</span>
-
-  <span class="nx">Result1</span> <span class="o">*</span><span class="nx">Result1</span>
-  <span class="nx">Result2</span> <span class="o">*</span><span class="nx">Result2</span>
-  <span class="nx">Result3</span> <span class="o">*</span><span class="nx">Result3</span>
-  <span class="nx">Result4</span> <span class="o">*</span><span class="nx">Result4</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Results</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">Out</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">Result1</span> <span class="o">*</span><span class="nx">Result1</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Result2</span> <span class="o">*</span><span class="nx">Result2</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Result3</span> <span class="o">*</span><span class="nx">Result3</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Result4</span> <span class="o">*</span><span class="nx">Result4</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">dig</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">()</span> <span class="p">(</span><span class="nx">Results</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="c1">// ...
-</span><span class="c1"></span><span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">dig</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="kd">func</span> <span class="p">()</span> <span class="p">(</span><span class="nx">Results</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们把上面的例子稍作修改。将<code>Config</code>内嵌的<code>dig.In</code>变为<code>dig.Out</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -899,18 +899,18 @@ mysql db: awesome
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">Out</span>
-
-  <span class="nx">Redis</span> <span class="o">*</span><span class="nx">RedisConfig</span>
-  <span class="nx">MySQL</span> <span class="o">*</span><span class="nx">MySQLConfig</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">Out</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">Redis</span> <span class="o">*</span><span class="nx">RedisConfig</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">MySQL</span> <span class="o">*</span><span class="nx">MySQLConfig</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>提供构造函数<code>InitRedisAndMySQLConfig</code>同时创建<code>RedisConfig</code>和<code>MySQLConfig</code>，通过<code>Config</code>返回。这样就不需要将<code>InitRedisConfig</code>和<code>InitMySQLConfig</code>加入<code>dig</code>容器了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -942,42 +942,42 @@ mysql db: awesome
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">InitRedisAndMySQLConfig</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="nx">Config</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">config</span> <span class="nx">Config</span>
-
-  <span class="nx">redis</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">InitRedisConfig</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">err</span>
-  <span class="p">}</span>
-
-  <span class="nx">mysql</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">InitMySQLConfig</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">err</span>
-  <span class="p">}</span>
-
-  <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span> <span class="p">=</span> <span class="nx">redis</span>
-  <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span> <span class="p">=</span> <span class="nx">mysql</span>
-  <span class="k">return</span> <span class="nx">config</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitOption</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConfig</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitRedisAndMySQLConfig</span><span class="p">)</span>
-
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">InitRedisAndMySQLConfig</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">*</span><span class="nx">ini</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="nx">Config</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">config</span> <span class="nx">Config</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">redis</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">InitRedisConfig</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">mysql</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">InitMySQLConfig</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span> <span class="p">=</span> <span class="nx">redis</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">config</span><span class="p">.</span><span class="nx">MySQL</span> <span class="p">=</span> <span class="nx">mysql</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">config</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitOption</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitRedisAndMySQLConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>PrintInfo</code>直接依赖<code>RedisConfig</code>和<code>MySQLConfig</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -992,20 +992,20 @@ mysql db: awesome
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">redis</span> <span class="o">*</span><span class="nx">RedisConfig</span><span class="p">,</span> <span class="nx">mysql</span> <span class="o">*</span><span class="nx">MySQLConfig</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;=========== redis section ===========&#34;</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis ip:&#34;</span><span class="p">,</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis port:&#34;</span><span class="p">,</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">Port</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis db:&#34;</span><span class="p">,</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span>
-
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;=========== mysql section ===========&#34;</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql ip:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql port:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">Port</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql user:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql password:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">Password</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql db:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">Database</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">redis</span> <span class="o">*</span><span class="nx">RedisConfig</span><span class="p">,</span> <span class="nx">mysql</span> <span class="o">*</span><span class="nx">MySQLConfig</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;=========== redis section ===========&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis ip:&#34;</span><span class="p">,</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis port:&#34;</span><span class="p">,</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">Port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;redis db:&#34;</span><span class="p">,</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;=========== mysql section ===========&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql ip:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">IP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql port:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">Port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql user:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql password:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">Password</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;mysql db:&#34;</span><span class="p">,</span> <span class="nx">mysql</span><span class="p">.</span><span class="nx">Database</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以看到<code>InitRedisAndMySQLConfig</code>返回<code>Config</code>类型的对象，该类型中的<code>RedisConfig</code>和<code>MySQLConfig</code>都被添加到了容器中，<code>PrintInfo</code>函数可直接使用。</p>
 <p>运行结果与之前的例子完全一样。</p>
@@ -1013,7 +1013,7 @@ mysql db: awesome
 <p>默认情况下，容器如果找不到对应的依赖，那么相应的对象无法创建成功，调用<code>Invoke</code>时也会返回错误。有些依赖不是必须的，<code>dig</code>也提供了一种方式将依赖设置为可选的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1021,19 +1021,19 @@ mysql db: awesome
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
-
-  <span class="nx">Redis</span> <span class="o">*</span><span class="nx">RedisConfig</span> <span class="s">`optional:&#34;true&#34;`</span>
-  <span class="nx">MySQL</span> <span class="o">*</span><span class="nx">MySQLConfig</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">Redis</span> <span class="o">*</span><span class="nx">RedisConfig</span> <span class="s">`optional:&#34;true&#34;`</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">MySQL</span> <span class="o">*</span><span class="nx">MySQLConfig</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>通过在字段后添加结构标签<code>optional:&quot;true&quot;</code>，我们将<code>RedisConfig</code>这个依赖设置为可选的，容器中<code>RedisConfig</code>对象也不要紧，这时传入的<code>Config</code>中<code>redis</code>为 nil，方法可以正常调用。显然可选依赖只能在参数对象中使用。</p>
 <p>我们直接注释掉<code>InitRedisConfig</code>，然后运行程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1051,34 +1051,34 @@ mysql db: awesome
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// 省略部分代码
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">config</span> <span class="nx">Config</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;no redis config&#34;</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitOption</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConfig</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitMySQLConfig</span><span class="p">)</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// 省略部分代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">config</span> <span class="nx">Config</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;no redis config&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitOption</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">InitMySQLConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go -c=my.ini
-no redis config
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go -c=my.ini
+</span></span><span class="line"><span class="cl">no redis config
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>注意，创建失败和没有提供构造函数是两个概念。如果<code>InitRedisConfig</code>调用失败了，使用<code>Invoke</code>执行<code>PrintInfo</code>还是会报错的。</p>
 <h2 id="命名">命名</h2>
@@ -1086,7 +1086,7 @@ no redis config
 <p>调用容器的<code>Provide</code>方法时，可以为构造函数的返回对象命名，这样同一个类型就可以有多个对象了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1100,24 +1100,24 @@ no redis config
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Name</span> <span class="kt">string</span>
-  <span class="nx">Age</span>  <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewUser</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">age</span> <span class="kt">int</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="o">*</span><span class="nx">User</span><span class="p">{}</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="o">*</span><span class="nx">User</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-<span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">))</span>
-<span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">))</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Age</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewUser</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">age</span> <span class="kt">int</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="o">*</span><span class="nx">User</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="o">*</span><span class="nx">User</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>也可以在结果对象中通过结构标签指定：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1125,18 +1125,18 @@ no redis config
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">UserResults</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">Out</span>
-
-  <span class="nx">User1</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj&#34;`</span>
-  <span class="nx">User2</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj2&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">UserResults</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">Out</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">User1</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj&#34;`</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">User2</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj2&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后在参数对象中通过名字指定使用哪个对象：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1144,18 +1144,18 @@ no redis config
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">UserParams</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
-
-  <span class="nx">User1</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj&#34;`</span>
-  <span class="nx">User2</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj2&#34;`</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">UserParams</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">User1</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj&#34;`</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">User2</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj2&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>完整代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1202,57 +1202,57 @@ no redis config
 </span><span class="lnt">45
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-
-  <span class="s">&#34;go.uber.org/dig&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Name</span> <span class="kt">string</span>
-  <span class="nx">Age</span>  <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewUser</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">age</span> <span class="kt">int</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="o">*</span><span class="nx">User</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="o">*</span><span class="nx">User</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">UserParams</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
-
-  <span class="nx">User1</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj&#34;`</span>
-  <span class="nx">User2</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj2&#34;`</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">params</span> <span class="nx">UserParams</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;User 1 ===========&#34;</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Name:&#34;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">User1</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Age:&#34;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">User1</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
-
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;User 2 ===========&#34;</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Name:&#34;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">User2</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Age:&#34;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">User2</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">))</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">))</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;go.uber.org/dig&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Age</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewUser</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">age</span> <span class="kt">int</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="o">*</span><span class="nx">User</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="o">*</span><span class="nx">User</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">UserParams</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">User1</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj&#34;`</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">User2</span> <span class="o">*</span><span class="nx">User</span> <span class="s">`name:&#34;dj2&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">PrintInfo</span><span class="p">(</span><span class="nx">params</span> <span class="nx">UserParams</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;User 1 ===========&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Name:&#34;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">User1</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Age:&#34;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">User1</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;User 2 ===========&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Name:&#34;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">User2</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Age:&#34;</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">User2</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Name</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">PrintInfo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>程序运行结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1261,33 +1261,33 @@ no redis config
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
-User 1 ===========
-Name: dj
-Age: 18
-User 2 ===========
-Name: dj2
-Age: 18
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go
+</span></span><span class="line"><span class="cl">User 1 ===========
+</span></span><span class="line"><span class="cl">Name: dj
+</span></span><span class="line"><span class="cl">Age: 18
+</span></span><span class="line"><span class="cl">User 2 ===========
+</span></span><span class="line"><span class="cl">Name: dj2
+</span></span><span class="line"><span class="cl">Age: 18
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>需要注意的时候，<code>NewUser</code>返回的是一个函数，由<code>dig</code>在需要的时候调用。</p>
 <h2 id="组">组</h2>
 <p>组可以将相同类型的对象放到一个切片中，可以直接使用这个切片。组的定义与上面名字定义类似。可以通过为<code>Provide</code>提供额外的参数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">))</span>
-<span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">))</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nf">NewUser</span><span class="p">(</span><span class="s">&#34;dj2&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>也可以在结果对象中添加结构标签<code>group:&quot;user&quot;</code>。</p>
 <p>然后我们定义一个参数对象，通过指定同样的结构标签来使用这个切片：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1304,27 +1304,27 @@ Age: 18
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">UserParams</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
-
-  <span class="nx">Users</span> <span class="p">[]</span><span class="nx">User</span> <span class="s">`group:&#34;user&#34;`</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">Info</span><span class="p">(</span><span class="nx">params</span> <span class="nx">UserParams</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">u</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">params</span><span class="p">.</span><span class="nx">Users</span> <span class="p">{</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">Info</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">UserParams</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">Users</span> <span class="p">[]</span><span class="nx">User</span> <span class="s">`group:&#34;user&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Info</span><span class="p">(</span><span class="nx">params</span> <span class="nx">UserParams</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">u</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">params</span><span class="p">.</span><span class="nx">Users</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">Info</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>最后我们通过一个完整的例子演示组的使用，我们将创建一个 HTTP 服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1399,80 +1399,80 @@ Age: 18
 </span><span class="lnt">73
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-  <span class="s">&#34;net/http&#34;</span>
-
-  <span class="s">&#34;go.uber.org/dig&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">Handler</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Greeting</span> <span class="kt">string</span>
-  <span class="nx">Path</span>     <span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">Handler</span><span class="p">)</span> <span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;%s from %s&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Greeting</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Path</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewHello1Handler</span><span class="p">()</span> <span class="nx">HandlerResult</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">HandlerResult</span><span class="p">{</span>
-    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">Handler</span><span class="p">{</span>
-      <span class="nx">Path</span><span class="p">:</span>     <span class="s">&#34;/hello1&#34;</span><span class="p">,</span>
-      <span class="nx">Greeting</span><span class="p">:</span> <span class="s">&#34;welcome&#34;</span><span class="p">,</span>
-    <span class="p">},</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewHello2Handler</span><span class="p">()</span> <span class="nx">HandlerResult</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">HandlerResult</span><span class="p">{</span>
-    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">Handler</span><span class="p">{</span>
-      <span class="nx">Path</span><span class="p">:</span>     <span class="s">&#34;/hello2&#34;</span><span class="p">,</span>
-      <span class="nx">Greeting</span><span class="p">:</span> <span class="s">&#34;😄&#34;</span><span class="p">,</span>
-    <span class="p">},</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">HandlerResult</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">Out</span>
-
-  <span class="nx">Handler</span> <span class="nx">Handler</span> <span class="s">`group:&#34;server&#34;`</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">HandlerParams</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
-
-  <span class="nx">Handlers</span> <span class="p">[]</span><span class="nx">Handler</span> <span class="s">`group:&#34;server&#34;`</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">RunServer</span><span class="p">(</span><span class="nx">params</span> <span class="nx">HandlerParams</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewServeMux</span><span class="p">()</span>
-  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">params</span><span class="p">.</span><span class="nx">Handlers</span> <span class="p">{</span>
-    <span class="nx">mux</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="nx">h</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
-    <span class="nx">Addr</span><span class="p">:</span>    <span class="s">&#34;:8080&#34;</span><span class="p">,</span>
-    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">mux</span><span class="p">,</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">err</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">NewHello1Handler</span><span class="p">)</span>
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">NewHello2Handler</span><span class="p">)</span>
-
-  <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">RunServer</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;go.uber.org/dig&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Handler</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Greeting</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Path</span>     <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">Handler</span><span class="p">)</span> <span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;%s from %s&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Greeting</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewHello1Handler</span><span class="p">()</span> <span class="nx">HandlerResult</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">HandlerResult</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">Handler</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">Path</span><span class="p">:</span>     <span class="s">&#34;/hello1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">Greeting</span><span class="p">:</span> <span class="s">&#34;welcome&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewHello2Handler</span><span class="p">()</span> <span class="nx">HandlerResult</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">HandlerResult</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">Handler</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">Path</span><span class="p">:</span>     <span class="s">&#34;/hello2&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">Greeting</span><span class="p">:</span> <span class="s">&#34;😄&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">HandlerResult</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">Out</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">Handler</span> <span class="nx">Handler</span> <span class="s">`group:&#34;server&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">HandlerParams</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dig</span><span class="p">.</span><span class="nx">In</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">Handlers</span> <span class="p">[]</span><span class="nx">Handler</span> <span class="s">`group:&#34;server&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">RunServer</span><span class="p">(</span><span class="nx">params</span> <span class="nx">HandlerParams</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewServeMux</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">params</span><span class="p">.</span><span class="nx">Handlers</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">mux</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="nx">h</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Addr</span><span class="p">:</span>    <span class="s">&#34;:8080&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">mux</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span> <span class="o">:=</span> <span class="nx">dig</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">NewHello1Handler</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Provide</span><span class="p">(</span><span class="nx">NewHello2Handler</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">container</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="nx">RunServer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们创建了两个处理器，添加到<code>server</code>组中，在<code>RunServer</code>函数中创建 HTTP 服务器，将这些处理器注册到服务器中。</p>
 <p>运行程序，在浏览器中输入<code>localhost:8080/hello1</code>和<code>localhost:8080/hello2</code>看看。关于 Go Web 编程相关的知识，可以看看我写的 Go Web 编程系列文章：</p>
@@ -1604,6 +1604,8 @@ Age: 18
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1643,7 +1645,7 @@ Age: 18
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1707,7 +1709,7 @@ Age: 18
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1730,6 +1732,8 @@ Age: 18
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

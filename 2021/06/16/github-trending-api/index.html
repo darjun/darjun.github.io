@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2021/06/16/github-trending-api/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="背景 上一篇文章Go 每日一库之 bubbletea我们介绍了炫酷的 TUI 程序框架 — bubbletea。最后实现了一个拉取 GitHub Trending 仓库，并显示在控制台的程" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2021/06/16/github-trending-api/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2021-06-16T07:35:23&#43;00:00" />
-<meta property="article:modified_time" content="2021-06-16T07:35:23&#43;00:00" />
+<meta property="article:published_time" content="2021-06-16T07:35:23+00:00" />
+<meta property="article:modified_time" content="2021-06-16T07:35:23+00:00" />
 
 <meta itemprop="name" content="用 Go 实现一个 GitHub Trending API">
-<meta itemprop="description" content="背景 上一篇文章Go 每日一库之 bubbletea我们介绍了炫酷的 TUI 程序框架 — bubbletea。最后实现了一个拉取 GitHub Trending 仓库，并显示在控制台的程"><meta itemprop="datePublished" content="2021-06-16T07:35:23&#43;00:00" />
-<meta itemprop="dateModified" content="2021-06-16T07:35:23&#43;00:00" />
+<meta itemprop="description" content="背景 上一篇文章Go 每日一库之 bubbletea我们介绍了炫酷的 TUI 程序框架 — bubbletea。最后实现了一个拉取 GitHub Trending 仓库，并显示在控制台的程"><meta itemprop="datePublished" content="2021-06-16T07:35:23+00:00" />
+<meta itemprop="dateModified" content="2021-06-16T07:35:23+00:00" />
 <meta itemprop="wordCount" content="3478">
 <meta itemprop="keywords" content="Go," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="用 Go 实现一个 GitHub Trending API"/>
@@ -424,25 +424,25 @@ if (!doNotTrack) {
 <p>在 GitHub 上创建仓库<code>ghtrending</code>，clone 到本地，执行<code>go mod init</code>初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go mod init github.com/darjun/ghtrending
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go mod init github.com/darjun/ghtrending
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后执行<code>go get</code>下载<code>goquery</code>库：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/PuerkitoBio/goquery
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go get github.com/PuerkitoBio/goquery
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>根据仓库和开发者的信息定义两个结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -462,25 +462,25 @@ if (!doNotTrack) {
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Repository</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Author</span>  <span class="kt">string</span>
-  <span class="nx">Name</span>    <span class="kt">string</span>
-  <span class="nx">Link</span>    <span class="kt">string</span>
-  <span class="nx">Desc</span>    <span class="kt">string</span>
-  <span class="nx">Lang</span>    <span class="kt">string</span>
-  <span class="nx">Stars</span>   <span class="kt">int</span>
-  <span class="nx">Forks</span>   <span class="kt">int</span>
-  <span class="nx">Add</span>     <span class="kt">int</span>
-  <span class="nx">BuiltBy</span> <span class="p">[]</span><span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">Developer</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Name</span>        <span class="kt">string</span>
-  <span class="nx">Username</span>    <span class="kt">string</span>
-  <span class="nx">PopularRepo</span> <span class="kt">string</span>
-  <span class="nx">Desc</span>        <span class="kt">string</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Repository</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Author</span>  <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span>    <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Link</span>    <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Desc</span>    <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Lang</span>    <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Stars</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Forks</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Add</span>     <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">BuiltBy</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Developer</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span>        <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Username</span>    <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">PopularRepo</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Desc</span>        <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="开爬">开爬</h2>
 <p>要想使用<code>goquery</code>获取相应的信息，我们首先要知道，对应的网页结构。按 F12 打开 chrome 开发者工具，选择<code>Elements</code>页签，即可看到网页结构：</p>
@@ -492,31 +492,31 @@ if (!doNotTrack) {
 <p>可以使用标准库<code>net/http</code>获取整个网页的内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;https://github.com/trending&#34;</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;https://github.com/trending&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后从<code>resp</code>对象中创建<code>goquery</code>文档结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">doc</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">doc</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>有了文档结构对象，我们可以调用其<code>Find()</code>方法，传入选择器，这里我选择<code>.Box .Box-row</code>。<code>.Box</code>是整个列表<code>div</code>的 class，<code>.Box-row</code>是仓库条目的 class。这样的选择更精准。<code>Find()</code>方法返回一个<code>*goquery.Selection</code>对象，我们可以调用其<code>Each()</code>方法对每个条目进行解析。<code>Each()</code>接收一个<code>func(int, *goquery.Selection)</code>类型的函数，第二个参数即为每个仓库条目在 goquery 中的结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">doc</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;.Box .Box-row&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">s</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">doc</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;.Box .Box-row&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">s</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>接下来我们看看如何提取各个部分。在<code>Elements</code>窗口中移动，可以很直观的看到每个元素对应页面的哪个部分：</p>
 <p><img src="/img/in-post/opensource/trending6.gif#center" alt=""></p>
@@ -525,7 +525,7 @@ if (!doNotTrack) {
 <p>它被包在<code>article</code>元素下的<code>h1</code>元素下的<code>a</code>元素内，作者名在<code>span</code>元素内，仓库名直接在<code>a</code>下，另外仓库的 URL 链接是<code>a</code>元素的<code>href</code>属性。我们来获取它们：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -534,28 +534,28 @@ if (!doNotTrack) {
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">titleSel</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;h1 a&#34;</span><span class="p">)</span>
-<span class="nx">repo</span><span class="p">.</span><span class="nx">Author</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Trim</span><span class="p">(</span><span class="nx">titleSel</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;span&#34;</span><span class="p">).</span><span class="nf">Text</span><span class="p">(),</span> <span class="s">&#34;/\n &#34;</span><span class="p">)</span>
-<span class="nx">repo</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">titleSel</span><span class="p">.</span><span class="nf">Contents</span><span class="p">().</span><span class="nf">Last</span><span class="p">().</span><span class="nf">Text</span><span class="p">())</span>
-<span class="nx">relativeLink</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">titleSel</span><span class="p">.</span><span class="nf">Attr</span><span class="p">(</span><span class="s">&#34;href&#34;</span><span class="p">)</span>
-<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">relativeLink</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
-  <span class="nx">repo</span><span class="p">.</span><span class="nx">Link</span> <span class="p">=</span> <span class="s">&#34;https://github.com&#34;</span> <span class="o">+</span> <span class="nx">relativeLink</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">titleSel</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;h1 a&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">repo</span><span class="p">.</span><span class="nx">Author</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Trim</span><span class="p">(</span><span class="nx">titleSel</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;span&#34;</span><span class="p">).</span><span class="nf">Text</span><span class="p">(),</span> <span class="s">&#34;/\n &#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">repo</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">titleSel</span><span class="p">.</span><span class="nf">Contents</span><span class="p">().</span><span class="nf">Last</span><span class="p">().</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="nx">relativeLink</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">titleSel</span><span class="p">.</span><span class="nf">Attr</span><span class="p">(</span><span class="s">&#34;href&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">relativeLink</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">repo</span><span class="p">.</span><span class="nx">Link</span> <span class="p">=</span> <span class="s">&#34;https://github.com&#34;</span> <span class="o">+</span> <span class="nx">relativeLink</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>仓库描述在<code>article</code>元素内的<code>p</code>元素中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">repo</span><span class="p">.</span><span class="nx">Desc</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;p&#34;</span><span class="p">).</span><span class="nf">Text</span><span class="p">())</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">repo</span><span class="p">.</span><span class="nx">Desc</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;p&#34;</span><span class="p">).</span><span class="nf">Text</span><span class="p">())</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>编程语言，星数，fork 数，贡献者（<code>BuiltBy</code>）和新增星数都在<code>article</code>元素的最后一个<code>div</code>中。编程语言、<code>BuiltBy</code>和新增星数在<code>span</code>元素内，星数和 fork 数在<code>a</code>元素内。如果编程语言未设置，则少一个<code>span</code>元素：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -584,39 +584,39 @@ if (!doNotTrack) {
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">langIdx</span><span class="p">,</span> <span class="nx">addIdx</span><span class="p">,</span> <span class="nx">builtByIdx</span> <span class="kt">int</span>
-<span class="nx">spanSel</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div&gt;span&#34;</span><span class="p">)</span>
-<span class="k">if</span> <span class="nx">spanSel</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">{</span>
-  <span class="c1">// language not exist
-</span><span class="c1"></span>  <span class="nx">langIdx</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
-  <span class="nx">addIdx</span> <span class="p">=</span> <span class="mi">1</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-  <span class="nx">builtByIdx</span> <span class="p">=</span> <span class="mi">1</span>
-  <span class="nx">addIdx</span> <span class="p">=</span> <span class="mi">2</span>
-<span class="p">}</span>
-
-<span class="c1">// language
-</span><span class="c1"></span><span class="k">if</span> <span class="nx">langIdx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">{</span>
-  <span class="nx">repo</span><span class="p">.</span><span class="nx">Lang</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">spanSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="nx">langIdx</span><span class="p">).</span><span class="nf">Text</span><span class="p">())</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-  <span class="nx">repo</span><span class="p">.</span><span class="nx">Lang</span> <span class="p">=</span> <span class="s">&#34;unknown&#34;</span>
-<span class="p">}</span>
-
-<span class="c1">// add
-</span><span class="c1"></span><span class="nx">addParts</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">SplitN</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">spanSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="nx">addIdx</span><span class="p">).</span><span class="nf">Text</span><span class="p">()),</span> <span class="s">&#34; &#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="nx">repo</span><span class="p">.</span><span class="nx">Add</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">addParts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-<span class="c1">// builtby
-</span><span class="c1"></span><span class="nx">spanSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="nx">builtByIdx</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;a&gt;img&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">img</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">src</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">img</span><span class="p">.</span><span class="nf">Attr</span><span class="p">(</span><span class="s">&#34;src&#34;</span><span class="p">)</span>
-  <span class="nx">repo</span><span class="p">.</span><span class="nx">BuiltBy</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">repo</span><span class="p">.</span><span class="nx">BuiltBy</span><span class="p">,</span> <span class="nx">src</span><span class="p">)</span>
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">langIdx</span><span class="p">,</span> <span class="nx">addIdx</span><span class="p">,</span> <span class="nx">builtByIdx</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="nx">spanSel</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div&gt;span&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">spanSel</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// language not exist
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">langIdx</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">addIdx</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">builtByIdx</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">addIdx</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// language
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">if</span> <span class="nx">langIdx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">repo</span><span class="p">.</span><span class="nx">Lang</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">spanSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="nx">langIdx</span><span class="p">).</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">repo</span><span class="p">.</span><span class="nx">Lang</span> <span class="p">=</span> <span class="s">&#34;unknown&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// add
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">addParts</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">SplitN</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">spanSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="nx">addIdx</span><span class="p">).</span><span class="nf">Text</span><span class="p">()),</span> <span class="s">&#34; &#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">repo</span><span class="p">.</span><span class="nx">Add</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">addParts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// builtby
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">spanSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="nx">builtByIdx</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;a&gt;img&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">img</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">src</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">img</span><span class="p">.</span><span class="nf">Attr</span><span class="p">(</span><span class="s">&#34;src&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">repo</span><span class="p">.</span><span class="nx">BuiltBy</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">repo</span><span class="p">.</span><span class="nx">BuiltBy</span><span class="p">,</span> <span class="nx">src</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后是星数和 fork 数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -625,36 +625,36 @@ if (!doNotTrack) {
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">aSel</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div&gt;a&#34;</span><span class="p">)</span>
-<span class="nx">starStr</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">aSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">).</span><span class="nf">Text</span><span class="p">())</span>
-<span class="nx">star</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">starStr</span><span class="p">,</span> <span class="s">&#34;,&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-<span class="nx">repo</span><span class="p">.</span><span class="nx">Stars</span> <span class="p">=</span> <span class="nx">star</span>
-<span class="nx">forkStr</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">aSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nf">Text</span><span class="p">())</span>
-<span class="nx">fork</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">forkStr</span><span class="p">,</span> <span class="s">&#34;,&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-<span class="nx">repo</span><span class="p">.</span><span class="nx">Forks</span> <span class="p">=</span> <span class="nx">fork</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">aSel</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div&gt;a&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">starStr</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">aSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">).</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="nx">star</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">starStr</span><span class="p">,</span> <span class="s">&#34;,&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">repo</span><span class="p">.</span><span class="nx">Stars</span> <span class="p">=</span> <span class="nx">star</span>
+</span></span><span class="line"><span class="cl"><span class="nx">forkStr</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">TrimSpace</span><span class="p">(</span><span class="nx">aSel</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="nx">fork</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">forkStr</span><span class="p">,</span> <span class="s">&#34;,&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">repo</span><span class="p">.</span><span class="nx">Forks</span> <span class="p">=</span> <span class="nx">fork</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Developers 也是类似的做法。这里就不赘述了。使用<code>goquery</code>有一点需要注意，因为网页层级结构比较复杂，<strong>我们使用选择器的时候尽量多限定一些元素、class，以确保找到的确实是我们想要的那个结构</strong>。另外网页上获取的内容有很多空格，需要使用<code>strings.TrimSpace()</code>移除。</p>
 <h2 id="接口设计">接口设计</h2>
 <p>基本工作完成之后，我们来看看如何设计接口。我想提供一个类型和一个创建该类型对象的方法，然后调用对象的<code>FetchRepos()</code>和<code>FetchDevelopers()</code>方法就可以获取仓库和开发者列表。但是我不希望用户了解这个类型的细节。所以我定义了一个接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Fetcher</span> <span class="kd">interface</span> <span class="p">{</span>
-  <span class="nf">FetchRepos</span><span class="p">()</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Repository</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-  <span class="nf">FetchDevelopers</span><span class="p">()</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Developer</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Fetcher</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">FetchRepos</span><span class="p">()</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Repository</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">FetchDevelopers</span><span class="p">()</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Developer</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们定义一个类型来实现这个接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -667,24 +667,24 @@ if (!doNotTrack) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">trending</span> <span class="kd">struct</span><span class="p">{}</span>
-
-<span class="kd">func</span> <span class="nf">New</span><span class="p">()</span> <span class="nx">Fetcher</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">trending</span><span class="p">{}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="nx">trending</span><span class="p">)</span> <span class="nf">FetchRepos</span><span class="p">()</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Repository</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="nx">trending</span><span class="p">)</span> <span class="nf">FetchDevelopers</span><span class="p">()</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Developer</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">trending</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">New</span><span class="p">()</span> <span class="nx">Fetcher</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">trending</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="nx">trending</span><span class="p">)</span> <span class="nf">FetchRepos</span><span class="p">()</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Repository</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="nx">trending</span><span class="p">)</span> <span class="nf">FetchDevelopers</span><span class="p">()</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Developer</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们上面介绍的爬取逻辑就是放在<code>FetchRepos()</code>和<code>FetchDevelopers()</code>方法中。</p>
 <p>然后，我们就可以在其他地方使用了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -692,19 +692,19 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">import</span> <span class="s">&#34;github.com/darjun/ghtrending&#34;</span>
-
-<span class="nx">t</span> <span class="o">:=</span> <span class="nx">ghtrending</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
-<span class="nx">repos</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchRepos</span><span class="p">()</span>
-
-<span class="nx">developers</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchDevelopers</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;github.com/darjun/ghtrending&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">ghtrending</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nx">repos</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchRepos</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">developers</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchDevelopers</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="选项">选项</h3>
 <p>前面也说过，GitHub Trending 支持选定本地语言、编程语言和时间范围等。我们希望把这些设置作为选项，使用 Go 语言常用的选项模式/函数式选项（functional option)。先定义选项结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -714,20 +714,20 @@ if (!doNotTrack) {
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">options</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">GitHubURL</span>  <span class="kt">string</span>
-  <span class="nx">SpokenLang</span> <span class="kt">string</span>
-  <span class="nx">Language</span>   <span class="kt">string</span> <span class="c1">// programming language
-</span><span class="c1"></span>  <span class="nx">DateRange</span>  <span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">option</span> <span class="kd">func</span><span class="p">(</span><span class="o">*</span><span class="nx">options</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">options</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">GitHubURL</span>  <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">SpokenLang</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Language</span>   <span class="kt">string</span> <span class="c1">// programming language
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">DateRange</span>  <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">option</span> <span class="kd">func</span><span class="p">(</span><span class="o">*</span><span class="nx">options</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后定义 3 个<code>DataRange</code>选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -746,63 +746,63 @@ if (!doNotTrack) {
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">WithDaily</span><span class="p">()</span> <span class="nx">option</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">opt</span><span class="p">.</span><span class="nx">DateRange</span> <span class="p">=</span> <span class="s">&#34;daily&#34;</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">WithWeekly</span><span class="p">()</span> <span class="nx">option</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">opt</span><span class="p">.</span><span class="nx">DateRange</span> <span class="p">=</span> <span class="s">&#34;weekly&#34;</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">WithMonthly</span><span class="p">()</span> <span class="nx">option</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">opt</span><span class="p">.</span><span class="nx">DateRange</span> <span class="p">=</span> <span class="s">&#34;monthly&#34;</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WithDaily</span><span class="p">()</span> <span class="nx">option</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opt</span><span class="p">.</span><span class="nx">DateRange</span> <span class="p">=</span> <span class="s">&#34;daily&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WithWeekly</span><span class="p">()</span> <span class="nx">option</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opt</span><span class="p">.</span><span class="nx">DateRange</span> <span class="p">=</span> <span class="s">&#34;weekly&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WithMonthly</span><span class="p">()</span> <span class="nx">option</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opt</span><span class="p">.</span><span class="nx">DateRange</span> <span class="p">=</span> <span class="s">&#34;monthly&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>以后可能还有其他范围的时间，留一个通用一点的选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">WithDateRange</span><span class="p">(</span><span class="nx">dr</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">opt</span><span class="p">.</span><span class="nx">DateRange</span> <span class="p">=</span> <span class="nx">dr</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WithDateRange</span><span class="p">(</span><span class="nx">dr</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opt</span><span class="p">.</span><span class="nx">DateRange</span> <span class="p">=</span> <span class="nx">dr</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>编程语言选项：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">WithLanguage</span><span class="p">(</span><span class="nx">lang</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">opt</span><span class="p">.</span><span class="nx">Language</span> <span class="p">=</span> <span class="nx">lang</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WithLanguage</span><span class="p">(</span><span class="nx">lang</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opt</span><span class="p">.</span><span class="nx">Language</span> <span class="p">=</span> <span class="nx">lang</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>本地语言选项，国家和代码分开，例如 Chinese 的代码为 cn：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -815,23 +815,23 @@ if (!doNotTrack) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">WithSpokenLanguageCode</span><span class="p">(</span><span class="nx">code</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">opt</span><span class="p">.</span><span class="nx">SpokenLang</span> <span class="p">=</span> <span class="nx">code</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">WithSpokenLanguageFull</span><span class="p">(</span><span class="nx">lang</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">opt</span><span class="p">.</span><span class="nx">SpokenLang</span> <span class="p">=</span> <span class="nx">spokenLangCode</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WithSpokenLanguageCode</span><span class="p">(</span><span class="nx">code</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opt</span><span class="p">.</span><span class="nx">SpokenLang</span> <span class="p">=</span> <span class="nx">code</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WithSpokenLanguageFull</span><span class="p">(</span><span class="nx">lang</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opt</span><span class="p">.</span><span class="nx">SpokenLang</span> <span class="p">=</span> <span class="nx">spokenLangCode</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>spokenLangCode</code>是 GitHub 支持的国家和代码的对照，我是从 GitHub Trending 页面爬取的。大概是这样的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -847,43 +847,43 @@ if (!doNotTrack) {
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="p">(</span>
-  <span class="nx">spokenLangCode</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">spokenLangCode</span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span>
-    <span class="s">&#34;abkhazian&#34;</span><span class="p">:</span>             <span class="s">&#34;ab&#34;</span><span class="p">,</span>
-    <span class="s">&#34;afar&#34;</span><span class="p">:</span>                  <span class="s">&#34;aa&#34;</span><span class="p">,</span>
-    <span class="s">&#34;afrikaans&#34;</span><span class="p">:</span>             <span class="s">&#34;af&#34;</span><span class="p">,</span>
-    <span class="s">&#34;akan&#34;</span><span class="p">:</span>                  <span class="s">&#34;ak&#34;</span><span class="p">,</span>
-    <span class="s">&#34;albanian&#34;</span><span class="p">:</span>              <span class="s">&#34;sq&#34;</span><span class="p">,</span>
-    <span class="c1">// ...
-</span><span class="c1"></span>  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">spokenLangCode</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">spokenLangCode</span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;abkhazian&#34;</span><span class="p">:</span>             <span class="s">&#34;ab&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;afar&#34;</span><span class="p">:</span>                  <span class="s">&#34;aa&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;afrikaans&#34;</span><span class="p">:</span>             <span class="s">&#34;af&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;akan&#34;</span><span class="p">:</span>                  <span class="s">&#34;ak&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;albanian&#34;</span><span class="p">:</span>              <span class="s">&#34;sq&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>最后我希望 GitHub 的 URL 也可以设置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">WithURL</span><span class="p">(</span><span class="nx">url</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">opt</span><span class="p">.</span><span class="nx">GitHubURL</span> <span class="p">=</span> <span class="nx">url</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WithURL</span><span class="p">(</span><span class="nx">url</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">option</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">opt</span> <span class="o">*</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opt</span><span class="p">.</span><span class="nx">GitHubURL</span> <span class="p">=</span> <span class="nx">url</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们在<code>trending</code>结构中增加<code>options</code>字段，然后改造一下<code>New()</code>方法，让它接受可变参数的选项。这样我们只需要设置我们想要设置的，其他的选项都可以采用默认值，例如<code>GitHubURL</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -905,57 +905,57 @@ if (!doNotTrack) {
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">trending</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">opts</span> <span class="nx">options</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">loadOptions</span><span class="p">(</span><span class="nx">opts</span> <span class="o">...</span><span class="nx">option</span><span class="p">)</span> <span class="nx">options</span> <span class="p">{</span>
-  <span class="nx">o</span> <span class="o">:=</span> <span class="nx">options</span><span class="p">{</span>
-    <span class="nx">GitHubURL</span><span class="p">:</span> <span class="s">&#34;http://github.com&#34;</span><span class="p">,</span>
-  <span class="p">}</span>
-  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">option</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">opts</span> <span class="p">{</span>
-    <span class="nf">option</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="nx">o</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">New</span><span class="p">(</span><span class="nx">opts</span> <span class="o">...</span><span class="nx">option</span><span class="p">)</span> <span class="nx">Fetcher</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">trending</span><span class="p">{</span>
-    <span class="nx">opts</span><span class="p">:</span> <span class="nf">loadOptions</span><span class="p">(</span><span class="nx">opts</span><span class="o">...</span><span class="p">),</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">trending</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">opts</span> <span class="nx">options</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">loadOptions</span><span class="p">(</span><span class="nx">opts</span> <span class="o">...</span><span class="nx">option</span><span class="p">)</span> <span class="nx">options</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">o</span> <span class="o">:=</span> <span class="nx">options</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">GitHubURL</span><span class="p">:</span> <span class="s">&#34;http://github.com&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">option</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">opts</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">option</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">o</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">New</span><span class="p">(</span><span class="nx">opts</span> <span class="o">...</span><span class="nx">option</span><span class="p">)</span> <span class="nx">Fetcher</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">trending</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opts</span><span class="p">:</span> <span class="nf">loadOptions</span><span class="p">(</span><span class="nx">opts</span><span class="o">...</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>最后在<code>FetchRepos()</code>方法和<code>FetchDevelopers()</code>方法中根据选项拼接 URL：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s/trending/%s?spoken_language_code=%s&amp;since=%s&#34;</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">GitHubURL</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">Language</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">SpokenLang</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">DateRange</span><span class="p">)</span>
-
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s/trending/developers?lanugage=%s&amp;since=%s&#34;</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">GitHubURL</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">Language</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">DateRange</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s/trending/%s?spoken_language_code=%s&amp;since=%s&#34;</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">GitHubURL</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">Language</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">SpokenLang</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">DateRange</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s/trending/developers?lanugage=%s&amp;since=%s&#34;</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">GitHubURL</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">Language</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">DateRange</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>加入选项之后，如果我们要获取一周内的，Go 语言 Trending 列表，可以这样：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">ghtrending</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">ghtrending</span><span class="p">.</span><span class="nf">WithWeekly</span><span class="p">(),</span> <span class="nx">ghtreading</span><span class="p">.</span><span class="nf">WithLanguage</span><span class="p">(</span><span class="s">&#34;Go&#34;</span><span class="p">))</span>
-<span class="nx">repos</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchRepos</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">ghtrending</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">ghtrending</span><span class="p">.</span><span class="nf">WithWeekly</span><span class="p">(),</span> <span class="nx">ghtreading</span><span class="p">.</span><span class="nf">WithLanguage</span><span class="p">(</span><span class="s">&#34;Go&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">repos</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchRepos</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="简单方法">简单方法</h3>
 <p>另外，我们还提供一个不需要创建<code>trending</code>对象，直接调用接口获取仓库和开发者列表的方法（懒人专用）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -964,33 +964,33 @@ if (!doNotTrack) {
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">TrendingRepositories</span><span class="p">(</span><span class="nx">opts</span> <span class="o">...</span><span class="nx">option</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Repository</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">opts</span><span class="o">...</span><span class="p">).</span><span class="nf">FetchRepos</span><span class="p">()</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">TrendingDevelopers</span><span class="p">(</span><span class="nx">opts</span> <span class="o">...</span><span class="nx">option</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Developer</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">opts</span><span class="o">...</span><span class="p">).</span><span class="nf">FetchDevelopers</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">TrendingRepositories</span><span class="p">(</span><span class="nx">opts</span> <span class="o">...</span><span class="nx">option</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Repository</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">opts</span><span class="o">...</span><span class="p">).</span><span class="nf">FetchRepos</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">TrendingDevelopers</span><span class="p">(</span><span class="nx">opts</span> <span class="o">...</span><span class="nx">option</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">Developer</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">opts</span><span class="o">...</span><span class="p">).</span><span class="nf">FetchDevelopers</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="使用效果">使用效果</h3>
 <p>新建目录并初始化 Go Modules：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir -p demo/ghtrending <span class="p">&amp;&amp;</span> <span class="k">cd</span> demo/ghtrending
-$ go mod init github/darjun/demo/ghtrending
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ mkdir -p demo/ghtrending <span class="p">&amp;&amp;</span> <span class="k">cd</span> demo/ghtrending
+</span></span><span class="line"><span class="cl">$ go mod init github/darjun/demo/ghtrending
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>下载包：</p>
 <p><img src="/img/in-post/opensource/trending9.png#center" alt=""></p>
 <p>编写代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1020,35 +1020,35 @@ $ go mod init github/darjun/demo/ghtrending
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-
-  <span class="s">&#34;github.com/darjun/ghtrending&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">t</span> <span class="o">:=</span> <span class="nx">ghtrending</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
-
-  <span class="nx">repos</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchRepos</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d repos\n&#34;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">repos</span><span class="p">))</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;first repo:%#v\n&#34;</span><span class="p">,</span> <span class="nx">repos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-  <span class="nx">developers</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchDevelopers</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d developers\n&#34;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">developers</span><span class="p">))</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;first developer:%#v\n&#34;</span><span class="p">,</span> <span class="nx">developers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/darjun/ghtrending&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">t</span> <span class="o">:=</span> <span class="nx">ghtrending</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">repos</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchRepos</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d repos\n&#34;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">repos</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;first repo:%#v\n&#34;</span><span class="p">,</span> <span class="nx">repos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">developers</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">FetchDevelopers</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d developers\n&#34;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">developers</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;first developer:%#v\n&#34;</span><span class="p">,</span> <span class="nx">developers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>运行效果：</p>
 <p><img src="/img/in-post/opensource/trending10.png#center" alt=""></p>
@@ -1168,6 +1168,8 @@ $ go mod init github/darjun/demo/ghtrending
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1207,7 +1209,7 @@ $ go mod init github/darjun/demo/ghtrending
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1271,7 +1273,7 @@ $ go mod init github/darjun/demo/ghtrending
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1294,6 +1296,8 @@ $ go mod init github/darjun/demo/ghtrending
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

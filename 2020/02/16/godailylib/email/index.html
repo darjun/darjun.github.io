@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/02/16/godailylib/email/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 程序中时常有发送邮件的需求。有异常情况了需要通知管理员和负责人，用户下单后可能需要通知订单信息，电商平台、中国移动和联通都有每月账单，这" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2020/02/16/godailylib/email/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2020-02-16T07:56:23&#43;00:00" />
-<meta property="article:modified_time" content="2020-02-16T07:56:23&#43;00:00" />
+<meta property="article:published_time" content="2020-02-16T07:56:23+00:00" />
+<meta property="article:modified_time" content="2020-02-16T07:56:23+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 email">
-<meta itemprop="description" content="简介 程序中时常有发送邮件的需求。有异常情况了需要通知管理员和负责人，用户下单后可能需要通知订单信息，电商平台、中国移动和联通都有每月账单，这"><meta itemprop="datePublished" content="2020-02-16T07:56:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-02-16T07:56:23&#43;00:00" />
+<meta itemprop="description" content="简介 程序中时常有发送邮件的需求。有异常情况了需要通知管理员和负责人，用户下单后可能需要通知订单信息，电商平台、中国移动和联通都有每月账单，这"><meta itemprop="datePublished" content="2020-02-16T07:56:23+00:00" />
+<meta itemprop="dateModified" content="2020-02-16T07:56:23+00:00" />
 <meta itemprop="wordCount" content="1990">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 email"/>
@@ -402,11 +402,11 @@ if (!doNotTrack) {
 <p>先安装库，这个自不必说：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/jordan-wright/email
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go get github.com/jordan-wright/email
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们需要额外一些工作。我们知道邮箱使用<code>SMTP/POP3/IMAP</code>等协议从邮件服务器上拉取邮件。邮件并不是直接发送到邮箱的，而是邮箱请求拉取的。
 所以，我们需要配置<code>SMTP/POP3/IMAP</code>服务器。从头搭建固然可行，而且也有现成的开源库，但是比较麻烦。现在一般的邮箱服务商都开放了<code>SMTP/POP3/IMAP</code>服务器。
@@ -419,7 +419,7 @@ if (!doNotTrack) {
 <p>然后就可以编码了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -441,27 +441,27 @@ if (!doNotTrack) {
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net/smtp&#34;</span>
-
-  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;xxx@126.com&gt;&#34;</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Awesome web&#34;</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Text Body is, of course, supported!&#34;</span><span class="p">)</span>
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span> <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;xxx@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;yyy&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">))</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/smtp&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;xxx@126.com&gt;&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Awesome web&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Text Body is, of course, supported!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span> <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;xxx@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;yyy&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>这里为了我的信息安全，我把真实信息都隐藏了</strong>。代码中<code>xxx</code>替换成你的邮箱账号，<code>yyy</code>替换成上面设置的密码。</p>
 <p>代码步骤比较简单清晰：</p>
@@ -478,7 +478,7 @@ if (!doNotTrack) {
 <code>email</code>我们也可以设置这两个参数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -502,29 +502,29 @@ if (!doNotTrack) {
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net/smtp&#34;</span>
-
-  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;xxx@126.com&gt;&#34;</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Cc</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;test1@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;test2@126.com&#34;</span><span class="p">}</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Bcc</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;secret@126.com&#34;</span><span class="p">}</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Awesome web&#34;</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Text Body is, of course, supported!&#34;</span><span class="p">)</span>
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span> <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;xxx@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;yyy&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">))</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/smtp&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;xxx@126.com&gt;&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Cc</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;test1@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;test2@126.com&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Bcc</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;secret@126.com&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Awesome web&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Text Body is, of course, supported!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span> <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;xxx@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;yyy&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>还是一样的，抄送的邮箱自己替换<code>test1/test2/secret</code>用自己的。</p>
 <p>运行程序将会向我的 QQ 邮件发送一封邮件，同时抄送一封到我另一个 126 邮箱：</p>
@@ -534,7 +534,7 @@ if (!doNotTrack) {
 <p>发送纯文本，邮件不太美观。<code>email</code>支持发送 HTML 格式的内容。与发送纯文本类似，直接设置对象的<code>HTML</code>字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -568,39 +568,39 @@ if (!doNotTrack) {
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net/smtp&#34;</span>
-
-  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;xxx@126.com&gt;&#34;</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Cc</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;xxx@126.com&#34;</span><span class="p">}</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Go 每日一库&#34;</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">HTML</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`
-</span><span class="s">  &lt;ul&gt;
-</span><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/10/godailylib/flag/&#34;&gt;Go 每日一库之 flag&lt;/a&gt;&lt;/li&gt;
-</span><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/10/godailylib/go-flags/&#34;&gt;Go 每日一库之 go-flags&lt;/a&gt;&lt;/li&gt;
-</span><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/14/godailylib/go-homedir/&#34;&gt;Go 每日一库之 go-homedir&lt;/a&gt;&lt;/li&gt;
-</span><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/15/godailylib/go-ini/&#34;&gt;Go 每日一库之 go-ini&lt;/a&gt;&lt;/li&gt;
-</span><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/17/godailylib/cobra/&#34;&gt;Go 每日一库之 cobra&lt;/a&gt;&lt;/li&gt;
-</span><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/18/godailylib/viper/&#34;&gt;Go 每日一库之 viper&lt;/a&gt;&lt;/li&gt;
-</span><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/19/godailylib/fsnotify/&#34;&gt;Go 每日一库之 fsnotify&lt;/a&gt;&lt;/li&gt;
-</span><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/20/godailylib/cast/&#34;&gt;Go 每日一库之 cast&lt;/a&gt;&lt;/li&gt;
-</span><span class="s">&lt;/ul&gt;
-</span><span class="s">  `</span><span class="p">)</span>
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span> <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;xxx@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;yyy&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">))</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;failed to send email:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/smtp&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;xxx@126.com&gt;&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Cc</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;xxx@126.com&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Go 每日一库&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">HTML</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`
+</span></span></span><span class="line"><span class="cl"><span class="s">  &lt;ul&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/10/godailylib/flag/&#34;&gt;Go 每日一库之 flag&lt;/a&gt;&lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/10/godailylib/go-flags/&#34;&gt;Go 每日一库之 go-flags&lt;/a&gt;&lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/14/godailylib/go-homedir/&#34;&gt;Go 每日一库之 go-homedir&lt;/a&gt;&lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/15/godailylib/go-ini/&#34;&gt;Go 每日一库之 go-ini&lt;/a&gt;&lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/17/godailylib/cobra/&#34;&gt;Go 每日一库之 cobra&lt;/a&gt;&lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/18/godailylib/viper/&#34;&gt;Go 每日一库之 viper&lt;/a&gt;&lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/19/godailylib/fsnotify/&#34;&gt;Go 每日一库之 fsnotify&lt;/a&gt;&lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;li&gt;&lt;a &#34;https://darjun.github.io/2020/01/20/godailylib/cast/&#34;&gt;Go 每日一库之 cast&lt;/a&gt;&lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">&lt;/ul&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">  `</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span> <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;xxx@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;yyy&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;failed to send email:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>发送结果：</p>
 <p><img src="/img/in-post/godailylib/email4.png#center" alt=""></p>
@@ -609,7 +609,7 @@ if (!doNotTrack) {
 <p>添加附件也很容易，直接调用<code>AttachFile</code>即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -632,28 +632,28 @@ if (!doNotTrack) {
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net/smtp&#34;</span>
-
-  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;xxx@126.com&gt;&#34;</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Go 每日一库&#34;</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;请看附件&#34;</span><span class="p">)</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nf">AttachFile</span><span class="p">(</span><span class="s">&#34;test.txt&#34;</span><span class="p">)</span>
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span> <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;xxx@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;yyy&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">))</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;failed to send email:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/smtp&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;xxx@126.com&gt;&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Go 每日一库&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;请看附件&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">e</span><span class="p">.</span><span class="nf">AttachFile</span><span class="p">(</span><span class="s">&#34;test.txt&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span> <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;xxx@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;yyy&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;failed to send email:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>收到的邮件：</p>
 <p><img src="/img/in-post/godailylib/email5.png#center" alt=""></p>
@@ -661,7 +661,7 @@ if (!doNotTrack) {
 <p>实际上每次调用<code>Send</code>时都会和 SMTP 服务器建立一次连接，如果发送邮件很多很频繁的话可能会有性能问题。<code>email</code>提供了连接池，可以复用网络连接：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -714,58 +714,58 @@ if (!doNotTrack) {
 </span><span class="lnt">51
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net/smtp&#34;</span>
-  <span class="s">&#34;os&#34;</span>
-  <span class="s">&#34;sync&#34;</span>
-  <span class="s">&#34;time&#34;</span>
-
-  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">email</span><span class="p">.</span><span class="nx">Email</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-  <span class="nx">p</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewPool</span><span class="p">(</span>
-    <span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span>
-    <span class="mi">4</span><span class="p">,</span>
-    <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;leedarjun@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;358942617ldj&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">),</span>
-  <span class="p">)</span>
-
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;failed to create pool:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
-  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-      <span class="k">for</span> <span class="nx">e</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">ch</span> <span class="p">{</span>
-        <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-          <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;email:%v sent error:%v\n&#34;</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}()</span>
-  <span class="p">}</span>
-
-  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
-    <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;leedarjun@126.com&gt;&#34;</span>
-    <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
-    <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Awesome web&#34;</span>
-    <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Awesome Web %d&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-    <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">e</span>
-  <span class="p">}</span>
-
-  <span class="nb">close</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
-  <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/smtp&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;sync&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/jordan-wright/email&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">email</span><span class="p">.</span><span class="nx">Email</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewPool</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;smtp.126.com:25&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mi">4</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">smtp</span><span class="p">.</span><span class="nf">PlainAuth</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;leedarjun@126.com&#34;</span><span class="p">,</span> <span class="s">&#34;358942617ldj&#34;</span><span class="p">,</span> <span class="s">&#34;smtp.126.com&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;failed to create pool:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="nx">e</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">ch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;email:%v sent error:%v\n&#34;</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">e</span> <span class="o">:=</span> <span class="nx">email</span><span class="p">.</span><span class="nf">NewEmail</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">e</span><span class="p">.</span><span class="nx">From</span> <span class="p">=</span> <span class="s">&#34;dj &lt;leedarjun@126.com&gt;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">e</span><span class="p">.</span><span class="nx">To</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;935653229@qq.com&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">e</span><span class="p">.</span><span class="nx">Subject</span> <span class="p">=</span> <span class="s">&#34;Awesome web&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Awesome Web %d&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">e</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nb">close</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面程序中，我们创建 4 goroutine 共用一个连接池发送邮件，发送 10 封邮件后程序退出。为了等邮件都发送完成或失败，程序才退出，我们使用了<code>sync.WaitGroup</code>。</p>
 <p>邮箱被轰炸了：</p>
@@ -881,6 +881,8 @@ if (!doNotTrack) {
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -920,7 +922,7 @@ if (!doNotTrack) {
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -984,7 +986,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1007,6 +1009,8 @@ if (!doNotTrack) {
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

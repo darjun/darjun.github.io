@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/06/18/godailylib/fyne2/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 在上一篇文章中，我们介绍了一个 Go 的高颜值 GUI 库fyne。本文接着上一篇，介绍如何使用fyne编写一个简单的计算器程序。程序效果如下： 控件布" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2020/06/18/godailylib/fyne2/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2020-06-18T22:41:55&#43;00:00" />
-<meta property="article:modified_time" content="2020-06-18T22:41:55&#43;00:00" />
+<meta property="article:published_time" content="2020-06-18T22:41:55+00:00" />
+<meta property="article:modified_time" content="2020-06-18T22:41:55+00:00" />
 
 <meta itemprop="name" content="使用 fyne 编写一个计算器">
-<meta itemprop="description" content="简介 在上一篇文章中，我们介绍了一个 Go 的高颜值 GUI 库fyne。本文接着上一篇，介绍如何使用fyne编写一个简单的计算器程序。程序效果如下： 控件布"><meta itemprop="datePublished" content="2020-06-18T22:41:55&#43;00:00" />
-<meta itemprop="dateModified" content="2020-06-18T22:41:55&#43;00:00" />
+<meta itemprop="description" content="简介 在上一篇文章中，我们介绍了一个 Go 的高颜值 GUI 库fyne。本文接着上一篇，介绍如何使用fyne编写一个简单的计算器程序。程序效果如下： 控件布"><meta itemprop="datePublished" content="2020-06-18T22:41:55+00:00" />
+<meta itemprop="dateModified" content="2020-06-18T22:41:55+00:00" />
 <meta itemprop="wordCount" content="1793">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="使用 fyne 编写一个计算器"/>
@@ -400,18 +400,18 @@ if (!doNotTrack) {
 <p>我们使用<code>widget.Entry</code>来显示输入的数字、运算符和运算结果。先创建一个<code>widget.Entry</code>对象，设置可显示多行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">display</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewEntry</span><span class="p">()</span>
-<span class="nx">display</span><span class="p">.</span><span class="nx">MultiLine</span> <span class="p">=</span> <span class="kc">true</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">display</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewEntry</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nx">display</span><span class="p">.</span><span class="nx">MultiLine</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>其它数字和符号控件都用<code>widget.Button</code>来表示。按钮也分为两种，一种是没有特殊效果的，点击后直接在显示框中添加对应的字符即可。一种是有特殊效果的，例如清空显示框（<code>AC</code>）、进行计算（<code>=</code>）。中间三行按钮都是前一种，我们使用<code>GridLayout</code>来布局，每行显示 4 个：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -425,19 +425,19 @@ if (!doNotTrack) {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">digits</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
-  <span class="s">&#34;7&#34;</span><span class="p">,</span> <span class="s">&#34;8&#34;</span><span class="p">,</span> <span class="s">&#34;9&#34;</span><span class="p">,</span> <span class="s">&#34;×&#34;</span><span class="p">,</span>
-  <span class="s">&#34;4&#34;</span><span class="p">,</span> <span class="s">&#34;5&#34;</span><span class="p">,</span> <span class="s">&#34;6&#34;</span><span class="p">,</span> <span class="s">&#34;-&#34;</span><span class="p">,</span>
-  <span class="s">&#34;1&#34;</span><span class="p">,</span> <span class="s">&#34;2&#34;</span><span class="p">,</span> <span class="s">&#34;3&#34;</span><span class="p">,</span> <span class="s">&#34;+&#34;</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="kd">var</span> <span class="nx">digitBtns</span> <span class="p">[]</span><span class="nx">fyne</span><span class="p">.</span><span class="nx">CanvasObject</span>
-<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">val</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">digits</span> <span class="p">{</span>
-  <span class="nx">digitBtns</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">digitBtns</span><span class="p">,</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="nx">val</span><span class="p">)))</span>
-<span class="p">}</span>
-<span class="nx">digitContainer</span> <span class="o">:=</span> <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
-  <span class="nx">layout</span><span class="p">.</span><span class="nf">NewGridLayout</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
-  <span class="nx">digitBtns</span><span class="o">...</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">digits</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;7&#34;</span><span class="p">,</span> <span class="s">&#34;8&#34;</span><span class="p">,</span> <span class="s">&#34;9&#34;</span><span class="p">,</span> <span class="s">&#34;×&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;4&#34;</span><span class="p">,</span> <span class="s">&#34;5&#34;</span><span class="p">,</span> <span class="s">&#34;6&#34;</span><span class="p">,</span> <span class="s">&#34;-&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;1&#34;</span><span class="p">,</span> <span class="s">&#34;2&#34;</span><span class="p">,</span> <span class="s">&#34;3&#34;</span><span class="p">,</span> <span class="s">&#34;+&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">digitBtns</span> <span class="p">[]</span><span class="nx">fyne</span><span class="p">.</span><span class="nx">CanvasObject</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">val</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">digits</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">digitBtns</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">digitBtns</span><span class="p">,</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="nx">val</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">digitContainer</span> <span class="o">:=</span> <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">layout</span><span class="p">.</span><span class="nf">NewGridLayout</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">digitBtns</span><span class="o">...</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>input</code>回调后面介绍。</p>
 <p>第一行有 3 个具有特殊效果的按钮：</p>
@@ -449,7 +449,7 @@ if (!doNotTrack) {
 <p>外加一个除法按钮。这一行同样使用<code>GridLayout</code>布局：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -462,24 +462,24 @@ if (!doNotTrack) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">clearBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;AC&#34;</span><span class="p">,</span> <span class="nf">clear</span><span class="p">(</span><span class="nx">display</span><span class="p">))</span>
-<span class="nx">signBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;+/-&#34;</span><span class="p">,</span> <span class="nf">sign</span><span class="p">(</span><span class="nx">display</span><span class="p">))</span>
-<span class="nx">percentBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;%&#34;</span><span class="p">,</span> <span class="nf">percent</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="s">&#34;%&#34;</span><span class="p">))</span>
-<span class="nx">divideBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;÷&#34;</span><span class="p">,</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="s">&#34;÷&#34;</span><span class="p">))</span>
-<span class="nx">clearContainer</span> <span class="o">:=</span> <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
-  <span class="nx">layout</span><span class="p">.</span><span class="nf">NewGridLayout</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
-  <span class="nx">clearBtn</span><span class="p">,</span>
-  <span class="nx">signBtn</span><span class="p">,</span>
-  <span class="nx">percentBtn</span><span class="p">,</span>
-  <span class="nx">divideBtn</span><span class="p">,</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">clearBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;AC&#34;</span><span class="p">,</span> <span class="nf">clear</span><span class="p">(</span><span class="nx">display</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">signBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;+/-&#34;</span><span class="p">,</span> <span class="nf">sign</span><span class="p">(</span><span class="nx">display</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">percentBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;%&#34;</span><span class="p">,</span> <span class="nf">percent</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="s">&#34;%&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">divideBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;÷&#34;</span><span class="p">,</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="s">&#34;÷&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">clearContainer</span> <span class="o">:=</span> <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">layout</span><span class="p">.</span><span class="nf">NewGridLayout</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">clearBtn</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">signBtn</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">percentBtn</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">divideBtn</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>几个回调处理后面统一介绍。</p>
 <p>最后一行由于<code>0</code>这个按钮宽度是其它按钮的 2 倍。我们先使用<code>GridLayout</code>布局，将这一行平均分成两<code>Grid</code>（即每行 2 个控件）。按钮<code>0</code>独占一个<code>Grid</code>，由于<code>GridLayout</code>布局中每个<code>Grid</code>大小相同，故按钮<code>0</code>有整个行一半的宽度。后一个<code>Grid</code>，按钮<code>.</code>和<code>=</code>平分，同样使用一个<code>GridLayout</code>达到这个效果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -493,24 +493,24 @@ if (!doNotTrack) {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">zeroBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;0&#34;</span><span class="p">,</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="s">&#34;0&#34;</span><span class="p">))</span>
-<span class="nx">dotBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;.&#34;</span><span class="p">,</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
-<span class="nx">equalBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;=&#34;</span><span class="p">,</span> <span class="nf">equals</span><span class="p">(</span><span class="nx">display</span><span class="p">))</span>
-<span class="nx">zeroContainer</span> <span class="o">:=</span> <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
-  <span class="nx">layout</span><span class="p">.</span><span class="nf">NewGridLayout</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
-  <span class="nx">zeroBtn</span><span class="p">,</span>
-  <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
-    <span class="nx">layout</span><span class="p">.</span><span class="nf">NewGridLayout</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
-    <span class="nx">dotBtn</span><span class="p">,</span>
-    <span class="nx">equalBtn</span><span class="p">,</span>
-  <span class="p">),</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">zeroBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;0&#34;</span><span class="p">,</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="s">&#34;0&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">dotBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;.&#34;</span><span class="p">,</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">equalBtn</span> <span class="o">:=</span> <span class="nx">widget</span><span class="p">.</span><span class="nf">NewButton</span><span class="p">(</span><span class="s">&#34;=&#34;</span><span class="p">,</span> <span class="nf">equals</span><span class="p">(</span><span class="nx">display</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nx">zeroContainer</span> <span class="o">:=</span> <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">layout</span><span class="p">.</span><span class="nf">NewGridLayout</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">zeroBtn</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">layout</span><span class="p">.</span><span class="nf">NewGridLayout</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">dotBtn</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">equalBtn</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">),</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>最后我们将所有部分用垂直的<code>BoxLayout</code>组合到一起：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -520,22 +520,22 @@ if (!doNotTrack) {
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">container</span> <span class="o">:=</span> <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
-  <span class="nx">layout</span><span class="p">.</span><span class="nf">NewVBoxLayout</span><span class="p">(),</span>
-  <span class="nx">display</span><span class="p">,</span>
-  <span class="nx">clearContainer</span><span class="p">,</span>
-  <span class="nx">digitContainer</span><span class="p">,</span>
-  <span class="nx">zeroContainer</span><span class="p">,</span>
-  <span class="nx">copyright</span><span class="p">,</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">container</span> <span class="o">:=</span> <span class="nx">fyne</span><span class="p">.</span><span class="nf">NewContainerWithLayout</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">layout</span><span class="p">.</span><span class="nf">NewVBoxLayout</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">display</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">clearContainer</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">digitContainer</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">zeroContainer</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">copyright</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在实际开发中，一般会组合使用多种布局实现界面效果。</p>
 <h2 id="按钮响应">按钮响应</h2>
 <p>清空按钮响应比较简单，直接将显示框的<code>Text</code>设置为空即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -543,19 +543,19 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">clear</span><span class="p">(</span><span class="nx">display</span> <span class="o">*</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Entry</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">display</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
-    <span class="nx">display</span><span class="p">.</span><span class="nf">Refresh</span><span class="p">()</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">clear</span><span class="p">(</span><span class="nx">display</span> <span class="o">*</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Entry</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">display</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">display</span><span class="p">.</span><span class="nf">Refresh</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>注意，要调用<code>Entry.Refresh()</code>方法刷新界面。由于按钮响应都是对应显示框进行操作，所以都需要传入该对象。</p>
 <p>我们设计在显示框中显示两行，第一行是上次计算的表达式，第二行是本次的。切换正负号在本次只输入一个数字时将该数字的正负号进行切换：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -573,28 +573,28 @@ if (!doNotTrack) {
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">sign</span><span class="p">(</span><span class="nx">display</span> <span class="o">*</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Entry</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">lines</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">display</span><span class="p">.</span><span class="nx">Text</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-      <span class="k">return</span>
-    <span class="p">}</span>
-
-    <span class="nx">line</span> <span class="o">:=</span> <span class="nx">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseInt</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="k">return</span>
-    <span class="p">}</span>
-    <span class="nx">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatInt</span><span class="p">(</span><span class="o">-</span><span class="nx">value</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="nx">display</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">lines</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">sign</span><span class="p">(</span><span class="nx">display</span> <span class="o">*</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Entry</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">lines</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">display</span><span class="p">.</span><span class="nx">Text</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">line</span> <span class="o">:=</span> <span class="nx">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseInt</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">FormatInt</span><span class="p">(</span><span class="o">-</span><span class="nx">value</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">display</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">lines</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>输入回调我们只做了简单的处理——将对应字符串拼接到显示框中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -602,18 +602,18 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span> <span class="o">*</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Entry</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">display</span><span class="p">.</span><span class="nx">Text</span> <span class="o">+=</span> <span class="nx">value</span>
-    <span class="nx">display</span><span class="p">.</span><span class="nf">Refresh</span><span class="p">()</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">input</span><span class="p">(</span><span class="nx">display</span> <span class="o">*</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Entry</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">display</span><span class="p">.</span><span class="nx">Text</span> <span class="o">+=</span> <span class="nx">value</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">display</span><span class="p">.</span><span class="nf">Refresh</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>计算表达式的函数也很简单，我这里使用了<code>govaluate</code>库（可以看我之前的文章）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -634,26 +634,26 @@ if (!doNotTrack) {
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">equals</span><span class="p">(</span><span class="nx">display</span> <span class="o">*</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Entry</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">lines</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">display</span><span class="p">.</span><span class="nx">Text</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-      <span class="k">return</span>
-    <span class="p">}</span>
-
-    <span class="nx">line</span> <span class="o">:=</span> <span class="nx">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="nx">line</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Trim</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;+÷×&#34;</span><span class="p">)</span>
-    <span class="nx">exprLine</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;÷&#34;</span><span class="p">,</span> <span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="nx">exprLine</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">exprLine</span><span class="p">,</span> <span class="s">&#34;×&#34;</span><span class="p">,</span> <span class="s">&#34;*&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="nx">expr</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">govaluate</span><span class="p">.</span><span class="nf">NewEvaluableExpression</span><span class="p">(</span><span class="nx">exprLine</span><span class="p">)</span>
-    <span class="nx">result</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">expr</span><span class="p">.</span><span class="nf">Evaluate</span><span class="p">(</span><span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="s">&#34;=\n&#34;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
-    <span class="nx">display</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="nx">line</span>
-    <span class="nx">display</span><span class="p">.</span><span class="nf">Refresh</span><span class="p">()</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">equals</span><span class="p">(</span><span class="nx">display</span> <span class="o">*</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Entry</span><span class="p">)</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">lines</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">display</span><span class="p">.</span><span class="nx">Text</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">line</span> <span class="o">:=</span> <span class="nx">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">line</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Trim</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;+÷×&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">exprLine</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;÷&#34;</span><span class="p">,</span> <span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">exprLine</span> <span class="p">=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">exprLine</span><span class="p">,</span> <span class="s">&#34;×&#34;</span><span class="p">,</span> <span class="s">&#34;*&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">expr</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">govaluate</span><span class="p">.</span><span class="nf">NewEvaluableExpression</span><span class="p">(</span><span class="nx">exprLine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">result</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">expr</span><span class="p">.</span><span class="nf">Evaluate</span><span class="p">(</span><span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">line</span> <span class="o">+=</span> <span class="s">&#34;=\n&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">line</span> <span class="o">+=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">display</span><span class="p">.</span><span class="nx">Text</span> <span class="p">=</span> <span class="nx">line</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">display</span><span class="p">.</span><span class="nf">Refresh</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>注意，这里做了一点容错，把前后多余的运算符去掉了。另外，我们前面为了显示，使用了<code>÷</code>表示除法符号，<code>×</code>表示乘法符号。要使用<code>govaluate</code>，必须将它们分别替换为<code>/</code>和<code>*</code>。</p>
 <p>至此计算器就编写完成了，下面我们介绍如何打包。</p>
@@ -663,11 +663,11 @@ if (!doNotTrack) {
 <p>打包：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ fyne package -os windows -icon icon.jpg
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ fyne package -os windows -icon icon.jpg
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在同目录下生成了一个<code>.exe</code>文件和一个<code>.syso</code>文件。现在可直接点击<code>calculator.exe</code>运行程序，没有其他依赖。</p>
 <h2 id="总结">总结</h2>
@@ -782,6 +782,8 @@ if (!doNotTrack) {
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -821,7 +823,7 @@ if (!doNotTrack) {
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -885,7 +887,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -908,6 +910,8 @@ if (!doNotTrack) {
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

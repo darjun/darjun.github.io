@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2021/06/10/godailylib/tunny/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 之前写过一篇文章介绍了ants这个 goroutine 池实现。当时在网上查看相关资料的时候，发现了另外一个实现tunny。趁着时间相近，正好研究一番。也好" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2021/06/10/godailylib/tunny/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2021-06-10T11:08:00&#43;00:00" />
-<meta property="article:modified_time" content="2021-06-10T11:08:00&#43;00:00" />
+<meta property="article:published_time" content="2021-06-10T11:08:00+00:00" />
+<meta property="article:modified_time" content="2021-06-10T11:08:00+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 tunny">
-<meta itemprop="description" content="简介 之前写过一篇文章介绍了ants这个 goroutine 池实现。当时在网上查看相关资料的时候，发现了另外一个实现tunny。趁着时间相近，正好研究一番。也好"><meta itemprop="datePublished" content="2021-06-10T11:08:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-06-10T11:08:00&#43;00:00" />
+<meta itemprop="description" content="简介 之前写过一篇文章介绍了ants这个 goroutine 池实现。当时在网上查看相关资料的时候，发现了另外一个实现tunny。趁着时间相近，正好研究一番。也好"><meta itemprop="datePublished" content="2021-06-10T11:08:00+00:00" />
+<meta itemprop="dateModified" content="2021-06-10T11:08:00+00:00" />
 <meta itemprop="wordCount" content="5895">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 tunny"/>
@@ -402,27 +402,27 @@ if (!doNotTrack) {
 <p>创建目录并初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir tunny <span class="p">&amp;&amp;</span> <span class="k">cd</span> tunny
-$ go mod init github.com/darjun/go-daily-lib/tunny
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ mkdir tunny <span class="p">&amp;&amp;</span> <span class="k">cd</span> tunny
+</span></span><span class="line"><span class="cl">$ go mod init github.com/darjun/go-daily-lib/tunny
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用<code>go get</code>从 GitHub 获取<code>tunny</code>库：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/Jeffail/tunny
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go get -u github.com/Jeffail/tunny
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>为了方便地和<code>ants</code>做一个对比，我们将<code>ants</code>中的示例重新用<code>tunny</code>实现一遍：还是那个分段求和的例子：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -441,24 +441,24 @@ $ go mod init github.com/darjun/go-daily-lib/tunny
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">const</span> <span class="p">(</span>
-  <span class="nx">DataSize</span>    <span class="p">=</span> <span class="mi">10000</span>
-  <span class="nx">DataPerTask</span> <span class="p">=</span> <span class="mi">100</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">numCPUs</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">NumCPU</span><span class="p">()</span>
-  <span class="nx">p</span> <span class="o">:=</span> <span class="nx">tunny</span><span class="p">.</span><span class="nf">NewFunc</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
-    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">n</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">payload</span><span class="p">.([]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">n</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">sum</span>
-  <span class="p">})</span>
-  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-  <span class="c1">// ...
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DataSize</span>    <span class="p">=</span> <span class="mi">10000</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DataPerTask</span> <span class="p">=</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">numCPUs</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">NumCPU</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span> <span class="o">:=</span> <span class="nx">tunny</span><span class="p">.</span><span class="nf">NewFunc</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">n</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">payload</span><span class="p">.([]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">n</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">sum</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用也非常简单，首先创建一个<code>Pool</code>，这里使用<code>tunny.NewFunc()</code>。</p>
 <p>第一个参数为池子大小，即同时有多少个 worker （也即 goroutine）在工作，这里设置成逻辑 CPU 个数，对于 CPU 密集型任务，这个值设置太大无意义，反而有可能导致 goroutine 切换频繁而降低性能。</p>
@@ -467,22 +467,22 @@ $ go mod init github.com/darjun/go-daily-lib/tunny
 <p>然后，生成测试数据，还是 10000 个随机数，分成 100 组：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">nums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="p">)</span>
-<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
-  <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">nums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>处理每组数据：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -495,18 +495,18 @@ $ go mod init github.com/darjun/go-daily-lib/tunny
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
-<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">DataSize</span> <span class="o">/</span> <span class="nx">DataPerTask</span><span class="p">)</span>
-<span class="nx">partialSums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">)</span>
-<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-  <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">partialSums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="o">*</span><span class="nx">DataPerTask</span> <span class="p">:</span> <span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">DataPerTask</span><span class="p">]).(</span><span class="kt">int</span><span class="p">)</span>
-    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-  <span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl"><span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">DataSize</span> <span class="o">/</span> <span class="nx">DataPerTask</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">partialSums</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">DataSize</span><span class="o">/</span><span class="nx">DataPerTask</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">partialSums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="o">*</span><span class="nx">DataPerTask</span> <span class="p">:</span> <span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">DataPerTask</span><span class="p">]).(</span><span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>调用<code>p.Process()</code>方法，传入任务数据，池子中会选择空闲的 goroutine 来处理这个数据。由于我们上面设置了处理函数，goroutine 会直接调用该函数，将这个切片作为参数传入。</p>
 <p><code>tunny</code>与<code>ants</code>不同的是，<code>tunny</code>的任务处理是同步的，即调用<code>p.Process()</code>方法之后，当前 goroutine 会挂起，直到任务处理完成之后才会被唤醒。由于是同步的，所以<code>p.Process()</code>方法可以直接返回处理结果。这也是上面程序在分发任务的时候，启动多个 goroutine 的原因。如果不是每个任务都启动一个 goroutine，<code>p.Process()</code>方法会一直等待任务完成，那么后面的任务要等到前面的任务全部执行完之后才能执行。这样就发挥不了并发的优势了。</p>
@@ -514,7 +514,7 @@ $ go mod init github.com/darjun/go-daily-lib/tunny
 <p>最后统计数据，验证结果：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -526,28 +526,28 @@ $ go mod init github.com/darjun/go-daily-lib/tunny
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
-<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">s</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">partialSums</span> <span class="p">{</span>
-  <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">s</span>
-<span class="p">}</span>
-
-<span class="kd">var</span> <span class="nx">expect</span> <span class="kt">int</span>
-<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">num</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
-  <span class="nx">expect</span> <span class="o">+=</span> <span class="nx">num</span>
-<span class="p">}</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;finish all tasks, result is %d expect:%d\n&#34;</span><span class="p">,</span> <span class="nx">sum</span><span class="p">,</span> <span class="nx">expect</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">s</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">partialSums</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">s</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">expect</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">num</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">nums</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">expect</span> <span class="o">+=</span> <span class="nx">num</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;finish all tasks, result is %d expect:%d\n&#34;</span><span class="p">,</span> <span class="nx">sum</span><span class="p">,</span> <span class="nx">expect</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
-finish all tasks, result is 5010172 expect:5010172
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go
+</span></span><span class="line"><span class="cl">finish all tasks, result is 5010172 expect:5010172
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="超时">超时</h2>
 <p>默认情况下，<code>p.Process()</code>会一直阻塞直到任务完成，即使当前没有空闲 worker 也会阻塞。我们也可以使用带超时的<code>Process()</code>方法：<code>ProcessTimed()</code>。传入一个超时时间间隔，如果超过这个时间还没有空闲 worker，或者任务还没有处理完成，就会终止，并返回一个错误。</p>
@@ -559,7 +559,7 @@ finish all tasks, result is 5010172 expect:5010172
 <p>下面我们编写一个计算斐波那契的函数，使用递归这种低效的实现方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -568,19 +568,19 @@ finish all tasks, result is 5010172 expect:5010172
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">1</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们先看任务比较耗时的情况，创建<code>Pool</code>对象。为了观察更明显，在处理函数中添加了<code>time.Sleep()</code>语句：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -589,19 +589,19 @@ finish all tasks, result is 5010172 expect:5010172
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">p</span> <span class="o">:=</span> <span class="nx">tunny</span><span class="p">.</span><span class="nf">NewFunc</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">payload</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
-  <span class="nx">result</span> <span class="o">:=</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
-  <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-  <span class="k">return</span> <span class="nx">result</span>
-<span class="p">})</span>
-<span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">p</span> <span class="o">:=</span> <span class="nx">tunny</span><span class="p">.</span><span class="nf">NewFunc</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">payload</span><span class="p">.(</span><span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">result</span> <span class="o">:=</span> <span class="nf">fib</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">result</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>生成与池容量相等的任务数，调用<code>p.ProcessTimed()</code>方法，设置超时为 1s：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -620,29 +620,29 @@ finish all tasks, result is 5010172 expect:5010172
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
-<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">)</span>
-<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">numCPUs</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-  <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">n</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
-    <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ProcessTimed</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-    <span class="nx">nowStr</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;[%s]task(%d) failed:%v\n&#34;</span><span class="p">,</span> <span class="nx">nowStr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;[%s]fib(%d) = %d\n&#34;</span><span class="p">,</span> <span class="nx">nowStr</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
-    <span class="p">}</span>
-    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-  <span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl"><span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">numCPUs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">numCPUs</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">n</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ProcessTimed</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">nowStr</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;[%s]task(%d) failed:%v\n&#34;</span><span class="p">,</span> <span class="nx">nowStr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;[%s]fib(%d) = %d\n&#34;</span><span class="p">,</span> <span class="nx">nowStr</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>因为处理函数中 sleep 5s，所以任务在执行过程中就超时了。运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -653,22 +653,22 @@ finish all tasks, result is 5010172 expect:5010172
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go 
-[2021-06-10 16:36:26]task(7) failed:job request timed out
-[2021-06-10 16:36:26]task(4) failed:job request timed out
-[2021-06-10 16:36:26]task(1) failed:job request timed out
-[2021-06-10 16:36:26]task(6) failed:job request timed out
-[2021-06-10 16:36:26]task(5) failed:job request timed out
-[2021-06-10 16:36:26]task(0) failed:job request timed out
-[2021-06-10 16:36:26]task(3) failed:job request timed out
-[2021-06-10 16:36:26]task(2) failed:job request timed out
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go 
+</span></span><span class="line"><span class="cl">[2021-06-10 16:36:26]task(7) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:36:26]task(4) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:36:26]task(1) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:36:26]task(6) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:36:26]task(5) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:36:26]task(0) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:36:26]task(3) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:36:26]task(2) failed:job request timed out
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>都在同一秒中超时。</p>
 <p>我们将任务数量翻倍，再将处理函数中的 sleep 改为 990ms，保证前一批任务能顺利完成，后续任务或者由于等不到空闲 worker，或者由于执行时间过长而超时返回。运行：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -687,30 +687,30 @@ finish all tasks, result is 5010172 expect:5010172
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
-[2021-06-10 16:42:46]fib(11) = 144
-[2021-06-10 16:42:46]fib(25) = 121393
-[2021-06-10 16:42:46]fib(27) = 317811
-[2021-06-10 16:42:46]fib(1) = 1
-[2021-06-10 16:42:46]fib(18) = 4181
-[2021-06-10 16:42:46]fib(29) = 832040
-[2021-06-10 16:42:46]fib(17) = 2584
-[2021-06-10 16:42:46]fib(20) = 10946
-[2021-06-10 16:42:46]task(5) failed:job request timed out
-[2021-06-10 16:42:46]task(14) failed:job request timed out
-[2021-06-10 16:42:46]task(8) failed:job request timed out
-[2021-06-10 16:42:46]task(7) failed:job request timed out
-[2021-06-10 16:42:46]task(13) failed:job request timed out
-[2021-06-10 16:42:46]task(12) failed:job request timed out
-[2021-06-10 16:42:46]task(11) failed:job request timed out
-[2021-06-10 16:42:46]task(6) failed:job request timed out
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]fib(11) = 144
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]fib(25) = 121393
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]fib(27) = 317811
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]fib(1) = 1
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]fib(18) = 4181
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]fib(29) = 832040
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]fib(17) = 2584
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]fib(20) = 10946
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]task(5) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]task(14) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]task(8) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]task(7) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]task(13) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]task(12) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]task(11) failed:job request timed out
+</span></span><span class="line"><span class="cl">[2021-06-10 16:42:46]task(6) failed:job request timed out
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="context">context</h2>
 <p>context 是协调 goroutine 的工具。<code>tunny</code>支持带<code>context.Context</code>参数的方法：<code>ProcessCtx()</code>。当前 context 状态变为<code>Done</code>之后，任务也会停止执行。context 会由于超时、取消等原因切换为<code>Done</code>状态。还是拿上面的例子：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -730,30 +730,30 @@ finish all tasks, result is 5010172 expect:5010172
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
-  <span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithCancel</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
-  <span class="k">if</span> <span class="nx">i</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">500</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
-      <span class="nf">cancel</span><span class="p">()</span>
-    <span class="p">}()</span>
-  <span class="p">}</span>
-
-  <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ProcessCtx</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;task(%d) failed:%v\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;fib(%d) = %d\n&#34;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithCancel</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">i</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">500</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nf">cancel</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ProcessCtx</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;task(%d) failed:%v\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;fib(%d) = %d\n&#34;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>其他代码都一样，我们调用<code>p.ProcessCtx()</code>方法来执行任务。参数是一个可取消的<code>Context</code>。对于序号为偶数的任务，我们启动一个 goroutine 在 500ms 之后<code>cancel()</code>掉这个<code>Context</code>。代码运行结果如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -764,23 +764,23 @@ finish all tasks, result is 5010172 expect:5010172
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go run main.go
-task(4) failed:context canceled
-task(6) failed:context canceled
-task(0) failed:context canceled
-task(2) failed:context canceled
-fib(27) = 317811
-fib(25) = 121393
-fib(1) = 1
-fib(18) = 4181
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go
+</span></span><span class="line"><span class="cl">task(4) failed:context canceled
+</span></span><span class="line"><span class="cl">task(6) failed:context canceled
+</span></span><span class="line"><span class="cl">task(0) failed:context canceled
+</span></span><span class="line"><span class="cl">task(2) failed:context canceled
+</span></span><span class="line"><span class="cl">fib(27) = 317811
+</span></span><span class="line"><span class="cl">fib(25) = 121393
+</span></span><span class="line"><span class="cl">fib(1) = 1
+</span></span><span class="line"><span class="cl">fib(18) = 4181
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们看到偶数序号的任务都被取消了。</p>
 <h2 id="源码">源码</h2>
 <p><code>tunny</code>的源码更少，除去测试代码和注释，连 500 行都不到。那么就一起来看一下吧。<code>Pool</code>结构如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -792,22 +792,22 @@ fib(18) = 4181
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/Jeffail/tunny.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">queuedJobs</span> <span class="kt">int64</span>
-
-  <span class="nx">ctor</span>    <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span>
-  <span class="nx">workers</span> <span class="p">[]</span><span class="o">*</span><span class="nx">workerWrapper</span>
-  <span class="nx">reqChan</span> <span class="kd">chan</span> <span class="nx">workRequest</span>
-
-  <span class="nx">workerMut</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/Jeffail/tunny.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">queuedJobs</span> <span class="kt">int64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">ctor</span>    <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">workers</span> <span class="p">[]</span><span class="o">*</span><span class="nx">workerWrapper</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">reqChan</span> <span class="kd">chan</span> <span class="nx">workRequest</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">workerMut</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>Pool</code>结构中有一个<code>ctor</code>字段，这是一个函数对象，用于返回一个实现<code>Worker</code>接口的值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -815,18 +815,18 @@ fib(18) = 4181
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Worker</span> <span class="kd">interface</span> <span class="p">{</span>
-  <span class="nf">Process</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
-  <span class="nf">BlockUntilReady</span><span class="p">()</span>
-  <span class="nf">Interrupt</span><span class="p">()</span>
-  <span class="nf">Terminate</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Worker</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">Process</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">BlockUntilReady</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">Interrupt</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">Terminate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个接口不同的方法在任务执行的不同阶段调用。最重要的当属<code>Process(interface{}) interface{}</code>方法了。这个就是执行任务的函数。<code>tunny</code>提供<code>New()</code>方法创建<code>Pool</code>对象，这个方法需要我们自己构造<code>ctor</code>函数对象，使用多有不便。<code>tunny</code>提供了另外两个默认实现<code>closureWorker</code>和<code>callbackWorker</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -854,38 +854,38 @@ fib(18) = 4181
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">closureWorker</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">processor</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">w</span><span class="p">.</span><span class="nf">processor</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">BlockUntilReady</span><span class="p">()</span> <span class="p">{}</span>
-<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Interrupt</span><span class="p">()</span>       <span class="p">{}</span>
-<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Terminate</span><span class="p">()</span>       <span class="p">{}</span>
-
-<span class="kd">type</span> <span class="nx">callbackWorker</span> <span class="kd">struct</span><span class="p">{}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-  <span class="nx">f</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">payload</span><span class="p">.(</span><span class="kd">func</span><span class="p">())</span>
-  <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">ErrJobNotFunc</span>
-  <span class="p">}</span>
-  <span class="nf">f</span><span class="p">()</span>
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">BlockUntilReady</span><span class="p">()</span> <span class="p">{}</span>
-<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Interrupt</span><span class="p">()</span>       <span class="p">{}</span>
-<span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Terminate</span><span class="p">()</span>       <span class="p">{}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">closureWorker</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">processor</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">w</span><span class="p">.</span><span class="nf">processor</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">BlockUntilReady</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Interrupt</span><span class="p">()</span>       <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">closureWorker</span><span class="p">)</span> <span class="nf">Terminate</span><span class="p">()</span>       <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">callbackWorker</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">f</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">payload</span><span class="p">.(</span><span class="kd">func</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">ErrJobNotFunc</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">BlockUntilReady</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Interrupt</span><span class="p">()</span>       <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">callbackWorker</span><span class="p">)</span> <span class="nf">Terminate</span><span class="p">()</span>       <span class="p">{}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>tunny.NewFunc()</code>方法使用的就是<code>closureWorker</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -894,38 +894,38 @@ fib(18) = 4181
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewFunc</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Pool</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">closureWorker</span><span class="p">{</span>
-      <span class="nx">processor</span><span class="p">:</span> <span class="nx">f</span><span class="p">,</span>
-    <span class="p">}</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewFunc</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Pool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">closureWorker</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">processor</span><span class="p">:</span> <span class="nx">f</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>创建的<code>closureWorker</code>直接将参数<code>f</code>作为任务处理函数。</p>
 <p><code>tunny.NewCallback()</code>方法使用<code>callbackWorker</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewCallback</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Pool</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">callbackWorker</span><span class="p">{}</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewCallback</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Pool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">New</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="nx">Worker</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">callbackWorker</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>callbackWorker</code>结构中没有处理函数，只能给它发送无参无返回值的函数对象作为任务，它的<code>Process()</code>方法就是执行这个函数。</p>
 <p>创建<code>Pool</code>对象后，都是调用它的<code>SetSize()</code>方法，设置 worker 数量。在这个方法中会启动相应数量的 goroutine：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -952,39 +952,39 @@ fib(18) = 4181
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">SetSize</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">workerMut</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workerMut</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-
-  <span class="nx">lWorkers</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">lWorkers</span> <span class="o">==</span> <span class="nx">n</span> <span class="p">{</span>
-    <span class="k">return</span>
-  <span class="p">}</span>
-
-  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">,</span> <span class="nf">newWorkerWrapper</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ctor</span><span class="p">()))</span>
-  <span class="p">}</span>
-
-  <span class="c1">// 停止过多的 worker
-</span><span class="c1"></span>  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">stop</span><span class="p">()</span>
-  <span class="p">}</span>
-
-  <span class="c1">// 等待 worker 停止
-</span><span class="c1"></span>  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">join</span><span class="p">()</span>
-    <span class="c1">// -----------------
-</span><span class="c1"></span>  <span class="p">}</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[:</span><span class="nx">n</span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">SetSize</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">workerMut</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workerMut</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">lWorkers</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">lWorkers</span> <span class="o">==</span> <span class="nx">n</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">,</span> <span class="nf">newWorkerWrapper</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nf">ctor</span><span class="p">()))</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 停止过多的 worker
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 等待 worker 停止
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">lWorkers</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">join</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// -----------------
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">[:</span><span class="nx">n</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>SetSize()</code>其实在扩容和缩容的时候也会调用。对于扩容，它会创建相应数量的 worker。对于缩容，它会将多余的 worker 停掉。与<code>ants</code>不同，<code>tunny</code>的扩容缩容都是即时生效的。</p>
 <p>代码中，我用<code>-----------------</code>标出来的地方我觉得有点问题。对于缩容，因为底层的数组没有变化，<code>workers</code>切片长度缩小之后，数组中后面的元素实际上就访问不到了，但是数组还持有它的引用，算是一种内存泄漏吧。所以稳妥起见最好加上<code>p.workers[i] = nil</code>？</p>
 <p>这里创建的 worker 实际上是包装了一层的<code>workerWrapper</code>结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1010,36 +1010,36 @@ fib(18) = 4181
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/Jeffail/worker.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">workerWrapper</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">worker</span>        <span class="nx">Worker</span>
-  <span class="nx">interruptChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
-  <span class="nx">reqChan</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">workRequest</span>
-  <span class="nx">closeChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
-  <span class="nx">closedChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">newWorkerWrapper</span><span class="p">(</span>
-  <span class="nx">reqChan</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">workRequest</span><span class="p">,</span>
-  <span class="nx">worker</span> <span class="nx">Worker</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">*</span><span class="nx">workerWrapper</span> <span class="p">{</span>
-  <span class="nx">w</span> <span class="o">:=</span> <span class="nx">workerWrapper</span><span class="p">{</span>
-    <span class="nx">worker</span><span class="p">:</span>        <span class="nx">worker</span><span class="p">,</span>
-    <span class="nx">interruptChan</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
-    <span class="nx">reqChan</span><span class="p">:</span>       <span class="nx">reqChan</span><span class="p">,</span>
-    <span class="nx">closeChan</span><span class="p">:</span>     <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
-    <span class="nx">closedChan</span><span class="p">:</span>    <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
-  <span class="p">}</span>
-
-  <span class="k">go</span> <span class="nx">w</span><span class="p">.</span><span class="nf">run</span><span class="p">()</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">w</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/Jeffail/worker.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">workerWrapper</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">worker</span>        <span class="nx">Worker</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">interruptChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">reqChan</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">workRequest</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">closeChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">closedChan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">newWorkerWrapper</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">reqChan</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">workRequest</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">worker</span> <span class="nx">Worker</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span> <span class="o">*</span><span class="nx">workerWrapper</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span> <span class="o">:=</span> <span class="nx">workerWrapper</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">worker</span><span class="p">:</span>        <span class="nx">worker</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">interruptChan</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">reqChan</span><span class="p">:</span>       <span class="nx">reqChan</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">closeChan</span><span class="p">:</span>     <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">closedChan</span><span class="p">:</span>    <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="nx">w</span><span class="p">.</span><span class="nf">run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">w</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>workerWrapper</code>结构创建之后会立刻调用<code>run()</code>方法启动一个 goroutine：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1073,44 +1073,44 @@ fib(18) = 4181
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">jobChan</span><span class="p">,</span> <span class="nx">retChan</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}),</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span>
-  <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Terminate</span><span class="p">()</span>
-    <span class="nb">close</span><span class="p">(</span><span class="nx">retChan</span><span class="p">)</span>
-    <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span><span class="p">)</span>
-  <span class="p">}()</span>
-
-  <span class="k">for</span> <span class="p">{</span>
-    <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">BlockUntilReady</span><span class="p">()</span>
-    <span class="k">select</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="nx">w</span><span class="p">.</span><span class="nx">reqChan</span> <span class="o">&lt;-</span> <span class="nx">workRequest</span><span class="p">{</span>
-      <span class="nx">jobChan</span><span class="p">:</span>       <span class="nx">jobChan</span><span class="p">,</span>
-      <span class="nx">retChan</span><span class="p">:</span>       <span class="nx">retChan</span><span class="p">,</span>
-      <span class="nx">interruptFunc</span><span class="p">:</span> <span class="nx">w</span><span class="p">.</span><span class="nx">interrupt</span><span class="p">,</span>
-    <span class="p">}:</span>
-      <span class="k">select</span> <span class="p">{</span>
-      <span class="k">case</span> <span class="nx">payload</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">jobChan</span><span class="p">:</span>
-        <span class="nx">result</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
-        <span class="k">select</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nx">retChan</span> <span class="o">&lt;-</span> <span class="nx">result</span><span class="p">:</span>
-        <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
-          <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
-        <span class="p">}</span>
-      <span class="k">case</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
-        <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
-      <span class="p">}</span>
-    <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">closeChan</span><span class="p">:</span>
-      <span class="k">return</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">jobChan</span><span class="p">,</span> <span class="nx">retChan</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}),</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Terminate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">close</span><span class="p">(</span><span class="nx">retChan</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">BlockUntilReady</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">w</span><span class="p">.</span><span class="nx">reqChan</span> <span class="o">&lt;-</span> <span class="nx">workRequest</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">jobChan</span><span class="p">:</span>       <span class="nx">jobChan</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">retChan</span><span class="p">:</span>       <span class="nx">retChan</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">interruptFunc</span><span class="p">:</span> <span class="nx">w</span><span class="p">.</span><span class="nx">interrupt</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}:</span>
+</span></span><span class="line"><span class="cl">      <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="nx">payload</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">jobChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">result</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nx">retChan</span> <span class="o">&lt;-</span> <span class="nx">result</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">closeChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>每个 worker goroutine 都在尝试向<code>w.reqChan</code>通道中发送一个<code>workRequest</code>结构数据，发送成功之后，从<code>jobChan</code>中获取任务数据，然后调用<code>Worker.Process()</code>方法执行任务，最后将结果发送到<code>retChan</code>通道中。这里其实有好几个交互。需要结合<code>Process()</code>方法来看才更清晰：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1118,20 +1118,20 @@ fib(18) = 4181
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-  <span class="nx">request</span><span class="p">,</span> <span class="nx">open</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span>
-  <span class="nx">request</span><span class="p">.</span><span class="nx">jobChan</span> <span class="o">&lt;-</span> <span class="nx">payload</span>
-  <span class="nx">payload</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">request</span><span class="p">.</span><span class="nx">retChan</span>
-  <span class="k">return</span> <span class="nx">payload</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">request</span><span class="p">,</span> <span class="nx">open</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">request</span><span class="p">.</span><span class="nx">jobChan</span> <span class="o">&lt;-</span> <span class="nx">payload</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">payload</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">request</span><span class="p">.</span><span class="nx">retChan</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">payload</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>删掉无相关的代码，最后就是上面这样。我们在调用池对象的<code>Process()</code>方法时，尝试从通道<code>reqChan</code>中接收数据，然后将任务数据发送到<code>jobChan</code>通道中，最后从<code>retChan</code>通道中接收结果。与上面的<code>run</code>流程结合来看，实际上在正常执行一个任务时，<code>Pool</code>与<code>workerWrapper</code>有 3 次交互。</p>
 <p>观察<code>Pool</code>创建到<code>workerWrapper</code>创建的流程，我们可以看到实际上<code>Pool</code>结构中的<code>reqChan</code>与<code>workerWrapper</code>结构中的<code>reqChan</code>是同一个通道。即<code>workerWrapper</code>启动后，会阻塞在向<code>reqChan</code>通道发送数据上，直到调用了<code>Pool</code>的<code>Process*()</code>方法，从通道<code>reqChan</code>取出数据。<code>Process()</code>方法得到<code>workRequest</code>会向它的<code>jobChan</code>通道中发送任务数据。而<code>workerWrapper.run()</code>方法成功发送数据到<code>reqChan</code>之后就开始等待从<code>jobChan</code>通道中接收数据，这时接收到<code>Process()</code>方法发送过来的数据。开始执行<code>w.worker.Process()</code>方法，然后向<code>retChan</code>通道发送结果数据，<code>Process()</code>方法在成功发送数据到<code>jobChan</code>之后，就开始等待从<code>retChan</code>通道中接收数据。接收成功之后，<code>Process()</code>方法返回，<code>workerWrapper.run()</code>继续阻塞在<code>w.reqChan &lt;-</code>这条语句上，等待处理下一个任务。注意<code>jobChan</code>和<code>retChan</code>都是<code>workerWrapper.run()</code>方法中创建的通道。</p>
 <p>那么超时是怎么实现的呢？看方法<code>ProcessTimed()</code>的实现：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1162,36 +1162,36 @@ fib(18) = 4181
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">ProcessTimed</span><span class="p">(</span>
-  <span class="nx">payload</span> <span class="kd">interface</span><span class="p">{},</span>
-  <span class="nx">timeout</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span>
-<span class="p">)</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">tout</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="nx">timeout</span><span class="p">)</span>
-  <span class="kd">var</span> <span class="nx">request</span> <span class="nx">workRequest</span>
-  <span class="k">select</span> <span class="p">{</span>
-  <span class="k">case</span> <span class="nx">request</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span><span class="p">:</span>
-  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
-    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
-  <span class="p">}</span>
-
-  <span class="k">select</span> <span class="p">{</span>
-  <span class="k">case</span> <span class="nx">request</span><span class="p">.</span><span class="nx">jobChan</span> <span class="o">&lt;-</span> <span class="nx">payload</span><span class="p">:</span>
-  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
-    <span class="nx">request</span><span class="p">.</span><span class="nf">interruptFunc</span><span class="p">()</span>
-    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
-  <span class="p">}</span>
-
-  <span class="k">select</span> <span class="p">{</span>
-  <span class="k">case</span> <span class="nx">payload</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">request</span><span class="p">.</span><span class="nx">retChan</span><span class="p">:</span>
-  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
-    <span class="nx">request</span><span class="p">.</span><span class="nf">interruptFunc</span><span class="p">()</span>
-    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
-  <span class="p">}</span>
-
-  <span class="nx">tout</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
-  <span class="k">return</span> <span class="nx">payload</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">ProcessTimed</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">payload</span> <span class="kd">interface</span><span class="p">{},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">timeout</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">tout</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="nx">timeout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">request</span> <span class="nx">workRequest</span>
+</span></span><span class="line"><span class="cl">  <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nx">request</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">p</span><span class="p">.</span><span class="nx">reqChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nx">request</span><span class="p">.</span><span class="nx">jobChan</span> <span class="o">&lt;-</span> <span class="nx">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">request</span><span class="p">.</span><span class="nf">interruptFunc</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nx">payload</span><span class="p">,</span> <span class="nx">open</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">request</span><span class="p">.</span><span class="nx">retChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">tout</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">request</span><span class="p">.</span><span class="nf">interruptFunc</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrJobTimedOut</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">tout</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">payload</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>同样地，删除不相干的代码。首先，创建一个<code>timer</code>，超时时间由传入参数指定。后面有 3 个<code>select</code>语句：</p>
 <ul>
@@ -1202,23 +1202,23 @@ fib(18) = 4181
 <p>第一种情况，如果超时了，说明 worker 都处于繁忙状态，直接返回任务超时。后面两种情况实际上是任务已经开始执行了，但是在规定的时间内没有完成。这两种情况，需要终止任务的执行。我们看到上面调用了<code>workerRequest.interruptFunc()</code>方法，也就是<code>workerWrapper.interrupt()</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">interrupt</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">)</span>
-  <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Interrupt</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">interrupt</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Interrupt</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个方法就是简单关闭了<code>interrupteChan</code>通道，然后调用<code>worker</code>对象的<code>Interrupt()</code>方法，默认实现中这个方法都是空的。</p>
 <p><code>interruptChan</code>通道关闭后，goroutine 中等待从<code>jobChan</code>接收数据和等待向<code>retChan</code>发送数据的操作都会取消：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1231,50 +1231,50 @@ fib(18) = 4181
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">select</span> <span class="p">{</span>
-<span class="k">case</span> <span class="nx">payload</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">jobChan</span><span class="p">:</span>
-  <span class="nx">result</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
-  <span class="k">select</span> <span class="p">{</span>
-  <span class="k">case</span> <span class="nx">retChan</span> <span class="o">&lt;-</span> <span class="nx">result</span><span class="p">:</span>
-  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
-    <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
-  <span class="p">}</span>
-<span class="k">case</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
-  <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="nx">payload</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">jobChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">result</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Process</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nx">retChan</span> <span class="o">&lt;-</span> <span class="nx">result</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span><span class="p">.</span><span class="nx">interruptChan</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>ProcessCtx()</code>实现也是类似的。</p>
 <p>最后调用<code>workerWrapper.stop()</code>会关闭<code>closeChan</code>通道，这会导致<code>workerWrapper.run()</code>方法中的<code>for</code>循环跳出，进而执行<code>defer</code>函数中的<code>close(retChan)</code>和<code>close(closedChan)</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Terminate</span><span class="p">()</span>
-  <span class="nb">close</span><span class="p">(</span><span class="nx">retChan</span><span class="p">)</span>
-  <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span><span class="p">)</span>
-<span class="p">}()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span><span class="p">.</span><span class="nx">worker</span><span class="p">.</span><span class="nf">Terminate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">close</span><span class="p">(</span><span class="nx">retChan</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">close</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里需要关闭<code>retChan</code>通道是为了防止<code>Process*()</code>方法在等待<code>retChan</code>数据。</p>
 <p><code>closedChan</code>通道关闭后，<code>workerWrapper.join()</code>方法就返回了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">join</span><span class="p">()</span> <span class="p">{</span>
-  <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">workerWrapper</span><span class="p">)</span> <span class="nf">join</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;-</span><span class="nx">w</span><span class="p">.</span><span class="nx">closedChan</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>Worker</code>几个方法的调用时机：</p>
 <ul>
@@ -1401,6 +1401,8 @@ fib(18) = 4181
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1440,7 +1442,7 @@ fib(18) = 4181
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1504,7 +1506,7 @@ fib(18) = 4181
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1527,6 +1529,8 @@ fib(18) = 4181
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

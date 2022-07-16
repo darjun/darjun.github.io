@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/05/23/redis-dict/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="1.概述 dict是Redis中最重要的数据结构之一。很多结构都使用dict作为基础数据结构，例如hash类型，命令表，SHA1到Lua脚本的" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2018/05/23/redis-dict/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2018-05-23T10:05:00&#43;00:00" />
-<meta property="article:modified_time" content="2018-05-23T10:05:00&#43;00:00" />
+<meta property="article:published_time" content="2018-05-23T10:05:00+00:00" />
+<meta property="article:modified_time" content="2018-05-23T10:05:00+00:00" />
 
 <meta itemprop="name" content="Redis源码阅读-dict">
-<meta itemprop="description" content="1.概述 dict是Redis中最重要的数据结构之一。很多结构都使用dict作为基础数据结构，例如hash类型，命令表，SHA1到Lua脚本的"><meta itemprop="datePublished" content="2018-05-23T10:05:00&#43;00:00" />
-<meta itemprop="dateModified" content="2018-05-23T10:05:00&#43;00:00" />
+<meta itemprop="description" content="1.概述 dict是Redis中最重要的数据结构之一。很多结构都使用dict作为基础数据结构，例如hash类型，命令表，SHA1到Lua脚本的"><meta itemprop="datePublished" content="2018-05-23T10:05:00+00:00" />
+<meta itemprop="dateModified" content="2018-05-23T10:05:00+00:00" />
 <meta itemprop="wordCount" content="5721">
 <meta itemprop="keywords" content="Redis源码阅读," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Redis源码阅读-dict"/>
@@ -410,7 +410,7 @@ if (!doNotTrack) {
 <p><code>dictEntry</code>表示为一个哈希表节点。<code>key</code>使用一个<code>void *</code>类型来表示，<code>value</code>由几个常见类型的<code>union</code>来表示。由于使用链地址法，所以<code>dictEntry</code>中存放了下一个节点的地址<code>next</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -422,22 +422,22 @@ if (!doNotTrack) {
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct dictEntry {
-    void *key;
-    union {
-        void *val;
-        uint64_t u64;
-        int64_t s64;
-        double d;
-    } v;
-    struct dictEntry *next;
-} dictEntry;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef struct dictEntry {
+</span></span><span class="line"><span class="cl">    void *key;
+</span></span><span class="line"><span class="cl">    union {
+</span></span><span class="line"><span class="cl">        void *val;
+</span></span><span class="line"><span class="cl">        uint64_t u64;
+</span></span><span class="line"><span class="cl">        int64_t s64;
+</span></span><span class="line"><span class="cl">        double d;
+</span></span><span class="line"><span class="cl">    } v;
+</span></span><span class="line"><span class="cl">    struct dictEntry *next;
+</span></span><span class="line"><span class="cl">} dictEntry;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>dictType</code>表示一个<code>dict</code>的相关方法，类似于C++中的类方法。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -453,26 +453,26 @@ if (!doNotTrack) {
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct dictType {
-    // hash函数，为key生成hash
-    unsigned int (*hasFunction)(const void *key);
-    // key复制函数
-    void *(*keyDup)(void *privdata, const void *key);
-    // value复制函数
-    void *(*valDup)(void *privdata, const void *obj);
-    // key比较函数
-    int (*keyCompare)(void *privdata, const void *key1, const void *key2);
-    // key销毁函数
-    void (*keyDestructor)(void *privdata, void *key);
-    // value销毁函数
-    void (*valDestructor)(void *privdata, void *obj);
-} dictType;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef struct dictType {
+</span></span><span class="line"><span class="cl">    // hash函数，为key生成hash
+</span></span><span class="line"><span class="cl">    unsigned int (*hasFunction)(const void *key);
+</span></span><span class="line"><span class="cl">    // key复制函数
+</span></span><span class="line"><span class="cl">    void *(*keyDup)(void *privdata, const void *key);
+</span></span><span class="line"><span class="cl">    // value复制函数
+</span></span><span class="line"><span class="cl">    void *(*valDup)(void *privdata, const void *obj);
+</span></span><span class="line"><span class="cl">    // key比较函数
+</span></span><span class="line"><span class="cl">    int (*keyCompare)(void *privdata, const void *key1, const void *key2);
+</span></span><span class="line"><span class="cl">    // key销毁函数
+</span></span><span class="line"><span class="cl">    void (*keyDestructor)(void *privdata, void *key);
+</span></span><span class="line"><span class="cl">    // value销毁函数
+</span></span><span class="line"><span class="cl">    void (*valDestructor)(void *privdata, void *obj);
+</span></span><span class="line"><span class="cl">} dictType;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>dictht</code>是一个链地址法哈希表。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -484,23 +484,23 @@ if (!doNotTrack) {
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct dictht {
-    // 哈希表的槽
-    dictEntry **table;
-    // 哈希表槽个数，是2的整数次幂
-    unsigned long size;
-    // size-1，计算出一个key的hash后，直接 hash &amp; sizemask即可算出所属的槽
-    unsigned long sizemask;
-    // 已使用大小
-    unsigned long used;
-} dictht;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef struct dictht {
+</span></span><span class="line"><span class="cl">    // 哈希表的槽
+</span></span><span class="line"><span class="cl">    dictEntry **table;
+</span></span><span class="line"><span class="cl">    // 哈希表槽个数，是2的整数次幂
+</span></span><span class="line"><span class="cl">    unsigned long size;
+</span></span><span class="line"><span class="cl">    // size-1，计算出一个key的hash后，直接 hash &amp; sizemask即可算出所属的槽
+</span></span><span class="line"><span class="cl">    unsigned long sizemask;
+</span></span><span class="line"><span class="cl">    // 已使用大小
+</span></span><span class="line"><span class="cl">    unsigned long used;
+</span></span><span class="line"><span class="cl">} dictht;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><img src="/img/in-post/redis-dict/dict-structure.png" alt="dictht结构"></p>
 <p><code>dict</code>是字典类型，包含两个<code>dictht</code>以实现增量rehash。增量rehash可以避免一次rehash耗费时间过长，导致其他操作阻塞的情形。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -513,23 +513,23 @@ if (!doNotTrack) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct dict {
-    dictType *type;
-    // 每个dict可以额外关联一些数据
-    void *privdata;
-    // 两个dictht，方便实现增量rehash
-    dictht ht[2];
-    // rehashidx表示rehash索引，不在rehash时，该字段为-1
-    long rehashidx;
-    // 该dict生成的安全迭代器的数量，有安全迭代器时不能rehash
-    int iterators;
-} dict;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef struct dict {
+</span></span><span class="line"><span class="cl">    dictType *type;
+</span></span><span class="line"><span class="cl">    // 每个dict可以额外关联一些数据
+</span></span><span class="line"><span class="cl">    void *privdata;
+</span></span><span class="line"><span class="cl">    // 两个dictht，方便实现增量rehash
+</span></span><span class="line"><span class="cl">    dictht ht[2];
+</span></span><span class="line"><span class="cl">    // rehashidx表示rehash索引，不在rehash时，该字段为-1
+</span></span><span class="line"><span class="cl">    long rehashidx;
+</span></span><span class="line"><span class="cl">    // 该dict生成的安全迭代器的数量，有安全迭代器时不能rehash
+</span></span><span class="line"><span class="cl">    int iterators;
+</span></span><span class="line"><span class="cl">} dict;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>另外定义了遍历一个<code>dict</code>的迭代器。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -543,19 +543,19 @@ if (!doNotTrack) {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct dictIterator {
-    dict *d;
-    // 槽索引
-    long index;
-    // table为dictht索引只能为0或1，safe表示是否需要安全的遍历（遍历过程中不能rehash）
-    int table, safe;
-    // 当前entry和下一个entry
-    dictEntry *entry, *nextEntry;
-    // 表示当前状态的一个64位整数，非安全迭代器初始化时计算这个值
-    // 释放迭代器时再次计算并比较两个值，如果不同说明用户在迭代过程中执行了非法操作
-    long long fingerprint;
-} dictIterator;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef struct dictIterator {
+</span></span><span class="line"><span class="cl">    dict *d;
+</span></span><span class="line"><span class="cl">    // 槽索引
+</span></span><span class="line"><span class="cl">    long index;
+</span></span><span class="line"><span class="cl">    // table为dictht索引只能为0或1，safe表示是否需要安全的遍历（遍历过程中不能rehash）
+</span></span><span class="line"><span class="cl">    int table, safe;
+</span></span><span class="line"><span class="cl">    // 当前entry和下一个entry
+</span></span><span class="line"><span class="cl">    dictEntry *entry, *nextEntry;
+</span></span><span class="line"><span class="cl">    // 表示当前状态的一个64位整数，非安全迭代器初始化时计算这个值
+</span></span><span class="line"><span class="cl">    // 释放迭代器时再次计算并比较两个值，如果不同说明用户在迭代过程中执行了非法操作
+</span></span><span class="line"><span class="cl">    long long fingerprint;
+</span></span><span class="line"><span class="cl">} dictIterator;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>定义文件：<code>dict.h</code>和<code>dict.c</code>。</p>
 <h2 id="span-iddict操作3dict操作span"><!-- raw HTML omitted -->3.dict操作<!-- raw HTML omitted --></h2>
@@ -563,7 +563,7 @@ if (!doNotTrack) {
 <p>调用<code>dictCreate</code>先分配空间。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -576,23 +576,23 @@ if (!doNotTrack) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 参数type自定义对哈希表节点的key和value进行的操作
-// 参数privDataPtr可以存放用户自定义信息，在type的操作函数中可以取得这个值
-dict *dictCreate(dictType *type, void *privDataPtr)
-{
-    // 分配空间
-    dict *d = malloc(sizeof(*d));
-
-    // 初始化
-    _dictInit(d,type,privDataPtr);
-    return d;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 参数type自定义对哈希表节点的key和value进行的操作
+</span></span><span class="line"><span class="cl">// 参数privDataPtr可以存放用户自定义信息，在type的操作函数中可以取得这个值
+</span></span><span class="line"><span class="cl">dict *dictCreate(dictType *type, void *privDataPtr)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    // 分配空间
+</span></span><span class="line"><span class="cl">    dict *d = malloc(sizeof(*d));
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 初始化
+</span></span><span class="line"><span class="cl">    _dictInit(d,type,privDataPtr);
+</span></span><span class="line"><span class="cl">    return d;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后调用<code>_dictInit</code>初始化各字段。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -605,23 +605,23 @@ dict *dictCreate(dictType *type, void *privDataPtr)
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">int _dictInit(dict *d, dictType *type, void *privDataPtr)
-{
-    // 重置dictht内容
-    _dictReset(&amp;d-&gt;ht[0]);
-    _dictReset(&amp;d-&gt;ht[1]);
-    d-&gt;type = type; // 设置操作
-    d-&gt;privdata = privDataPtr; // 自定义信息
-    d-&gt;rehashidx = -1; // 不在rehash中
-    d-&gt;iterators = 0; // 生成的安全迭代器数量为0
-    return DICK_OK;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int _dictInit(dict *d, dictType *type, void *privDataPtr)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    // 重置dictht内容
+</span></span><span class="line"><span class="cl">    _dictReset(&amp;d-&gt;ht[0]);
+</span></span><span class="line"><span class="cl">    _dictReset(&amp;d-&gt;ht[1]);
+</span></span><span class="line"><span class="cl">    d-&gt;type = type; // 设置操作
+</span></span><span class="line"><span class="cl">    d-&gt;privdata = privDataPtr; // 自定义信息
+</span></span><span class="line"><span class="cl">    d-&gt;rehashidx = -1; // 不在rehash中
+</span></span><span class="line"><span class="cl">    d-&gt;iterators = 0; // 生成的安全迭代器数量为0
+</span></span><span class="line"><span class="cl">    return DICK_OK;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>_dictInit</code>会调用<code>_dictReset</code>重置两个<code>dictht</code>内容。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -630,20 +630,20 @@ dict *dictCreate(dictType *type, void *privDataPtr)
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">static void _dictReset(dictht *ht)
-{
-    ht-&gt;table = NULL; // 初始化槽为空
-    ht-&gt;size = 0; // 初始化槽大小为0
-    ht-&gt;sizemask = 0;
-    ht-&gt;used = 0; // 没有元素
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">static void _dictReset(dictht *ht)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    ht-&gt;table = NULL; // 初始化槽为空
+</span></span><span class="line"><span class="cl">    ht-&gt;size = 0; // 初始化槽大小为0
+</span></span><span class="line"><span class="cl">    ht-&gt;sizemask = 0;
+</span></span><span class="line"><span class="cl">    ht-&gt;used = 0; // 没有元素
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-id添加节点32添加节点span"><!-- raw HTML omitted -->3.2.添加节点<!-- raw HTML omitted --></h3>
 <p>调用<code>dictAdd</code>添加节点。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -656,23 +656,23 @@ dict *dictCreate(dictType *type, void *privDataPtr)
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">int dictAdd(dict *d, void *key, void *val)
-{
-    // dictAddRaw会新建一个entry，插入对应的位置。同时还会处理rehash的情况。
-    dictEntry *entry = dictAddRaw(d,key);
-
-    // key已存在
-    if (!entry) return DICT_ERR;
-    // 定义在dict.h中的宏，设置value值
-    dictSetVal(d, entry, val); 
-    return DICT_OK;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int dictAdd(dict *d, void *key, void *val)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    // dictAddRaw会新建一个entry，插入对应的位置。同时还会处理rehash的情况。
+</span></span><span class="line"><span class="cl">    dictEntry *entry = dictAddRaw(d,key);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // key已存在
+</span></span><span class="line"><span class="cl">    if (!entry) return DICT_ERR;
+</span></span><span class="line"><span class="cl">    // 定义在dict.h中的宏，设置value值
+</span></span><span class="line"><span class="cl">    dictSetVal(d, entry, val); 
+</span></span><span class="line"><span class="cl">    return DICT_OK;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>dictAddRaw</code>创建新的节点，插入相应位置。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -700,39 +700,39 @@ dict *dictCreate(dictType *type, void *privDataPtr)
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 该函数插入entry，但是并不设置值。它返回entry，让调用者可以使用dictSet*Val系列函数设置值。
-// 例如：
-// entry = dictAddRaw(dict, mykey);
-// if (entry != NULL) dictSetSignedIntegerVal(entry, 1000);
-dictEntry *dictAddRaw(dict *d, void *key)
-{
-    int index;
-    dictEntry *entry;
-    dictht *ht;
-
-    // 如果正在rehash，让其向前推进一步
-    if (dictIsRehashing(d)) _dictRehashStep(d);
-
-    // 返回一个槽，可以在其中插入一个entry
-    if ((index = _dictKeyIndex(d, key)) == -1)
-        return NULL;
-
-    // 如果在rehash，新key应该插入到新dictht中（即索引为1的dictht）
-    ht = dictIsRehashing(d) ? &amp;d-&gt;ht[1] : &amp;d-&gt;ht[0];
-    entry = zmalloc(sizeof(*entry));
-    entry-&gt;next = ht-&gt;table[index];
-    ht-&gt;used++;
-
-    dictSetKey(d, entry, key);
-    return entry;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 该函数插入entry，但是并不设置值。它返回entry，让调用者可以使用dictSet*Val系列函数设置值。
+</span></span><span class="line"><span class="cl">// 例如：
+</span></span><span class="line"><span class="cl">// entry = dictAddRaw(dict, mykey);
+</span></span><span class="line"><span class="cl">// if (entry != NULL) dictSetSignedIntegerVal(entry, 1000);
+</span></span><span class="line"><span class="cl">dictEntry *dictAddRaw(dict *d, void *key)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    int index;
+</span></span><span class="line"><span class="cl">    dictEntry *entry;
+</span></span><span class="line"><span class="cl">    dictht *ht;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 如果正在rehash，让其向前推进一步
+</span></span><span class="line"><span class="cl">    if (dictIsRehashing(d)) _dictRehashStep(d);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 返回一个槽，可以在其中插入一个entry
+</span></span><span class="line"><span class="cl">    if ((index = _dictKeyIndex(d, key)) == -1)
+</span></span><span class="line"><span class="cl">        return NULL;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 如果在rehash，新key应该插入到新dictht中（即索引为1的dictht）
+</span></span><span class="line"><span class="cl">    ht = dictIsRehashing(d) ? &amp;d-&gt;ht[1] : &amp;d-&gt;ht[0];
+</span></span><span class="line"><span class="cl">    entry = zmalloc(sizeof(*entry));
+</span></span><span class="line"><span class="cl">    entry-&gt;next = ht-&gt;table[index];
+</span></span><span class="line"><span class="cl">    ht-&gt;used++;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    dictSetKey(d, entry, key);
+</span></span><span class="line"><span class="cl">    return entry;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-id查找节点33查找节点span"><!-- raw HTML omitted -->3.3.查找节点<!-- raw HTML omitted --></h3>
 <p>查找由函数<code>dictFind</code>负责，该函数实现也很简单。先计算<code>key</code>的hash值，找到对应的槽，依次比较。但是由于存在rehash状态，所以需要查找两个<code>dictht</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -759,37 +759,37 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">dictEntry *dictFind(dict *d, const void *key)
-{
-    dictEntry *he;
-    unsigned int h, idx, table;
-
-    // 没有元素
-    if (d-&gt;ht[0].size == 0) return NULL;
-    // 如果正在rehash，将其向前推进一步
-    if (dictIsRehashing(d)) _dictRehashStep(d);
-    // 计算hash值
-    h = dictHashKey(d, key);
-    for (table = 0; table &lt;= 1; table++) {
-        // 计算槽索引
-        idx = h &amp; d-&gt;ht[table].sizemask;
-        he = d-&gt;ht[table].table[idx];
-        while (he) {
-            // 比较key，如果自定义了keyCompare，调用此函数比较，否则比较地址。
-            if (dictCompareKeys(d, key, he-&gt;key))
-                return he;
-            he = he-&gt;next;
-        }
-        // 非rehash中，不用处理新dictht
-        if (!dictIsRehashing(d)) return NULL;
-    }
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">dictEntry *dictFind(dict *d, const void *key)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    dictEntry *he;
+</span></span><span class="line"><span class="cl">    unsigned int h, idx, table;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 没有元素
+</span></span><span class="line"><span class="cl">    if (d-&gt;ht[0].size == 0) return NULL;
+</span></span><span class="line"><span class="cl">    // 如果正在rehash，将其向前推进一步
+</span></span><span class="line"><span class="cl">    if (dictIsRehashing(d)) _dictRehashStep(d);
+</span></span><span class="line"><span class="cl">    // 计算hash值
+</span></span><span class="line"><span class="cl">    h = dictHashKey(d, key);
+</span></span><span class="line"><span class="cl">    for (table = 0; table &lt;= 1; table++) {
+</span></span><span class="line"><span class="cl">        // 计算槽索引
+</span></span><span class="line"><span class="cl">        idx = h &amp; d-&gt;ht[table].sizemask;
+</span></span><span class="line"><span class="cl">        he = d-&gt;ht[table].table[idx];
+</span></span><span class="line"><span class="cl">        while (he) {
+</span></span><span class="line"><span class="cl">            // 比较key，如果自定义了keyCompare，调用此函数比较，否则比较地址。
+</span></span><span class="line"><span class="cl">            if (dictCompareKeys(d, key, he-&gt;key))
+</span></span><span class="line"><span class="cl">                return he;
+</span></span><span class="line"><span class="cl">            he = he-&gt;next;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        // 非rehash中，不用处理新dictht
+</span></span><span class="line"><span class="cl">        if (!dictIsRehashing(d)) return NULL;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>另外有个函数<code>dictFetchValue</code>可以取出<code>entry</code>的值。它直接使用<code>dictFind</code>完成其功能。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -797,19 +797,19 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">void *dictFetchValue(dict *d, const void *key) {
-    dictEntry *he;
-
-    he = dictFind(d, key);
-    return he ? dictGetVal(he) : NULL;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void *dictFetchValue(dict *d, const void *key) {
+</span></span><span class="line"><span class="cl">    dictEntry *he;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    he = dictFind(d, key);
+</span></span><span class="line"><span class="cl">    return he ? dictGetVal(he) : NULL;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-id随机一个节点34随机一个节点span"><!-- raw HTML omitted -->3.4.随机一个节点<!-- raw HTML omitted --></h3>
 <p><code>dictGetRandomKey</code>随机返回一个<code>dict</code>中的<code>entry</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -845,41 +845,41 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">34
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">dictEntry *dictGetRandomKey(dict *d) {
-    dictEntry *he, *orighe;
-    unsigned int h;
-    int listlen, listele;
-
-    if (dictSize(d) == 0) return NULL;
-    if (dictIsRehashing(d)) _dictRehashStep(d);
-    if (dictIsRehashing(d)) {
-        // 在rehash中，需要在两个dictht中随机槽索引
-        do {
-            h = random() % (d-&gt;ht[0].size+d-&gt;ht[1].size);
-            he = (h &gt;= d-&gt;ht[0].size) ? d-&gt;ht[1].table[h - d-&gt;ht[0].size] :
-                                      d-&gt;ht[0].table[h];
-        } while(he == NULL);
-    } else {
-        do {
-            h = random() &amp; d-&gt;ht[0].sizemask;
-            he = d-&gt;ht[0].table[h];
-        } while (he == NULL);
-    }
-
-    // 链表长度
-    listlen = 0;
-    orighe = he;
-    while(he) {
-        he = he-&gt;next;
-        listlen++;
-    }
-    // 在链表中随机entry
-    listele = random() % listlen;
-    he = orighe;
-    while(listele--) he = he-&gt;next;
-    return he;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">dictEntry *dictGetRandomKey(dict *d) {
+</span></span><span class="line"><span class="cl">    dictEntry *he, *orighe;
+</span></span><span class="line"><span class="cl">    unsigned int h;
+</span></span><span class="line"><span class="cl">    int listlen, listele;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    if (dictSize(d) == 0) return NULL;
+</span></span><span class="line"><span class="cl">    if (dictIsRehashing(d)) _dictRehashStep(d);
+</span></span><span class="line"><span class="cl">    if (dictIsRehashing(d)) {
+</span></span><span class="line"><span class="cl">        // 在rehash中，需要在两个dictht中随机槽索引
+</span></span><span class="line"><span class="cl">        do {
+</span></span><span class="line"><span class="cl">            h = random() % (d-&gt;ht[0].size+d-&gt;ht[1].size);
+</span></span><span class="line"><span class="cl">            he = (h &gt;= d-&gt;ht[0].size) ? d-&gt;ht[1].table[h - d-&gt;ht[0].size] :
+</span></span><span class="line"><span class="cl">                                      d-&gt;ht[0].table[h];
+</span></span><span class="line"><span class="cl">        } while(he == NULL);
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">        do {
+</span></span><span class="line"><span class="cl">            h = random() &amp; d-&gt;ht[0].sizemask;
+</span></span><span class="line"><span class="cl">            he = d-&gt;ht[0].table[h];
+</span></span><span class="line"><span class="cl">        } while (he == NULL);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 链表长度
+</span></span><span class="line"><span class="cl">    listlen = 0;
+</span></span><span class="line"><span class="cl">    orighe = he;
+</span></span><span class="line"><span class="cl">    while(he) {
+</span></span><span class="line"><span class="cl">        he = he-&gt;next;
+</span></span><span class="line"><span class="cl">        listlen++;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    // 在链表中随机entry
+</span></span><span class="line"><span class="cl">    listele = random() % listlen;
+</span></span><span class="line"><span class="cl">    he = orighe;
+</span></span><span class="line"><span class="cl">    while(listele--) he = he-&gt;next;
+</span></span><span class="line"><span class="cl">    return he;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>注意</strong>：
 这个函数先随机槽，再随机链表元素，并不是等概率的。</p>
@@ -887,7 +887,7 @@ dictEntry *dictAddRaw(dict *d, void *key)
 <p>可以通过调用<code>dictReplace</code>设置一个key对应的value值。如果key不存在，则新增这个键值对。返回1表示新增，返回0表示更新值。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -903,21 +903,21 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">int dictReplace(dict *d, void *key, void *val) {
-    dictEntry *entry, auxentry;
-
-    // 先尝试新增。成功说明key不存在，已新增成功，直接返回。
-    if (dictAdd(d, key, val) == DICT_OK)
-        return 1;
-    // 查找key对应entry
-    entry = dictFind(d, key);
-    // 记录旧的entry，设置之后老的value需要释放！
-    auxentry = *entry;
-    dictSetVal(d, entry, val);
-    dictFreeVal(d, &amp;auxentry);
-    return 0;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int dictReplace(dict *d, void *key, void *val) {
+</span></span><span class="line"><span class="cl">    dictEntry *entry, auxentry;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 先尝试新增。成功说明key不存在，已新增成功，直接返回。
+</span></span><span class="line"><span class="cl">    if (dictAdd(d, key, val) == DICT_OK)
+</span></span><span class="line"><span class="cl">        return 1;
+</span></span><span class="line"><span class="cl">    // 查找key对应entry
+</span></span><span class="line"><span class="cl">    entry = dictFind(d, key);
+</span></span><span class="line"><span class="cl">    // 记录旧的entry，设置之后老的value需要释放！
+</span></span><span class="line"><span class="cl">    auxentry = *entry;
+</span></span><span class="line"><span class="cl">    dictSetVal(d, entry, val);
+</span></span><span class="line"><span class="cl">    dictFreeVal(d, &amp;auxentry);
+</span></span><span class="line"><span class="cl">    return 0;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>函数<code>dictReplaceRaw</code>进行以下处理：</p>
 <ul>
@@ -928,7 +928,7 @@ dictEntry *dictAddRaw(dict *d, void *key)
 <p>节点删除通过<code>dictGenericDelete</code>完成，可以通过<code>nofree</code>指定是否销毁键和值。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -974,57 +974,57 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">44
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">static int dictGenericDelete(dict *d, const void *key, int nofree)
-{
-    unsigned int h, idx;
-    dictEntry *he, *prevHe;
-    int table;
-
-    // 大小为0，删除失败
-    if (d-&gt;ht[0].size == 0) return DICT_ERR;
-
-    // 如果正在rehash，将其向前推进一步
-    if (dictIsRehashing(d)) _dictRehashStep(d);
-    // 生成key的hash值
-    h = dictHashKey(d, key);
-
-    // 因为存在rehash状态，所以必须查找两个dictht
-    for (table = 0; table &lt;= 1; table++) {
-        idx = h &amp; d-&gt;ht[table].sizemask;
-        he = d-&gt;ht[table].table[idx];
-        prevHe = NULL;
-        while(he) {
-            // 比较key
-            if (dictCompareKeys(d, key, he-&gt;key)) {
-                // 调整删除节点的前一个节点的next指向，如果为第一个节点调整table[idx]
-                if (prevHe)
-                    prevHe-&gt;next = he-&gt;next;
-                else
-                    d-&gt;ht[table].table[idx] = he-&gt;next;
-                if (!nofree) {
-                    // 销毁键和值
-                    dictFreeKey(d, he);
-                    dictFreeVal(d, he);
-                }
-                zfree(he);
-                d-&gt;ht[table].used--;
-                return DICT_OK;
-            }
-            prevHe = he;
-            he = he-&gt;next;
-        }
-        // 如果没有在rehash，就不用遍历索引为1的dictht了
-        if (!dictIsRehashing(d)) break;
-    }
-    return DICT_ERR;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">static int dictGenericDelete(dict *d, const void *key, int nofree)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    unsigned int h, idx;
+</span></span><span class="line"><span class="cl">    dictEntry *he, *prevHe;
+</span></span><span class="line"><span class="cl">    int table;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 大小为0，删除失败
+</span></span><span class="line"><span class="cl">    if (d-&gt;ht[0].size == 0) return DICT_ERR;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 如果正在rehash，将其向前推进一步
+</span></span><span class="line"><span class="cl">    if (dictIsRehashing(d)) _dictRehashStep(d);
+</span></span><span class="line"><span class="cl">    // 生成key的hash值
+</span></span><span class="line"><span class="cl">    h = dictHashKey(d, key);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 因为存在rehash状态，所以必须查找两个dictht
+</span></span><span class="line"><span class="cl">    for (table = 0; table &lt;= 1; table++) {
+</span></span><span class="line"><span class="cl">        idx = h &amp; d-&gt;ht[table].sizemask;
+</span></span><span class="line"><span class="cl">        he = d-&gt;ht[table].table[idx];
+</span></span><span class="line"><span class="cl">        prevHe = NULL;
+</span></span><span class="line"><span class="cl">        while(he) {
+</span></span><span class="line"><span class="cl">            // 比较key
+</span></span><span class="line"><span class="cl">            if (dictCompareKeys(d, key, he-&gt;key)) {
+</span></span><span class="line"><span class="cl">                // 调整删除节点的前一个节点的next指向，如果为第一个节点调整table[idx]
+</span></span><span class="line"><span class="cl">                if (prevHe)
+</span></span><span class="line"><span class="cl">                    prevHe-&gt;next = he-&gt;next;
+</span></span><span class="line"><span class="cl">                else
+</span></span><span class="line"><span class="cl">                    d-&gt;ht[table].table[idx] = he-&gt;next;
+</span></span><span class="line"><span class="cl">                if (!nofree) {
+</span></span><span class="line"><span class="cl">                    // 销毁键和值
+</span></span><span class="line"><span class="cl">                    dictFreeKey(d, he);
+</span></span><span class="line"><span class="cl">                    dictFreeVal(d, he);
+</span></span><span class="line"><span class="cl">                }
+</span></span><span class="line"><span class="cl">                zfree(he);
+</span></span><span class="line"><span class="cl">                d-&gt;ht[table].used--;
+</span></span><span class="line"><span class="cl">                return DICT_OK;
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            prevHe = he;
+</span></span><span class="line"><span class="cl">            he = he-&gt;next;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        // 如果没有在rehash，就不用遍历索引为1的dictht了
+</span></span><span class="line"><span class="cl">        if (!dictIsRehashing(d)) break;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    return DICT_ERR;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-id销毁dict37销毁dictspan"><!-- raw HTML omitted -->3.7.销毁<code>dict</code><!-- raw HTML omitted --></h3>
 <p>可以通过调用<code>dictRelease</code>删除一个<code>dict</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1033,19 +1033,19 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">void dictRelease(dict *d)
-{
-    // 清空两个dictht
-    _dictClear(d,&amp;d-&gt;ht[0],NULL);
-    _dictClear(d,&amp;d-&gt;ht[1],NULL);
-    zfree(d);
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void dictRelease(dict *d)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    // 清空两个dictht
+</span></span><span class="line"><span class="cl">    _dictClear(d,&amp;d-&gt;ht[0],NULL);
+</span></span><span class="line"><span class="cl">    _dictClear(d,&amp;d-&gt;ht[1],NULL);
+</span></span><span class="line"><span class="cl">    zfree(d);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>_dictClear</code>负责清空<code>dictht</code>，释放所占空间。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1071,37 +1071,37 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">int _dictClear(dict *d, dictht *ht, void (callback)(void *)) {
-    unsigned long i;
-
-    for (i = 0; i &lt; ht-&gt;size &amp;&amp; ht-&gt;used &gt; 0; i++) {
-        dictEntry *he, *nextHe;
-
-        if (callback &amp;&amp; (i &amp; 65535) == 0) callback(d-&gt;privdata);
-
-        if ((he = ht-&gt;table[i]) == NULL) continue;
-        while (he) {
-            nextHe = he-&gt;next;
-            // 释放键值
-            dictFreeKey(d, he);
-            dictFreeVal(d, he);
-            zfree(he);
-            ht-&gt;used--;
-            he = nextHe;
-        }
-    }
-    zfree(ht-&gt;table);
-    // 重置，后续可以再次使用
-    _dictReset(ht);
-    return DICT_OK;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int _dictClear(dict *d, dictht *ht, void (callback)(void *)) {
+</span></span><span class="line"><span class="cl">    unsigned long i;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    for (i = 0; i &lt; ht-&gt;size &amp;&amp; ht-&gt;used &gt; 0; i++) {
+</span></span><span class="line"><span class="cl">        dictEntry *he, *nextHe;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        if (callback &amp;&amp; (i &amp; 65535) == 0) callback(d-&gt;privdata);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        if ((he = ht-&gt;table[i]) == NULL) continue;
+</span></span><span class="line"><span class="cl">        while (he) {
+</span></span><span class="line"><span class="cl">            nextHe = he-&gt;next;
+</span></span><span class="line"><span class="cl">            // 释放键值
+</span></span><span class="line"><span class="cl">            dictFreeKey(d, he);
+</span></span><span class="line"><span class="cl">            dictFreeVal(d, he);
+</span></span><span class="line"><span class="cl">            zfree(he);
+</span></span><span class="line"><span class="cl">            ht-&gt;used--;
+</span></span><span class="line"><span class="cl">            he = nextHe;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    zfree(ht-&gt;table);
+</span></span><span class="line"><span class="cl">    // 重置，后续可以再次使用
+</span></span><span class="line"><span class="cl">    _dictReset(ht);
+</span></span><span class="line"><span class="cl">    return DICT_OK;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-id清空dict38清空dictspan"><!-- raw HTML omitted -->3.8.清空<code>dict</code><!-- raw HTML omitted --></h3>
 <p>可以调用<code>dictEmpty</code>清空一个<code>dict</code>，但不销毁。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1110,21 +1110,21 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">void dictEmpty(dict *d, void(callback)(void*)) {
-    // 清空两个dictht
-    _dictClear(d,&amp;d-&gt;ht[0],callback);
-    _dictClear(d,&amp;d-&gt;ht[1],callback);
-    d-&gt;rehashidx = -1;
-    d-&gt;iterators = 0;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void dictEmpty(dict *d, void(callback)(void*)) {
+</span></span><span class="line"><span class="cl">    // 清空两个dictht
+</span></span><span class="line"><span class="cl">    _dictClear(d,&amp;d-&gt;ht[0],callback);
+</span></span><span class="line"><span class="cl">    _dictClear(d,&amp;d-&gt;ht[1],callback);
+</span></span><span class="line"><span class="cl">    d-&gt;rehashidx = -1;
+</span></span><span class="line"><span class="cl">    d-&gt;iterators = 0;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-id遍历dict39遍历dictspan"><!-- raw HTML omitted -->3.9.遍历<code>dict</code><!-- raw HTML omitted --></h3>
 <p>为了便于<code>dict</code>的遍历，Redis提供了<code>dict</code>的迭代器<code>dictIterator</code>。</p>
 <p>迭代器分为安全的和非安全的两种，分别通过<code>dictGetIterator</code>和<code>dictGetSafeIterator</code>获取。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1146,27 +1146,27 @@ dictEntry *dictAddRaw(dict *d, void *key)
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">dictIterator *dictGetIterator(dict *d)
-{
-    dictIterator *d = zmalloc(sizeof(*iter));
-
-    iter-&gt;d = d;
-    iter-&gt;table = 0;
-    iter-&gt;index = -1;
-    iter-&gt;safe = 0;
-    iter-&gt;entry = NULL;
-    iter-&gt;nextEntry = NULL;
-    return iter;
-}
-
-dictIterator *dictGetSafeIterator(dict *d) {
-    dictIterator *i = dictGetIterator(d);
-
-    // 创建时不需要增加dict.iterators的值，在遍历正在开始后增加
-    i-&gt;safe = 1;
-    return i;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">dictIterator *dictGetIterator(dict *d)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    dictIterator *d = zmalloc(sizeof(*iter));
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    iter-&gt;d = d;
+</span></span><span class="line"><span class="cl">    iter-&gt;table = 0;
+</span></span><span class="line"><span class="cl">    iter-&gt;index = -1;
+</span></span><span class="line"><span class="cl">    iter-&gt;safe = 0;
+</span></span><span class="line"><span class="cl">    iter-&gt;entry = NULL;
+</span></span><span class="line"><span class="cl">    iter-&gt;nextEntry = NULL;
+</span></span><span class="line"><span class="cl">    return iter;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">dictIterator *dictGetSafeIterator(dict *d) {
+</span></span><span class="line"><span class="cl">    dictIterator *i = dictGetIterator(d);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 创建时不需要增加dict.iterators的值，在遍历正在开始后增加
+</span></span><span class="line"><span class="cl">    i-&gt;safe = 1;
+</span></span><span class="line"><span class="cl">    return i;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>两种迭代器的区别：</p>
 <ul>
@@ -1180,7 +1180,7 @@ dictIterator *dictGetSafeIterator(dict *d) {
 <p>通过<code>dictNext</code>获取迭代器的下一个值。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1218,48 +1218,48 @@ dictIterator *dictGetSafeIterator(dict *d) {
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">dictEntry *dictNext(dictIterator *iter)
-{
-    while(1) {
-        if (iter-&gt;entry == NULL) {
-            dictht *ht = &amp;iter-&gt;d-&gt;ht[iter-&gt;table];
-            // 遍历第一个元素时，安全迭代器需要增加dict.iterators值
-            // 非安全迭代器计算fingerprint
-            if (iter-&gt;index == -1 &amp;&amp; iter-&gt;table == 0) {
-                if (iter-&gt;safe)
-                    iter-&gt;d-&gt;iterators++;
-                else
-                    iter-&gt;fingerprint = dictFingerprint(iter-&gt;d);
-            }
-            iter-&gt;index++;
-            // 一个dictht遍历完成，如果是索引为0，并且正在rehash，索引为1也可能有值，继续遍历。
-            // 否则直接break
-            if (iter-&gt;index &gt;= (long)ht-&gt;size) {
-                if (dictIsRehashing(iter-&gt;d) &amp;&amp; iter-&gt;table == 0) {
-                    iter-&gt;table++;
-                    iter-&gt;index = 0;
-                    ht = &amp;iter-&gt;d-&gt;ht[1];
-                } else {
-                    break;
-                }
-            }
-            iter-&gt;entry = ht-&gt;table[iter-&gt;index];
-        } else {
-            iter-&gt;entry = iter-&gt;nextEntry;
-        }
-        if (iter-&gt;entry) {
-            iter-&gt;nextEntry = iter-&gt;entry-&gt;next;
-            return iter-&gt;entry;
-        }
-    }
-    return NULL;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">dictEntry *dictNext(dictIterator *iter)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    while(1) {
+</span></span><span class="line"><span class="cl">        if (iter-&gt;entry == NULL) {
+</span></span><span class="line"><span class="cl">            dictht *ht = &amp;iter-&gt;d-&gt;ht[iter-&gt;table];
+</span></span><span class="line"><span class="cl">            // 遍历第一个元素时，安全迭代器需要增加dict.iterators值
+</span></span><span class="line"><span class="cl">            // 非安全迭代器计算fingerprint
+</span></span><span class="line"><span class="cl">            if (iter-&gt;index == -1 &amp;&amp; iter-&gt;table == 0) {
+</span></span><span class="line"><span class="cl">                if (iter-&gt;safe)
+</span></span><span class="line"><span class="cl">                    iter-&gt;d-&gt;iterators++;
+</span></span><span class="line"><span class="cl">                else
+</span></span><span class="line"><span class="cl">                    iter-&gt;fingerprint = dictFingerprint(iter-&gt;d);
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            iter-&gt;index++;
+</span></span><span class="line"><span class="cl">            // 一个dictht遍历完成，如果是索引为0，并且正在rehash，索引为1也可能有值，继续遍历。
+</span></span><span class="line"><span class="cl">            // 否则直接break
+</span></span><span class="line"><span class="cl">            if (iter-&gt;index &gt;= (long)ht-&gt;size) {
+</span></span><span class="line"><span class="cl">                if (dictIsRehashing(iter-&gt;d) &amp;&amp; iter-&gt;table == 0) {
+</span></span><span class="line"><span class="cl">                    iter-&gt;table++;
+</span></span><span class="line"><span class="cl">                    iter-&gt;index = 0;
+</span></span><span class="line"><span class="cl">                    ht = &amp;iter-&gt;d-&gt;ht[1];
+</span></span><span class="line"><span class="cl">                } else {
+</span></span><span class="line"><span class="cl">                    break;
+</span></span><span class="line"><span class="cl">                }
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            iter-&gt;entry = ht-&gt;table[iter-&gt;index];
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            iter-&gt;entry = iter-&gt;nextEntry;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        if (iter-&gt;entry) {
+</span></span><span class="line"><span class="cl">            iter-&gt;nextEntry = iter-&gt;entry-&gt;next;
+</span></span><span class="line"><span class="cl">            return iter-&gt;entry;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    return NULL;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>遍历完成之后，调用<code>dictReleaseIterator</code>销毁迭代器。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1273,25 +1273,25 @@ dictIterator *dictGetSafeIterator(dict *d) {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">void dictReleaseIterator(dictIterator *iter) {
-    if (!(iter-&gt;index == -1 &amp;&amp; iter-&gt;table == 0)) {
-        // 进行过遍历，释放时
-        // 安全迭代器需要减少dict.iterators值
-        // 非安全迭代器比较遍历前后fingerprint值
-        if (iter-&gt;safe)
-            iter-&gt;d-&gt;iterators--;
-        else
-            assert(iter-&gt;fingerprint == dictFingerprint(iter-&gt;d));
-    }
-    zfree(iter);
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void dictReleaseIterator(dictIterator *iter) {
+</span></span><span class="line"><span class="cl">    if (!(iter-&gt;index == -1 &amp;&amp; iter-&gt;table == 0)) {
+</span></span><span class="line"><span class="cl">        // 进行过遍历，释放时
+</span></span><span class="line"><span class="cl">        // 安全迭代器需要减少dict.iterators值
+</span></span><span class="line"><span class="cl">        // 非安全迭代器比较遍历前后fingerprint值
+</span></span><span class="line"><span class="cl">        if (iter-&gt;safe)
+</span></span><span class="line"><span class="cl">            iter-&gt;d-&gt;iterators--;
+</span></span><span class="line"><span class="cl">        else
+</span></span><span class="line"><span class="cl">            assert(iter-&gt;fingerprint == dictFingerprint(iter-&gt;d));
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    zfree(iter);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-idrehash310rehashspan"><!-- raw HTML omitted -->3.10.rehash<!-- raw HTML omitted --></h3>
 <p>在上面添加key时，会调用<code>_dictKeyIndex</code>为key分配一个槽。<code>_dictKeyIndex</code>会调用<code>_dictExpandIfNeeded</code>，按需扩容。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1309,28 +1309,28 @@ dictIterator *dictGetSafeIterator(dict *d) {
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">static int _dictExpandIfNeeded(dict *d) {
-    // 正在rehash，不用处理
-    if (dictIsRehashing(d)) return DICT_OK;
-
-    // 如果ht[0]大小为0，容量扩大为DICT_HT_INITIAL_SIZE。
-    if (d-&gt;ht[0].size == 0) return dictExpand(d, DICT_HT_INITIAL_SIZE);
-
-    // 如果节点数量超过槽数量并且当前数量与总容量比大于dict_force_resize_ratio，扩容为当前数量的两倍。
-    // 如果设置了dict_can_resize，不需要判断比值
-    if (d-&gt;ht[0].used &gt;= d-&gt;ht[0].size &amp;&amp;
-        (dict_can_resize ||
-         d-&gt;ht[0].used/d-&gt;ht[0].size &gt; dict_force_resize_ratio))
-    {
-        return dictExpand(d, h-&gt;ht[0].used * 2);
-    }
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">static int _dictExpandIfNeeded(dict *d) {
+</span></span><span class="line"><span class="cl">    // 正在rehash，不用处理
+</span></span><span class="line"><span class="cl">    if (dictIsRehashing(d)) return DICT_OK;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 如果ht[0]大小为0，容量扩大为DICT_HT_INITIAL_SIZE。
+</span></span><span class="line"><span class="cl">    if (d-&gt;ht[0].size == 0) return dictExpand(d, DICT_HT_INITIAL_SIZE);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 如果节点数量超过槽数量并且当前数量与总容量比大于dict_force_resize_ratio，扩容为当前数量的两倍。
+</span></span><span class="line"><span class="cl">    // 如果设置了dict_can_resize，不需要判断比值
+</span></span><span class="line"><span class="cl">    if (d-&gt;ht[0].used &gt;= d-&gt;ht[0].size &amp;&amp;
+</span></span><span class="line"><span class="cl">        (dict_can_resize ||
+</span></span><span class="line"><span class="cl">         d-&gt;ht[0].used/d-&gt;ht[0].size &gt; dict_force_resize_ratio))
+</span></span><span class="line"><span class="cl">    {
+</span></span><span class="line"><span class="cl">        return dictExpand(d, h-&gt;ht[0].used * 2);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>dictExpand</code>进行真正的扩容操作。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1359,54 +1359,54 @@ dictIterator *dictGetSafeIterator(dict *d) {
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">int dictExpand(dict *d, unsigned long size) {
-    dictht n;
-    // 保证容量一定是2的整数次幂
-    unsigned long realsize = _dictNextPower(size);
-
-    // 正在rehash，不能扩容。
-    // 当前元素数量已经超过size了，肯定哪里出了问题
-    if (dictIsRehashing(d) || d-&gt;ht[0].used &gt; size)
-        return DICT_ERR;
-
-    n.size = realsize;
-    n.sizemask = realsize-1;
-    n.table = zcalloc(realsize*sizeof(dictEntry*));
-    n.used = 0;
-
-    // 还没有元素，d-&gt;ht[0]设置为n即可
-    if (d-&gt;ht[0].table == NULL) {
-        d-&gt;ht[0] = n;
-        return DICT_OK;
-    }
-
-    // d-&gt;ht[1]设置为n，开始rehash
-    d-&gt;ht[1] = n;
-    // rehashidx=0表示正在rehash中，以后的新增都在新的dictht中操作
-    d-&gt;rehashidx = 0;
-    return DICT_OK;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int dictExpand(dict *d, unsigned long size) {
+</span></span><span class="line"><span class="cl">    dictht n;
+</span></span><span class="line"><span class="cl">    // 保证容量一定是2的整数次幂
+</span></span><span class="line"><span class="cl">    unsigned long realsize = _dictNextPower(size);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 正在rehash，不能扩容。
+</span></span><span class="line"><span class="cl">    // 当前元素数量已经超过size了，肯定哪里出了问题
+</span></span><span class="line"><span class="cl">    if (dictIsRehashing(d) || d-&gt;ht[0].used &gt; size)
+</span></span><span class="line"><span class="cl">        return DICT_ERR;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    n.size = realsize;
+</span></span><span class="line"><span class="cl">    n.sizemask = realsize-1;
+</span></span><span class="line"><span class="cl">    n.table = zcalloc(realsize*sizeof(dictEntry*));
+</span></span><span class="line"><span class="cl">    n.used = 0;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 还没有元素，d-&gt;ht[0]设置为n即可
+</span></span><span class="line"><span class="cl">    if (d-&gt;ht[0].table == NULL) {
+</span></span><span class="line"><span class="cl">        d-&gt;ht[0] = n;
+</span></span><span class="line"><span class="cl">        return DICT_OK;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // d-&gt;ht[1]设置为n，开始rehash
+</span></span><span class="line"><span class="cl">    d-&gt;ht[1] = n;
+</span></span><span class="line"><span class="cl">    // rehashidx=0表示正在rehash中，以后的新增都在新的dictht中操作
+</span></span><span class="line"><span class="cl">    d-&gt;rehashidx = 0;
+</span></span><span class="line"><span class="cl">    return DICT_OK;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这条执行路径<code>dictAddRaw</code> -&gt; <code>_dictKeyIndex</code> -&gt; <code>_dictExpandIfNeeded</code> -&gt; <code>_dictExpand</code>，没有显式进行rehash。后续进行其他操作时，会适当的时候调用<code>_dictRehashStep</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">static void _dictRehashStep(dict *d) {
-    // 没有生产迭代器时才能rehash
-    if (d-&gt;iterators == 0) dictRehash(d,1);
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">static void _dictRehashStep(dict *d) {
+</span></span><span class="line"><span class="cl">    // 没有生产迭代器时才能rehash
+</span></span><span class="line"><span class="cl">    if (d-&gt;iterators == 0) dictRehash(d,1);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>_dictRehashStep</code>调用<code>dictRehash</code>处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1444,48 +1444,48 @@ dictIterator *dictGetSafeIterator(dict *d) {
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">int dictRehash(dict *d, int n) {
-    if (!dictIsRehashing(d)) return 0;
-
-    // 执行n趟，每趟处理一个槽
-    while(n--) {
-        dictEntry *de, *nextde;
-
-        // 第一个dictht已经没有元素了，rehash完成！
-        // 将第二个dictht复制给第一个，重置第二个dictht，保证非rehash时，元素只在第一个dictht中
-        if (d-&gt;ht[0].used == 0) {
-            zfree(d-&gt;ht[0].table);
-            d-&gt;ht[0] = d-&gt;ht[1];
-            _dictReset(&amp;d-&gt;ht[1]);
-            d-&gt;rehashidx = -1;
-            return 0;
-        }
-
-        assert(d-&gt;ht[0].size &gt; (unsigned long)d-&gt;rehashidx);
-        while(d-&gt;ht[0].table[d-&gt;rehashidx] == NULL) d-&gt;rehashidx++;
-        de = d-&gt;ht[0].table[d-&gt;rehashidx];
-        while(de) {
-            unsigned int h;
-
-            nextde = de-&gt;next;
-            h = dictHashKey(d, de-&gt;key) &amp; d-&gt;ht[1].sizemask;
-            de-&gt;next = d-&gt;ht[1].table[h];
-            d-&gt;ht[1].table[h] = de;
-            d-&gt;ht[0].used--;
-            d-&gt;ht[1].used++;
-            de = nextde;
-        }
-        d-&gt;ht[0].table[d-&gt;rehashidx] = NULL;
-        d-&gt;rehashidx++;
-    }
-    return 1;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int dictRehash(dict *d, int n) {
+</span></span><span class="line"><span class="cl">    if (!dictIsRehashing(d)) return 0;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 执行n趟，每趟处理一个槽
+</span></span><span class="line"><span class="cl">    while(n--) {
+</span></span><span class="line"><span class="cl">        dictEntry *de, *nextde;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        // 第一个dictht已经没有元素了，rehash完成！
+</span></span><span class="line"><span class="cl">        // 将第二个dictht复制给第一个，重置第二个dictht，保证非rehash时，元素只在第一个dictht中
+</span></span><span class="line"><span class="cl">        if (d-&gt;ht[0].used == 0) {
+</span></span><span class="line"><span class="cl">            zfree(d-&gt;ht[0].table);
+</span></span><span class="line"><span class="cl">            d-&gt;ht[0] = d-&gt;ht[1];
+</span></span><span class="line"><span class="cl">            _dictReset(&amp;d-&gt;ht[1]);
+</span></span><span class="line"><span class="cl">            d-&gt;rehashidx = -1;
+</span></span><span class="line"><span class="cl">            return 0;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        assert(d-&gt;ht[0].size &gt; (unsigned long)d-&gt;rehashidx);
+</span></span><span class="line"><span class="cl">        while(d-&gt;ht[0].table[d-&gt;rehashidx] == NULL) d-&gt;rehashidx++;
+</span></span><span class="line"><span class="cl">        de = d-&gt;ht[0].table[d-&gt;rehashidx];
+</span></span><span class="line"><span class="cl">        while(de) {
+</span></span><span class="line"><span class="cl">            unsigned int h;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            nextde = de-&gt;next;
+</span></span><span class="line"><span class="cl">            h = dictHashKey(d, de-&gt;key) &amp; d-&gt;ht[1].sizemask;
+</span></span><span class="line"><span class="cl">            de-&gt;next = d-&gt;ht[1].table[h];
+</span></span><span class="line"><span class="cl">            d-&gt;ht[1].table[h] = de;
+</span></span><span class="line"><span class="cl">            d-&gt;ht[0].used--;
+</span></span><span class="line"><span class="cl">            d-&gt;ht[1].used++;
+</span></span><span class="line"><span class="cl">            de = nextde;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        d-&gt;ht[0].table[d-&gt;rehashidx] = NULL;
+</span></span><span class="line"><span class="cl">        d-&gt;rehashidx++;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    return 1;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>dictRehashMilliseconds</code>可以指定超时时间，rehash处理用时超过这个时间，就返回。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1498,23 +1498,23 @@ dictIterator *dictGetSafeIterator(dict *d) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">int dictRehashMilliseconds(dict *d, int ms) {
-    long long start = timeInMilliseconds();
-    int rehashes = 0;
-
-    while (dictRehash(d, 100)) {
-        rehashes += 100;
-        // 超时了，break
-        if (timeInMilliseconds()-start &gt; ms) break;
-    }
-    return rehashes;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int dictRehashMilliseconds(dict *d, int ms) {
+</span></span><span class="line"><span class="cl">    long long start = timeInMilliseconds();
+</span></span><span class="line"><span class="cl">    int rehashes = 0;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    while (dictRehash(d, 100)) {
+</span></span><span class="line"><span class="cl">        rehashes += 100;
+</span></span><span class="line"><span class="cl">        // 超时了，break
+</span></span><span class="line"><span class="cl">        if (timeInMilliseconds()-start &gt; ms) break;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    return rehashes;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>函数<code>dictResize</code>将<code>dict</code>的大小指定为能容纳所有元素的最小值。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1525,16 +1525,16 @@ dictIterator *dictGetSafeIterator(dict *d) {
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">int dictResize(dict *d) {
-    int minimal;
-
-    if (!dict_can_resize || dictIsRehashing(d)) return DICT_ERR;
-    minimal = d-&gt;ht[0].used;
-    if (minimal &lt; DICT_HT_INITIAL_SIZE)
-        minimal = DICT_HT_INITIAL_SIZE;
-    return dictExpand(d, minimal);
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int dictResize(dict *d) {
+</span></span><span class="line"><span class="cl">    int minimal;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    if (!dict_can_resize || dictIsRehashing(d)) return DICT_ERR;
+</span></span><span class="line"><span class="cl">    minimal = d-&gt;ht[0].used;
+</span></span><span class="line"><span class="cl">    if (minimal &lt; DICT_HT_INITIAL_SIZE)
+</span></span><span class="line"><span class="cl">        minimal = DICT_HT_INITIAL_SIZE;
+</span></span><span class="line"><span class="cl">    return dictExpand(d, minimal);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="span-idhash算法4hash算法span"><!-- raw HTML omitted -->4.hash算法<!-- raw HTML omitted --></h2>
 <ul>
@@ -1552,7 +1552,7 @@ dictIterator *dictGetSafeIterator(dict *d) {
 <p><code>dict.c</code>最后列举了一个<code>string copy</code>的<code>dictType</code>示例。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1614,67 +1614,67 @@ dictIterator *dictGetSafeIterator(dict *d) {
 </span><span class="lnt">60
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 计算hash值
-static unsigned int _dictStringCopyHTHashFunction(const void *key) {
-    return dictGenHashFunction(key, strlen(key));
-}
-
-static void *_dictStringDup(void *privdata, const void *key) {
-    int len = strlen(key);
-    // 重新copy一份string
-    char *copy = zmalloc(len+1);
-    // 防止编译器“未使用变量”警告
-    DICT_NOTUSED(privdata);
-
-    memcpy(copy, key, len);
-    copy[len] = &#39;\0&#39;;
-    return copy;
-}
-
-static int _dictStringCopyHTKeyCompare(void *privdata, const void *key1, const void *key2) {
-    DICT_NOTUSED(privdata);
-
-    // 使用c str的比较方式
-    return strcmp(key1, key2) == 0;
-}
-
-// 销毁key
-static void _dictStringDestructor(void *privdata, void *key) {
-    DICT_NOTUSED(privdata);
-
-    zfree(key);
-}
-
-// 只为key重新分配空间，value共享指针
-dictType dictTypeHeapStringCopyKey = {
-    _dictStringCopyHTHashFunction, // hash计算函数
-    _dictStringDup, // key复制函数，重新分配空间，复制
-    NULL, // value复制函数，为NULL，直接指针赋值
-    _dictStringCopyHTKeyCompare, // key比较函数，使用c str比较方式
-    _dictStringDestructor, // key销毁函数，因为是重新分配空间，所以需要显示free
-    NULL, // value销毁函数，value是共享指针，不定义销毁函数
-};
-
-// key和value都不重新分配空间，只共享指针
-dictType dictTypeHeapStrings {
-    _dictStringCopyHTHashFunction, // hash计算函数
-    NULL, // key复制函数，为NULL，直接指针赋值
-    NULL, // value复制函数，为NULL，直接指针赋值
-    _dictStringCopyKeyHTKeyCompare, // key比较函数，使用c str比较方式
-    _dictStringDestructor, // key销毁函数
-    NULL, // value销毁函数
-};
-
-// key和value都重新分配空间
-dictType dictTypeHeadStringCopyKeyValue = {
-    _dictStringCopyHTHashFunction, // hash计算函数
-    _dictStringDup, // key复制函数，重新分配空间，复制
-    _dictStringDup, // value复制函数，重新分配空间，复制
-    _dictStringCopyHTKeyCompare, // key比较函数，使用c str比较方式
-    _dictStringDestructor, // key销毁函数，因为是重新分配空间，所以需要显示free
-    _dictStringDestructor, // value销毁函数，因为是重新分配空间，所以需要显示free
-};
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 计算hash值
+</span></span><span class="line"><span class="cl">static unsigned int _dictStringCopyHTHashFunction(const void *key) {
+</span></span><span class="line"><span class="cl">    return dictGenHashFunction(key, strlen(key));
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">static void *_dictStringDup(void *privdata, const void *key) {
+</span></span><span class="line"><span class="cl">    int len = strlen(key);
+</span></span><span class="line"><span class="cl">    // 重新copy一份string
+</span></span><span class="line"><span class="cl">    char *copy = zmalloc(len+1);
+</span></span><span class="line"><span class="cl">    // 防止编译器“未使用变量”警告
+</span></span><span class="line"><span class="cl">    DICT_NOTUSED(privdata);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    memcpy(copy, key, len);
+</span></span><span class="line"><span class="cl">    copy[len] = &#39;\0&#39;;
+</span></span><span class="line"><span class="cl">    return copy;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">static int _dictStringCopyHTKeyCompare(void *privdata, const void *key1, const void *key2) {
+</span></span><span class="line"><span class="cl">    DICT_NOTUSED(privdata);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 使用c str的比较方式
+</span></span><span class="line"><span class="cl">    return strcmp(key1, key2) == 0;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 销毁key
+</span></span><span class="line"><span class="cl">static void _dictStringDestructor(void *privdata, void *key) {
+</span></span><span class="line"><span class="cl">    DICT_NOTUSED(privdata);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    zfree(key);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 只为key重新分配空间，value共享指针
+</span></span><span class="line"><span class="cl">dictType dictTypeHeapStringCopyKey = {
+</span></span><span class="line"><span class="cl">    _dictStringCopyHTHashFunction, // hash计算函数
+</span></span><span class="line"><span class="cl">    _dictStringDup, // key复制函数，重新分配空间，复制
+</span></span><span class="line"><span class="cl">    NULL, // value复制函数，为NULL，直接指针赋值
+</span></span><span class="line"><span class="cl">    _dictStringCopyHTKeyCompare, // key比较函数，使用c str比较方式
+</span></span><span class="line"><span class="cl">    _dictStringDestructor, // key销毁函数，因为是重新分配空间，所以需要显示free
+</span></span><span class="line"><span class="cl">    NULL, // value销毁函数，value是共享指针，不定义销毁函数
+</span></span><span class="line"><span class="cl">};
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// key和value都不重新分配空间，只共享指针
+</span></span><span class="line"><span class="cl">dictType dictTypeHeapStrings {
+</span></span><span class="line"><span class="cl">    _dictStringCopyHTHashFunction, // hash计算函数
+</span></span><span class="line"><span class="cl">    NULL, // key复制函数，为NULL，直接指针赋值
+</span></span><span class="line"><span class="cl">    NULL, // value复制函数，为NULL，直接指针赋值
+</span></span><span class="line"><span class="cl">    _dictStringCopyKeyHTKeyCompare, // key比较函数，使用c str比较方式
+</span></span><span class="line"><span class="cl">    _dictStringDestructor, // key销毁函数
+</span></span><span class="line"><span class="cl">    NULL, // value销毁函数
+</span></span><span class="line"><span class="cl">};
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// key和value都重新分配空间
+</span></span><span class="line"><span class="cl">dictType dictTypeHeadStringCopyKeyValue = {
+</span></span><span class="line"><span class="cl">    _dictStringCopyHTHashFunction, // hash计算函数
+</span></span><span class="line"><span class="cl">    _dictStringDup, // key复制函数，重新分配空间，复制
+</span></span><span class="line"><span class="cl">    _dictStringDup, // value复制函数，重新分配空间，复制
+</span></span><span class="line"><span class="cl">    _dictStringCopyHTKeyCompare, // key比较函数，使用c str比较方式
+</span></span><span class="line"><span class="cl">    _dictStringDestructor, // key销毁函数，因为是重新分配空间，所以需要显示free
+</span></span><span class="line"><span class="cl">    _dictStringDestructor, // value销毁函数，因为是重新分配空间，所以需要显示free
+</span></span><span class="line"><span class="cl">};
+</span></span></code></pre></td></tr></table>
 </div>
 </div>
     </div>
@@ -1775,6 +1775,8 @@ dictType dictTypeHeadStringCopyKeyValue = {
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1814,7 +1816,7 @@ dictType dictTypeHeadStringCopyKeyValue = {
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1878,7 +1880,7 @@ dictType dictTypeHeadStringCopyKeyValue = {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1901,6 +1903,8 @@ dictType dictTypeHeadStringCopyKeyValue = {
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

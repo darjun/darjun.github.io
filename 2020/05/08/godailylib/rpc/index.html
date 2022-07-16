@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/05/08/godailylib/rpc/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 RPC（Remote Procedure Call）是远程方法调用的缩写，它可以通过网络调用远程对象的方法。Go 标准库net/rpc提供了一个简单、强大且高" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2020/05/08/godailylib/rpc/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2020-05-08T21:12:22&#43;00:00" />
-<meta property="article:modified_time" content="2020-05-08T21:12:22&#43;00:00" />
+<meta property="article:published_time" content="2020-05-08T21:12:22+00:00" />
+<meta property="article:modified_time" content="2020-05-08T21:12:22+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 rpc">
-<meta itemprop="description" content="简介 RPC（Remote Procedure Call）是远程方法调用的缩写，它可以通过网络调用远程对象的方法。Go 标准库net/rpc提供了一个简单、强大且高"><meta itemprop="datePublished" content="2020-05-08T21:12:22&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-08T21:12:22&#43;00:00" />
+<meta itemprop="description" content="简介 RPC（Remote Procedure Call）是远程方法调用的缩写，它可以通过网络调用远程对象的方法。Go 标准库net/rpc提供了一个简单、强大且高"><meta itemprop="datePublished" content="2020-05-08T21:12:22+00:00" />
+<meta itemprop="dateModified" content="2020-05-08T21:12:22+00:00" />
 <meta itemprop="wordCount" content="3975">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 rpc"/>
@@ -404,7 +404,7 @@ if (!doNotTrack) {
 <p>由于是网络程序，我们需要编写服务端和客户端两个程序。首先是服务端程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -449,50 +449,50 @@ if (!doNotTrack) {
 </span><span class="lnt">43
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;errors&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net&#34;</span>
-  <span class="s">&#34;net/http&#34;</span>
-  <span class="s">&#34;net/rpc&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">Args</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">A</span><span class="p">,</span> <span class="nx">B</span> <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">Quotient</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Quo</span><span class="p">,</span> <span class="nx">Rem</span> <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">Arith</span> <span class="kt">int</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Arith</span><span class="p">)</span> <span class="nf">Multiply</span><span class="p">(</span><span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">reply</span> <span class="o">*</span><span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="o">*</span><span class="nx">reply</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">*</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Arith</span><span class="p">)</span> <span class="nf">Divide</span><span class="p">(</span><span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">quo</span> <span class="o">*</span><span class="nx">Quotient</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;divide by 0&#34;</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">/</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
-  <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">%</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
-  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">arith</span><span class="p">)</span>
-  <span class="nx">rpc</span><span class="p">.</span><span class="nf">HandleHTTP</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:1234&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;serve error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;errors&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/rpc&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Args</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">A</span><span class="p">,</span> <span class="nx">B</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Quotient</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Quo</span><span class="p">,</span> <span class="nx">Rem</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Arith</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Arith</span><span class="p">)</span> <span class="nf">Multiply</span><span class="p">(</span><span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">reply</span> <span class="o">*</span><span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*</span><span class="nx">reply</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">*</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Arith</span><span class="p">)</span> <span class="nf">Divide</span><span class="p">(</span><span class="nx">args</span> <span class="o">*</span><span class="nx">Args</span><span class="p">,</span> <span class="nx">quo</span> <span class="o">*</span><span class="nx">Quotient</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;divide by 0&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">/</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span> <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span> <span class="o">%</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span><span class="p">.</span><span class="nf">HandleHTTP</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:1234&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;serve error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们定义了一个<code>Arith</code>类型，为它编写了两个方法<code>Multiply</code>和<code>Divide</code>。创建<code>Arith</code>类型的对象<code>arith</code>，调用<code>rpc.Register(arith)</code>会注册这两个方法。<code>rpc</code>库对注册的方法有一定的限制，方法必须满足签名<code>func (t *T) MethodName(argType T1, replyType *T2) error</code>：</p>
 <ul>
@@ -503,7 +503,7 @@ if (!doNotTrack) {
 <p><code>rpc.HandleHTTP()</code>注册 HTTP 路由。<code>http.ListenAndServe(&quot;:1234&quot;, nil)</code>在端口<code>1234</code>上启动一个 HTTP 服务，请求 rpc 方法会交给<code>rpc</code>内部路由处理。这样我们就可以通过客户端调用这两个方法了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -543,72 +543,72 @@ if (!doNotTrack) {
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net/rpc&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">Args</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">A</span><span class="p">,</span> <span class="nx">B</span> <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">Quotient</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Quo</span><span class="p">,</span> <span class="nx">Rem</span> <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">DialHTTP</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dialing:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
-  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
-  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
-
-  <span class="nx">args</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">15</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
-  <span class="kd">var</span> <span class="nx">quo</span> <span class="nx">Quotient</span>
-  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Divide&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">quo</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Divide error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Divide: %d/%d=%d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/rpc&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Args</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">A</span><span class="p">,</span> <span class="nx">B</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Quotient</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Quo</span><span class="p">,</span> <span class="nx">Rem</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">DialHTTP</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dialing:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">args</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">15</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">quo</span> <span class="nx">Quotient</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Divide&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">quo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Divide error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Divide: %d/%d=%d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>客户端比服务端稍微简单一点，我们使用<code>rpc.DialHTTP(&quot;tcp&quot;, &quot;:1234&quot;)</code>连接到服务端的监听地址，返回一个 rpc 的客户端对象。后续就可以调用该对象的<code>Call()</code>方法调用服务端对象的对应方法，依次传入方法名（需要加上类型限定）、参数、一个指针（用于接收返回值）。首先运行服务端程序：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后在一个新的控制台中运行客户端程序，输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">client</span><span class="p">.</span><span class="k">go</span>
-<span class="nx">Multiply</span><span class="p">:</span> <span class="mi">7</span><span class="o">*</span><span class="mi">8</span><span class="p">=</span><span class="mi">56</span>
-<span class="nx">Divide</span><span class="p">:</span> <span class="mi">15</span><span class="o">/</span><span class="mi">6</span><span class="p">=</span><span class="mf">2.</span><span class="p">.</span><span class="mf">.3</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">client</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Multiply</span><span class="p">:</span> <span class="mi">7</span><span class="o">*</span><span class="mi">8</span><span class="p">=</span><span class="mi">56</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Divide</span><span class="p">:</span> <span class="mi">15</span><span class="o">/</span><span class="mi">6</span><span class="p">=</span><span class="mf">2.</span><span class="p">.</span><span class="mf">.3</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>对<code>net/http</code>包不熟悉的童鞋可能会觉得奇怪，<code>rpc.HandleHTTP()</code>与<code>http.ListenAndServer(&quot;:1234&quot;, nil)</code>是怎么联系起来的？我们简单看一下源码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -625,37 +625,37 @@ if (!doNotTrack) {
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/rpc/server.go
-</span><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
-  <span class="c1">// Defaults used by HandleHTTP
-</span><span class="c1"></span>  <span class="nx">DefaultRPCPath</span>   <span class="p">=</span> <span class="s">&#34;/_goRPC_&#34;</span>
-  <span class="nx">DefaultDebugPath</span> <span class="p">=</span> <span class="s">&#34;/debug/rpc&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">HandleHTTP</span><span class="p">(</span><span class="nx">rpcPath</span><span class="p">,</span> <span class="nx">debugPath</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">http</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">rpcPath</span><span class="p">,</span> <span class="nx">server</span><span class="p">)</span>
-  <span class="nx">http</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">debugPath</span><span class="p">,</span> <span class="nx">debugHTTP</span><span class="p">{</span><span class="nx">server</span><span class="p">})</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">HandleHTTP</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">HandleHTTP</span><span class="p">(</span><span class="nx">DefaultRPCPath</span><span class="p">,</span> <span class="nx">DefaultDebugPath</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/net/rpc/server.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Defaults used by HandleHTTP
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">DefaultRPCPath</span>   <span class="p">=</span> <span class="s">&#34;/_goRPC_&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DefaultDebugPath</span> <span class="p">=</span> <span class="s">&#34;/debug/rpc&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">HandleHTTP</span><span class="p">(</span><span class="nx">rpcPath</span><span class="p">,</span> <span class="nx">debugPath</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">http</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">rpcPath</span><span class="p">,</span> <span class="nx">server</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">http</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">debugPath</span><span class="p">,</span> <span class="nx">debugHTTP</span><span class="p">{</span><span class="nx">server</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">HandleHTTP</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">HandleHTTP</span><span class="p">(</span><span class="nx">DefaultRPCPath</span><span class="p">,</span> <span class="nx">DefaultDebugPath</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>实际上，<code>rpc.HandleHTTP()</code>会调用<code>http.Handle()</code>在预定义的路径上（<code>/_goRPC_</code>）注册处理器。这个处理器最终被添加到<code>net/http</code>包中的默认多路复用器上：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/http/server.go
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">Handle</span><span class="p">(</span><span class="nx">pattern</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">handler</span> <span class="nx">Handler</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">DefaultServeMux</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="nx">handler</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/net/http/server.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Handle</span><span class="p">(</span><span class="nx">pattern</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">handler</span> <span class="nx">Handler</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DefaultServeMux</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="nx">handler</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>而<code>http.ListenAndServer()</code>第二个参数传入<code>nil</code>时也是使用默认的多路复用器。具体可以看看我之前的文章<a href="https://darjun.github.io/2019/12/05/goweb/structure/">Go Web 编程之 程序结构</a>。</p>
 <p>细心的朋友可能发现了，除了默认的路径<code>/_goRPC_</code>用来处理 RPC 请求，<code>rpc.HandleHTTP()</code>方法还注册了一个调试路径<code>/debug/rpc</code>。我们可以直接在浏览器中访问这个网址（需要服务端程序开启。如果服务端在远程，需要相应地修改地址）<a href="http://localhost:1234/debug/prc">localhost:1234</a>，直观的查看各个方法的调用情况：</p>
@@ -664,7 +664,7 @@ if (!doNotTrack) {
 <p>上面的例子中，我们在客户端使用了同步的调用方式，即一直等待服务端的响应或出错。在等待的过程中，客户端就不能处理其它的任务了。当然，我们也可以采用异步的调用方式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -705,51 +705,51 @@ if (!doNotTrack) {
 </span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">DialHTTP</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dialing:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">args1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
-  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
-  <span class="nx">multiplyReply</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Go</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args1</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-
-  <span class="nx">args2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">15</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
-  <span class="kd">var</span> <span class="nx">quo</span> <span class="nx">Quotient</span>
-  <span class="nx">divideReply</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Go</span><span class="p">(</span><span class="s">&#34;Arith.Divide&#34;</span><span class="p">,</span> <span class="nx">args2</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">quo</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-
-  <span class="nx">ticker</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTicker</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
-  <span class="k">defer</span> <span class="nx">ticker</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
-
-  <span class="kd">var</span> <span class="nx">multiplyReplied</span><span class="p">,</span> <span class="nx">divideReplied</span> <span class="kt">bool</span>
-  <span class="k">for</span> <span class="p">!</span><span class="nx">multiplyReplied</span> <span class="o">||</span> <span class="p">!</span><span class="nx">divideReplied</span> <span class="p">{</span>
-    <span class="k">select</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="nx">replyCall</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">multiplyReply</span><span class="p">.</span><span class="nx">Done</span><span class="p">:</span>
-      <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">replyCall</span><span class="p">.</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args1</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args1</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
-      <span class="p">}</span>
-      <span class="nx">multiplyReplied</span> <span class="p">=</span> <span class="kc">true</span>
-    <span class="k">case</span> <span class="nx">replyCall</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">divideReply</span><span class="p">.</span><span class="nx">Done</span><span class="p">:</span>
-      <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">replyCall</span><span class="p">.</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Divide error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Divide: %d/%d=%d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args2</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args2</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
-      <span class="p">}</span>
-      <span class="nx">divideReplied</span> <span class="p">=</span> <span class="kc">true</span>
-    <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ticker</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;tick&#34;</span><span class="p">)</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">DialHTTP</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dialing:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">args1</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">multiplyReply</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Go</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args1</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">args2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">15</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">quo</span> <span class="nx">Quotient</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">divideReply</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Go</span><span class="p">(</span><span class="s">&#34;Arith.Divide&#34;</span><span class="p">,</span> <span class="nx">args2</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">quo</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">ticker</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTicker</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">ticker</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">multiplyReplied</span><span class="p">,</span> <span class="nx">divideReplied</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">!</span><span class="nx">multiplyReplied</span> <span class="o">||</span> <span class="p">!</span><span class="nx">divideReplied</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">replyCall</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">multiplyReply</span><span class="p">.</span><span class="nx">Done</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">replyCall</span><span class="p">.</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args1</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args1</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">multiplyReplied</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">replyCall</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">divideReply</span><span class="p">.</span><span class="nx">Done</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">replyCall</span><span class="p">.</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Divide error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Divide: %d/%d=%d...%d\n&#34;</span><span class="p">,</span> <span class="nx">args2</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args2</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Quo</span><span class="p">,</span> <span class="nx">quo</span><span class="p">.</span><span class="nx">Rem</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">divideReplied</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ticker</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;tick&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>异步调用使用<code>client.Go()</code>方法，参数与同步调用基本一样。它返回一个<code>rpc.Call</code>对象：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -759,35 +759,35 @@ if (!doNotTrack) {
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/rpc/client.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Call</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">ServiceMethod</span> <span class="kt">string</span>     
-  <span class="nx">Args</span>          <span class="kd">interface</span><span class="p">{}</span>
-  <span class="nx">Reply</span>         <span class="kd">interface</span><span class="p">{}</span>
-  <span class="nx">Error</span>         <span class="kt">error</span>      
-  <span class="nx">Done</span>          <span class="kd">chan</span> <span class="o">*</span><span class="nx">Call</span> 
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/net/rpc/client.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Call</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ServiceMethod</span> <span class="kt">string</span>     
+</span></span><span class="line"><span class="cl">  <span class="nx">Args</span>          <span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Reply</span>         <span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Error</span>         <span class="kt">error</span>      
+</span></span><span class="line"><span class="cl">  <span class="nx">Done</span>          <span class="kd">chan</span> <span class="o">*</span><span class="nx">Call</span> 
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们可以通过该对象获取此次调用的信息，如方法名、参数、返回值和错误。我们通过监听通道<code>Done</code>是否有值判断调用是否完成。上面代码中使用一个<code>select</code>语句轮询两次调用的状态。注意一点，<strong>如果多个通道都有值，<code>select</code>执行哪个<code>case</code>是随机的</strong>。所以可能先输出<code>divide</code>的信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">client</span><span class="p">.</span><span class="k">go</span> 
-<span class="nx">Divide</span><span class="p">:</span> <span class="mi">15</span><span class="o">/</span><span class="mi">6</span><span class="p">=</span><span class="mf">2.</span><span class="p">.</span><span class="mf">.3</span>
-<span class="nx">Multiply</span><span class="p">:</span> <span class="mi">7</span><span class="o">*</span><span class="mi">8</span><span class="p">=</span><span class="mi">56</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">client</span><span class="p">.</span><span class="k">go</span> 
+</span></span><span class="line"><span class="cl"><span class="nx">Divide</span><span class="p">:</span> <span class="mi">15</span><span class="o">/</span><span class="mi">6</span><span class="p">=</span><span class="mf">2.</span><span class="p">.</span><span class="mf">.3</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Multiply</span><span class="p">:</span> <span class="mi">7</span><span class="o">*</span><span class="mi">8</span><span class="p">=</span><span class="mi">56</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>服务端可以继续使用一开始的。</p>
 <h2 id="定制方法名">定制方法名</h2>
 <p>默认情况下，<code>rpc.Register()</code>将方法接收者（<code>receiver</code>）的类型名作为方法名前缀。我们也可以自己设置。这时需要调用<code>RegisterName(name string, rcvr interface{}) error</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -797,20 +797,20 @@ if (!doNotTrack) {
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
-  <span class="nx">rpc</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;math&#34;</span><span class="p">,</span> <span class="nx">arith</span><span class="p">)</span>
-  <span class="nx">rpc</span><span class="p">.</span><span class="nf">HandleHTTP</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:1234&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;serve error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;math&#34;</span><span class="p">,</span> <span class="nx">arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span><span class="p">.</span><span class="nf">HandleHTTP</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:1234&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;serve error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面我们将注册的方法名前缀改为<code>math</code>了，客户端调用时传入的方法名也需要相应的修改：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -826,27 +826,27 @@ if (!doNotTrack) {
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">DialHTTP</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dialing:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
-  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
-  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;math.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">DialHTTP</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dialing:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;math.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="tcp">TCP</h2>
 <p>上面我们都是使用 HTTP 协议来实现 rpc 服务的，<code>rpc</code>库也支持直接使用 TCP 协议。首先，服务端先调用<code>net.Listen(&quot;tcp&quot;, &quot;:1234&quot;)</code>创建一个监听某个 TCP 端口的监听器（Accepter），然后使用<code>rpc.Accept(l)</code>在此监听器上接受连接并处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -858,22 +858,22 @@ if (!doNotTrack) {
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;listen error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
-  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">arith</span><span class="p">)</span>
-  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Accept</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;listen error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Accept</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后，客户端调用<code>rpc.Dial()</code>以 TCP 协议连接到服务端：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -889,27 +889,27 @@ if (!doNotTrack) {
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">Dial</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dialing:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
-  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
-  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">Dial</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dialing:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="自己接收连接">自己接收连接</h2>
 <p>我们可以自己接受连接，然后在此连接上应用 rpc 协议：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -929,32 +929,32 @@ if (!doNotTrack) {
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;listen error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
-  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">arith</span><span class="p">)</span>
-
-  <span class="k">for</span> <span class="p">{</span>
-    <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;accept error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-    <span class="p">}</span>
-
-    <span class="k">go</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">ServeConn</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;listen error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;accept error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">ServeConn</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个客户端与上面 TCP 的客户端一样，不用修改。</p>
 <h2 id="自定义编码格式">自定义编码格式</h2>
 <p>默认客户端与服务端之间的数据使用<code>gob</code>编码，我们可以使用其它的格式来编码。在服务端，我们要实现<code>rpc.ServerCodec</code>接口：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -964,20 +964,20 @@ if (!doNotTrack) {
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/rpc/server.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ServerCodec</span> <span class="kd">interface</span> <span class="p">{</span>
-  <span class="nf">ReadRequestHeader</span><span class="p">(</span><span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="kt">error</span>
-  <span class="nf">ReadRequestBody</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
-  <span class="nf">WriteResponse</span><span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
-
-  <span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/net/rpc/server.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">ServerCodec</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">ReadRequestHeader</span><span class="p">(</span><span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">ReadRequestBody</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">WriteResponse</span><span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>实际上不用这么麻烦，我们查看源码看看<code>gobServerCodec</code>是怎么实现的，然后仿造实现一个就行了。下面我实现了一个 JSON 格式的编解码器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1044,77 +1044,77 @@ if (!doNotTrack) {
 </span><span class="lnt">65
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">JsonServerCodec</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">rwc</span>    <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span>
-  <span class="nx">dec</span>    <span class="o">*</span><span class="nx">json</span><span class="p">.</span><span class="nx">Decoder</span>
-  <span class="nx">enc</span>    <span class="o">*</span><span class="nx">json</span><span class="p">.</span><span class="nx">Encoder</span>
-  <span class="nx">encBuf</span> <span class="o">*</span><span class="nx">bufio</span><span class="p">.</span><span class="nx">Writer</span>
-  <span class="nx">closed</span> <span class="kt">bool</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewJsonServerCodec</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span><span class="p">)</span> <span class="o">*</span><span class="nx">JsonServerCodec</span> <span class="p">{</span>
-  <span class="nx">buf</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewWriter</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">JsonServerCodec</span><span class="p">{</span><span class="nx">conn</span><span class="p">,</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewDecoder</span><span class="p">(</span><span class="nx">conn</span><span class="p">),</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewEncoder</span><span class="p">(</span><span class="nx">buf</span><span class="p">),</span> <span class="nx">buf</span><span class="p">,</span> <span class="kc">false</span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonServerCodec</span><span class="p">)</span> <span class="nf">ReadRequestHeader</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dec</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonServerCodec</span><span class="p">)</span> <span class="nf">ReadRequestBody</span><span class="p">(</span><span class="nx">body</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dec</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonServerCodec</span><span class="p">)</span> <span class="nf">WriteResponse</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Response</span><span class="p">,</span> <span class="nx">body</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">enc</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">encBuf</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;rpc: json error encoding response:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-      <span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-    <span class="p">}</span>
-    <span class="k">return</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">enc</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">encBuf</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;rpc: json error encoding body:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-      <span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-    <span class="p">}</span>
-    <span class="k">return</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">encBuf</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonServerCodec</span><span class="p">)</span> <span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">closed</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">}</span>
-  <span class="nx">c</span><span class="p">.</span><span class="nx">closed</span> <span class="p">=</span> <span class="kc">true</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">rwc</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;listen error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
-  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">arith</span><span class="p">)</span>
-
-  <span class="k">for</span> <span class="p">{</span>
-    <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;accept error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-    <span class="p">}</span>
-
-    <span class="k">go</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">ServeCodec</span><span class="p">(</span><span class="nf">NewJsonServerCodec</span><span class="p">(</span><span class="nx">conn</span><span class="p">))</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">JsonServerCodec</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rwc</span>    <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dec</span>    <span class="o">*</span><span class="nx">json</span><span class="p">.</span><span class="nx">Decoder</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">enc</span>    <span class="o">*</span><span class="nx">json</span><span class="p">.</span><span class="nx">Encoder</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">encBuf</span> <span class="o">*</span><span class="nx">bufio</span><span class="p">.</span><span class="nx">Writer</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">closed</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewJsonServerCodec</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span><span class="p">)</span> <span class="o">*</span><span class="nx">JsonServerCodec</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">buf</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewWriter</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">JsonServerCodec</span><span class="p">{</span><span class="nx">conn</span><span class="p">,</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewDecoder</span><span class="p">(</span><span class="nx">conn</span><span class="p">),</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewEncoder</span><span class="p">(</span><span class="nx">buf</span><span class="p">),</span> <span class="nx">buf</span><span class="p">,</span> <span class="kc">false</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonServerCodec</span><span class="p">)</span> <span class="nf">ReadRequestHeader</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dec</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonServerCodec</span><span class="p">)</span> <span class="nf">ReadRequestBody</span><span class="p">(</span><span class="nx">body</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dec</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonServerCodec</span><span class="p">)</span> <span class="nf">WriteResponse</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Response</span><span class="p">,</span> <span class="nx">body</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">enc</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">encBuf</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;rpc: json error encoding response:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">enc</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">encBuf</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;rpc: json error encoding body:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">encBuf</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonServerCodec</span><span class="p">)</span> <span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">closed</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">c</span><span class="p">.</span><span class="nx">closed</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">rwc</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;listen error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rpc</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;accept error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">ServeCodec</span><span class="p">(</span><span class="nf">NewJsonServerCodec</span><span class="p">(</span><span class="nx">conn</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在<code>for</code>循环中需要创建编解码器<code>JsonServerCodec</code>传给<code>ServeCodec</code>方法。同样的，客户端要实现<code>rpc.ClientCodec</code>接口，也是仿造<code>gobClientCodec</code>的实现：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1166,64 +1166,64 @@ if (!doNotTrack) {
 </span><span class="lnt">50
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">JsonClientCodec</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">rwc</span>    <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span>
-  <span class="nx">dec</span>    <span class="o">*</span><span class="nx">json</span><span class="p">.</span><span class="nx">Decoder</span>
-  <span class="nx">enc</span>    <span class="o">*</span><span class="nx">json</span><span class="p">.</span><span class="nx">Encoder</span>
-  <span class="nx">encBuf</span> <span class="o">*</span><span class="nx">bufio</span><span class="p">.</span><span class="nx">Writer</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewJsonClientCodec</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span><span class="p">)</span> <span class="o">*</span><span class="nx">JsonClientCodec</span> <span class="p">{</span>
-  <span class="nx">encBuf</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewWriter</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">JsonClientCodec</span><span class="p">{</span><span class="nx">conn</span><span class="p">,</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewDecoder</span><span class="p">(</span><span class="nx">conn</span><span class="p">),</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewEncoder</span><span class="p">(</span><span class="nx">encBuf</span><span class="p">),</span> <span class="nx">encBuf</span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonClientCodec</span><span class="p">)</span> <span class="nf">WriteRequest</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span> <span class="nx">body</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">enc</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">enc</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">encBuf</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonClientCodec</span><span class="p">)</span> <span class="nf">ReadResponseHeader</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Response</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dec</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonClientCodec</span><span class="p">)</span> <span class="nf">ReadResponseBody</span><span class="p">(</span><span class="nx">body</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dec</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonClientCodec</span><span class="p">)</span> <span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">rwc</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Dial</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dial error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">client</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">NewClientWithCodec</span><span class="p">(</span><span class="nf">NewJsonClientCodec</span><span class="p">(</span><span class="nx">conn</span><span class="p">))</span>
-
-  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
-  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
-  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">JsonClientCodec</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">rwc</span>    <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">dec</span>    <span class="o">*</span><span class="nx">json</span><span class="p">.</span><span class="nx">Decoder</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">enc</span>    <span class="o">*</span><span class="nx">json</span><span class="p">.</span><span class="nx">Encoder</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">encBuf</span> <span class="o">*</span><span class="nx">bufio</span><span class="p">.</span><span class="nx">Writer</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewJsonClientCodec</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span><span class="p">)</span> <span class="o">*</span><span class="nx">JsonClientCodec</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">encBuf</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewWriter</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">JsonClientCodec</span><span class="p">{</span><span class="nx">conn</span><span class="p">,</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewDecoder</span><span class="p">(</span><span class="nx">conn</span><span class="p">),</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewEncoder</span><span class="p">(</span><span class="nx">encBuf</span><span class="p">),</span> <span class="nx">encBuf</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonClientCodec</span><span class="p">)</span> <span class="nf">WriteRequest</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span> <span class="nx">body</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">enc</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">enc</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">encBuf</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonClientCodec</span><span class="p">)</span> <span class="nf">ReadResponseHeader</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">Response</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dec</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonClientCodec</span><span class="p">)</span> <span class="nf">ReadResponseBody</span><span class="p">(</span><span class="nx">body</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dec</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">JsonClientCodec</span><span class="p">)</span> <span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">rwc</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Dial</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:1234&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;dial error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">client</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">NewClientWithCodec</span><span class="p">(</span><span class="nf">NewJsonClientCodec</span><span class="p">(</span><span class="nx">conn</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Args</span><span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">reply</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="p">=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="s">&#34;Arith.Multiply&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Multiply error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Multiply: %d*%d=%d\n&#34;</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">B</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>要使用<code>NewClientWithCodec</code>以指定的编解码器创建客户端。</p>
 <h2 id="自定义服务器">自定义服务器</h2>
 <p>实际上，上面我们调用的方法<code>rpc.Register</code>，<code>rpc.RegisterName</code>，<code>rpc.ServeConn</code>，<code>rpc.ServeCodec</code>都是转而去调用默认<code>DefaultServer</code>的相关方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1241,28 +1241,28 @@ if (!doNotTrack) {
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/net/rpc/server.go
-</span><span class="c1"></span><span class="kd">var</span> <span class="nx">DefaultServer</span> <span class="p">=</span> <span class="nf">NewServer</span><span class="p">()</span>
-
-<span class="kd">func</span> <span class="nf">Register</span><span class="p">(</span><span class="nx">rcvr</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">rcvr</span><span class="p">)</span> <span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">RegisterName</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">rcvr</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">rcvr</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">ServeConn</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">ServeConn</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">ServeCodec</span><span class="p">(</span><span class="nx">codec</span> <span class="nx">ServerCodec</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">ServeCodec</span><span class="p">(</span><span class="nx">codec</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/net/rpc/server.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">DefaultServer</span> <span class="p">=</span> <span class="nf">NewServer</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Register</span><span class="p">(</span><span class="nx">rcvr</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="nx">rcvr</span><span class="p">)</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">RegisterName</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">rcvr</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">rcvr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ServeConn</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadWriteCloser</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">ServeConn</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ServeCodec</span><span class="p">(</span><span class="nx">codec</span> <span class="nx">ServerCodec</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DefaultServer</span><span class="p">.</span><span class="nf">ServeCodec</span><span class="p">(</span><span class="nx">codec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>但是因为<code>DefaultServer</code>是全局共享的，如果有第三方库使用了相关方法，并且注册了一些对象的方法，我们引用这个第三方库之后，就出现两个问题。第一，可能与我们注册的方法冲突；第二，带来额外的安全隐患（库中方法直接<code>panic</code>？）。故而推荐做法是自己<code>NewServer</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1274,17 +1274,17 @@ if (!doNotTrack) {
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
-  <span class="nx">server</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
-  <span class="nx">server</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;math&#34;</span><span class="p">,</span> <span class="nx">arith</span><span class="p">)</span>
-  <span class="nx">server</span><span class="p">.</span><span class="nf">HandleHTTP</span><span class="p">(</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">DefaultRPCPath</span><span class="p">,</span> <span class="nx">rpc</span><span class="p">.</span><span class="nx">DefaultDebugPath</span><span class="p">)</span>
-
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:1234&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;serve error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">arith</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">server</span> <span class="o">:=</span> <span class="nx">rpc</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">server</span><span class="p">.</span><span class="nf">RegisterName</span><span class="p">(</span><span class="s">&#34;math&#34;</span><span class="p">,</span> <span class="nx">arith</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">server</span><span class="p">.</span><span class="nf">HandleHTTP</span><span class="p">(</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">DefaultRPCPath</span><span class="p">,</span> <span class="nx">rpc</span><span class="p">.</span><span class="nx">DefaultDebugPath</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:1234&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;serve error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这其实是一个套路，很多库会提供一个默认的实现直接使用，如<code>log</code>、<code>net/http</code>这些库。但是也提供了创建和自定义的方法。一般测试时为了方便可以使用默认实现，实践中最好自己创建相应的对象，避免干扰和安全问题。</p>
 <h2 id="总结">总结</h2>
@@ -1397,6 +1397,8 @@ if (!doNotTrack) {
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1436,7 +1438,7 @@ if (!doNotTrack) {
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1500,7 +1502,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1523,6 +1525,8 @@ if (!doNotTrack) {
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

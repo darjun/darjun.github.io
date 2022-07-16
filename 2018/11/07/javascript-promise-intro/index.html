@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/11/07/javascript-promise-intro/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="1.概述 相信大家都听过Node中著名的回调地狱（callback hell)。因为Node中的操作默认都是异步执行的，所以需要调用者传入一个回" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2018/11/07/javascript-promise-intro/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2018-11-08T23:44:00&#43;00:00" />
-<meta property="article:modified_time" content="2018-11-08T23:44:00&#43;00:00" />
+<meta property="article:published_time" content="2018-11-08T23:44:00+00:00" />
+<meta property="article:modified_time" content="2018-11-08T23:44:00+00:00" />
 
 <meta itemprop="name" content="深入理解Javascript之Promise">
-<meta itemprop="description" content="1.概述 相信大家都听过Node中著名的回调地狱（callback hell)。因为Node中的操作默认都是异步执行的，所以需要调用者传入一个回"><meta itemprop="datePublished" content="2018-11-08T23:44:00&#43;00:00" />
-<meta itemprop="dateModified" content="2018-11-08T23:44:00&#43;00:00" />
+<meta itemprop="description" content="1.概述 相信大家都听过Node中著名的回调地狱（callback hell)。因为Node中的操作默认都是异步执行的，所以需要调用者传入一个回"><meta itemprop="datePublished" content="2018-11-08T23:44:00+00:00" />
+<meta itemprop="dateModified" content="2018-11-08T23:44:00+00:00" />
 <meta itemprop="wordCount" content="4356">
 <meta itemprop="keywords" content="深入理解JavaScript," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="深入理解Javascript之Promise"/>
@@ -432,18 +432,18 @@ if (!doNotTrack) {
 <p><code>Javascript</code>提供了<code>Promise</code>构造函数用于创建<code>Promise</code>对象。格式如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(executor(resolve, reject));
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(executor(resolve, reject));
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>代码中<code>executor</code>是用户自定义的函数，用于实现具体异步操作流程。该函数有两个参数<code>resolve</code>和<code>reject</code>，它们是Javascript引擎提供的函数，不需要用户实现。在<code>executor</code>函数中，如果异步操作成功，则调用<code>resolve</code>将<code>Promise</code>的状态转换为<code>resolved</code>，<code>resolve</code>函数以结果数据作为参数。如果异步操作失败，则调用<code>reject</code>将<code>Promise</code>的状态转换为<code>rejected</code>，<code>reject</code>函数以具体错误对象作为参数。</p>
 <h3 id="span-idthen方法22-then方法span"><!-- raw HTML omitted -->2.2 <code>then</code>方法<!-- raw HTML omitted --></h3>
 <p><code>Promise</code>对象创建完成之后，我们需要调用<code>then(succ_handler, fail_handler)</code>方法指定成功和/或失败的回调处理。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -454,22 +454,22 @@ if (!doNotTrack) {
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(function(resolve, reject) {
-    resolve(&#34;finished&#34;);
-});
-
-p.then(function (data) {
-    console.log(data); // 输出finished
-}, function (err) {
-    console.log(&#34;oh no, &#34;, err.message);
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(function(resolve, reject) {
+</span></span><span class="line"><span class="cl">    resolve(&#34;finished&#34;);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data); // 输出finished
+</span></span><span class="line"><span class="cl">}, function (err) {
+</span></span><span class="line"><span class="cl">    console.log(&#34;oh no, &#34;, err.message);
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在上面的代码中，我们创建了一个<code>Promise</code>对象，在<code>executor</code>函数中调用<code>resolve</code>将该对象状态转换为<code>resolved</code>。</p>
 <p>进而<code>then</code>指定的成功回调函数被调用，输出<code>finished</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -480,16 +480,16 @@ p.then(function (data) {
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(function(resolve, reject) {
-    reject(new Error(&#34;something be wrong&#34;));
-});
-
-p.then(function (data) {
-    console.log(data);
-}, function (err) {
-    console.log(&#34;oh no, &#34;, err); // 输出oh no,  something be wrong
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(function(resolve, reject) {
+</span></span><span class="line"><span class="cl">    reject(new Error(&#34;something be wrong&#34;));
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data);
+</span></span><span class="line"><span class="cl">}, function (err) {
+</span></span><span class="line"><span class="cl">    console.log(&#34;oh no, &#34;, err); // 输出oh no,  something be wrong
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>以上代码中，在<code>executor</code>函数中调用<code>reject</code>将<code>Promise</code>对象状态转换为<code>rejected</code>。</p>
 <p>进而<code>then</code>指定的失败回调函数被调用，输出<code>oh no, something be wrong</code>。</p>
@@ -498,7 +498,7 @@ p.then(function (data) {
 <p>（2）<code>executor</code>函数是立即执行的，而成功或失败的回调函数会到当前<code>EventLoop</code>的最后再执行。下面的代码可以验证这一点：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -510,35 +510,35 @@ p.then(function (data) {
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(function(resolve, reject) {
-    console.log(&#34;promise constructor&#34;);
-    resolve(&#34;finished&#34;);
-});
-
-p.then(function (data) {
-    console.log(data);
-});
-
-console.log(&#34;end&#34;);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(function(resolve, reject) {
+</span></span><span class="line"><span class="cl">    console.log(&#34;promise constructor&#34;);
+</span></span><span class="line"><span class="cl">    resolve(&#34;finished&#34;);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">console.log(&#34;end&#34;);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出结果为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">promise constructor
-end
-finished
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">promise constructor
+</span></span><span class="line"><span class="cl">end
+</span></span><span class="line"><span class="cl">finished
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>（3） <code>then</code>方法返回的是一个新的<code>Promise</code>对象，所以可以链式调用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -550,22 +550,22 @@ finished
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(function(resolve) {
-    resolve(5);
-});
-
-p.then(function (data) {
-    return data * 2;
-})
- .then(function (data) {
-    console.log(data); // 输出10
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(function(resolve) {
+</span></span><span class="line"><span class="cl">    resolve(5);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    return data * 2;
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl"> .then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data); // 输出10
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>（4）<code>Promise</code>对象的<code>then</code>方法可以被调用多次，而且可以被重复调用（不同于事件，同一个事件的回调只会被调用一次。）。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -582,41 +582,41 @@ p.then(function (data) {
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(function(resolve) {
-    resolve(&#34;repeat&#34;);
-});
-
-p.then(function (data) {
-    console.log(data);
-});
-
-p.then(function (data) {
-    console.log(data);
-});
-
-p.then(function (data) {
-    console.log(data);
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(function(resolve) {
+</span></span><span class="line"><span class="cl">    resolve(&#34;repeat&#34;);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data);
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">repeat
-repeat
-repeat
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">repeat
+</span></span><span class="line"><span class="cl">repeat
+</span></span><span class="line"><span class="cl">repeat
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-idcatch方法23-catch方法span"><!-- raw HTML omitted -->2.3 <code>catch</code>方法<!-- raw HTML omitted --></h3>
 <p>由前面的介绍，我们知道，可以由<code>then</code>方法指定错误处理。但是ES6提供了一个更好用的方法<code>catch</code>。直观上理解可以认为<code>catch(handler)</code>等同于<code>then(null, handler)</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -625,14 +625,14 @@ repeat
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(function(resolve, reject) {
-    reject(new Error(&#34;something be wrong&#34;));
-});
-
-p.catch(function (err) {
-    console.log(&#34;oh no, &#34;, err.message); // 输出oh no, something be wrong
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(function(resolve, reject) {
+</span></span><span class="line"><span class="cl">    reject(new Error(&#34;something be wrong&#34;));
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.catch(function (err) {
+</span></span><span class="line"><span class="cl">    console.log(&#34;oh no, &#34;, err.message); // 输出oh no, something be wrong
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>通常不建议在<code>then</code>方法中指定错误处理，而是在调用链的最后增加一个<code>catch</code>方法用于处理前面的步骤中出现的错误。</p>
 <p>使用时注意一下几点：</p>
@@ -646,7 +646,7 @@ p.catch(function (err) {
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -658,17 +658,17 @@ p.catch(function (err) {
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(function (resolve, reject) {
-    throw new Error(&#34;something be wrong&#34;);
-});
-
-p.then(function (data) {
-    console.log(data);
-});
-
-console.log(&#34;end&#34;);
-// 程序正常结束，输出end
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">    throw new Error(&#34;something be wrong&#34;);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">console.log(&#34;end&#34;);
+</span></span><span class="line"><span class="cl">// 程序正常结束，输出end
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-id其他创建promise的方式24-其他创建promise对象的方式span"><!-- raw HTML omitted -->2.4 其他创建<code>Promise</code>对象的方式<!-- raw HTML omitted --></h3>
 <p>除了<code>Promise</code>构造函数，ES6还提供了两个简单易用的创建<code>Promise</code>对象的方式，即<code>Promise.resolve</code>和<code>Promise.reject</code>。</p>
@@ -676,26 +676,26 @@ console.log(&#34;end&#34;);
 <p>顾名思义，<code>Promise.resolve</code>创建一个<code>resolved</code>状态的<code>Promise</code>对象：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = Promise.resolve(&#34;hello&#34;);
-
-p.then(function (data) {
-    console.log(data); // 输出hello
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = Promise.resolve(&#34;hello&#34;);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data); // 输出hello
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>Promise.resolve</code>的参数分为以下几种类型：</p>
 <p>（1）参数是一个<code>Promise</code>对象，那么直接返回该对象。</p>
 <p>（2） 参数是一个<code>thenable</code>对象，即拥有<code>then</code>函数的对象。这时<code>Promise.resolve</code>会将该对象转换为一个<code>Promise</code>对象，并且立即执行其<code>then</code>函数。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -708,18 +708,18 @@ p.then(function (data) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let thenable = {
-    then: function (resolve, reject) {
-        resolve(25);
-    };
-};
-
-let p = Promise.resolve(thenable);
-
-p.then(function (data) {
-    console.log(data); // 输出25
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let thenable = {
+</span></span><span class="line"><span class="cl">    then: function (resolve, reject) {
+</span></span><span class="line"><span class="cl">        resolve(25);
+</span></span><span class="line"><span class="cl">    };
+</span></span><span class="line"><span class="cl">};
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let p = Promise.resolve(thenable);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data); // 输出25
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>（3）其他参数（无参数相当于有一个undefined参数），创建一个状态为<code>resolved</code>的<code>Promise</code>对象，参数作为操作结果会传递给后续回调处理。</p>
 <h4 id="promisereject"><code>Promise.reject</code></h4>
@@ -729,7 +729,7 @@ p.then(function (data) {
 <p><code>then</code>方法的成功回调函数可以返回一个新的<code>Promise</code>对象，这时旧的<code>Promise</code>对象将会被冻结，其状态取决于新<code>Promise</code>对象的状态。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -747,30 +747,30 @@ p.then(function (data) {
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p1 = new Promise(function (resolve) {
-    setTimeout(function () {
-        resolve(&#34;promise1&#34;);
-    }, 3000);
-});
-
-let p2 = new Promise(function (resolve) {
-    resolve(&#34;promise2&#34;);
-});
-
-p2.then(function (data) {
-    return p1;  // (A)
-})
-  .then(function (data) { // (B)
-    console.log(data); // 输出promise2
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p1 = new Promise(function (resolve) {
+</span></span><span class="line"><span class="cl">    setTimeout(function () {
+</span></span><span class="line"><span class="cl">        resolve(&#34;promise1&#34;);
+</span></span><span class="line"><span class="cl">    }, 3000);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let p2 = new Promise(function (resolve) {
+</span></span><span class="line"><span class="cl">    resolve(&#34;promise2&#34;);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p2.then(function (data) {
+</span></span><span class="line"><span class="cl">    return p1;  // (A)
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl">  .then(function (data) { // (B)
+</span></span><span class="line"><span class="cl">    console.log(data); // 输出promise2
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们在(A)行直接返回了另一个<code>Promise</code>对象。后面的<code>then</code>方法执行取决于该对象的状态，所以在3s后输出<code>promise1</code>，不会输出<code>promise2</code>。</p>
 <h3 id="span-idpromise_all32-promiseall-方法span"><!-- raw HTML omitted -->3.2 Promise.all 方法<!-- raw HTML omitted --></h3>
 <p>很多时候，我们想要等待多个异步操作完成后再进行一些处理。如果使用回调的方式，会出现前面提到过的回调地狱。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -798,51 +798,51 @@ p2.then(function (data) {
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let fs = require(&#34;fs&#34;);
-
-fs.readFile(&#34;file1&#34;, &#34;utf8&#34;, function (data1, err1) {
-    if (err1 != nil) {
-        console.log(err1);
-        return;
-    }
-
-    fs.readFile(&#34;file2&#34;, &#34;utf8&#34;, function (data2, err2) {
-        if (err2 != nil) {
-            console.log(err2);
-            return;
-        }
-
-        fs.readFile(&#34;file3&#34;, &#34;utf8&#34;, function (data3, err3) {
-            if (err3 != nil) {
-                console.log(err3);
-                return;
-            }
-
-            console.log(data1);
-            console.log(data2);
-            console.log(data3);
-        });
-    });
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let fs = require(&#34;fs&#34;);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">fs.readFile(&#34;file1&#34;, &#34;utf8&#34;, function (data1, err1) {
+</span></span><span class="line"><span class="cl">    if (err1 != nil) {
+</span></span><span class="line"><span class="cl">        console.log(err1);
+</span></span><span class="line"><span class="cl">        return;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    fs.readFile(&#34;file2&#34;, &#34;utf8&#34;, function (data2, err2) {
+</span></span><span class="line"><span class="cl">        if (err2 != nil) {
+</span></span><span class="line"><span class="cl">            console.log(err2);
+</span></span><span class="line"><span class="cl">            return;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        fs.readFile(&#34;file3&#34;, &#34;utf8&#34;, function (data3, err3) {
+</span></span><span class="line"><span class="cl">            if (err3 != nil) {
+</span></span><span class="line"><span class="cl">                console.log(err3);
+</span></span><span class="line"><span class="cl">                return;
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            console.log(data1);
+</span></span><span class="line"><span class="cl">            console.log(data2);
+</span></span><span class="line"><span class="cl">            console.log(data3);
+</span></span><span class="line"><span class="cl">        });
+</span></span><span class="line"><span class="cl">    });
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>假设文件<code>file1</code>，<code>file2</code>，<code>file3</code>中的内容分别是&quot;in file1&quot;，&ldquo;in file2&rdquo;，&ldquo;in file3&rdquo;。那么输出如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">in file1
-in file2
-in file3
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">in file1
+</span></span><span class="line"><span class="cl">in file2
+</span></span><span class="line"><span class="cl">in file3
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这种情况下，<code>Promise.all</code>就派上大用场了。<code>Promise.all</code>接受一个可迭代对象（即ES6中的Iterable对象），每个元素通过调用<code>Promise.resolve</code>转换为<code>Promise</code>对象。<code>Promise.all</code>方法返回一个新的<code>Promise</code>对象。该对象在所有<code>Promise</code>对象状态变为<code>resolved</code>时，其状态才会转换为<code>resolved</code>，参数为各个<code>Promise</code>的结果组成的数组。只要有一个对象的状态变为<code>rejected</code>，新对象的状态就会转换为<code>rejected</code>。使用<code>Promise.all</code>我们可以很优雅的实现上面的功能：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -883,60 +883,60 @@ in file3
 </span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let fs = require(&#34;fs&#34;);
-
-let promise1 = new Promise(function (resolve, reject) {
-    fs.readFile(&#34;file1&#34;, &#34;utf8&#34;, function (err, data) {
-        if (err != null) {
-            reject(err);
-        } else {
-            resolve(data);
-        }
-    });
-});
-
-let promise2 = new Promise(function (resolve, reject) {
-    fs.readFile(&#34;file2&#34;, &#34;utf8&#34;, function (err, data) {
-        if (err != null) {
-            reject(err);
-        } else {
-            resolve(data);
-        }
-    });
-});
-
-let promise3 = new Promise(function (resolve, reject) {
-    fs.readFile(&#34;file3&#34;, &#34;utf8&#34;, function (err, data) {
-        if (err != null) {
-            reject(err);
-        } else {
-            resolve(data);
-        }
-    });
-});
-
-let p = Promise.all([promise1, promise2, promise3]);
-p.then(function (datas) {
-    console.log(datas);
-})
- .catch(function (err) {
-    console.log(err);
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let fs = require(&#34;fs&#34;);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let promise1 = new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">    fs.readFile(&#34;file1&#34;, &#34;utf8&#34;, function (err, data) {
+</span></span><span class="line"><span class="cl">        if (err != null) {
+</span></span><span class="line"><span class="cl">            reject(err);
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            resolve(data);
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    });
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let promise2 = new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">    fs.readFile(&#34;file2&#34;, &#34;utf8&#34;, function (err, data) {
+</span></span><span class="line"><span class="cl">        if (err != null) {
+</span></span><span class="line"><span class="cl">            reject(err);
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            resolve(data);
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    });
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let promise3 = new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">    fs.readFile(&#34;file3&#34;, &#34;utf8&#34;, function (err, data) {
+</span></span><span class="line"><span class="cl">        if (err != null) {
+</span></span><span class="line"><span class="cl">            reject(err);
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            resolve(data);
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    });
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let p = Promise.all([promise1, promise2, promise3]);
+</span></span><span class="line"><span class="cl">p.then(function (datas) {
+</span></span><span class="line"><span class="cl">    console.log(datas);
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl"> .catch(function (err) {
+</span></span><span class="line"><span class="cl">    console.log(err);
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>输出如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">[&#39;in file1&#39;, &#39;in file2&#39;, &#39;in file3&#39;]
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[&#39;in file1&#39;, &#39;in file2&#39;, &#39;in file3&#39;]
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>第二段代码我们可以进一步简化为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -963,38 +963,38 @@ p.then(function (datas) {
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let fs = require(&#34;fs&#34;);
-
-let myReadFile = function (filename) {
-    return new Promise(function (resolve, reject) {
-        fs.readFile(filename, &#34;utf8&#34;, function (err, data) {
-            if (err != null) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
-}
-
-let promise1 = myReadFile(&#34;file1&#34;);
-let promise2 = myReadFile(&#34;file2&#34;);
-let promise3 = myReadFile(&#34;file3&#34;);
-
-let p = Promise.all([promise1, promise2, promise3]);
-p.then(function (datas) {
-    console.log(datas);
-})
- .catch(function (err) {
-    console.log(err);
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let fs = require(&#34;fs&#34;);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let myReadFile = function (filename) {
+</span></span><span class="line"><span class="cl">    return new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">        fs.readFile(filename, &#34;utf8&#34;, function (err, data) {
+</span></span><span class="line"><span class="cl">            if (err != null) {
+</span></span><span class="line"><span class="cl">                reject(err);
+</span></span><span class="line"><span class="cl">            } else {
+</span></span><span class="line"><span class="cl">                resolve(data);
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        });
+</span></span><span class="line"><span class="cl">    });
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let promise1 = myReadFile(&#34;file1&#34;);
+</span></span><span class="line"><span class="cl">let promise2 = myReadFile(&#34;file2&#34;);
+</span></span><span class="line"><span class="cl">let promise3 = myReadFile(&#34;file3&#34;);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let p = Promise.all([promise1, promise2, promise3]);
+</span></span><span class="line"><span class="cl">p.then(function (datas) {
+</span></span><span class="line"><span class="cl">    console.log(datas);
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl"> .catch(function (err) {
+</span></span><span class="line"><span class="cl">    console.log(err);
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="span-idpromiserace33-promiserace-方法span"><!-- raw HTML omitted -->3.3 Promise.race 方法<!-- raw HTML omitted --></h3>
 <p><code>Promise.race</code>与<code>Promise.all</code>一样，接受一个可迭代对象作为参数，返回一个新的<code>Promise</code>对象。不同的是，只要参数中有一个<code>Promise</code>对象状态发生变化，新对象的状态就会变化。也就是说哪个操作快，就用哪个结果（或出错）。利用这种特性，我们可以实现超时处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1017,52 +1017,52 @@ p.then(function (datas) {
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p1 = new Promise(function (resolve, reject) {
-    setTimeout(function () {
-        reject(new Error(&#34;time out&#34;));
-    }, 1000);
-});
-
-let p2 = new Promise(function (resolve, reject) {
-    // 模拟耗时操作
-    setTimeout(function () {
-        resolve(&#34;get result&#34;);
-    }, 2000);
-});
-
-let p = Promise.race([p1, p2]);
-
-p.then(function (data) {
-    console.log(data);
-})
- .catch(function (err) {
-    console.log(err);
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p1 = new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">    setTimeout(function () {
+</span></span><span class="line"><span class="cl">        reject(new Error(&#34;time out&#34;));
+</span></span><span class="line"><span class="cl">    }, 1000);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let p2 = new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">    // 模拟耗时操作
+</span></span><span class="line"><span class="cl">    setTimeout(function () {
+</span></span><span class="line"><span class="cl">        resolve(&#34;get result&#34;);
+</span></span><span class="line"><span class="cl">    }, 2000);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let p = Promise.race([p1, p2]);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (data) {
+</span></span><span class="line"><span class="cl">    console.log(data);
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl"> .catch(function (err) {
+</span></span><span class="line"><span class="cl">    console.log(err);
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>对象<code>p1</code>在1s之后状态转换为<code>rejected</code>，<code>p2</code>在2s后转换为<code>resolved</code>。所以1s后，<code>p1</code>状态转换时，<code>p</code>的状态紧接着就转为<code>rejected</code>了。从而，输出为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">time out
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">time out
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果将对象<code>p2</code>的延迟改为0.5s，那么在0.5s后<code>p2</code>状态改变时，<code>p</code>紧随其后状态转换为<code>resolved</code>。从而输出为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">get result
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">get result
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="span-id使用案例4使用案例span"><!-- raw HTML omitted -->4.使用案例<!-- raw HTML omitted --></h2>
 <p>前面我们提到过，<code>then</code>方法会返回一个新的<code>Promise</code>对象。所以<code>then</code>方法可以链式调用，前一个成功回调的返回值会作为下一个成功回调的参数。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1077,26 +1077,26 @@ p.then(function (data) {
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let p = new Promise(function (resolve, reject) {
-    resolve(25);
-});
-
-p.then(function (num) { // (A)
-    return num + 1;
-})
- .then(function (num) { // (B)
-    return num * 2;
-})
- .then(function (num) { // (C)
-    console.log(num);
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let p = new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">    resolve(25);
+</span></span><span class="line"><span class="cl">});
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">p.then(function (num) { // (A)
+</span></span><span class="line"><span class="cl">    return num + 1;
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl"> .then(function (num) { // (B)
+</span></span><span class="line"><span class="cl">    return num * 2;
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl"> .then(function (num) { // (C)
+</span></span><span class="line"><span class="cl">    console.log(num);
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>对象<code>p</code>状态变为<code>resolved</code>时，结果为<code>25</code>。行(A)处函数最先被调用，参数<code>num</code>的值为<code>25</code>，返回值为<code>26</code>。<code>26</code>又作为行(B)处函数的参数，函数返回<code>62</code>。<code>62</code>作为行(C)处函数的参数，被输出。</p>
 <p>下面给出结合AJAX的一个案例。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1127,36 +1127,36 @@ p.then(function (num) { // (A)
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">let getJSON = function (url) {
-    return new Promise(function (resolve, reject) {
-        let xhr = new XMLHttpRequest();
-        xhr.open(&#39;GET&#39;, url);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState !== 4) {
-                return;
-            }
-
-            if (xhr.status === 200) {
-                resolve(xhr.response);
-            } else {
-                reject(new Error(xhr.statusText));
-            }
-        }
-        xhr.send();
-    });
-}
-
-getJSON(&#34;http://api.icndb.com/jokes/random&#34;)
- .then(function (responseText) {
-    return JSON.parse(responseText);
-})
- .then(function (obj) {
-    console.log(obj.value.joke);
-})
- .catch(function (err) {
-    console.log(err.message);
-});
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let getJSON = function (url) {
+</span></span><span class="line"><span class="cl">    return new Promise(function (resolve, reject) {
+</span></span><span class="line"><span class="cl">        let xhr = new XMLHttpRequest();
+</span></span><span class="line"><span class="cl">        xhr.open(&#39;GET&#39;, url);
+</span></span><span class="line"><span class="cl">        xhr.onreadystatechange = function () {
+</span></span><span class="line"><span class="cl">            if (xhr.readyState !== 4) {
+</span></span><span class="line"><span class="cl">                return;
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            if (xhr.status === 200) {
+</span></span><span class="line"><span class="cl">                resolve(xhr.response);
+</span></span><span class="line"><span class="cl">            } else {
+</span></span><span class="line"><span class="cl">                reject(new Error(xhr.statusText));
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        xhr.send();
+</span></span><span class="line"><span class="cl">    });
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">getJSON(&#34;http://api.icndb.com/jokes/random&#34;)
+</span></span><span class="line"><span class="cl"> .then(function (responseText) {
+</span></span><span class="line"><span class="cl">    return JSON.parse(responseText);
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl"> .then(function (obj) {
+</span></span><span class="line"><span class="cl">    console.log(obj.value.joke);
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl"> .catch(function (err) {
+</span></span><span class="line"><span class="cl">    console.log(err.message);
+</span></span><span class="line"><span class="cl">});
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>getJSON</code>函数接受一个<code>url</code>地址，请求json数据。但是请求到的数据是文本格式，所以在第一个<code>then</code>方法的回调中使用<code>JSON.parse</code>将其转为对象，第二个<code>then</code>方法回调再进行具体处理。</p>
 <p><code>http://api.icndb.com/jokes/random</code>是一个随机笑话的api，大家可以试试 😄。</p>
@@ -1268,6 +1268,8 @@ getJSON(&#34;http://api.icndb.com/jokes/random&#34;)
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1307,7 +1309,7 @@ getJSON(&#34;http://api.icndb.com/jokes/random&#34;)
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1371,7 +1373,7 @@ getJSON(&#34;http://api.icndb.com/jokes/random&#34;)
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1394,6 +1396,8 @@ getJSON(&#34;http://api.icndb.com/jokes/random&#34;)
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

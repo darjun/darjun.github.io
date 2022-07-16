@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/03/21/godailylib/buntdb/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 buntdb是一个完全用 Go 语言编写的内存键值数据库。它支持 ACID、并发读、自定义索引和空间信息数据。buntdb只用一个源码文件就实现" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2020/03/21/godailylib/buntdb/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2020-03-21T20:27:24&#43;00:00" />
-<meta property="article:modified_time" content="2020-03-21T20:27:24&#43;00:00" />
+<meta property="article:published_time" content="2020-03-21T20:27:24+00:00" />
+<meta property="article:modified_time" content="2020-03-21T20:27:24+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 buntdb">
-<meta itemprop="description" content="简介 buntdb是一个完全用 Go 语言编写的内存键值数据库。它支持 ACID、并发读、自定义索引和空间信息数据。buntdb只用一个源码文件就实现"><meta itemprop="datePublished" content="2020-03-21T20:27:24&#43;00:00" />
-<meta itemprop="dateModified" content="2020-03-21T20:27:24&#43;00:00" />
+<meta itemprop="description" content="简介 buntdb是一个完全用 Go 语言编写的内存键值数据库。它支持 ACID、并发读、自定义索引和空间信息数据。buntdb只用一个源码文件就实现"><meta itemprop="datePublished" content="2020-03-21T20:27:24+00:00" />
+<meta itemprop="dateModified" content="2020-03-21T20:27:24+00:00" />
 <meta itemprop="wordCount" content="4848">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 buntdb"/>
@@ -413,16 +413,16 @@ if (!doNotTrack) {
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">tidwall</span><span class="o">/</span><span class="nx">buntdb</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">tidwall</span><span class="o">/</span><span class="nx">buntdb</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -460,49 +460,49 @@ if (!doNotTrack) {
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-
-  <span class="s">&#34;github.com/tidwall/buntdb&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">oldValue</span><span class="p">,</span> <span class="nx">replaced</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">,</span> <span class="s">&#34;testvalue&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">err</span>
-    <span class="p">}</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;old value:%q replaced:%t\n&#34;</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">,</span> <span class="nx">replaced</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">err</span>
-    <span class="p">}</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;value is:&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/tidwall/buntdb&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">oldValue</span><span class="p">,</span> <span class="nx">replaced</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">,</span> <span class="s">&#34;testvalue&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;old value:%q replaced:%t\n&#34;</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">,</span> <span class="nx">replaced</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;value is:&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>buntdb</code>在使用方式上与我们熟知的<code>sqlite</code>有些类似，只是前者支持的是键值对，后者支持的关系型数据。首先，我们要打开一个数据库，<code>buntdb</code>支持将数据存储到文件和内存，将数据保存在磁盘上的文件中，断电不会丢失。直接存放在内存中，程序退出后数据就丢失了。调用<code>buntdb.Open()</code>方法需要传入一个文件名的参数，指定数据保存的文件路径。如果传入特殊字符串<code>:memory:</code>，则<code>buntdb</code>不会将数据保存到磁盘。</p>
 <p>在<code>buntdb</code>中，所有的读写操作都必须在一个事务中执行。同一时间只能存在一个写事务，但是可以同时存在多个并发的读事务。如果只需要读取数据，那么调用<code>db.View()</code>方法。方法接收一个类型为<code>func (tx *buntdb.Tx) error</code>的函数作为参数，<code>db.View()</code>方法内部会生成一个事务对象<code>tx</code>，然后将这个<code>tx</code>作为参数传给该函数。在此函数中使用事务对象<code>tx</code>的<code>Get()</code>方法执行读取的逻辑：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -513,22 +513,22 @@ if (!doNotTrack) {
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">err</span>
-  <span class="p">}</span>
-
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;value is:&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;value is:&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果需要读写数据，那么使用<code>db.Update()</code>方法。同样地，也需要传入一个类型为<code>func (tx *buntdb.Tx) error</code>的函数，在此函数中使用事务对象<code>tx</code>的<code>Set</code>方法执行写入逻辑。<code>tx.Set()</code>方法返回 3 个值。如果<code>Set()</code>替换了当前值，则返回替换之前的值和<code>true</code>。如果此函数返回非空错误，<code>db.Update()</code>会回退此前所做的修改，反之会提交此次修改。</p>
 <p>如果运行两次上面的程序，我们会看到下面的输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -539,16 +539,16 @@ if (!doNotTrack) {
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// 第一次运行
-</span><span class="c1"></span><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> 
-<span class="nx">old</span> <span class="nx">value</span><span class="p">:</span><span class="s">&#34;&#34;</span> <span class="nx">replaced</span><span class="p">:</span><span class="kc">false</span>
-<span class="nx">value</span> <span class="nx">is</span><span class="p">:</span> <span class="nx">testvalue</span>
-
-<span class="c1">// 第二次运行
-</span><span class="c1"></span><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> 
-<span class="nx">old</span> <span class="nx">value</span><span class="p">:</span><span class="s">&#34;testvalue&#34;</span> <span class="nx">replaced</span><span class="p">:</span><span class="kc">true</span>
-<span class="nx">value</span> <span class="nx">is</span><span class="p">:</span> <span class="nx">testvalue</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// 第一次运行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> 
+</span></span><span class="line"><span class="cl"><span class="nx">old</span> <span class="nx">value</span><span class="p">:</span><span class="s">&#34;&#34;</span> <span class="nx">replaced</span><span class="p">:</span><span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="nx">value</span> <span class="nx">is</span><span class="p">:</span> <span class="nx">testvalue</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 第二次运行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span> 
+</span></span><span class="line"><span class="cl"><span class="nx">old</span> <span class="nx">value</span><span class="p">:</span><span class="s">&#34;testvalue&#34;</span> <span class="nx">replaced</span><span class="p">:</span><span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="nx">value</span> <span class="nx">is</span><span class="p">:</span> <span class="nx">testvalue</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>注意：</p>
 <ul>
@@ -560,16 +560,16 @@ if (!doNotTrack) {
 <p><code>buntdb</code>中存储的数据是根据键排序的，我们可以按顺序依次遍历这些数据。由于遍历是读取操作，我们用<code>db.View()</code>方法。<code>buntdb</code>提供了很多遍历的方法，基本形式都差不多，这里只介绍一个基本的<code>Ascend()</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">Tx</span><span class="p">)</span> <span class="nf">Ascend</span><span class="p">(</span><span class="nx">index</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">iterator</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span><span class="p">)</span> <span class="kt">error</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">Tx</span><span class="p">)</span> <span class="nf">Ascend</span><span class="p">(</span><span class="nx">index</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">iterator</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span><span class="p">)</span> <span class="kt">error</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>Ascend()</code>方法接收一个索引名，然后以该索引定义的顺序遍历所有键值对，将遍历到的键值对传给<code>iterator</code>函数处理，如果<code>iterator</code>返回<code>false</code>，终止遍历。另外，如果未指定索引名，则根据键升序遍历：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -604,68 +604,68 @@ if (!doNotTrack) {
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">data</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span>
-      <span class="s">&#34;a&#34;</span><span class="p">:</span> <span class="s">&#34;apple&#34;</span><span class="p">,</span>
-      <span class="s">&#34;b&#34;</span><span class="p">:</span> <span class="s">&#34;banana&#34;</span><span class="p">,</span>
-      <span class="s">&#34;p&#34;</span><span class="p">:</span> <span class="s">&#34;pear&#34;</span><span class="p">,</span>
-      <span class="s">&#34;o&#34;</span><span class="p">:</span> <span class="s">&#34;orange&#34;</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">data</span> <span class="p">{</span>
-      <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">count</span> <span class="kt">int</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;key:%s value:%s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="nx">count</span><span class="o">++</span>
-      <span class="k">if</span> <span class="nx">count</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">false</span>
-      <span class="p">}</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">data</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;a&#34;</span><span class="p">:</span> <span class="s">&#34;apple&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;b&#34;</span><span class="p">:</span> <span class="s">&#34;banana&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;p&#34;</span><span class="p">:</span> <span class="s">&#34;pear&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;o&#34;</span><span class="p">:</span> <span class="s">&#34;orange&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">data</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">count</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;key:%s value:%s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">count</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">count</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面代码中，我们按键升序遍历（因为传入索引名为<code>&quot;&quot;</code>），在处理完第三个键值对后，<code>iterator</code>函数返回<code>false</code>，停止遍历。最终输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">key</span><span class="p">:</span><span class="nx">a</span> <span class="nx">value</span><span class="p">:</span><span class="nx">apple</span>
-<span class="nx">key</span><span class="p">:</span><span class="nx">b</span> <span class="nx">value</span><span class="p">:</span><span class="nx">banana</span>
-<span class="nx">key</span><span class="p">:</span><span class="nx">o</span> <span class="nx">value</span><span class="p">:</span><span class="nx">orange</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">key</span><span class="p">:</span><span class="nx">a</span> <span class="nx">value</span><span class="p">:</span><span class="nx">apple</span>
+</span></span><span class="line"><span class="cl"><span class="nx">key</span><span class="p">:</span><span class="nx">b</span> <span class="nx">value</span><span class="p">:</span><span class="nx">banana</span>
+</span></span><span class="line"><span class="cl"><span class="nx">key</span><span class="p">:</span><span class="nx">o</span> <span class="nx">value</span><span class="p">:</span><span class="nx">orange</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="索引">索引</h2>
 <p><code>buntdb</code>将所有数据都存储在一个<strong>B-tree</strong>中，每组数据都有一个键和值。所有数据是根据键来排序的。我们也可以创建自定义索引，这样就可以对值进行排序了。创建索引需要调用<code>db.CreateIndex()</code>方法，该方法签名如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="nf">CreateIndex</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">pattern</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">less</span> <span class="o">...</span><span class="kd">func</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span><span class="p">)</span> <span class="kt">error</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">DB</span><span class="p">)</span> <span class="nf">CreateIndex</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">pattern</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">less</span> <span class="o">...</span><span class="kd">func</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span><span class="p">)</span> <span class="kt">error</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>name</code>为索引名，在上一节介绍遍历的时候，我们说过遍历时需要传入索引名，以便按照该索引所定义的顺序遍历。<code>pattern</code>为模式，指定索引对哪些键生效，可以只对某些特定模式的键创建索引。<code>*</code>表示所有键，<code>user:*:name</code>表示键名是<code>user:</code>和<code>:name</code>之间有任意字符的键。通过<code>less</code>函数，我们可以自定义排序规则。<code>buntdb</code>内置了一些排序规则，如<code>IndexString</code>对值进行大小写不敏感的排序，<code>IndexInt/IndexUint/IndexFloat</code>执行数值类型的排序。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -694,41 +694,41 @@ if (!doNotTrack) {
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;names&#34;</span><span class="p">,</span> <span class="s">&#34;user:*:name&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nx">IndexString</span><span class="p">)</span>
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1:name&#34;</span><span class="p">,</span> <span class="s">&#34;tom&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2:name&#34;</span><span class="p">,</span> <span class="s">&#34;Randi&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3:name&#34;</span><span class="p">,</span> <span class="s">&#34;jane&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4:name&#34;</span><span class="p">,</span> <span class="s">&#34;Janet&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5:name&#34;</span><span class="p">,</span> <span class="s">&#34;Paula&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:6:name&#34;</span><span class="p">,</span> <span class="s">&#34;peter&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:7:name&#34;</span><span class="p">,</span> <span class="s">&#34;Terri&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;names&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;names&#34;</span><span class="p">,</span> <span class="s">&#34;user:*:name&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nx">IndexString</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1:name&#34;</span><span class="p">,</span> <span class="s">&#34;tom&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2:name&#34;</span><span class="p">,</span> <span class="s">&#34;Randi&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3:name&#34;</span><span class="p">,</span> <span class="s">&#34;jane&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4:name&#34;</span><span class="p">,</span> <span class="s">&#34;Janet&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5:name&#34;</span><span class="p">,</span> <span class="s">&#34;Paula&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:6:name&#34;</span><span class="p">,</span> <span class="s">&#34;peter&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:7:name&#34;</span><span class="p">,</span> <span class="s">&#34;Terri&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;names&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们先为键名满足模式<code>user:*:name</code>的数据创建一个名为<code>names</code>的索引，执行大小写不敏感的排序（<code>buntdb.IndexString</code>）。然后向<code>buntdb</code>中写入几组数据。最后，我们使用<code>Ascend()</code>方法，传入索引名<code>names</code>按该索引指定次序遍历键值对（这里只是遍历满足模式<code>user:*:name</code>的键值对）。</p>
 <p>如果我们的键只有<code>user:*:name</code>这种模式的，也可以直接使用模式<code>*</code>或<code>user:*</code></p>
 <p>对于整数等非字符串类型的排序，我们需要注意一点：因为<code>buntdb</code>存储的键值都是字符串，所以自定义的排序函数需要执行相应的类型转换。一般需求的数值排序，内置函数就可以满足要求了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -757,41 +757,41 @@ if (!doNotTrack) {
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;ages&#34;</span><span class="p">,</span> <span class="s">&#34;user:*:age&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nx">IndexInt</span><span class="p">)</span>
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1:age&#34;</span><span class="p">,</span> <span class="s">&#34;16&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2:age&#34;</span><span class="p">,</span> <span class="s">&#34;35&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3:age&#34;</span><span class="p">,</span> <span class="s">&#34;24&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4:age&#34;</span><span class="p">,</span> <span class="s">&#34;32&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5:age&#34;</span><span class="p">,</span> <span class="s">&#34;25&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:6:age&#34;</span><span class="p">,</span> <span class="s">&#34;28&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:7:age&#34;</span><span class="p">,</span> <span class="s">&#34;31&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;ages&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;ages&#34;</span><span class="p">,</span> <span class="s">&#34;user:*:age&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nx">IndexInt</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1:age&#34;</span><span class="p">,</span> <span class="s">&#34;16&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2:age&#34;</span><span class="p">,</span> <span class="s">&#34;35&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3:age&#34;</span><span class="p">,</span> <span class="s">&#34;24&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4:age&#34;</span><span class="p">,</span> <span class="s">&#34;32&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5:age&#34;</span><span class="p">,</span> <span class="s">&#34;25&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:6:age&#34;</span><span class="p">,</span> <span class="s">&#34;28&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:7:age&#34;</span><span class="p">,</span> <span class="s">&#34;31&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;ages&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>首先，为键名满足<code>user:*:age</code>的键创建索引<code>ages</code>，因为在这些键对应的值中，我们存储的都是年龄（整数），故使用排序规则<code>IndexInt</code>。</p>
 <h3 id="json-索引">JSON 索引</h3>
 <p><code>buntdb</code>提供了强大的 JSON 索引功能。如果存储的值是一个 JSON 字符串，<code>buntdb</code>可以对 JSON 串内部的键创建索引。<code>buntdb.IndexJSON()</code>实现了 JSON 索引的排序规则，我们需要传入键在 JSON 内部的路径，如<code>name.first</code>，<code>contact.email</code>等：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -828,42 +828,42 @@ if (!doNotTrack) {
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;first_name&#34;</span><span class="p">,</span> <span class="s">&#34;user:*&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">IndexJSON</span><span class="p">(</span><span class="s">&#34;name.first&#34;</span><span class="p">))</span>
-  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="s">&#34;user:*&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">IndexJSON</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">))</span>
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;zhang&#34;,&#34;last&#34;:&#34;san&#34;},&#34;age&#34;:18}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;li&#34;,&#34;last&#34;:&#34;si&#34;},&#34;age&#34;:27`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;wang&#34;,&#34;last&#34;:&#34;wu&#34;},&#34;age&#34;:32}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;sun&#34;,&#34;last&#34;:&#34;qi&#34;},&#34;age&#34;:8}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Order by first name&#34;</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;first_name&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Order by age&#34;</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Order by age range 18-30&#34;</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">AscendRange</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="s">`{&#34;age&#34;:18}`</span><span class="p">,</span> <span class="s">`{&#34;age&#34;:30}`</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;first_name&#34;</span><span class="p">,</span> <span class="s">&#34;user:*&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">IndexJSON</span><span class="p">(</span><span class="s">&#34;name.first&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="s">&#34;user:*&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">IndexJSON</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;zhang&#34;,&#34;last&#34;:&#34;san&#34;},&#34;age&#34;:18}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;li&#34;,&#34;last&#34;:&#34;si&#34;},&#34;age&#34;:27`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;wang&#34;,&#34;last&#34;:&#34;wu&#34;},&#34;age&#34;:32}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;sun&#34;,&#34;last&#34;:&#34;qi&#34;},&#34;age&#34;:8}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Order by first name&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;first_name&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Order by age&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Order by age range 18-30&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">AscendRange</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="s">`{&#34;age&#34;:18}`</span><span class="p">,</span> <span class="s">`{&#34;age&#34;:30}`</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>JSON 给我们提供了一种很好的存储用户数据的格式。以<code>user:</code>后加上用户 ID 作为键名，用户数据以 JSON 格式存储在值中，如上所示。</p>
 <p>我们分别为 JSON 内部的键<code>name.first</code>和<code>age</code>创建索引。然后分别以<code>name.first</code>和<code>age</code>定义的顺序遍历输出。值得一提的是最后一个遍历使用了<code>AscendRange</code>，可以只遍历指定范围内的数据，例子中为年龄在 18~30 之间。范围遍历并非 JSON 索引独有的，与普通的<code>Ascend</code>相比，<code>AscendRange</code>需要传入区间上下限<code>min</code>和<code>max</code>，所有处于<code>[min, max)</code>之间的数据都会被遍历到（注意不包含<code>max</code>）。</p>
@@ -871,7 +871,7 @@ if (!doNotTrack) {
 <p>细节的盆友应该发现了，创建索引的方法<code>CreateIndex()</code>接受可变数量的排序规则函数，如果第一个函数无法判断两个值的大小，则继续使用后一个函数，直到可以判断或没有其他函数了。这个就是多重索引。在上面的示例中，我们可以将<code>first_name</code>和<code>age</code>两个索引放在一起，先对<code>name.first</code>比较，如果相等，再比较<code>age</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -895,36 +895,36 @@ if (!doNotTrack) {
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;first_name_age&#34;</span><span class="p">,</span> <span class="s">&#34;user:*&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">IndexJSON</span><span class="p">(</span><span class="s">&#34;name.first&#34;</span><span class="p">),</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">IndexJSON</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">))</span>
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;zhang&#34;,&#34;last&#34;:&#34;san&#34;},&#34;age&#34;:18}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;li&#34;,&#34;last&#34;:&#34;si&#34;},&#34;age&#34;:27`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;wang&#34;,&#34;last&#34;:&#34;wu&#34;},&#34;age&#34;:30}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;sun&#34;,&#34;last&#34;:&#34;qi&#34;},&#34;age&#34;:8}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;li&#34;, &#34;name&#34;:&#34;dajun&#34;},&#34;age&#34;:20}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;first_name_age&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;first_name_age&#34;</span><span class="p">,</span> <span class="s">&#34;user:*&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">IndexJSON</span><span class="p">(</span><span class="s">&#34;name.first&#34;</span><span class="p">),</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">IndexJSON</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;zhang&#34;,&#34;last&#34;:&#34;san&#34;},&#34;age&#34;:18}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;li&#34;,&#34;last&#34;:&#34;si&#34;},&#34;age&#34;:27`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;wang&#34;,&#34;last&#34;:&#34;wu&#34;},&#34;age&#34;:30}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;sun&#34;,&#34;last&#34;:&#34;qi&#34;},&#34;age&#34;:8}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5&#34;</span><span class="p">,</span> <span class="s">`{&#34;name&#34;:{&#34;first&#34;:&#34;li&#34;, &#34;name&#34;:&#34;dajun&#34;},&#34;age&#34;:20}`</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;first_name_age&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>由于<code>user:2</code>和<code>user:5</code>的<code>name.first</code>都是<code>li</code>，相等。故使用<code>age</code>的值排序，所以输出中<code>user:5</code>在<code>user:2</code>前面。</p>
 <h3 id="降序">降序</h3>
 <p>我们使用的内置函数都是升序规则。可以使用<code>buntdb.Desc()</code>将升序规则变为降序，拿前面整数排序的例子来说，只需要将<code>buntdb.IndexInt</code>变为<code>buntdb.Desc(buntdb.IndexInt)</code>即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -950,37 +950,37 @@ if (!doNotTrack) {
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;ages&#34;</span><span class="p">,</span> <span class="s">&#34;user:*:age&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Desc</span><span class="p">(</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">IndexInt</span><span class="p">))</span>
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1:age&#34;</span><span class="p">,</span> <span class="s">&#34;16&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2:age&#34;</span><span class="p">,</span> <span class="s">&#34;35&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3:age&#34;</span><span class="p">,</span> <span class="s">&#34;24&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4:age&#34;</span><span class="p">,</span> <span class="s">&#34;32&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5:age&#34;</span><span class="p">,</span> <span class="s">&#34;25&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:6:age&#34;</span><span class="p">,</span> <span class="s">&#34;28&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:7:age&#34;</span><span class="p">,</span> <span class="s">&#34;31&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;ages&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="s">&#34;ages&#34;</span><span class="p">,</span> <span class="s">&#34;user:*:age&#34;</span><span class="p">,</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Desc</span><span class="p">(</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">IndexInt</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1:age&#34;</span><span class="p">,</span> <span class="s">&#34;16&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2:age&#34;</span><span class="p">,</span> <span class="s">&#34;35&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3:age&#34;</span><span class="p">,</span> <span class="s">&#34;24&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4:age&#34;</span><span class="p">,</span> <span class="s">&#34;32&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5:age&#34;</span><span class="p">,</span> <span class="s">&#34;25&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:6:age&#34;</span><span class="p">,</span> <span class="s">&#34;28&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:7:age&#34;</span><span class="p">,</span> <span class="s">&#34;31&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;ages&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="过期">过期</h2>
 <p>在向<code>buntdb</code>中设置键值时，我们可以通过选项<code>buntdb.SetOptions</code>指定过期时间，超过这个时间数据会自动从<code>buntdb</code>中移除。如果想要移除过期时间，重新使用<code>nil</code>选项设置该键值即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1005,48 +1005,48 @@ if (!doNotTrack) {
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">,</span> <span class="s">&#34;testvalue&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">SetOptions</span><span class="p">{</span><span class="nx">Expires</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">TTL</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">})</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">)</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;value is:&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">)</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;value is:&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">,</span> <span class="s">&#34;testvalue&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">SetOptions</span><span class="p">{</span><span class="nx">Expires</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">TTL</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;value is:&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;testkey&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;value is:&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面例子中，我们先写入数据，并设置过期时间为<code>1s</code>。然后立刻读取，这时可以读到刚刚设置的值。然后<code>Sleep</code> 1s 之后再次读取，读到空值，说明已被删除：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">value</span> <span class="nx">is</span><span class="p">:</span> <span class="nx">testvalue</span>
-<span class="nx">value</span> <span class="nx">is</span><span class="p">:</span> 
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">value</span> <span class="nx">is</span><span class="p">:</span> <span class="nx">testvalue</span>
+</span></span><span class="line"><span class="cl"><span class="nx">value</span> <span class="nx">is</span><span class="p">:</span> 
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="杂项">杂项</h2>
 <h3 id="遍历时删除">遍历时删除</h3>
 <p><code>buntdb</code>不支持遍历时删除数据，一般迂回的做法是先记录需要删除的键，遍历结束后统一删除。下面将年龄 &gt;= 30 的用户删掉（嗯，程序员年龄大了，干不动了）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1089,54 +1089,54 @@ if (!doNotTrack) {
 </span><span class="lnt">41
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
-  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1:age&#34;</span><span class="p">,</span> <span class="s">&#34;16&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2:age&#34;</span><span class="p">,</span> <span class="s">&#34;35&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3:age&#34;</span><span class="p">,</span> <span class="s">&#34;24&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4:age&#34;</span><span class="p">,</span> <span class="s">&#34;32&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5:age&#34;</span><span class="p">,</span> <span class="s">&#34;25&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:6:age&#34;</span><span class="p">,</span> <span class="s">&#34;28&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:7:age&#34;</span><span class="p">,</span> <span class="s">&#34;31&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="c1">// 先汇总
-</span><span class="c1"></span>    <span class="nx">deleteKeys</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">string</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">age</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseUint</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
-      <span class="k">if</span> <span class="nx">age</span> <span class="o">&gt;=</span> <span class="mi">30</span> <span class="p">{</span>
-        <span class="nx">deleteKeys</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">deleteKeys</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
-      <span class="p">}</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-
-    <span class="c1">// 再删除
-</span><span class="c1"></span>    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">key</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">deleteKeys</span> <span class="p">{</span>
-      <span class="nx">tx</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-
-  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;:memory:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:1:age&#34;</span><span class="p">,</span> <span class="s">&#34;16&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:2:age&#34;</span><span class="p">,</span> <span class="s">&#34;35&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:3:age&#34;</span><span class="p">,</span> <span class="s">&#34;24&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:4:age&#34;</span><span class="p">,</span> <span class="s">&#34;32&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:5:age&#34;</span><span class="p">,</span> <span class="s">&#34;25&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:6:age&#34;</span><span class="p">,</span> <span class="s">&#34;28&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;user:7:age&#34;</span><span class="p">,</span> <span class="s">&#34;31&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 先汇总
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">deleteKeys</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">string</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">age</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseUint</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">age</span> <span class="o">&gt;=</span> <span class="mi">30</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">deleteKeys</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">deleteKeys</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 再删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">key</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">deleteKeys</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">tx</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s: %s\n&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="web-服务">Web 服务</h2>
 <p><code>buntdb</code>只能在本地程序中操作，我们简单为它编写一个 Web 服务，可以通过 HTTP 请求操作远程的<code>buntdb</code>。代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -1248,142 +1248,142 @@ if (!doNotTrack) {
 </span><span class="lnt">110
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;encoding/json&#34;</span>
-  <span class="s">&#34;fmt&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;net/http&#34;</span>
-  <span class="s">&#34;strconv&#34;</span>
-  <span class="s">&#34;time&#34;</span>
-
-  <span class="s">&#34;github.com/tidwall/buntdb&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">var</span> <span class="nx">db</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">DB</span>
-
-<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
-  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;data.db&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">response</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">,</span> <span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
-  <span class="nx">bytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span>
-    <span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">err</span><span class="p">,</span>
-    <span class="s">&#34;data&#34;</span><span class="p">:</span>  <span class="nx">data</span><span class="p">,</span>
-  <span class="p">})</span>
-  <span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">bytes</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">key</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;key&#34;</span><span class="p">)</span>
-  <span class="nx">value</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;value&#34;</span><span class="p">)</span>
-  <span class="nx">expire</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseBool</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;expire&#34;</span><span class="p">))</span>
-  <span class="nx">ttl</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">ParseDuration</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;ttl&#34;</span><span class="p">))</span>
-
-  <span class="kd">var</span> <span class="nx">setOption</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">SetOptions</span>
-  <span class="k">if</span> <span class="nx">expire</span> <span class="o">&amp;&amp;</span> <span class="nx">ttl</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="nx">setOption</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">SetOptions</span><span class="p">{</span><span class="nx">Expires</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">TTL</span><span class="p">:</span> <span class="nx">ttl</span><span class="p">}</span>
-  <span class="p">}</span>
-
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">setOption</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nx">err</span>
-  <span class="p">})</span>
-
-  <span class="nf">response</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">get</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">key</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;key&#34;</span><span class="p">)</span>
-
-  <span class="kd">var</span> <span class="nx">value</span> <span class="kt">string</span>
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
-    <span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nx">err</span>
-  <span class="p">})</span>
-
-  <span class="nf">response</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">Pair</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Key</span>   <span class="kt">string</span>
-  <span class="nx">Value</span> <span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">iterate</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">index</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;index&#34;</span><span class="p">)</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span>
-
-  <span class="kd">var</span> <span class="nx">items</span> <span class="p">[]</span><span class="nx">Pair</span>
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
-      <span class="nx">items</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="nx">Pair</span><span class="p">{</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">})</span>
-      <span class="k">return</span> <span class="kc">true</span>
-    <span class="p">})</span>
-    <span class="k">return</span> <span class="nx">err</span>
-  <span class="p">})</span>
-
-  <span class="nf">response</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">items</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">createIndex</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">name</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">)</span>
-  <span class="nx">pattern</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;pattern&#34;</span><span class="p">)</span>
-  <span class="nx">less</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nx">IndexString</span>
-
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">,</span> <span class="nx">less</span><span class="p">)</span>
-  <span class="nf">response</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewServeMux</span><span class="p">()</span>
-  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/get&#34;</span><span class="p">,</span> <span class="nx">get</span><span class="p">)</span>
-  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/set&#34;</span><span class="p">,</span> <span class="nx">set</span><span class="p">)</span>
-  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/iterate&#34;</span><span class="p">,</span> <span class="nx">iterate</span><span class="p">)</span>
-  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/create_index&#34;</span><span class="p">,</span> <span class="nx">createIndex</span><span class="p">)</span>
-
-  <span class="nx">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
-    <span class="nx">Addr</span><span class="p">:</span>    <span class="s">&#34;:8000&#34;</span><span class="p">,</span>
-    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">mux</span><span class="p">,</span>
-  <span class="p">}</span>
-
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;encoding/json&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;strconv&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/tidwall/buntdb&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">db</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">DB</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;data.db&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">response</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">,</span> <span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">bytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">err</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;data&#34;</span><span class="p">:</span>  <span class="nx">data</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">bytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">key</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;key&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">value</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;value&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">expire</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseBool</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;expire&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ttl</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">ParseDuration</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;ttl&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">setOption</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">SetOptions</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">expire</span> <span class="o">&amp;&amp;</span> <span class="nx">ttl</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">setOption</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">SetOptions</span><span class="p">{</span><span class="nx">Expires</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">TTL</span><span class="p">:</span> <span class="nx">ttl</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">setOption</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nf">response</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">get</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">key</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;key&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">value</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nf">response</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Pair</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Key</span>   <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Value</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">iterate</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">index</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;index&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">items</span> <span class="p">[]</span><span class="nx">Pair</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">View</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">buntdb</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Ascend</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">items</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="nx">Pair</span><span class="p">{</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nf">response</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">items</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">createIndex</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">name</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">pattern</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">FormValue</span><span class="p">(</span><span class="s">&#34;pattern&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">less</span> <span class="o">:=</span> <span class="nx">buntdb</span><span class="p">.</span><span class="nx">IndexString</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">CreateIndex</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">,</span> <span class="nx">less</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">response</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewServeMux</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/get&#34;</span><span class="p">,</span> <span class="nx">get</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/set&#34;</span><span class="p">,</span> <span class="nx">set</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/iterate&#34;</span><span class="p">,</span> <span class="nx">iterate</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mux</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/create_index&#34;</span><span class="p">,</span> <span class="nx">createIndex</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Addr</span><span class="p">:</span>    <span class="s">&#34;:8000&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Handler</span><span class="p">:</span> <span class="nx">mux</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我只编写了基本读取、设置、创建索引和遍历的功能，代码并不难理解。下面我们先运行程序，然后用浏览器请求：</p>
 <p>请求<code>localhost:8000/set?key=name&amp;value=dj</code>，返回：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;error&#34;</span><span class="p">:</span><span class="nx">null</span><span class="p">,</span> <span class="s">&#34;data&#34;</span><span class="p">:</span><span class="nx">null</span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="p">{</span><span class="s">&#34;error&#34;</span><span class="p">:</span><span class="nx">null</span><span class="p">,</span> <span class="s">&#34;data&#34;</span><span class="p">:</span><span class="nx">null</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>error</code>为<code>null</code>表示无错误。</p>
 <p>请求<code>localhost:8000/set?key=dj&amp;value=18</code>，返回：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span><span class="s">&#34;error&#34;</span><span class="p">:</span><span class="nx">null</span><span class="p">,</span> <span class="s">&#34;data&#34;</span><span class="p">:</span><span class="nx">null</span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="p">{</span><span class="s">&#34;error&#34;</span><span class="p">:</span><span class="nx">null</span><span class="p">,</span> <span class="s">&#34;data&#34;</span><span class="p">:</span><span class="nx">null</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>请求<code>localhost:8000/iterate</code>，返回：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1398,20 +1398,20 @@ if (!doNotTrack) {
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{</span>
-  <span class="s">&#34;data&#34;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="s">&#34;Key&#34;</span><span class="p">:</span> <span class="s">&#34;age&#34;</span><span class="p">,</span>
-      <span class="s">&#34;Value&#34;</span><span class="p">:</span> <span class="s">&#34;18&#34;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="s">&#34;Key&#34;</span><span class="p">:</span> <span class="s">&#34;name&#34;</span><span class="p">,</span>
-      <span class="s">&#34;Value&#34;</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
-  <span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">null</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;data&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;Key&#34;</span><span class="p">:</span> <span class="s">&#34;age&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;Value&#34;</span><span class="p">:</span> <span class="s">&#34;18&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;Key&#34;</span><span class="p">:</span> <span class="s">&#34;name&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;Value&#34;</span><span class="p">:</span> <span class="s">&#34;dj&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;error&#34;</span><span class="p">:</span> <span class="nx">null</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>感兴趣可以试着添加更多的功能。如果对 Go Web 编程不太了解，可以去看看我的<a href="https://darjun.github.io/tags/go-web-%E7%BC%96%E7%A8%8B/">Go Web 编程</a>系列文章。</p>
 <h2 id="总结">总结</h2>
@@ -1524,6 +1524,8 @@ if (!doNotTrack) {
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1563,7 +1565,7 @@ if (!doNotTrack) {
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1627,7 +1629,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1650,6 +1652,8 @@ if (!doNotTrack) {
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

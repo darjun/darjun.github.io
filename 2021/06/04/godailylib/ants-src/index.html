@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2021/06/04/godailylib/ants-src/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 继上一篇Go 每日一库之 ants，这篇文章我们来一起看看ants的源码。 Pool 通过上篇文章，我们知道ants池有两种创建方式： p, _ := ants." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2021/06/04/godailylib/ants-src/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2021-06-04T07:26:23&#43;00:00" />
-<meta property="article:modified_time" content="2021-06-04T07:26:23&#43;00:00" />
+<meta property="article:published_time" content="2021-06-04T07:26:23+00:00" />
+<meta property="article:modified_time" content="2021-06-04T07:26:23+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 ants（源码赏析）">
-<meta itemprop="description" content="简介 继上一篇Go 每日一库之 ants，这篇文章我们来一起看看ants的源码。 Pool 通过上篇文章，我们知道ants池有两种创建方式： p, _ := ants."><meta itemprop="datePublished" content="2021-06-04T07:26:23&#43;00:00" />
-<meta itemprop="dateModified" content="2021-06-04T07:26:23&#43;00:00" />
+<meta itemprop="description" content="简介 继上一篇Go 每日一库之 ants，这篇文章我们来一起看看ants的源码。 Pool 通过上篇文章，我们知道ants池有两种创建方式： p, _ := ants."><meta itemprop="datePublished" content="2021-06-04T07:26:23+00:00" />
+<meta itemprop="dateModified" content="2021-06-04T07:26:23+00:00" />
 <meta itemprop="wordCount" content="8842">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 ants（源码赏析）"/>
@@ -421,7 +421,7 @@ if (!doNotTrack) {
 <p><code>Pool</code>结构定义在文件<code>pool.go</code>中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -435,19 +435,19 @@ if (!doNotTrack) {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/panjf2000/ants/pool.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">capacity</span> <span class="kt">int32</span>
-  <span class="nx">running</span> <span class="kt">int32</span>
-  <span class="nx">workers</span> <span class="nx">workerArray</span>
-  <span class="nx">state</span> <span class="kt">int32</span>
-  <span class="nx">lock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Locker</span>
-  <span class="nx">cond</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">Cond</span>
-  <span class="nx">workerCache</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span>
-  <span class="nx">blockingNum</span> <span class="kt">int</span>
-  <span class="nx">options</span> <span class="o">*</span><span class="nx">Options</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/panjf2000/ants/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">capacity</span> <span class="kt">int32</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">running</span> <span class="kt">int32</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">workers</span> <span class="nx">workerArray</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">state</span> <span class="kt">int32</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">lock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Locker</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">cond</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">Cond</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">workerCache</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">blockingNum</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">options</span> <span class="o">*</span><span class="nx">Options</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>各个字段含义如下：</p>
 <ul>
@@ -464,7 +464,7 @@ if (!doNotTrack) {
 <p>这里明确一个概念，<code>ants</code>中为每个任务都是由 worker 对象来处理的，每个 worker 对象会对应创建一个 goroutine 来处理任务。<code>ants</code>中使用<code>goWorker</code>表示 worker：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -472,20 +472,20 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/panjf2000/ants/worker.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">goWorker</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">pool</span> <span class="o">*</span><span class="nx">Pool</span>
-  <span class="nx">task</span> <span class="kd">chan</span> <span class="kd">func</span><span class="p">()</span>
-  <span class="nx">recycleTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/panjf2000/ants/worker.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">goWorker</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">pool</span> <span class="o">*</span><span class="nx">Pool</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">task</span> <span class="kd">chan</span> <span class="kd">func</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">recycleTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>后文详细介绍这一块内容，现在我们只需要知道<code>Pool.workers</code>字段就是存放<code>goWorker</code>对象的容器。</p>
 <h3 id="pool创建"><code>Pool</code>创建</h3>
 <p>创建<code>Pool</code>对象需调用<code>ants.NewPool(size, options)</code>函数。省略了一些处理选项的代码，最终代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -515,35 +515,35 @@ if (!doNotTrack) {
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/panjf2000/ants/pool.go
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">NewPool</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">options</span> <span class="o">...</span><span class="nx">Option</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Pool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="c1">// ...
-</span><span class="c1"></span>  <span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Pool</span><span class="p">{</span>
-    <span class="nx">capacity</span><span class="p">:</span> <span class="nb">int32</span><span class="p">(</span><span class="nx">size</span><span class="p">),</span>
-    <span class="nx">lock</span><span class="p">:</span>     <span class="nx">internal</span><span class="p">.</span><span class="nf">NewSpinLock</span><span class="p">(),</span>
-    <span class="nx">options</span><span class="p">:</span>  <span class="nx">opts</span><span class="p">,</span>
-  <span class="p">}</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">workerCache</span><span class="p">.</span><span class="nx">New</span> <span class="p">=</span> <span class="kd">func</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">goWorker</span><span class="p">{</span>
-      <span class="nx">pool</span><span class="p">:</span> <span class="nx">p</span><span class="p">,</span>
-      <span class="nx">task</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">func</span><span class="p">(),</span> <span class="nx">workerChanCap</span><span class="p">),</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PreAlloc</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidPreAllocSize</span>
-    <span class="p">}</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">loopQueueType</span><span class="p">,</span> <span class="nx">size</span><span class="p">)</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">stackType</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span> <span class="p">=</span> <span class="nx">sync</span><span class="p">.</span><span class="nf">NewCond</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">)</span>
-
-  <span class="k">go</span> <span class="nx">p</span><span class="p">.</span><span class="nf">purgePeriodically</span><span class="p">()</span>
-  <span class="k">return</span> <span class="nx">p</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/panjf2000/ants/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewPool</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">options</span> <span class="o">...</span><span class="nx">Option</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Pool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Pool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">capacity</span><span class="p">:</span> <span class="nb">int32</span><span class="p">(</span><span class="nx">size</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">lock</span><span class="p">:</span>     <span class="nx">internal</span><span class="p">.</span><span class="nf">NewSpinLock</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">options</span><span class="p">:</span>  <span class="nx">opts</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">workerCache</span><span class="p">.</span><span class="nx">New</span> <span class="p">=</span> <span class="kd">func</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">goWorker</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">pool</span><span class="p">:</span> <span class="nx">p</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">task</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">func</span><span class="p">(),</span> <span class="nx">workerChanCap</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PreAlloc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidPreAllocSize</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">loopQueueType</span><span class="p">,</span> <span class="nx">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">stackType</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span> <span class="p">=</span> <span class="nx">sync</span><span class="p">.</span><span class="nf">NewCond</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="nx">p</span><span class="p">.</span><span class="nf">purgePeriodically</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">p</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>代码不难理解：</p>
 <ul>
@@ -556,7 +556,7 @@ if (!doNotTrack) {
 <p><code>Pool.workers</code>字段为<code>workerArray</code>类型，这实际上是一个接口，表示一个 worker 容器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -566,15 +566,15 @@ if (!doNotTrack) {
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">workerArray</span> <span class="kd">interface</span> <span class="p">{</span>
-  <span class="nb">len</span><span class="p">()</span> <span class="kt">int</span>
-  <span class="nf">isEmpty</span><span class="p">()</span> <span class="kt">bool</span>
-  <span class="nf">insert</span><span class="p">(</span><span class="nx">worker</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="kt">error</span>
-  <span class="nf">detach</span><span class="p">()</span> <span class="o">*</span><span class="nx">goWorker</span>
-  <span class="nf">retrieveExpiry</span><span class="p">(</span><span class="nx">duration</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
-  <span class="nf">reset</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">workerArray</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">len</span><span class="p">()</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">isEmpty</span><span class="p">()</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">insert</span><span class="p">(</span><span class="nx">worker</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">detach</span><span class="p">()</span> <span class="o">*</span><span class="nx">goWorker</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">retrieveExpiry</span><span class="p">(</span><span class="nx">duration</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">reset</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>每个方法从名字上很好理解含义：</p>
 <ul>
@@ -590,7 +590,7 @@ if (!doNotTrack) {
 <p>我们先来介绍一下<code>workerStack</code>，它位于文件<code>worker_stack.go</code>中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -605,20 +605,20 @@ if (!doNotTrack) {
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/panjf2000/ants/worker_stack.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">workerStack</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">items</span>  <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
-  <span class="nx">expiry</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
-  <span class="nx">size</span>   <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">newWorkerStack</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">workerStack</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">workerStack</span><span class="p">{</span>
-    <span class="nx">items</span><span class="p">:</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">goWorker</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">size</span><span class="p">),</span>
-    <span class="nx">size</span><span class="p">:</span>  <span class="nx">size</span><span class="p">,</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/panjf2000/ants/worker_stack.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">workerStack</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">items</span>  <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">expiry</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">size</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">newWorkerStack</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">workerStack</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">workerStack</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">items</span><span class="p">:</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">goWorker</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">size</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">size</span><span class="p">:</span>  <span class="nx">size</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li><code>items</code>：空闲的<code>worker</code>；</li>
@@ -627,22 +627,22 @@ if (!doNotTrack) {
 <p>goroutine 完成任务之后，<code>Pool</code>池会将相应的 worker 放回<code>workerStack</code>，调用<code>workerStack.insert()</code>直接<code>append</code>到<code>items</code>中即可：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">insert</span><span class="p">(</span><span class="nx">worker</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span> <span class="nx">worker</span><span class="p">)</span>
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">insert</span><span class="p">(</span><span class="nx">worker</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span> <span class="nx">worker</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>新任务到来时，会调用<code>workerStack.detach()</code>从容器中取出一个空闲的 worker：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -656,26 +656,26 @@ if (!doNotTrack) {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">detach</span><span class="p">()</span> <span class="o">*</span><span class="nx">goWorker</span> <span class="p">{</span>
-  <span class="nx">l</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nb">len</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">l</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">}</span>
-
-  <span class="nx">w</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span> <span class="c1">// avoid memory leaks
-</span><span class="c1"></span>  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="nx">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-  <span class="k">return</span> <span class="nx">w</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">detach</span><span class="p">()</span> <span class="o">*</span><span class="nx">goWorker</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">l</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nb">len</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">l</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span> <span class="c1">// avoid memory leaks
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="nx">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">w</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里总是返回最后一个 worker，每次<code>insert()</code>也是<code>append</code>到最后，符合栈后进先出的特点，故称为<code>workerStack</code>。</p>
 <p>这里有一个细节，由于切片的底层结构是数组，只要有引用数组的指针，数组中的元素就不会释放。这里取出切片最后一个元素后，将对应数组元素的指针设置为<code>nil</code>，主动释放这个引用。</p>
 <p>上面说过新建<code>Pool</code>对象时会创建一个 goroutine 定期检查和清理过期的 worker。通过调用<code>workerArray.retrieveExpiry()</code>获取过期的 worker 列表。<code>workerStack</code>实现如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -697,32 +697,32 @@ if (!doNotTrack) {
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">retrieveExpiry</span><span class="p">(</span><span class="nx">duration</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span> <span class="p">{</span>
-  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nb">len</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">}</span>
-
-  <span class="nx">expiryTime</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Add</span><span class="p">(</span><span class="o">-</span><span class="nx">duration</span><span class="p">)</span>
-  <span class="nx">index</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nf">binarySearch</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">expiryTime</span><span class="p">)</span>
-
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
-  <span class="k">if</span> <span class="nx">index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
-    <span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span><span class="p">,</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span><span class="p">)</span>
-    <span class="nx">m</span> <span class="o">:=</span> <span class="nb">copy</span><span class="p">(</span><span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
-    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-      <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
-    <span class="p">}</span>
-    <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="nx">m</span><span class="p">]</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">retrieveExpiry</span><span class="p">(</span><span class="nx">duration</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nb">len</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">expiryTime</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Add</span><span class="p">(</span><span class="o">-</span><span class="nx">duration</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">index</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nf">binarySearch</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">expiryTime</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span><span class="p">,</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">m</span> <span class="o">:=</span> <span class="nb">copy</span><span class="p">(</span><span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">index</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="nx">m</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">expiry</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>实现使用二分查找法找到已过期的最近一个 worker。由于过期时间是按照 goroutine 执行任务后的空闲时间计算的，而<code>workerStack.insert()</code>入队顺序决定了，它们的过期时间是从早到晚的。所以可以使用二分查找：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -736,19 +736,19 @@ if (!doNotTrack) {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">binarySearch</span><span class="p">(</span><span class="nx">l</span><span class="p">,</span> <span class="nx">r</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">expiryTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">mid</span> <span class="kt">int</span>
-  <span class="k">for</span> <span class="nx">l</span> <span class="o">&lt;=</span> <span class="nx">r</span> <span class="p">{</span>
-    <span class="nx">mid</span> <span class="p">=</span> <span class="p">(</span><span class="nx">l</span> <span class="o">+</span> <span class="nx">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="k">if</span> <span class="nx">expiryTime</span><span class="p">.</span><span class="nf">Before</span><span class="p">(</span><span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">mid</span><span class="p">].</span><span class="nx">recycleTime</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">r</span> <span class="p">=</span> <span class="nx">mid</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">l</span> <span class="p">=</span> <span class="nx">mid</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="nx">r</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">binarySearch</span><span class="p">(</span><span class="nx">l</span><span class="p">,</span> <span class="nx">r</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">expiryTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">mid</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">l</span> <span class="o">&lt;=</span> <span class="nx">r</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">mid</span> <span class="p">=</span> <span class="p">(</span><span class="nx">l</span> <span class="o">+</span> <span class="nx">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">expiryTime</span><span class="p">.</span><span class="nf">Before</span><span class="p">(</span><span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">mid</span><span class="p">].</span><span class="nx">recycleTime</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">r</span> <span class="p">=</span> <span class="nx">mid</span> <span class="o">-</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">l</span> <span class="p">=</span> <span class="nx">mid</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">r</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>二分查找的是最近过期的 worker，即将过期的 worker 的前一个。它和在它之前的 worker 已经全部过期了。</p>
 <p>如果找到索引<code>index</code>，将<code>items</code>从开头到<code>index</code>（包括）的所有 worker 复制到<code>expiry</code>字段中。然后将<code>index</code>之后的所有未过期 worker 复制到切片头部，这里使用了<code>copy</code>函数。<code>copy</code>返回实际复制的数量，即未过期的 worker 数量<code>m</code>。然后将切片<code>items</code>从<code>m</code>开始所有的元素置为<code>nil</code>，避免内存泄漏，因为它们已经被复制到头部了。最后裁剪<code>items</code>切片，返回过期 worker 切片。</p>
@@ -756,7 +756,7 @@ if (!doNotTrack) {
 <p><code>loopQueue</code>实现基于循环队列，结构定义在文件<code>worker_loop_queue</code>中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -773,22 +773,22 @@ if (!doNotTrack) {
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">loopQueue</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">items</span>  <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
-  <span class="nx">expiry</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
-  <span class="nx">head</span>   <span class="kt">int</span>
-  <span class="nx">tail</span>   <span class="kt">int</span>
-  <span class="nx">size</span>   <span class="kt">int</span>
-  <span class="nx">isFull</span> <span class="kt">bool</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">newWorkerLoopQueue</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">loopQueue</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">loopQueue</span><span class="p">{</span>
-    <span class="nx">items</span><span class="p">:</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">goWorker</span><span class="p">,</span> <span class="nx">size</span><span class="p">),</span>
-    <span class="nx">size</span><span class="p">:</span>  <span class="nx">size</span><span class="p">,</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">loopQueue</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">items</span>  <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">expiry</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorker</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">head</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">tail</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">size</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">isFull</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">newWorkerLoopQueue</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">loopQueue</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">loopQueue</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">items</span><span class="p">:</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">goWorker</span><span class="p">,</span> <span class="nx">size</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">size</span><span class="p">:</span>  <span class="nx">size</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>由于是循环队列，这里先创建好了一个长度为<code>size</code>的切片。循环队列有一个队列头指针<code>head</code>，指向第一个有元素的位置，一个队列尾指针<code>tail</code>，指向下一个可以存放元素的位置。所以一开始状态如下：</p>
 <p><img src="/img/in-post/godailylib/ants-src1.png#center" alt=""></p>
@@ -804,7 +804,7 @@ if (!doNotTrack) {
 <p>由于<code>head</code>和<code>tail</code>相等的情况有可能是队列空，也有可能是队列满，所以<code>loopQueue</code>中增加一个<code>isFull</code>字段以示区分。goroutine 完成任务之后，会将对应的 worker 对象放回<code>loopQueue</code>，执行的是<code>insert()</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -826,33 +826,33 @@ if (!doNotTrack) {
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">loopQueue</span><span class="p">)</span> <span class="nf">insert</span><span class="p">(</span><span class="nx">worker</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">size</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">errQueueIsReleased</span>
-  <span class="p">}</span>
-
-  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">isFull</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">errQueueIsFull</span>
-  <span class="p">}</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span><span class="p">]</span> <span class="p">=</span> <span class="nx">worker</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span><span class="o">++</span>
-
-  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span> <span class="o">==</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">size</span> <span class="p">{</span>
-    <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span> <span class="p">=</span> <span class="mi">0</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span> <span class="o">==</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span> <span class="p">{</span>
-    <span class="nx">wq</span><span class="p">.</span><span class="nx">isFull</span> <span class="p">=</span> <span class="kc">true</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">loopQueue</span><span class="p">)</span> <span class="nf">insert</span><span class="p">(</span><span class="nx">worker</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">size</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">errQueueIsReleased</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">isFull</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">errQueueIsFull</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span><span class="p">]</span> <span class="p">=</span> <span class="nx">worker</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span> <span class="o">==</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">size</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span> <span class="o">==</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wq</span><span class="p">.</span><span class="nx">isFull</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个方法执行的就是循环队列的入队流程，注意如果插入后<code>tail==head</code>了，说明队列满了，设置<code>isFull</code>字段。</p>
 <p>新任务到来调用<code>loopQueeue.detach()</code>方法获取一个空闲的 worker 结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -869,22 +869,22 @@ if (!doNotTrack) {
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">loopQueue</span><span class="p">)</span> <span class="nf">detach</span><span class="p">()</span> <span class="o">*</span><span class="nx">goWorker</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nf">isEmpty</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kc">nil</span>
-  <span class="p">}</span>
-
-  <span class="nx">w</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">wq</span><span class="p">.</span><span class="nx">head</span><span class="p">]</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">wq</span><span class="p">.</span><span class="nx">head</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span><span class="o">++</span>
-  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span> <span class="o">==</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">size</span> <span class="p">{</span>
-    <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span> <span class="p">=</span> <span class="mi">0</span>
-  <span class="p">}</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">isFull</span> <span class="p">=</span> <span class="kc">false</span>
-
-  <span class="k">return</span> <span class="nx">w</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">loopQueue</span><span class="p">)</span> <span class="nf">detach</span><span class="p">()</span> <span class="o">*</span><span class="nx">goWorker</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nf">isEmpty</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">wq</span><span class="p">.</span><span class="nx">head</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">wq</span><span class="p">.</span><span class="nx">head</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span> <span class="o">==</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">size</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">isFull</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">w</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个方法对应的是循环队列的出队流程，注意每次出队后，队列肯定不满了，<code>isFull</code>要重置为<code>false</code>。</p>
 <p>与<code>workerStack</code>结构一样，先入的 worker 对象过期时间早，后入的晚，获取过期 worker 的方法与<code>workerStack</code>中类似，只是没有使用二分查找了。这里就不赘述了。</p>
@@ -892,7 +892,7 @@ if (!doNotTrack) {
 <p>介绍完两种<code>workerArray</code>的实现之后，再来看<code>Pool</code>的创建函数中<code>workers</code>字段的设置：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -902,20 +902,20 @@ if (!doNotTrack) {
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PreAlloc</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidPreAllocSize</span>
-  <span class="p">}</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">loopQueueType</span><span class="p">,</span> <span class="nx">size</span><span class="p">)</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">stackType</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PreAlloc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidPreAllocSize</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">loopQueueType</span><span class="p">,</span> <span class="nx">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span> <span class="p">=</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">stackType</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>newWorkerArray()</code>定义在文件<code>worker_array.go</code>中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -934,31 +934,31 @@ if (!doNotTrack) {
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">arrayType</span> <span class="kt">int</span>
-
-<span class="kd">const</span> <span class="p">(</span>
-  <span class="nx">stackType</span> <span class="nx">arrayType</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span>
-  <span class="nx">loopQueueType</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">aType</span> <span class="nx">arrayType</span><span class="p">,</span> <span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">workerArray</span> <span class="p">{</span>
-  <span class="k">switch</span> <span class="nx">aType</span> <span class="p">{</span>
-  <span class="k">case</span> <span class="nx">stackType</span><span class="p">:</span>
-    <span class="k">return</span> <span class="nf">newWorkerStack</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
-  <span class="k">case</span> <span class="nx">loopQueueType</span><span class="p">:</span>
-    <span class="k">return</span> <span class="nf">newWorkerLoopQueue</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
-  <span class="k">default</span><span class="p">:</span>
-    <span class="k">return</span> <span class="nf">newWorkerStack</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">arrayType</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">stackType</span> <span class="nx">arrayType</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">loopQueueType</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">newWorkerArray</span><span class="p">(</span><span class="nx">aType</span> <span class="nx">arrayType</span><span class="p">,</span> <span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">workerArray</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">switch</span> <span class="nx">aType</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nx">stackType</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">newWorkerStack</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nx">loopQueueType</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">newWorkerLoopQueue</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">newWorkerStack</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>即如果设置了预分配选项，就采用<code>loopQueue</code>结构。否则就采用<code>stack</code>的结构。</p>
 <h2 id="worker-结构">worker 结构</h2>
 <p>介绍完<code>Pool</code>的创建和结构，我们来看看 worker 的结构。在<code>ants</code>中 worker 用结构体<code>goWorker</code>表示，定义在文件<code>worker.go</code>中。它的结构非常简单：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -966,13 +966,13 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/panjf2000/ants/worker.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">goWorker</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">pool</span> <span class="o">*</span><span class="nx">Pool</span>
-  <span class="nx">task</span> <span class="kd">chan</span> <span class="kd">func</span><span class="p">()</span>
-  <span class="nx">recycleTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/panjf2000/ants/worker.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">goWorker</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">pool</span> <span class="o">*</span><span class="nx">Pool</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">task</span> <span class="kd">chan</span> <span class="kd">func</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">recycleTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>具体字段含义很明显：</p>
 <ul>
@@ -983,7 +983,7 @@ if (!doNotTrack) {
 <p><code>goWorker</code>创建时会调用<code>run()</code>方法，<code>run()</code>方法中启动一个新 goroutine 处理任务。<code>run()</code>主体流程非常简单：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -998,20 +998,20 @@ if (!doNotTrack) {
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">f</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">w</span><span class="p">.</span><span class="nx">task</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="nx">f</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="k">return</span>
-      <span class="p">}</span>
-      <span class="nf">f</span><span class="p">()</span>
-      <span class="k">if</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">revertWorker</span><span class="p">(</span><span class="nx">w</span><span class="p">);</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
-        <span class="k">return</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">f</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">w</span><span class="p">.</span><span class="nx">task</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">f</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">revertWorker</span><span class="p">(</span><span class="nx">w</span><span class="p">);</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个方法启动一个新的 goroutine，然后不停地从<code>task</code>通道中接收任务，然后执行任务，任务执行完成之后调用池对象的<code>revertWorker()</code>方法将该<code>goWorker</code>对象放回池中，以便下次取出处理新的任务。<code>revertWorker()</code>方法后面会详细分析。</p>
 <p>这里注意，实际上<code>for f := range w.task</code>这个循环直到通道<code>task</code>关闭或取出为<code>nil</code>的任务才会终止。所以这个 goroutine 一直在运行，这正是<code>ants</code>高性能的关键所在。每个<code>goWorker</code>只会启动一次 goroutine， 后续重复利用这个 goroutine。goroutine 每次只执行一个任务就会被放回池中。</p>
@@ -1020,7 +1020,7 @@ if (!doNotTrack) {
 <p>下面我们看看<code>run()</code>方法的异常处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1036,21 +1036,21 @@ if (!doNotTrack) {
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">workerCache</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">w</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">p</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">p</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">ph</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PanicHandler</span><span class="p">;</span> <span class="nx">ph</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nf">ph</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;worker exits from a panic: %v\n&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
-      <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">4096</span><span class="p">]</span><span class="kt">byte</span>
-      <span class="nx">n</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">Stack</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:],</span> <span class="kc">false</span><span class="p">)</span>
-      <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;worker exits from panic: %s\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">n</span><span class="p">]))</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Signal</span><span class="p">()</span>
-<span class="p">}()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">workerCache</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">w</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">p</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">p</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">ph</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PanicHandler</span><span class="p">;</span> <span class="nx">ph</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nf">ph</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;worker exits from a panic: %v\n&#34;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">4096</span><span class="p">]</span><span class="kt">byte</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">n</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">Stack</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:],</span> <span class="kc">false</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;worker exits from panic: %s\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">n</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Signal</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>简单来说，就是在<code>defer</code>中通过<code>recover()</code>函数捕获任务执行过程中抛出的<code>panic</code>。这时任务执行失败，goroutine 也结束了。但是<code>goWorker</code>对象还是可以重复利用，所以<code>defer</code>函数一开始调用<code>w.pool.workerCache.Put(w)</code>将<code>goWorker</code>对象放回<code>sync.Pool</code>池中。</p>
 <p>接着就是处理<code>panic</code>，如果选项中指定了<code>panic</code>处理器，直接调用这个处理器。否则，<code>ants</code>调用选项中设置的<code>Logger</code>记录一些日志，如堆栈，<code>panic</code>信息等。</p>
@@ -1059,7 +1059,7 @@ if (!doNotTrack) {
 <p>接下来，通过提交任务就可以串起整个流程。由上一篇文章我们知道，可以调用池对象的<code>Submit()</code>方法提交任务：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1072,23 +1072,23 @@ if (!doNotTrack) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Submit</span><span class="p">(</span><span class="nx">task</span> <span class="kd">func</span><span class="p">())</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">ErrPoolClosed</span>
-  <span class="p">}</span>
-  <span class="kd">var</span> <span class="nx">w</span> <span class="o">*</span><span class="nx">goWorker</span>
-  <span class="k">if</span> <span class="nx">w</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">retrieveWorker</span><span class="p">();</span> <span class="nx">w</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">ErrPoolOverload</span>
-  <span class="p">}</span>
-  <span class="nx">w</span><span class="p">.</span><span class="nx">task</span> <span class="o">&lt;-</span> <span class="nx">task</span>
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Submit</span><span class="p">(</span><span class="nx">task</span> <span class="kd">func</span><span class="p">())</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">ErrPoolClosed</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">w</span> <span class="o">*</span><span class="nx">goWorker</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">w</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">retrieveWorker</span><span class="p">();</span> <span class="nx">w</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">ErrPoolOverload</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span><span class="p">.</span><span class="nx">task</span> <span class="o">&lt;-</span> <span class="nx">task</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>首先判断池是否已关闭，然后调用<code>retrieveWorker()</code>方法获取一个空闲的 worker，然后将任务<code>task</code>发送到 worker 的任务通道。下面是<code>retrieveWorker()</code>实现：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1133,73 +1133,73 @@ if (!doNotTrack) {
 </span><span class="lnt">43
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">retrieveWorker</span><span class="p">()</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-
-  <span class="nx">w</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">detach</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">w</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">capacity</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Cap</span><span class="p">();</span> <span class="nx">capacity</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">capacity</span> <span class="p">&gt;</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Running</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-    <span class="nf">spawnWorker</span><span class="p">()</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">Nonblocking</span> <span class="p">{</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-      <span class="k">return</span>
-    <span class="p">}</span>
-  <span class="nx">Reentry</span><span class="p">:</span>
-    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">MaxBlockingTasks</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">p</span><span class="p">.</span><span class="nx">blockingNum</span> <span class="o">&gt;=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">MaxBlockingTasks</span> <span class="p">{</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-      <span class="k">return</span>
-    <span class="p">}</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">blockingNum</span><span class="o">++</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">blockingNum</span><span class="o">--</span>
-    <span class="kd">var</span> <span class="nx">nw</span> <span class="kt">int</span>
-    <span class="k">if</span> <span class="nx">nw</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Running</span><span class="p">();</span> <span class="nx">nw</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-      <span class="k">if</span> <span class="p">!</span><span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nf">spawnWorker</span><span class="p">()</span>
-      <span class="p">}</span>
-      <span class="k">return</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="nx">w</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">detach</span><span class="p">();</span> <span class="nx">w</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="nx">nw</span> <span class="p">&lt;</span> <span class="nx">capacity</span> <span class="p">{</span>
-        <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-        <span class="nf">spawnWorker</span><span class="p">()</span>
-        <span class="k">return</span>
-      <span class="p">}</span>
-      <span class="k">goto</span> <span class="nx">Reentry</span>
-    <span class="p">}</span>
-
-    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-  <span class="p">}</span>
-  <span class="k">return</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">retrieveWorker</span><span class="p">()</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">detach</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">w</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">capacity</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Cap</span><span class="p">();</span> <span class="nx">capacity</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">capacity</span> <span class="p">&gt;</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Running</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">spawnWorker</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">Nonblocking</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Reentry</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">MaxBlockingTasks</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">p</span><span class="p">.</span><span class="nx">blockingNum</span> <span class="o">&gt;=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">MaxBlockingTasks</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">blockingNum</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">blockingNum</span><span class="o">--</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">nw</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">nw</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Running</span><span class="p">();</span> <span class="nx">nw</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">!</span><span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">spawnWorker</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">w</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">detach</span><span class="p">();</span> <span class="nx">w</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">nw</span> <span class="p">&lt;</span> <span class="nx">capacity</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">spawnWorker</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">goto</span> <span class="nx">Reentry</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个方法稍微有点复杂，我们一点点来看。首先调用<code>p.workers.detach()</code>获取<code>goWorker</code>对象。<code>p.workers</code>是<code>loopQueue</code>或者<code>workerStack</code>对象，它们都实现了<code>detach()</code>方法，前面已经介绍过了。</p>
 <p>如果返回了一个<code>goWorker</code>对象，说明有空闲 goroutine，直接返回。</p>
 <p>否则，池容量还没用完（即容量大于正在工作的<code>goWorker</code>数量），则调用<code>spawnWorker()</code>新建一个<code>goWorker</code>，执行其<code>run()</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">spawnWorker</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">w</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workerCache</span><span class="p">.</span><span class="nf">Get</span><span class="p">().(</span><span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span>
-  <span class="nx">w</span><span class="p">.</span><span class="nf">run</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">spawnWorker</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workerCache</span><span class="p">.</span><span class="nf">Get</span><span class="p">().(</span><span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">w</span><span class="p">.</span><span class="nf">run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>否则，池容量已用完。如果设置了<strong>非阻塞</strong>选项，则直接返回。否则，如果设置了最大阻塞队列长度上限，且当前阻塞等待的任务数量已经达到这个上限，直接返回。否则，阻塞等待数量 +1，调用<code>p.cond.Wait()</code>等待。</p>
 <p>然后<code>goWorker.run()</code>完成一个任务后，调用池的<code>revertWorker()</code>方法放回<code>goWorker</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1223,29 +1223,29 @@ if (!doNotTrack) {
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">revertWorker</span><span class="p">(</span><span class="nx">worker</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">capacity</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Cap</span><span class="p">();</span> <span class="p">(</span><span class="nx">capacity</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Running</span><span class="p">()</span> <span class="p">&gt;</span> <span class="nx">capacity</span><span class="p">)</span> <span class="o">||</span> <span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kc">false</span>
-  <span class="p">}</span>
-  <span class="nx">worker</span><span class="p">.</span><span class="nx">recycleTime</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-
-  <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-    <span class="k">return</span> <span class="kc">false</span>
-  <span class="p">}</span>
-
-  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">insert</span><span class="p">(</span><span class="nx">worker</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-    <span class="k">return</span> <span class="kc">false</span>
-  <span class="p">}</span>
-
-  <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Signal</span><span class="p">()</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-  <span class="k">return</span> <span class="kc">true</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">revertWorker</span><span class="p">(</span><span class="nx">worker</span> <span class="o">*</span><span class="nx">goWorker</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">capacity</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Cap</span><span class="p">();</span> <span class="p">(</span><span class="nx">capacity</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Running</span><span class="p">()</span> <span class="p">&gt;</span> <span class="nx">capacity</span><span class="p">)</span> <span class="o">||</span> <span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">worker</span><span class="p">.</span><span class="nx">recycleTime</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">insert</span><span class="p">(</span><span class="nx">worker</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Signal</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里设置了<code>goWorker</code>的<code>recycleTime</code>字段，用于判定过期。然后将<code>goWorker</code>放回池。<code>workers</code>的<code>insert()</code>方法前面也已经分析过了。</p>
 <p>接着调用<code>p.cond.Signal()</code>唤醒之前<code>retrieveWorker()</code>方法中的等待。<code>retrieveWorker()</code>方法继续执行，阻塞等待数量 -1，这里判断当前<code>goWorker</code>的数量（也即 goroutine 数量）。如果数量等于 0，很有可能池子刚刚执行了<code>Release()</code>关闭，这时需要判断池是否处于关闭状态，如果是则直接返回。否则，调用<code>spawnWorker()</code>创建一个新的<code>goWorker</code>并执行其<code>run()</code>方法。</p>
@@ -1257,7 +1257,7 @@ if (!doNotTrack) {
 <p>在<code>NewPool()</code>函数中会启动一个 goroutine 定期清理过期的<code>goWorker</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1282,35 +1282,35 @@ if (!doNotTrack) {
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">purgePeriodically</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">heartbeat</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTicker</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">ExpiryDuration</span><span class="p">)</span>
-  <span class="k">defer</span> <span class="nx">heartbeat</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
-
-  <span class="k">for</span> <span class="k">range</span> <span class="nx">heartbeat</span><span class="p">.</span><span class="nx">C</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">break</span>
-    <span class="p">}</span>
-
-    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-    <span class="nx">expiredWorkers</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">retrieveExpiry</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">ExpiryDuration</span><span class="p">)</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-
-    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">expiredWorkers</span> <span class="p">{</span>
-      <span class="nx">expiredWorkers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">task</span> <span class="o">&lt;-</span> <span class="kc">nil</span>
-      <span class="nx">expiredWorkers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Running</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Broadcast</span><span class="p">()</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">purgePeriodically</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">heartbeat</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTicker</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">ExpiryDuration</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">heartbeat</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="k">range</span> <span class="nx">heartbeat</span><span class="p">.</span><span class="nx">C</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nf">IsClosed</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">break</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">expiredWorkers</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">retrieveExpiry</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">ExpiryDuration</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">expiredWorkers</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">expiredWorkers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">task</span> <span class="o">&lt;-</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">expiredWorkers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Running</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Broadcast</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果池子已关闭，直接退出 goroutine。由选项<code>ExpiryDuration</code>来设置清理的间隔，如果没有设置该选项，采用默认值 1s：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1325,20 +1325,20 @@ if (!doNotTrack) {
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/panjf2000/ants/pool.go
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">NewPool</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">options</span> <span class="o">...</span><span class="nx">Option</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Pool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">expiry</span> <span class="o">:=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">ExpiryDuration</span><span class="p">;</span> <span class="nx">expiry</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidPoolExpiry</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">expiry</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="nx">opts</span><span class="p">.</span><span class="nx">ExpiryDuration</span> <span class="p">=</span> <span class="nx">DefaultCleanIntervalTime</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="c1">// src/github.com/panjf2000/ants/pool.go
-</span><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
-  <span class="nx">DefaultCleanIntervalTime</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/panjf2000/ants/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewPool</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">options</span> <span class="o">...</span><span class="nx">Option</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Pool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">expiry</span> <span class="o">:=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">ExpiryDuration</span><span class="p">;</span> <span class="nx">expiry</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidPoolExpiry</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">expiry</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">opts</span><span class="p">.</span><span class="nx">ExpiryDuration</span> <span class="p">=</span> <span class="nx">DefaultCleanIntervalTime</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// src/github.com/panjf2000/ants/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DefaultCleanIntervalTime</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后就是每个清理周期，调用<code>p.workers.retrieveExpiry()</code>方法，取出过期的<code>goWorker</code>。<strong>因为由这些<code>goWorker</code>启动的 goroutine 还阻塞在通道<code>task</code>上，所以要向该通道发送一个<code>nil</code>值，而<code>goWorker.run()</code>方法中接收到一个值为<code>nil</code>的任务会<code>return</code>，结束 goroutine，避免了 goroutine 泄漏</strong>。</p>
 <p>如果所有<code>goWorker</code>都被清理掉了，可能这时还有 goroutine 阻塞在<code>retrieveWorker()</code>方法中的<code>p.cond.Wait()</code>上，所以这里需要调用<code>p.cond.Broadcast()</code>唤醒这些 goroutine。</p>
@@ -1346,7 +1346,7 @@ if (!doNotTrack) {
 <p>在运行过程中，可以动态修改池的容量。调用<code>p.Tune(size int)</code>方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1354,13 +1354,13 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Tune</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">capacity</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Cap</span><span class="p">();</span> <span class="nx">capacity</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">size</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">size</span> <span class="o">==</span> <span class="nx">capacity</span> <span class="o">||</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PreAlloc</span> <span class="p">{</span>
-    <span class="k">return</span>
-  <span class="p">}</span>
-  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">capacity</span><span class="p">,</span> <span class="nb">int32</span><span class="p">(</span><span class="nx">size</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Tune</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">capacity</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">Cap</span><span class="p">();</span> <span class="nx">capacity</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">size</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">size</span> <span class="o">==</span> <span class="nx">capacity</span> <span class="o">||</span> <span class="nx">p</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">PreAlloc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">capacity</span><span class="p">,</span> <span class="nb">int32</span><span class="p">(</span><span class="nx">size</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里只是简单设置了一下新的容量，不影响当前正在执行的<code>goWorker</code>，而且如果设置了预分配选项，容量不能再次设置。</p>
 <p>下次执行<code>revertWorker()</code>的时候就会以新的容量判断是否能放回，下次执行<code>retrieveWorker()</code>的时候也会以新容量判断是否能创建新<code>goWorker</code>。</p>
@@ -1368,7 +1368,7 @@ if (!doNotTrack) {
 <p>使用完成之后，需要关闭<code>Pool</code>，避免 goroutine 泄漏。调用池对象的<code>Release()</code>方法关闭：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1377,20 +1377,20 @@ if (!doNotTrack) {
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Release</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">CLOSED</span><span class="p">)</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">reset</span><span class="p">()</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Broadcast</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Release</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">CLOSED</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">workers</span><span class="p">.</span><span class="nf">reset</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">cond</span><span class="p">.</span><span class="nf">Broadcast</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>调用<code>p.workers.reset()</code>结束<code>loopQueue</code>或<code>wokerStack</code>中的 goroutine，做一些清理工作，同时为了防止有 goroutine 阻塞在<code>p.cond.Wait()</code>上，执行一次<code>p.cond.Broadcast()</code>。</p>
 <p><code>workerStack</code>与<code>loopQueue</code>的<code>reset()</code>基本相同，即发送<code>nil</code>到<code>task</code>通道从而结束 goroutine，然后重置各个字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1417,56 +1417,56 @@ if (!doNotTrack) {
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// loopQueue 版本
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">loopQueue</span><span class="p">)</span> <span class="nf">reset</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nf">isEmpty</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span>
-  <span class="p">}</span>
-
-<span class="nx">Releasing</span><span class="p">:</span>
-  <span class="k">if</span> <span class="nx">w</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nf">detach</span><span class="p">();</span> <span class="nx">w</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">w</span><span class="p">.</span><span class="nx">task</span> <span class="o">&lt;-</span> <span class="kc">nil</span>
-    <span class="k">goto</span> <span class="nx">Releasing</span>
-  <span class="p">}</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">size</span> <span class="p">=</span> <span class="mi">0</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span> <span class="p">=</span> <span class="mi">0</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span> <span class="p">=</span> <span class="mi">0</span>
-<span class="p">}</span>
-
-<span class="c1">// stack 版本
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">reset</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">wq</span><span class="p">.</span><span class="nb">len</span><span class="p">();</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">task</span> <span class="o">&lt;-</span> <span class="kc">nil</span>
-    <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
-  <span class="p">}</span>
-  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// loopQueue 版本
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">loopQueue</span><span class="p">)</span> <span class="nf">reset</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">wq</span><span class="p">.</span><span class="nf">isEmpty</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Releasing</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">w</span> <span class="o">:=</span> <span class="nx">wq</span><span class="p">.</span><span class="nf">detach</span><span class="p">();</span> <span class="nx">w</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">w</span><span class="p">.</span><span class="nx">task</span> <span class="o">&lt;-</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="k">goto</span> <span class="nx">Releasing</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">size</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">head</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">tail</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// stack 版本
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">wq</span> <span class="o">*</span><span class="nx">workerStack</span><span class="p">)</span> <span class="nf">reset</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">wq</span><span class="p">.</span><span class="nb">len</span><span class="p">();</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">task</span> <span class="o">&lt;-</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">wq</span><span class="p">.</span><span class="nx">items</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>池关闭后还可以调用<code>Reboot()</code>重启：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Reboot</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">CLOSED</span><span class="p">,</span> <span class="nx">OPENED</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">go</span> <span class="nx">p</span><span class="p">.</span><span class="nf">purgePeriodically</span><span class="p">()</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Reboot</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">CLOSED</span><span class="p">,</span> <span class="nx">OPENED</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="nx">p</span><span class="p">.</span><span class="nf">purgePeriodically</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>由于<code>p.purgePeriodically()</code>在<code>p.Release()</code>之后检测到池关闭就直接退出了，这里需要重新开启一个 goroutine 定期清理。</p>
 <h2 id="poolwithfunc和workwithfunc"><code>PoolWithFunc</code>和<code>WorkWithFunc</code></h2>
 <p>上一篇文章中我们还介绍了另一种方式创建<code>Pool</code>，即<code>NewPoolWithFunc()</code>，指定一个函数。后面提交任务时调用<code>p.Invoke()</code>提供参数就可以执行该函数了。这种方式创建的 Pool 和 Woker 结构如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1478,22 +1478,22 @@ if (!doNotTrack) {
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">PoolWithFunc</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">workers</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorkerWithFunc</span>
-  <span class="nx">poolFunc</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">goWorkerWithFunc</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">pool</span> <span class="o">*</span><span class="nx">PoolWithFunc</span>
-  <span class="nx">args</span> <span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}</span>
-  <span class="nx">recycleTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">PoolWithFunc</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">workers</span> <span class="p">[]</span><span class="o">*</span><span class="nx">goWorkerWithFunc</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">poolFunc</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">goWorkerWithFunc</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">pool</span> <span class="o">*</span><span class="nx">PoolWithFunc</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">args</span> <span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">recycleTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>与前面介绍的<code>Pool</code>和<code>goWorker</code>大体相似，只是<code>PoolWithFunc</code>保存了传入的函数对象，使用数组保存 worker。<code>goWorkerWithFunc</code>以<code>interface{}</code>为<code>args</code>通道的数据类型，其实也好理解，因为已经有函数了，只需要传入数据作为参数就可以运行了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1508,20 +1508,20 @@ if (!doNotTrack) {
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">goWorkerWithFunc</span><span class="p">)</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">args</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">w</span><span class="p">.</span><span class="nx">args</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="nx">args</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="k">return</span>
-      <span class="p">}</span>
-      <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">poolFunc</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
-      <span class="k">if</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">revertWorker</span><span class="p">(</span><span class="nx">w</span><span class="p">);</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
-        <span class="k">return</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">goWorkerWithFunc</span><span class="p">)</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">args</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">w</span><span class="p">.</span><span class="nx">args</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">args</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">poolFunc</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">revertWorker</span><span class="p">(</span><span class="nx">w</span><span class="p">);</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>从通道接收函数参数，执行池中保存的函数对象。</p>
 <h2 id="其他细节">其他细节</h2>
@@ -1529,7 +1529,7 @@ if (!doNotTrack) {
 <p>还记得创建<code>p.workerCache</code>这个<code>sync.Pool</code>对象的代码么：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1537,18 +1537,18 @@ if (!doNotTrack) {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">p</span><span class="p">.</span><span class="nx">workerCache</span><span class="p">.</span><span class="nx">New</span> <span class="p">=</span> <span class="kd">func</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">goWorker</span><span class="p">{</span>
-    <span class="nx">pool</span><span class="p">:</span> <span class="nx">p</span><span class="p">,</span>
-    <span class="nx">task</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">func</span><span class="p">(),</span> <span class="nx">workerChanCap</span><span class="p">),</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">p</span><span class="p">.</span><span class="nx">workerCache</span><span class="p">.</span><span class="nx">New</span> <span class="p">=</span> <span class="kd">func</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">goWorker</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">pool</span><span class="p">:</span> <span class="nx">p</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">task</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">func</span><span class="p">(),</span> <span class="nx">workerChanCap</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在<code>sync.Pool</code>中没有<code>goWorker</code>对象时，调用<code>New()</code>方法创建一个，注意到这里创建的<code>task</code>通道使用<code>workerChanCap</code>作为容量。这个变量定义在<code>ants.go</code>文件中：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1567,29 +1567,29 @@ if (!doNotTrack) {
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="p">(</span>
-  <span class="c1">// workerChanCap determines whether the channel of a worker should be a buffered channel
-</span><span class="c1"></span>  <span class="c1">// to get the best performance. Inspired by fasthttp at
-</span><span class="c1"></span>  <span class="c1">// https://github.com/valyala/fasthttp/blob/master/workerpool.go#L139
-</span><span class="c1"></span>  <span class="nx">workerChanCap</span> <span class="p">=</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
-    <span class="c1">// Use blocking channel if GOMAXPROCS=1.
-</span><span class="c1"></span>    <span class="c1">// This switches context from sender to receiver immediately,
-</span><span class="c1"></span>    <span class="c1">// which results in higher performance (under go1.5 at least).
-</span><span class="c1"></span>    <span class="k">if</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">GOMAXPROCS</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="mi">0</span>
-    <span class="p">}</span>
-
-    <span class="c1">// Use non-blocking workerChan if GOMAXPROCS&gt;1,
-</span><span class="c1"></span>    <span class="c1">// since otherwise the sender might be dragged down if the receiver is CPU-bound.
-</span><span class="c1"></span>    <span class="k">return</span> <span class="mi">1</span>
-  <span class="p">}()</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// workerChanCap determines whether the channel of a worker should be a buffered channel
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// to get the best performance. Inspired by fasthttp at
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// https://github.com/valyala/fasthttp/blob/master/workerpool.go#L139
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">workerChanCap</span> <span class="p">=</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Use blocking channel if GOMAXPROCS=1.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// This switches context from sender to receiver immediately,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// which results in higher performance (under go1.5 at least).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">GOMAXPROCS</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Use non-blocking workerChan if GOMAXPROCS&gt;1,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// since otherwise the sender might be dragged down if the receiver is CPU-bound.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}()</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>为了方便对照，我把注释也放上来了。<code>ants</code>参考了著名的 Web 框架<code>fasthttp</code>的实现。当<code>GOMAXPROCS</code>为 1 时（即操作系统线程数为 1），向通道<code>task</code>发送会挂起发送 goroutine，将执行流程转向接收 goroutine，这能提升接收处理性能。如果<code>GOMAXPROCS</code>大于 1，<code>ants</code>使用带缓冲的通道，为了防止接收 goroutine 是 CPU 密集的，导致发送 goroutine 被阻塞。下面是<code>fasthttp</code>中的相关代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1605,27 +1605,27 @@ if (!doNotTrack) {
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// src/github.com/valyala/fasthttp/workerpool.go
-</span><span class="c1"></span><span class="kd">var</span> <span class="nx">workerChanCap</span> <span class="p">=</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
-  <span class="c1">// Use blocking workerChan if GOMAXPROCS=1.
-</span><span class="c1"></span>  <span class="c1">// This immediately switches Serve to WorkerFunc, which results
-</span><span class="c1"></span>  <span class="c1">// in higher performance (under go1.5 at least).
-</span><span class="c1"></span>  <span class="k">if</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">GOMAXPROCS</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="mi">0</span>
-  <span class="p">}</span>
-
-  <span class="c1">// Use non-blocking workerChan if GOMAXPROCS&gt;1,
-</span><span class="c1"></span>  <span class="c1">// since otherwise the Serve caller (Acceptor) may lag accepting
-</span><span class="c1"></span>  <span class="c1">// new connections if WorkerFunc is CPU-bound.
-</span><span class="c1"></span>  <span class="k">return</span> <span class="mi">1</span>
-<span class="p">}()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// src/github.com/valyala/fasthttp/workerpool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">workerChanCap</span> <span class="p">=</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Use blocking workerChan if GOMAXPROCS=1.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// This immediately switches Serve to WorkerFunc, which results
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// in higher performance (under go1.5 at least).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">if</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">GOMAXPROCS</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// Use non-blocking workerChan if GOMAXPROCS&gt;1,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// since otherwise the Serve caller (Acceptor) may lag accepting
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// new connections if WorkerFunc is CPU-bound.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">return</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="p">}()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="自旋锁">自旋锁</h3>
 <p><code>ants</code>利用<code>atomic.CompareAndSwapUint32()</code>这个原子操作实现了一个自旋锁。与其他类型的锁不同，自旋锁在加锁失败之后不会立刻进入等待，而是会继续尝试。这对于很快就能获得锁的应用来说能极大提升性能，因为能避免加锁和解锁导致的线程切换：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1647,27 +1647,27 @@ if (!doNotTrack) {
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">spinLock</span> <span class="kt">uint32</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">sl</span> <span class="o">*</span><span class="nx">spinLock</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">backoff</span> <span class="o">:=</span> <span class="mi">1</span>
-  <span class="k">for</span> <span class="p">!</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapUint32</span><span class="p">((</span><span class="o">*</span><span class="kt">uint32</span><span class="p">)(</span><span class="nx">sl</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">backoff</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-      <span class="nx">runtime</span><span class="p">.</span><span class="nf">Gosched</span><span class="p">()</span>
-    <span class="p">}</span>
-    <span class="nx">backoff</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">sl</span> <span class="o">*</span><span class="nx">spinLock</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint32</span><span class="p">((</span><span class="o">*</span><span class="kt">uint32</span><span class="p">)(</span><span class="nx">sl</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="c1">// NewSpinLock instantiates a spin-lock.
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">NewSpinLock</span><span class="p">()</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Locker</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nb">new</span><span class="p">(</span><span class="nx">spinLock</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">spinLock</span> <span class="kt">uint32</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">sl</span> <span class="o">*</span><span class="nx">spinLock</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">backoff</span> <span class="o">:=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">!</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapUint32</span><span class="p">((</span><span class="o">*</span><span class="kt">uint32</span><span class="p">)(</span><span class="nx">sl</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">backoff</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">runtime</span><span class="p">.</span><span class="nf">Gosched</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">backoff</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">sl</span> <span class="o">*</span><span class="nx">spinLock</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint32</span><span class="p">((</span><span class="o">*</span><span class="kt">uint32</span><span class="p">)(</span><span class="nx">sl</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// NewSpinLock instantiates a spin-lock.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewSpinLock</span><span class="p">()</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Locker</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nb">new</span><span class="p">(</span><span class="nx">spinLock</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>另外这里使用了<strong>指数退避</strong>，先等 1 个循环周期，通过<code>runtime.Gosched()</code>告诉运行时切换其他 goroutine 运行。如果还是获取不到锁，就再等 2 个周期。如果还是不行，再等 4，8，16&hellip;以此类推。这可以防止短时间内获取不到锁，导致 CPU 时间的浪费。</p>
 <h2 id="总结">总结</h2>
@@ -1779,6 +1779,8 @@ if (!doNotTrack) {
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1818,7 +1820,7 @@ if (!doNotTrack) {
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1882,7 +1884,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1905,6 +1907,8 @@ if (!doNotTrack) {
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

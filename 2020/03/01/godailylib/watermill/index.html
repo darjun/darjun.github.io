@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/03/01/godailylib/watermill/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 在上一篇文章Go 每日一库之 message-bus中，我们介绍了一款小巧、实现简单的异步通信库。作为学习，message-bus确实不错。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2020/03/01/godailylib/watermill/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2020-03-01T07:03:23&#43;00:00" />
-<meta property="article:modified_time" content="2020-03-01T07:03:23&#43;00:00" />
+<meta property="article:published_time" content="2020-03-01T07:03:23+00:00" />
+<meta property="article:modified_time" content="2020-03-01T07:03:23+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 watermill">
-<meta itemprop="description" content="简介 在上一篇文章Go 每日一库之 message-bus中，我们介绍了一款小巧、实现简单的异步通信库。作为学习，message-bus确实不错。"><meta itemprop="datePublished" content="2020-03-01T07:03:23&#43;00:00" />
-<meta itemprop="dateModified" content="2020-03-01T07:03:23&#43;00:00" />
+<meta itemprop="description" content="简介 在上一篇文章Go 每日一库之 message-bus中，我们介绍了一款小巧、实现简单的异步通信库。作为学习，message-bus确实不错。"><meta itemprop="datePublished" content="2020-03-01T07:03:23+00:00" />
+<meta itemprop="dateModified" content="2020-03-01T07:03:23+00:00" />
 <meta itemprop="wordCount" content="3852">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 watermill"/>
@@ -406,16 +406,16 @@ if (!doNotTrack) {
 <p>安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get github.com/ThreeDotsLabs/watermill
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go get github.com/ThreeDotsLabs/watermill
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -463,53 +463,53 @@ if (!doNotTrack) {
 </span><span class="lnt">46
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;context&#34;</span>
-  <span class="s">&#34;log&#34;</span>
-  <span class="s">&#34;time&#34;</span>
-
-  <span class="s">&#34;github.com/ThreeDotsLabs/watermill&#34;</span>
-  <span class="s">&#34;github.com/ThreeDotsLabs/watermill/message&#34;</span>
-  <span class="s">&#34;github.com/ThreeDotsLabs/watermill/pubsub/gochannel&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">pubSub</span> <span class="o">:=</span> <span class="nx">gochannel</span><span class="p">.</span><span class="nf">NewGoChannel</span><span class="p">(</span>
-    <span class="nx">gochannel</span><span class="p">.</span><span class="nx">Config</span><span class="p">{},</span>
-    <span class="nx">watermill</span><span class="p">.</span><span class="nf">NewStdLogger</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">),</span>
-  <span class="p">)</span>
-
-  <span class="nx">messages</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">pubSub</span><span class="p">.</span><span class="nf">Subscribe</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;example.topic&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="k">go</span> <span class="nf">process</span><span class="p">(</span><span class="nx">messages</span><span class="p">)</span>
-
-  <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">pubSub</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">publisher</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Publisher</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">for</span> <span class="p">{</span>
-    <span class="nx">msg</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Hello, world!&#34;</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">publisher</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;example.topic&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-    <span class="p">}</span>
-
-    <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">process</span><span class="p">(</span><span class="nx">messages</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">for</span> <span class="nx">msg</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">messages</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;received message: %s, payload: %s&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Payload</span><span class="p">))</span>
-    <span class="nx">msg</span><span class="p">.</span><span class="nf">Ack</span><span class="p">()</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/ThreeDotsLabs/watermill&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/ThreeDotsLabs/watermill/message&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/ThreeDotsLabs/watermill/pubsub/gochannel&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">pubSub</span> <span class="o">:=</span> <span class="nx">gochannel</span><span class="p">.</span><span class="nf">NewGoChannel</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">gochannel</span><span class="p">.</span><span class="nx">Config</span><span class="p">{},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">watermill</span><span class="p">.</span><span class="nf">NewStdLogger</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">messages</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">pubSub</span><span class="p">.</span><span class="nf">Subscribe</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;example.topic&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="nf">process</span><span class="p">(</span><span class="nx">messages</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">pubSub</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">publisher</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Publisher</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">msg</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Hello, world!&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">publisher</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;example.topic&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">process</span><span class="p">(</span><span class="nx">messages</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">msg</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">messages</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;received message: %s, payload: %s&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Payload</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">msg</span><span class="p">.</span><span class="nf">Ack</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>首先，我们创建一个<code>GoChannel</code>对象，它是一个消息管理器。可以调用其<code>Subscribe</code>订阅某个主题（<strong>topic</strong>）的消息，调用其<code>Publish()</code>以某个主题发布消息。<code>Subscribe()</code>方法会返回一个<code>&lt;-chan *message.Message</code>，一旦该主题有消息发布，<code>GoChannel</code>就会将消息发送到该管道中。订阅者只需监听此管道，接收消息进行处理。在上面的例子中，我们启动了一个消息处理的<code>goroutine</code>，持续从管道中读取消息，然后打印输出。主<code>goroutine</code>在一个死循环中每隔 1s 发布一次消息。</p>
 <p><code>message.Message</code>这个结构是<code>watermill</code>库的核心，每个消息都会封装到该结构中发送。<code>Message</code>保存的是原始的字节流（<code>[]byte</code>），所以可以将 JSON/protobuf/XML 等等格式的序列化结果保存到<code>Message</code>中。</p>
@@ -527,7 +527,7 @@ if (!doNotTrack) {
 <p>路由其实管理多个订阅者，每个订阅者在一个独立的<code>goroutine</code>中运行，彼此互不干扰。订阅者收到消息后，交由注册时指定的处理函数（<strong>HandlerFunc</strong>）。路由还可以设置插件（<strong>plugin</strong>）和中间件（<strong>middleware</strong>），插件是定制路由的行为，而中间件是定制处理器的行为。处理器处理消息后会返回若干消息，这些消息会被路由重新发布到（另一个）管理器中。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -578,79 +578,79 @@ if (!doNotTrack) {
 </span><span class="lnt">49
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="p">(</span>
-  <span class="nx">logger</span> <span class="p">=</span> <span class="nx">watermill</span><span class="p">.</span><span class="nf">NewStdLogger</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">router</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewRouter</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">RouterConfig</span><span class="p">{},</span> <span class="nx">logger</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">pubSub</span> <span class="o">:=</span> <span class="nx">gochannel</span><span class="p">.</span><span class="nf">NewGoChannel</span><span class="p">(</span><span class="nx">gochannel</span><span class="p">.</span><span class="nx">Config</span><span class="p">{},</span> <span class="nx">logger</span><span class="p">)</span>
-  <span class="k">go</span> <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">pubSub</span><span class="p">)</span>
-
-  <span class="nx">router</span><span class="p">.</span><span class="nf">AddHandler</span><span class="p">(</span><span class="s">&#34;myhandler&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">myHandler</span><span class="p">{}.</span><span class="nx">Handler</span><span class="p">)</span>
-
-  <span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_in_messages&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
-  <span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_out_messages&#34;</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
-
-  <span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">router</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="nx">ctx</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">publisher</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Publisher</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">for</span> <span class="p">{</span>
-    <span class="nx">msg</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Hello, world!&#34;</span><span class="p">))</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">publisher</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-    <span class="p">}</span>
-
-    <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">printMessages</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;\n&gt; Received message: %s\n&gt; %s\n&gt;\n&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Payload</span><span class="p">))</span>
-  <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">myHandler</span> <span class="kd">struct</span> <span class="p">{</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">myHandler</span><span class="p">)</span> <span class="nf">Handler</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;myHandler received message&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">)</span>
-
-  <span class="nx">msg</span> <span class="p">=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;message produced by myHandler&#34;</span><span class="p">))</span>
-  <span class="k">return</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Messages</span><span class="p">{</span><span class="nx">msg</span><span class="p">},</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">logger</span> <span class="p">=</span> <span class="nx">watermill</span><span class="p">.</span><span class="nf">NewStdLogger</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">router</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewRouter</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">RouterConfig</span><span class="p">{},</span> <span class="nx">logger</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">pubSub</span> <span class="o">:=</span> <span class="nx">gochannel</span><span class="p">.</span><span class="nf">NewGoChannel</span><span class="p">(</span><span class="nx">gochannel</span><span class="p">.</span><span class="nx">Config</span><span class="p">{},</span> <span class="nx">logger</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">pubSub</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">router</span><span class="p">.</span><span class="nf">AddHandler</span><span class="p">(</span><span class="s">&#34;myhandler&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">myHandler</span><span class="p">{}.</span><span class="nx">Handler</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_in_messages&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_out_messages&#34;</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">router</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="nx">ctx</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">publisher</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Publisher</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">msg</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Hello, world!&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">publisher</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">printMessages</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;\n&gt; Received message: %s\n&gt; %s\n&gt;\n&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Payload</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">myHandler</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">myHandler</span><span class="p">)</span> <span class="nf">Handler</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;myHandler received message&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">msg</span> <span class="p">=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;message produced by myHandler&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Messages</span><span class="p">{</span><span class="nx">msg</span><span class="p">},</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>首先，我们创建一个路由：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewRouter</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">RouterConfig</span><span class="p">{},</span> <span class="nx">logger</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewRouter</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">RouterConfig</span><span class="p">{},</span> <span class="nx">logger</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后为路由注册处理器。注册的处理器有两种类型，一种是：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddHandler</span><span class="p">(</span><span class="s">&#34;myhandler&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">myHandler</span><span class="p">{}.</span><span class="nx">Handler</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nf">AddHandler</span><span class="p">(</span><span class="s">&#34;myhandler&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">myHandler</span><span class="p">{}.</span><span class="nx">Handler</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个方法原型为：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -660,27 +660,27 @@ if (!doNotTrack) {
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Router</span><span class="p">)</span> <span class="nf">AddHandler</span><span class="p">(</span>
-  <span class="nx">handlerName</span> <span class="kt">string</span><span class="p">,</span>
-  <span class="nx">subscribeTopic</span> <span class="kt">string</span><span class="p">,</span>
-  <span class="nx">subscriber</span> <span class="nx">Subscriber</span><span class="p">,</span>
-  <span class="nx">publishTopic</span> <span class="kt">string</span><span class="p">,</span>
-  <span class="nx">publisher</span> <span class="nx">Publisher</span><span class="p">,</span>
-  <span class="nx">handlerFunc</span> <span class="nx">HandlerFunc</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">*</span><span class="nx">Handler</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Router</span><span class="p">)</span> <span class="nf">AddHandler</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">handlerName</span> <span class="kt">string</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">subscribeTopic</span> <span class="kt">string</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">subscriber</span> <span class="nx">Subscriber</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">publishTopic</span> <span class="kt">string</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">publisher</span> <span class="nx">Publisher</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">handlerFunc</span> <span class="nx">HandlerFunc</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span> <span class="o">*</span><span class="nx">Handler</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>该方法的作用是创建一个名为<code>handlerName</code>的处理器，监听<code>subscriber</code>中主题为<code>subscribeTopic</code>的消息，收到消息后调用<code>handlerFunc</code>处理，将返回的消息以主题<code>publishTopic</code>发布到<code>publisher</code>中。</p>
 <p>另外一种处理器是下面这种形式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_in_messages&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
-<span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_out_messages&#34;</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_in_messages&#34;</span><span class="p">,</span> <span class="s">&#34;in_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nf">AddNoPublisherHandler</span><span class="p">(</span><span class="s">&#34;print_out_messages&#34;</span><span class="p">,</span> <span class="s">&#34;out_topic&#34;</span><span class="p">,</span> <span class="nx">pubSub</span><span class="p">,</span> <span class="nx">printMessages</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>从名字我们也可以看出，这种形式的处理器只处理接收到的消息，不发布新消息。</p>
 <p>最后，我们调用<code>router.Run()</code>运行这个路由。</p>
@@ -704,43 +704,43 @@ if (!doNotTrack) {
 <p>中间件的使用也是比较简单和直接的：调用<code>router.AddMiddleware()</code>。例如，我们想要把处理返回的消息 double 一下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Duplicator</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Duplicator</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>想重试？可以：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Retry</span><span class="p">{</span>
-  <span class="nx">MaxRetries</span><span class="p">:</span>      <span class="mi">3</span><span class="p">,</span>
-  <span class="nx">InitialInterval</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
-  <span class="nx">Logger</span><span class="p">:</span>          <span class="nx">logger</span><span class="p">,</span>
-<span class="p">}.</span><span class="nx">Middleware</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Retry</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">MaxRetries</span><span class="p">:</span>      <span class="mi">3</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">InitialInterval</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Logger</span><span class="p">:</span>          <span class="nx">logger</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}.</span><span class="nx">Middleware</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面设置最大重试次数为 3，重试初始时间间隔为 100ms。</p>
 <p>一般情况下，生产环境需要保证稳定性，某个处理异常不能影响后续的消息处理。故设置<code>Recoverer</code>是比较好的选择：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Recoverer</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">Recoverer</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>也可以实现自己的中间件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -751,21 +751,21 @@ if (!doNotTrack) {
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">MyMiddleware</span><span class="p">(</span><span class="nx">h</span> <span class="nx">message</span><span class="p">.</span><span class="nx">HandlerFunc</span><span class="p">)</span> <span class="nx">message</span><span class="p">.</span><span class="nx">HandlerFunc</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">fields</span> <span class="o">:=</span> <span class="nx">watermill</span><span class="p">.</span><span class="nx">LogFields</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">Name</span><span class="p">}</span>
-    <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware before&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
-    <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">h</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
-    <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware after&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">MyMiddleware</span><span class="p">(</span><span class="nx">h</span> <span class="nx">message</span><span class="p">.</span><span class="nx">HandlerFunc</span><span class="p">)</span> <span class="nx">message</span><span class="p">.</span><span class="nx">HandlerFunc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fields</span> <span class="o">:=</span> <span class="nx">watermill</span><span class="p">.</span><span class="nx">LogFields</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">Name</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware before&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">h</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware after&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>中间件有两种实现方式，如果不需要参数或依赖，那么直接实现为函数即可，像上面这样。如果需要有参数，那么可以实现为一个结构：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -780,63 +780,63 @@ if (!doNotTrack) {
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">myMiddleware</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Name</span> <span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">myMiddleware</span><span class="p">)</span> <span class="nf">Middleware</span><span class="p">(</span><span class="nx">h</span> <span class="nx">message</span><span class="p">.</span><span class="nx">HandlerFunc</span><span class="p">)</span> <span class="nx">message</span><span class="p">.</span><span class="nx">HandlerFunc</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">fields</span> <span class="o">:=</span> <span class="nx">watermill</span><span class="p">.</span><span class="nx">LogFields</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">Name</span><span class="p">}</span>
-    <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware before&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
-    <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">h</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
-    <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware after&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">myMiddleware</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">myMiddleware</span><span class="p">)</span> <span class="nf">Middleware</span><span class="p">(</span><span class="nx">h</span> <span class="nx">message</span><span class="p">.</span><span class="nx">HandlerFunc</span><span class="p">)</span> <span class="nx">message</span><span class="p">.</span><span class="nx">HandlerFunc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fields</span> <span class="o">:=</span> <span class="nx">watermill</span><span class="p">.</span><span class="nx">LogFields</span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">Name</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware before&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">h</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;myMiddleware after&#34;</span><span class="p">,</span> <span class="nx">fields</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">ms</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这两种中间件的添加方式有所不同，第一种直接添加：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">MyMiddleware</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">MyMiddleware</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>第二种要构造一个对象，然后将其<code>Middleware</code>方法传入，在该方法中可以访问<code>MyMiddleware</code>对象的字段：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">MyMiddleware</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}.</span><span class="nx">Middleware</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nf">AddMiddleware</span><span class="p">(</span><span class="nx">MyMiddleware</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="s">&#34;dj&#34;</span><span class="p">}.</span><span class="nx">Middleware</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="设置">设置</h2>
 <p>如果运行上面程序，你很可能会看到这样一条日志：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">No</span> <span class="nx">subscribers</span> <span class="nx">to</span> <span class="nx">send</span> <span class="nx">message</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">No</span> <span class="nx">subscribers</span> <span class="nx">to</span> <span class="nx">send</span> <span class="nx">message</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>因为发布消息是在另一个<code>goroutine</code>，我们没有控制何时发布，可能发布消息时，我们还未订阅。我们观察后面的处理日志，对比 uuid 发现这条消息直接被丢弃了。<code>watermill</code>提供了一个选项，可以将消息都保存下来，订阅某个主题时将该主题之前的消息也发送给它：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">pubSub</span> <span class="o">:=</span> <span class="nx">gochannel</span><span class="p">.</span><span class="nf">NewGoChannel</span><span class="p">(</span>
-  <span class="nx">gochannel</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
-    <span class="nx">Persistent</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="p">},</span> <span class="nx">logger</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">pubSub</span> <span class="o">:=</span> <span class="nx">gochannel</span><span class="p">.</span><span class="nf">NewGoChannel</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gochannel</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Persistent</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span> <span class="nx">logger</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>创建<code>GoChannel</code>时将<code>Config</code>中<code>Persistent</code>字段设置为<code>true</code>即可。此时运行，我们仔细观察一下，出现<code>No subscribers to send message</code>信息的消息后续确实被处理了。</p>
 <h2 id="rabbitmq">RabbitMQ</h2>
@@ -844,34 +844,34 @@ if (!doNotTrack) {
 <p>使用<code>RabbitMQ</code>需要先运行<code>RabbitMQ</code>程序，<code>RabbitMQ</code>采用<code>Erlang</code>开发。我们之前很多文章也介绍过 windows 上的软件安装神器<code>choco</code>。使用<code>choco</code>安装<code>RabbitMQ</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">choco</span> <span class="nx">install</span> <span class="nx">rabbitmq</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="err">$</span> <span class="nx">choco</span> <span class="nx">install</span> <span class="nx">rabbitmq</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>启动<code>RabbitMQ</code>服务器：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="nx">rabbitmq</span><span class="o">-</span><span class="nx">server</span><span class="p">.</span><span class="nx">bat</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="err">$</span> <span class="nx">rabbitmq</span><span class="o">-</span><span class="nx">server</span><span class="p">.</span><span class="nx">bat</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>watermill</code>对<code>RabbitMQ</code>的支持使用独立库的形式，需要另行安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">ThreeDotsLabs</span><span class="o">/</span><span class="nx">watermill</span><span class="o">-</span><span class="nx">amqp</span><span class="o">/</span><span class="nx">pkg</span><span class="o">/</span><span class="nx">amqp</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">get</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">ThreeDotsLabs</span><span class="o">/</span><span class="nx">watermill</span><span class="o">-</span><span class="nx">amqp</span><span class="o">/</span><span class="nx">pkg</span><span class="o">/</span><span class="nx">amqp</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>发布订阅：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -919,53 +919,53 @@ if (!doNotTrack) {
 </span><span class="lnt">46
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">amqpURI</span> <span class="p">=</span> <span class="s">&#34;amqp://localhost:5672/&#34;</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">amqpConfig</span> <span class="o">:=</span> <span class="nx">amqp</span><span class="p">.</span><span class="nf">NewDurableQueueConfig</span><span class="p">(</span><span class="nx">amqpURI</span><span class="p">)</span>
-
-  <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">amqp</span><span class="p">.</span><span class="nf">NewSubscriber</span><span class="p">(</span>
-    <span class="nx">amqpConfig</span><span class="p">,</span>
-    <span class="nx">watermill</span><span class="p">.</span><span class="nf">NewStdLogger</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">),</span>
-  <span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nx">messages</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nf">Subscribe</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;example.topic&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="k">go</span> <span class="nf">process</span><span class="p">(</span><span class="nx">messages</span><span class="p">)</span>
-
-  <span class="nx">publisher</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">amqp</span><span class="p">.</span><span class="nf">NewPublisher</span><span class="p">(</span><span class="nx">amqpConfig</span><span class="p">,</span> <span class="nx">watermill</span><span class="p">.</span><span class="nf">NewStdLogger</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">))</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">publisher</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">publisher</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Publisher</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">for</span> <span class="p">{</span>
-    <span class="nx">msg</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Hello, world!&#34;</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">publisher</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;example.topic&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-    <span class="p">}</span>
-
-    <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">process</span><span class="p">(</span><span class="nx">messages</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">for</span> <span class="nx">msg</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">messages</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;received message: %s, payload: %s&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Payload</span><span class="p">))</span>
-    <span class="nx">msg</span><span class="p">.</span><span class="nf">Ack</span><span class="p">()</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">amqpURI</span> <span class="p">=</span> <span class="s">&#34;amqp://localhost:5672/&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">amqpConfig</span> <span class="o">:=</span> <span class="nx">amqp</span><span class="p">.</span><span class="nf">NewDurableQueueConfig</span><span class="p">(</span><span class="nx">amqpURI</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">amqp</span><span class="p">.</span><span class="nf">NewSubscriber</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">amqpConfig</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">watermill</span><span class="p">.</span><span class="nf">NewStdLogger</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">messages</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nf">Subscribe</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="s">&#34;example.topic&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="nf">process</span><span class="p">(</span><span class="nx">messages</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">publisher</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">amqp</span><span class="p">.</span><span class="nf">NewPublisher</span><span class="p">(</span><span class="nx">amqpConfig</span><span class="p">,</span> <span class="nx">watermill</span><span class="p">.</span><span class="nf">NewStdLogger</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">publisher</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">publishMessages</span><span class="p">(</span><span class="nx">publisher</span> <span class="nx">message</span><span class="p">.</span><span class="nx">Publisher</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">msg</span> <span class="o">:=</span> <span class="nx">message</span><span class="p">.</span><span class="nf">NewMessage</span><span class="p">(</span><span class="nx">watermill</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">(),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;Hello, world!&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">publisher</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="s">&#34;example.topic&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">process</span><span class="p">(</span><span class="nx">messages</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">message</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">msg</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">messages</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;received message: %s, payload: %s&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">UUID</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Payload</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">msg</span><span class="p">.</span><span class="nf">Ack</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果有自定义发布-订阅实现的需求，可以参考<code>RabbitMQ</code>的实现：<a href="github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp">github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp</a>。</p>
 <h2 id="总结">总结</h2>
@@ -1078,6 +1078,8 @@ if (!doNotTrack) {
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -1117,7 +1119,7 @@ if (!doNotTrack) {
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1181,7 +1183,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1204,6 +1206,8 @@ if (!doNotTrack) {
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

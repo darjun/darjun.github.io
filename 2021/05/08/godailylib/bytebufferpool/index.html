@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2021/05/08/godailylib/bytebufferpool/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 在编程开发中，我们经常会需要频繁创建和销毁同类对象的情形。这样的操作很可能会对性能造成影响。这时，常用的优化手段就是使用对象池（obje" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2021/05/08/godailylib/bytebufferpool/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2021-05-08T20:31:00&#43;00:00" />
-<meta property="article:modified_time" content="2021-05-08T20:31:00&#43;00:00" />
+<meta property="article:published_time" content="2021-05-08T20:31:00+00:00" />
+<meta property="article:modified_time" content="2021-05-08T20:31:00+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 bytebufferpool">
-<meta itemprop="description" content="简介 在编程开发中，我们经常会需要频繁创建和销毁同类对象的情形。这样的操作很可能会对性能造成影响。这时，常用的优化手段就是使用对象池（obje"><meta itemprop="datePublished" content="2021-05-08T20:31:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-05-08T20:31:00&#43;00:00" />
+<meta itemprop="description" content="简介 在编程开发中，我们经常会需要频繁创建和销毁同类对象的情形。这样的操作很可能会对性能造成影响。这时，常用的优化手段就是使用对象池（obje"><meta itemprop="datePublished" content="2021-05-08T20:31:00+00:00" />
+<meta itemprop="dateModified" content="2021-05-08T20:31:00+00:00" />
 <meta itemprop="wordCount" content="2769">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 bytebufferpool"/>
@@ -401,27 +401,27 @@ if (!doNotTrack) {
 <p>创建目录并初始化：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ mkdir bytebufferpool <span class="p">&amp;&amp;</span> <span class="k">cd</span> bytebufferpool
-$ go mod init github.com/darjun/go-daily-lib/bytebufferpool
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ mkdir bytebufferpool <span class="p">&amp;&amp;</span> <span class="k">cd</span> bytebufferpool
+</span></span><span class="line"><span class="cl">$ go mod init github.com/darjun/go-daily-lib/bytebufferpool
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>安装<code>bytebufferpool</code>库：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cmd" data-lang="cmd">$ go get -u github.com/PuerkitoBio/bytebufferpool
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go get -u github.com/PuerkitoBio/bytebufferpool
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>典型的使用方式先通过<code>bytebufferpool</code>提供的<code>Get()</code>方法获取一个<code>bytebufferpool.Buffer</code>对象，然后调用这个对象的方法写入数据，使用完成之后再调用<code>bytebufferpool.Put()</code>将对象放回对象池中。例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -441,47 +441,47 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;fmt&#34;</span>
-
-  <span class="s">&#34;github.com/valyala/bytebufferpool&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">b</span> <span class="o">:=</span> <span class="nx">bytebufferpool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
-  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">)</span>
-  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteByte</span><span class="p">(</span><span class="sc">&#39;,&#39;</span><span class="p">)</span>
-  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34; world!&#34;</span><span class="p">)</span>
-
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
-
-  <span class="nx">bytebufferpool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/valyala/bytebufferpool&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span> <span class="o">:=</span> <span class="nx">bytebufferpool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteByte</span><span class="p">(</span><span class="sc">&#39;,&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34; world!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">bytebufferpool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>直接调用<code>bytebufferpool</code>包的<code>Get()</code>和<code>Put()</code>方法，底层操作的是包中默认的对象池：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// bytebufferpool/pool.go
-</span><span class="c1"></span><span class="kd">var</span> <span class="nx">defaultPool</span> <span class="nx">Pool</span>
-
-<span class="kd">func</span> <span class="nf">Get</span><span class="p">()</span> <span class="o">*</span><span class="nx">ByteBuffer</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">defaultPool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span> <span class="p">}</span>
-<span class="kd">func</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">ByteBuffer</span><span class="p">)</span> <span class="p">{</span> <span class="nx">defaultPool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// bytebufferpool/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">defaultPool</span> <span class="nx">Pool</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Get</span><span class="p">()</span> <span class="o">*</span><span class="nx">ByteBuffer</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">defaultPool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">ByteBuffer</span><span class="p">)</span> <span class="p">{</span> <span class="nx">defaultPool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们当然可以根据实际需要创建新的对象池，将相同用处的对象放在一起（比如我们可以创建一个对象池用于辅助接收网络包，一个用于辅助拼接字符串）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -494,18 +494,18 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">joinPool</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">bytebufferpool</span><span class="p">.</span><span class="nx">Pool</span><span class="p">)</span>
-  <span class="nx">b</span> <span class="o">:=</span> <span class="nx">joinPool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
-  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">)</span>
-  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteByte</span><span class="p">(</span><span class="sc">&#39;,&#39;</span><span class="p">)</span>
-  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34; world!&#34;</span><span class="p">)</span>
-
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
-
-  <span class="nx">joinPool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">joinPool</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">bytebufferpool</span><span class="p">.</span><span class="nx">Pool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span> <span class="o">:=</span> <span class="nx">joinPool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteByte</span><span class="p">(</span><span class="sc">&#39;,&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34; world!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">joinPool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>bytebufferpool</code>没有提供具体的创建函数，不过可以使用<code>new</code>创建。</p>
 <h2 id="优化细节">优化细节</h2>
@@ -514,7 +514,7 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 <p>如果容量小于 2^6，则属于第一个区间。如果处于 2^6 和 2^7-1 之间，则落在第二个区间。依次类推。执行足够多的放回次数后，<code>bytebufferpool</code>会重新校准，计算处于哪个区间容量的对象最多。将<code>defaultSize</code>设置为该区间的上限容量，第一个区间的上限容量为 2^6，第二区间为 2^7，最后一个区间为 2^26。后续通过<code>Get()</code>请求对象时，若池中无空闲对象，创建一个新对象时，直接将容量设置为<code>defaultSize</code>。这样基本可以避免在使用过程中的切片扩容，从而提升性能。下面结合代码来理解：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -537,35 +537,35 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// bytebufferpool/pool.go
-</span><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
-  <span class="nx">minBitSize</span> <span class="p">=</span> <span class="mi">6</span> <span class="c1">// 2**6=64 is a CPU cache line size
-</span><span class="c1"></span>  <span class="nx">steps</span>      <span class="p">=</span> <span class="mi">20</span>
-
-  <span class="nx">minSize</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="nx">minBitSize</span>
-  <span class="nx">maxSize</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="nx">minBitSize</span> <span class="o">+</span> <span class="nx">steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-
-  <span class="nx">calibrateCallsThreshold</span> <span class="p">=</span> <span class="mi">42000</span>
-  <span class="nx">maxPercentile</span>           <span class="p">=</span> <span class="mf">0.95</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">calls</span>       <span class="p">[</span><span class="nx">steps</span><span class="p">]</span><span class="kt">uint64</span>
-  <span class="nx">calibrating</span> <span class="kt">uint64</span>
-
-  <span class="nx">defaultSize</span> <span class="kt">uint64</span>
-  <span class="nx">maxSize</span>     <span class="kt">uint64</span>
-
-  <span class="nx">pool</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// bytebufferpool/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">minBitSize</span> <span class="p">=</span> <span class="mi">6</span> <span class="c1">// 2**6=64 is a CPU cache line size
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">steps</span>      <span class="p">=</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">minSize</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="nx">minBitSize</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">maxSize</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="nx">minBitSize</span> <span class="o">+</span> <span class="nx">steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">calibrateCallsThreshold</span> <span class="p">=</span> <span class="mi">42000</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">maxPercentile</span>           <span class="p">=</span> <span class="mf">0.95</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">calls</span>       <span class="p">[</span><span class="nx">steps</span><span class="p">]</span><span class="kt">uint64</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">calibrating</span> <span class="kt">uint64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">defaultSize</span> <span class="kt">uint64</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">maxSize</span>     <span class="kt">uint64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">pool</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们可以看到，<code>bytebufferpool</code>内部使用了标准库中的对象<code>sync.Pool</code>。</p>
 <p>这里的<code>steps</code>就是上面所说的区间，一共 20 份。<code>calls</code>数组记录放回对象容量落在各个区间的次数。</p>
 <p>调用<code>Pool.Get()</code>将对象放回时，首先计算切片容量落在哪个区间，增加<code>calls</code>数组中相应元素的值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -581,26 +581,26 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// bytebufferpool/pool.go
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">ByteBuffer</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">idx</span> <span class="o">:=</span> <span class="nf">index</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">B</span><span class="p">))</span>
-
-  <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">calls</span><span class="p">[</span><span class="nx">idx</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="p">&gt;</span> <span class="nx">calibrateCallsThreshold</span> <span class="p">{</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nf">calibrate</span><span class="p">()</span>
-  <span class="p">}</span>
-
-  <span class="nx">maxSize</span> <span class="o">:=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">maxSize</span><span class="p">))</span>
-  <span class="k">if</span> <span class="nx">maxSize</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nx">maxSize</span> <span class="p">{</span>
-    <span class="nx">b</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
-    <span class="nx">p</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// bytebufferpool/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">ByteBuffer</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">idx</span> <span class="o">:=</span> <span class="nf">index</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">B</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">calls</span><span class="p">[</span><span class="nx">idx</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="p">&gt;</span> <span class="nx">calibrateCallsThreshold</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nf">calibrate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">maxSize</span> <span class="o">:=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">maxSize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">maxSize</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nx">maxSize</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">b</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果<code>calls</code>数组该元素超过指定值<code>calibrateCallsThreshold=42000</code>（说明距离上次校准，放回对象到该区间的次数已经达到阈值了，42000 应该就是个经验数字），则调用<code>Pool.calibrate()</code>执行校准操作：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -645,50 +645,50 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 </span><span class="lnt">43
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// bytebufferpool/pool.go
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">calibrate</span><span class="p">()</span> <span class="p">{</span>
-  <span class="c1">// 避免并发放回对象触发 `calibrate`
-</span><span class="c1"></span>  <span class="k">if</span> <span class="p">!</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">calibrating</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span>
-  <span class="p">}</span>
-
-  <span class="c1">// step 1.统计并排序
-</span><span class="c1"></span>  <span class="nx">a</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="nx">callSizes</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">steps</span><span class="p">)</span>
-  <span class="kd">var</span> <span class="nx">callsSum</span> <span class="kt">uint64</span>
-  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">steps</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="nx">calls</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">SwapUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">calls</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="nx">callsSum</span> <span class="o">+=</span> <span class="nx">calls</span>
-    <span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">callSize</span><span class="p">{</span>
-      <span class="nx">calls</span><span class="p">:</span> <span class="nx">calls</span><span class="p">,</span>
-      <span class="nx">size</span><span class="p">:</span>  <span class="nx">minSize</span> <span class="o">&lt;&lt;</span> <span class="nx">i</span><span class="p">,</span>
-    <span class="p">})</span>
-  <span class="p">}</span>
-  <span class="nx">sort</span><span class="p">.</span><span class="nf">Sort</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
-
-  <span class="c1">// step 2.计算 defaultSize 和 maxSize
-</span><span class="c1"></span>  <span class="nx">defaultSize</span> <span class="o">:=</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">size</span>
-  <span class="nx">maxSize</span> <span class="o">:=</span> <span class="nx">defaultSize</span>
-
-  <span class="nx">maxSum</span> <span class="o">:=</span> <span class="nb">uint64</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">callsSum</span><span class="p">)</span> <span class="o">*</span> <span class="nx">maxPercentile</span><span class="p">)</span>
-  <span class="nx">callsSum</span> <span class="p">=</span> <span class="mi">0</span>
-  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">steps</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">callsSum</span> <span class="p">&gt;</span> <span class="nx">maxSum</span> <span class="p">{</span>
-      <span class="k">break</span>
-    <span class="p">}</span>
-    <span class="nx">callsSum</span> <span class="o">+=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">calls</span>
-    <span class="nx">size</span> <span class="o">:=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">size</span>
-    <span class="k">if</span> <span class="nx">size</span> <span class="p">&gt;</span> <span class="nx">maxSize</span> <span class="p">{</span>
-      <span class="nx">maxSize</span> <span class="p">=</span> <span class="nx">size</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-
-  <span class="c1">// step 3.保存对应值
-</span><span class="c1"></span>  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">defaultSize</span><span class="p">,</span> <span class="nx">defaultSize</span><span class="p">)</span>
-  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">maxSize</span><span class="p">,</span> <span class="nx">maxSize</span><span class="p">)</span>
-
-  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">calibrating</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// bytebufferpool/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">calibrate</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 避免并发放回对象触发 `calibrate`
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">if</span> <span class="p">!</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">calibrating</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// step 1.统计并排序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">a</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="nx">callSizes</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">steps</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="nx">callsSum</span> <span class="kt">uint64</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">steps</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">calls</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">SwapUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">calls</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">callsSum</span> <span class="o">+=</span> <span class="nx">calls</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">callSize</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">calls</span><span class="p">:</span> <span class="nx">calls</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">size</span><span class="p">:</span>  <span class="nx">minSize</span> <span class="o">&lt;&lt;</span> <span class="nx">i</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">sort</span><span class="p">.</span><span class="nf">Sort</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// step 2.计算 defaultSize 和 maxSize
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">defaultSize</span> <span class="o">:=</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">size</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">maxSize</span> <span class="o">:=</span> <span class="nx">defaultSize</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">maxSum</span> <span class="o">:=</span> <span class="nb">uint64</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">callsSum</span><span class="p">)</span> <span class="o">*</span> <span class="nx">maxPercentile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">callsSum</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">steps</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">callsSum</span> <span class="p">&gt;</span> <span class="nx">maxSum</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">break</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">callsSum</span> <span class="o">+=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">calls</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">size</span> <span class="o">:=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">size</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">size</span> <span class="p">&gt;</span> <span class="nx">maxSize</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">maxSize</span> <span class="p">=</span> <span class="nx">size</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// step 3.保存对应值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">defaultSize</span><span class="p">,</span> <span class="nx">defaultSize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">maxSize</span><span class="p">,</span> <span class="nx">maxSize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">calibrating</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>step 1.统计并排序</p>
 <p><code>calls</code>数组记录了放回对象到对应区间的次数。按照这个次数从大到小排序。注意：<code>minSize &lt;&lt; i</code>表示区间<code>i</code>的上限容量。</p>
@@ -696,7 +696,7 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 <p><code>defaultSize</code>很好理解，取排序后的第一个<code>size</code>即可。<code>maxSize</code>值记录放回次数超过 95% 的多个对象容量的最大值。它的作用是防止将使用较少的大容量对象放回对象池，从而占用太多内存。这里就可以理解<code>Pool.Put()</code>方法后半部分的逻辑了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -704,19 +704,19 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// 如果要放回的对象容量大于 maxSize，则不放回
-</span><span class="c1"></span><span class="nx">maxSize</span> <span class="o">:=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">maxSize</span><span class="p">))</span>
-<span class="k">if</span> <span class="nx">maxSize</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nx">maxSize</span> <span class="p">{</span>
-  <span class="nx">b</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
-  <span class="nx">p</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// 如果要放回的对象容量大于 maxSize，则不放回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">maxSize</span> <span class="o">:=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">maxSize</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">maxSize</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nx">maxSize</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">b</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">p</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>step 3.保存对应值</p>
 <p>后续通过<code>Pool.Get()</code>获取对象时，若池中无空闲对象，新创建的对象默认容量为<code>defaultSize</code>。这样的容量能满足绝大多数情况下的使用，避免使用过程中的切片扩容。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -728,17 +728,17 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// bytebufferpool/pool.go
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Get</span><span class="p">()</span> <span class="o">*</span><span class="nx">ByteBuffer</span> <span class="p">{</span>
-  <span class="nx">v</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">v</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">v</span><span class="p">.(</span><span class="o">*</span><span class="nx">ByteBuffer</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">ByteBuffer</span><span class="p">{</span>
-    <span class="nx">B</span><span class="p">:</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">defaultSize</span><span class="p">)),</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// bytebufferpool/pool.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Get</span><span class="p">()</span> <span class="o">*</span><span class="nx">ByteBuffer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">v</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">v</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">v</span><span class="p">.(</span><span class="o">*</span><span class="nx">ByteBuffer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">ByteBuffer</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">B</span><span class="p">:</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint64</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">defaultSize</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>其他一些细节：</p>
 <ul>
@@ -855,6 +855,8 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -894,7 +896,7 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -958,7 +960,7 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -981,6 +983,8 @@ $ go mod init github.com/darjun/go-daily-lib/bytebufferpool
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

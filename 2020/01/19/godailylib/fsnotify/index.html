@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2020/01/19/godailylib/fsnotify/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="简介 上一篇文章Go 每日一库之 viper中，我们介绍了 viper 可以监听文件修改进而自动重新加载。 其内部使用的就是fsnotify这个库，它是跨平台的" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2020/01/19/godailylib/fsnotify/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2020-01-18T21:08:05&#43;00:00" />
-<meta property="article:modified_time" content="2020-01-18T21:08:05&#43;00:00" />
+<meta property="article:published_time" content="2020-01-18T21:08:05+00:00" />
+<meta property="article:modified_time" content="2020-01-18T21:08:05+00:00" />
 
 <meta itemprop="name" content="Go 每日一库之 fsnotify">
-<meta itemprop="description" content="简介 上一篇文章Go 每日一库之 viper中，我们介绍了 viper 可以监听文件修改进而自动重新加载。 其内部使用的就是fsnotify这个库，它是跨平台的"><meta itemprop="datePublished" content="2020-01-18T21:08:05&#43;00:00" />
-<meta itemprop="dateModified" content="2020-01-18T21:08:05&#43;00:00" />
+<meta itemprop="description" content="简介 上一篇文章Go 每日一库之 viper中，我们介绍了 viper 可以监听文件修改进而自动重新加载。 其内部使用的就是fsnotify这个库，它是跨平台的"><meta itemprop="datePublished" content="2020-01-18T21:08:05+00:00" />
+<meta itemprop="dateModified" content="2020-01-18T21:08:05+00:00" />
 <meta itemprop="wordCount" content="2054">
 <meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go 每日一库之 fsnotify"/>
@@ -400,16 +400,16 @@ if (!doNotTrack) {
 <p>先安装：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go get github.com/fsnotify/fsnotify
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go get github.com/fsnotify/fsnotify
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>后使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -452,48 +452,48 @@ if (!doNotTrack) {
 </span><span class="lnt">41
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-  <span class="s">&#34;log&#34;</span>
-
-  <span class="s">&#34;github.com/fsnotify/fsnotify&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">watcher</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nf">NewWatcher</span><span class="p">()</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;NewWatcher failed: &#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">defer</span> <span class="nx">watcher</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-  <span class="nx">done</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">)</span>
-  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="p">{</span>
-      <span class="k">select</span> <span class="p">{</span>
-      <span class="k">case</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">watcher</span><span class="p">.</span><span class="nx">Events</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
-          <span class="k">return</span>
-        <span class="p">}</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s %s\n&#34;</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Op</span><span class="p">)</span>
-      <span class="k">case</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">watcher</span><span class="p">.</span><span class="nx">Errors</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
-          <span class="k">return</span>
-        <span class="p">}</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}()</span>
-
-  <span class="nx">err</span> <span class="p">=</span> <span class="nx">watcher</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;./&#34;</span><span class="p">)</span>
-  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Add failed:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="o">&lt;-</span><span class="nx">done</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/fsnotify/fsnotify&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">watcher</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nf">NewWatcher</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;NewWatcher failed: &#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">defer</span> <span class="nx">watcher</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">done</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">watcher</span><span class="p">.</span><span class="nx">Events</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s %s\n&#34;</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Op</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">watcher</span><span class="p">.</span><span class="nx">Errors</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;error:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">err</span> <span class="p">=</span> <span class="nx">watcher</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;./&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Add failed:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;-</span><span class="nx">done</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>fsnotify</code>的使用比较简单：</p>
 <ul>
@@ -505,17 +505,17 @@ if (!doNotTrack) {
 <p>编译、运行程序。在当前目录创建一个<code>新建文本文档.txt</code>，然后重命名为<code>file1.txt</code>文件，输入内容<code>some test text</code>，然后删除它。观察控制台输出：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">2020/01/20 08:41:17 新建文本文档.txt CREATE
-2020/01/20 08:41:25 新建文本文档.txt RENAME
-2020/01/20 08:41:25 file1.txt CREATE
-2020/01/20 08:42:28 file1.txt REMOVE
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">2020/01/20 08:41:17 新建文本文档.txt CREATE
+</span></span><span class="line"><span class="cl">2020/01/20 08:41:25 新建文本文档.txt RENAME
+</span></span><span class="line"><span class="cl">2020/01/20 08:41:25 file1.txt CREATE
+</span></span><span class="line"><span class="cl">2020/01/20 08:42:28 file1.txt REMOVE
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>其实，重命名时会产生两个事件，一个是原文件的<code>RENAME</code>事件，一个是新文件的<code>CREATE</code>事件。</strong></p>
 <p>注意，<code>fsnotify</code>使用了操作系统接口，监听器中保存了系统资源的句柄，所以使用后需要关闭。</p>
@@ -523,24 +523,24 @@ if (!doNotTrack) {
 <p>上面示例中的事件是<code>fsnotify.Event</code>类型：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// fsnotify/fsnotify.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Event</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Name</span> <span class="kt">string</span>
-  <span class="nx">Op</span>   <span class="nx">Op</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// fsnotify/fsnotify.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Event</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Op</span>   <span class="nx">Op</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>事件只有两个字段，<code>Name</code>表示发生变化的文件或目录名，<code>Op</code>表示具体的变化。<code>Op</code>有 5 种取值：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -552,36 +552,36 @@ if (!doNotTrack) {
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// fsnotify/fsnotify.go
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Op</span> <span class="kt">uint32</span>
-
-<span class="kd">const</span> <span class="p">(</span>
-  <span class="nx">Create</span> <span class="nx">Op</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span>
-  <span class="nx">Write</span>
-  <span class="nx">Remove</span>
-  <span class="nx">Rename</span>
-  <span class="nx">Chmod</span>
-<span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// fsnotify/fsnotify.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Op</span> <span class="kt">uint32</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Create</span> <span class="nx">Op</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Write</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Remove</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Rename</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Chmod</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在<a href="#%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8">快速使用</a>中，我们已经演示了前 4 种事件。<code>Chmod</code>事件在文件或目录的属性发生变化时触发，在 Linux 系统中可以通过<code>chmod</code>命令改变文件或目录属性。</p>
 <p>事件中的<code>Op</code>是按照位来存储的，可以存储多个，可以通过<code>&amp;</code>操作判断对应事件是不是发生了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Op</span> <span class="o">&amp;</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Write</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
-  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Op has Write&#34;</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Op</span> <span class="o">&amp;</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Write</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Op has Write&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们在代码中不需要这样判断，因为<code>Op</code>的<code>String()</code>方法已经帮我们处理了这种情况了：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -608,32 +608,32 @@ if (!doNotTrack) {
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// fsnotify.go
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">op</span> <span class="nx">Op</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
-  <span class="c1">// Use a buffer for efficient string concatenation
-</span><span class="c1"></span>  <span class="kd">var</span> <span class="nx">buffer</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
-
-  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Create</span> <span class="o">==</span> <span class="nx">Create</span> <span class="p">{</span>
-    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|CREATE&#34;</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Remove</span> <span class="o">==</span> <span class="nx">Remove</span> <span class="p">{</span>
-    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|REMOVE&#34;</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Write</span> <span class="o">==</span> <span class="nx">Write</span> <span class="p">{</span>
-    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|WRITE&#34;</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Rename</span> <span class="o">==</span> <span class="nx">Rename</span> <span class="p">{</span>
-    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|RENAME&#34;</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Chmod</span> <span class="o">==</span> <span class="nx">Chmod</span> <span class="p">{</span>
-    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|CHMOD&#34;</span><span class="p">)</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="nx">buffer</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="s">&#34;&#34;</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="nx">buffer</span><span class="p">.</span><span class="nf">String</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span> <span class="c1">// Strip leading pipe
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// fsnotify.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">op</span> <span class="nx">Op</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Use a buffer for efficient string concatenation
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">var</span> <span class="nx">buffer</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Create</span> <span class="o">==</span> <span class="nx">Create</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|CREATE&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Remove</span> <span class="o">==</span> <span class="nx">Remove</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|REMOVE&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Write</span> <span class="o">==</span> <span class="nx">Write</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|WRITE&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Rename</span> <span class="o">==</span> <span class="nx">Rename</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|RENAME&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">op</span><span class="o">&amp;</span><span class="nx">Chmod</span> <span class="o">==</span> <span class="nx">Chmod</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;|CHMOD&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">buffer</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">buffer</span><span class="p">.</span><span class="nf">String</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span> <span class="c1">// Strip leading pipe
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="应用">应用</h2>
 <p><code>fsnotify</code>的应用非常广泛，在 godoc 上，我们可以看到哪些库导入了<code>fsnotify</code>。只需要在<code>fsnotify</code>文档的 URL 后加上<code>?imports</code>即可：</p>
@@ -641,7 +641,7 @@ if (!doNotTrack) {
 <p>上一篇文章中，我们介绍了调用<code>viper.WatchConfig</code>就可以监听配置修改，自动重新加载。下面我们就来看看<code>WatchConfig</code>是怎么实现的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -714,78 +714,78 @@ if (!doNotTrack) {
 </span><span class="lnt">71
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// viper/viper.go
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">WatchConfig</span><span class="p">()</span> <span class="p">{</span> <span class="nx">v</span><span class="p">.</span><span class="nf">WatchConfig</span><span class="p">()</span> <span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="o">*</span><span class="nx">Viper</span><span class="p">)</span> <span class="nf">WatchConfig</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">initWG</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
-  <span class="nx">initWG</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">watcher</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nf">NewWatcher</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-    <span class="p">}</span>
-    <span class="k">defer</span> <span class="nx">watcher</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-    <span class="c1">// we have to watch the entire directory to pick up renames/atomic saves in a cross-platform way
-</span><span class="c1"></span>    <span class="nx">filename</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">getConfigFile</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-      <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;error: %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-      <span class="nx">initWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-      <span class="k">return</span>
-    <span class="p">}</span>
-
-    <span class="nx">configFile</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Clean</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
-    <span class="nx">configDir</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">configFile</span><span class="p">)</span>
-    <span class="nx">realConfigFile</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">EvalSymlinks</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
-
-    <span class="nx">eventsWG</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
-    <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">for</span> <span class="p">{</span>
-        <span class="k">select</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">watcher</span><span class="p">.</span><span class="nx">Events</span><span class="p">:</span>
-          <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span> <span class="c1">// &#39;Events&#39; channel is closed
-</span><span class="c1"></span>            <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-            <span class="k">return</span>
-          <span class="p">}</span>
-          <span class="nx">currentConfigFile</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">EvalSymlinks</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
-          <span class="c1">// we only care about the config file with the following cases:
-</span><span class="c1"></span>          <span class="c1">// 1 - if the config file was modified or created
-</span><span class="c1"></span>          <span class="c1">// 2 - if the real path to the config file changed (eg: k8s ConfigMap replacement)
-</span><span class="c1"></span>          <span class="kd">const</span> <span class="nx">writeOrCreateMask</span> <span class="p">=</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Write</span> <span class="p">|</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Create</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">filepath</span><span class="p">.</span><span class="nf">Clean</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span> <span class="o">==</span> <span class="nx">configFile</span> <span class="o">&amp;&amp;</span>
-            <span class="nx">event</span><span class="p">.</span><span class="nx">Op</span><span class="o">&amp;</span><span class="nx">writeOrCreateMask</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span>
-            <span class="p">(</span><span class="nx">currentConfigFile</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="o">&amp;&amp;</span> <span class="nx">currentConfigFile</span> <span class="o">!=</span> <span class="nx">realConfigFile</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">realConfigFile</span> <span class="p">=</span> <span class="nx">currentConfigFile</span>
-            <span class="nx">err</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">ReadInConfig</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-              <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;error reading config file: %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="nx">v</span><span class="p">.</span><span class="nx">onConfigChange</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-              <span class="nx">v</span><span class="p">.</span><span class="nf">onConfigChange</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span>
-            <span class="p">}</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Clean</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span> <span class="o">==</span> <span class="nx">configFile</span> <span class="o">&amp;&amp;</span>
-            <span class="nx">event</span><span class="p">.</span><span class="nx">Op</span><span class="o">&amp;</span><span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Remove</span><span class="o">&amp;</span><span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Remove</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
-            <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-            <span class="k">return</span>
-          <span class="p">}</span>
-
-        <span class="k">case</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">watcher</span><span class="p">.</span><span class="nx">Errors</span><span class="p">:</span>
-          <span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span> <span class="c1">// &#39;Errors&#39; channel is not closed
-</span><span class="c1"></span>            <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;watcher error: %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-          <span class="p">}</span>
-          <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-          <span class="k">return</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}()</span>
-    <span class="nx">watcher</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">configDir</span><span class="p">)</span>
-    <span class="nx">initWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>   <span class="c1">// done initializing the watch in this go routine, so the parent routine can move on...
-</span><span class="c1"></span>    <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span> <span class="c1">// now, wait for event loop to end in this go-routine...
-</span><span class="c1"></span>  <span class="p">}()</span>
-  <span class="nx">initWG</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span> <span class="c1">// make sure that the go routine above fully ended before returning
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// viper/viper.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">WatchConfig</span><span class="p">()</span> <span class="p">{</span> <span class="nx">v</span><span class="p">.</span><span class="nf">WatchConfig</span><span class="p">()</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="o">*</span><span class="nx">Viper</span><span class="p">)</span> <span class="nf">WatchConfig</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">initWG</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">initWG</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">watcher</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nf">NewWatcher</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">defer</span> <span class="nx">watcher</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// we have to watch the entire directory to pick up renames/atomic saves in a cross-platform way
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">filename</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">getConfigFile</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;error: %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">initWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">configFile</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Clean</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">configDir</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">configFile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">realConfigFile</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">EvalSymlinks</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">eventsWG</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">watcher</span><span class="p">.</span><span class="nx">Events</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span> <span class="c1">// &#39;Events&#39; channel is closed
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">currentConfigFile</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">EvalSymlinks</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// we only care about the config file with the following cases:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// 1 - if the config file was modified or created
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// 2 - if the real path to the config file changed (eg: k8s ConfigMap replacement)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="kd">const</span> <span class="nx">writeOrCreateMask</span> <span class="p">=</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Write</span> <span class="p">|</span> <span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Create</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="p">(</span><span class="nx">filepath</span><span class="p">.</span><span class="nf">Clean</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span> <span class="o">==</span> <span class="nx">configFile</span> <span class="o">&amp;&amp;</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">event</span><span class="p">.</span><span class="nx">Op</span><span class="o">&amp;</span><span class="nx">writeOrCreateMask</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span>
+</span></span><span class="line"><span class="cl">            <span class="p">(</span><span class="nx">currentConfigFile</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="o">&amp;&amp;</span> <span class="nx">currentConfigFile</span> <span class="o">!=</span> <span class="nx">realConfigFile</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">realConfigFile</span> <span class="p">=</span> <span class="nx">currentConfigFile</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">err</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">ReadInConfig</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;error reading config file: %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">v</span><span class="p">.</span><span class="nx">onConfigChange</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">v</span><span class="p">.</span><span class="nf">onConfigChange</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Clean</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span> <span class="o">==</span> <span class="nx">configFile</span> <span class="o">&amp;&amp;</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">event</span><span class="p">.</span><span class="nx">Op</span><span class="o">&amp;</span><span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Remove</span><span class="o">&amp;</span><span class="nx">fsnotify</span><span class="p">.</span><span class="nx">Remove</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">watcher</span><span class="p">.</span><span class="nx">Errors</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span> <span class="c1">// &#39;Errors&#39; channel is not closed
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;watcher error: %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">watcher</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">configDir</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">initWG</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>   <span class="c1">// done initializing the watch in this go routine, so the parent routine can move on...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">eventsWG</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span> <span class="c1">// now, wait for event loop to end in this go-routine...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">initWG</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span> <span class="c1">// make sure that the go routine above fully ended before returning
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>其实流程是相似的：</p>
 <ul>
@@ -911,6 +911,8 @@ if (!doNotTrack) {
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -950,7 +952,7 @@ if (!doNotTrack) {
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -1014,7 +1016,7 @@ if (!doNotTrack) {
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -1037,6 +1039,8 @@ if (!doNotTrack) {
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 

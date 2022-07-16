@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
 <link rel="canonical" href="https://darjun.github.io/2018/03/09/event-manager/" />
@@ -65,12 +65,12 @@
 <meta property="og:description" content="背景 在游戏开发过程中，经常遇到这样一个问题。现在我们有几个功能系统：任务系统，成就系统等。这些系统都需要处理玩家击杀怪物的事件。通常的做法就" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darjun.github.io/2018/03/09/event-manager/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2018-03-09T10:58:00&#43;00:00" />
-<meta property="article:modified_time" content="2018-03-09T10:58:00&#43;00:00" />
+<meta property="article:published_time" content="2018-03-09T10:58:00+00:00" />
+<meta property="article:modified_time" content="2018-03-09T10:58:00+00:00" />
 
 <meta itemprop="name" content="用C&#43;&#43;11实现事件管理器">
-<meta itemprop="description" content="背景 在游戏开发过程中，经常遇到这样一个问题。现在我们有几个功能系统：任务系统，成就系统等。这些系统都需要处理玩家击杀怪物的事件。通常的做法就"><meta itemprop="datePublished" content="2018-03-09T10:58:00&#43;00:00" />
-<meta itemprop="dateModified" content="2018-03-09T10:58:00&#43;00:00" />
+<meta itemprop="description" content="背景 在游戏开发过程中，经常遇到这样一个问题。现在我们有几个功能系统：任务系统，成就系统等。这些系统都需要处理玩家击杀怪物的事件。通常的做法就"><meta itemprop="datePublished" content="2018-03-09T10:58:00+00:00" />
+<meta itemprop="dateModified" content="2018-03-09T10:58:00+00:00" />
 <meta itemprop="wordCount" content="1100">
 <meta itemprop="keywords" content="开源项目," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="用C&#43;&#43;11实现事件管理器"/>
@@ -395,7 +395,7 @@ if (!doNotTrack) {
 <p>在游戏开发过程中，经常遇到这样一个问题。现在我们有几个功能系统：任务系统，成就系统等。这些系统都需要处理玩家击杀怪物的事件。通常的做法就是在击杀怪物的处理函数中调用这些功能系统的对应接口，代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -404,20 +404,20 @@ if (!doNotTrack) {
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Battle.cpp
-void KillMonster(Player* player, Monster* monster)
-{
-    ...
-    player-&gt;GetTaskMgr().OnKillMonster(monster);
-    player-&gt;GetAchievementMgr().OnKillMonster(monster);
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Battle.cpp
+</span></span><span class="line"><span class="cl">void KillMonster(Player* player, Monster* monster)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    ...
+</span></span><span class="line"><span class="cl">    player-&gt;GetTaskMgr().OnKillMonster(monster);
+</span></span><span class="line"><span class="cl">    player-&gt;GetAchievementMgr().OnKillMonster(monster);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后在对应接口中做各自的计数，状态变更等等等等。</p>
 <p>然后，来了一个新的需求。策划想要做一个活动，也需要处理这个事件。那么除了活动代码中需要增加接口<code>OnKillMonster</code>，<code>Battle.cpp</code>还需要做以下修改：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -427,15 +427,15 @@ void KillMonster(Player* player, Monster* monster)
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Battle.cpp
-void KillMonster(Player* player, Monster* monster)
-{
-    ...
-    player-&gt;GetTaskMgr().OnKillMonster(monster);
-    player-&gt;GetAchievementMgr().OnKillMonster(monster);
-    player-&gt;GetActivityMgr().OnKillMonster(monster);
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Battle.cpp
+</span></span><span class="line"><span class="cl">void KillMonster(Player* player, Monster* monster)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    ...
+</span></span><span class="line"><span class="cl">    player-&gt;GetTaskMgr().OnKillMonster(monster);
+</span></span><span class="line"><span class="cl">    player-&gt;GetAchievementMgr().OnKillMonster(monster);
+</span></span><span class="line"><span class="cl">    player-&gt;GetActivityMgr().OnKillMonster(monster);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>代码耦合度太高！</p>
 <h2 id="实现eventmanager">实现EventManager</h2>
@@ -449,22 +449,22 @@ void KillMonster(Player* player, Monster* monster)
 <p>首先，我们需要在<code>Event.h</code>中定义对应的事件：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct KillMonsterEvent
-{
-    Monster* monster;
-};
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">struct KillMonsterEvent
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    Monster* monster;
+</span></span><span class="line"><span class="cl">};
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后在<code>KillMonster</code>处理中发出这个事件:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -473,19 +473,19 @@ void KillMonster(Player* player, Monster* monster)
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Battle.cpp
-void KillMonster(Player* player, Monster* monster)
-{
-    ...
-    KillMonsterEvent event{monster};
-    FIRE_EVENT(event);
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Battle.cpp
+</span></span><span class="line"><span class="cl">void KillMonster(Player* player, Monster* monster)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    ...
+</span></span><span class="line"><span class="cl">    KillMonsterEvent event{monster};
+</span></span><span class="line"><span class="cl">    FIRE_EVENT(event);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个函数中的代码编写完成之后，今后不管什么功能需要这个事件，都不需要再来修改这个函数了。新增系统的处理：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -501,21 +501,21 @@ void KillMonster(Player* player, Monster* monster)
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// ActivityMgr.cpp
-class ActivityMgr
-{
-public:
-    ActivityMgr()
-    {
-        REGISTER_EVENT(&amp;ActivityMgr::OnKillMonster, this);
-    }
-
-    void OnKillMonster(Monster* monster)
-    {
-        // ...
-    }
-};
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// ActivityMgr.cpp
+</span></span><span class="line"><span class="cl">class ActivityMgr
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">public:
+</span></span><span class="line"><span class="cl">    ActivityMgr()
+</span></span><span class="line"><span class="cl">    {
+</span></span><span class="line"><span class="cl">        REGISTER_EVENT(&amp;ActivityMgr::OnKillMonster, this);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    void OnKillMonster(Monster* monster)
+</span></span><span class="line"><span class="cl">    {
+</span></span><span class="line"><span class="cl">        // ...
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">};
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>功能与功能之间解耦了。随着时间的推移，积累的事件越来越多，编写程序越来越方便。</p>
 <p>现在只有在添加新的事件时，需要修改对应位置的代码。</p>
@@ -630,6 +630,8 @@ public:
 
   
 
+  
+
         </div>
       </div>
     </main>
@@ -669,7 +671,7 @@ public:
 </svg>
 
   </a>
-   
+  
 </div>
 
 <div class="copyright">
@@ -733,7 +735,7 @@ public:
 
 
 
-<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
 
 
 
@@ -756,6 +758,8 @@ public:
 
 
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
 
 
 
