@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>大俊的博客</title>
+  <title>Go 每日一库之 gore - 大俊的博客</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -22,8 +22,9 @@
 
 <meta name="mobile-web-app-capable" content="yes">
 
-<meta name="author" content="大俊" />
-  <meta name="description" content="Gopher，这里的内容主要是个人技术学习总结，其他个人杂想。" />
+<meta name="author" content="darjun" />
+  <meta name="description" content="简介 周末闲逛 GitHub 的时候发现一个很好玩的 Go 语言的 REPL（read-eval-print-loop）工具。本文和大家分享一下这个工具：gore。" />
+
   <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
 
 
@@ -34,8 +35,8 @@
 <meta name="generator" content="Hugo 0.102.0-DEV" />
 
 
-<link rel="canonical" href="https://darjun.github.io/" />
-<link href="/index.xml" rel="alternate" type="application/rss+xml" title="大俊的博客" />
+<link rel="canonical" href="https://darjun.github.io/2022/07/18/godailylib/gore/" />
+
 
 
 
@@ -60,15 +61,20 @@
 <link rel="stylesheet" href="/css/custom.css">
 
 
-<meta property="og:title" content="大俊的博客" />
-<meta property="og:description" content="Gopher，这里的内容主要是个人技术学习总结，其他个人杂想。" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://darjun.github.io/" />
+<meta property="og:title" content="Go 每日一库之 gore" />
+<meta property="og:description" content="简介 周末闲逛 GitHub 的时候发现一个很好玩的 Go 语言的 REPL（read-eval-print-loop）工具。本文和大家分享一下这个工具：gore。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2022/07/18/godailylib/gore/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-07-18T22:30:23+00:00" />
+<meta property="article:modified_time" content="2022-07-18T22:30:23+00:00" />
 
-<meta itemprop="name" content="大俊的博客">
-<meta itemprop="description" content="Gopher，这里的内容主要是个人技术学习总结，其他个人杂想。"><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="大俊的博客"/>
-<meta name="twitter:description" content="Gopher，这里的内容主要是个人技术学习总结，其他个人杂想。"/>
+<meta itemprop="name" content="Go 每日一库之 gore">
+<meta itemprop="description" content="简介 周末闲逛 GitHub 的时候发现一个很好玩的 Go 语言的 REPL（read-eval-print-loop）工具。本文和大家分享一下这个工具：gore。"><meta itemprop="datePublished" content="2022-07-18T22:30:23+00:00" />
+<meta itemprop="dateModified" content="2022-07-18T22:30:23+00:00" />
+<meta itemprop="wordCount" content="1367">
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 每日一库之 gore"/>
+<meta name="twitter:description" content="简介 周末闲逛 GitHub 的时候发现一个很好玩的 Go 语言的 REPL（read-eval-print-loop）工具。本文和大家分享一下这个工具：gore。"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -338,394 +344,214 @@ if (!doNotTrack) {
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
-          
-<section id="posts" class="posts">
-  
-  
+          <article class="post bg-white">
     
-  
-  
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
+    <header class="post-header">
+      <h1 class="post-title">Go 每日一库之 gore</h1>
       
-      <a class="post-link" href="/2020/05/10/godailylib/jsonrpc/">Go 每日一库之 jsonrpc</a>
-    </h1>
+      <div class="post-meta">
+        <time datetime="2022-07-18" class="post-time">
+          2022-07-18
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 1367 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
     
-    <div class="post-meta">
-      <time datetime="2020-05-10" class="post-time">
-        2020-05-10
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速使用">快速使用</a></li>
+    <li><a href="#命令">命令</a>
+      <ul>
+        <li><a href="#基础命令">基础命令</a></li>
+        <li><a href="#代码命令">代码命令</a></li>
+      </ul>
+    </li>
+    <li><a href="#特性">特性</a></li>
+    <li><a href="#缺点">缺点</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="简介">简介</h2>
+<p>周末闲逛 GitHub 的时候发现一个很好玩的 Go 语言的 REPL（read-eval-print-loop）工具。本文和大家分享一下这个工具：<a href="https://github.com/x-motemen/gore"><code>gore</code></a>。</p>
+<p>首先放一张 GitHub 的动图感受一下：</p>
+<p><img src="/img/in-post/godailylib/gore1.gif#center" alt=""></p>
+<h2 id="快速使用">快速使用</h2>
+<p>gore 是一个命令行工具，需要配合 Go Module 安装。Go 环境安装完成之后，执行下面的命令安装 gore：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go install github.com/x-motemen/gore/cmd/gore@latest
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>go install 命令会将会在<code>$GOPATH/bin</code>目录生成的 gore 可执行文件。强烈推荐大家把<code>$GOPATH/bin</code>加入到系统的可执行文件搜索目录（即<code>$PATH</code>）中。</p>
+<p>执行下面的命令即可进入 Go 的 REPL：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ gore
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="命令">命令</h2>
+<p>目前支持的命令还不多。我将命令分为两类，一种是基础命令，一种是代码相关命令。</p>
+<p>注意，在 gore 中所有的命令必须以<code>:</code>开始。非<code>:</code>开始的行会被识别为代码。</p>
+<h3 id="基础命令">基础命令</h3>
+<ul>
+<li>help：显示命令列表</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore2.png#center" alt=""></p>
+<ul>
+<li>doc：我觉得这个命令挺有意思，它可以显示一个包、结构体或接口的文档。如果要查看标准库的文档，例如<code>math/bits</code>，可以直接键入命令<code>:doc bits</code>。</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore3.png#center" alt=""></p>
+<p>注意，要查看文档的包必须先使用<code>:import</code>命令导入。并且传给<code>:doc</code>命令的参数必须是包去掉路径的部分，例如我们不能使用<code>:doc math/bits</code>，必须使用<code>:doc bits</code>。</p>
+<p>doc 也可以用来查看第三方库的文档。也是先导入后查看：</p>
+<p><img src="/img/in-post/godailylib/gore4.png#center" alt=""></p>
+<ul>
+<li>quit：退出 REPL。</li>
+</ul>
+<h3 id="代码命令">代码命令</h3>
+<ul>
+<li>import：导入包的命令。既可以导入标准库的包，也可以导入第三方库的包，gore 会自动调用 go get 去下载第三方库。</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore5.png#center" alt=""></p>
+<ul>
+<li>type：输出表达式会变量的类型</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore6.png#center" alt=""></p>
+<ul>
+<li>print：我们在 gore 中输入的代码都会存放在一个临时文件中。print 命令会打印这个临时文件的内容。</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore7.png#center" alt=""></p>
+<ul>
+<li>clear：清空临时文件。执行 clear 命令之后 print 将会打印一个空的 main 函数。</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore8.png#center" alt=""></p>
+<ul>
+<li>write <code>[&lt;filename&gt;]</code>：将临时文件保存到指定的路径中。</li>
+</ul>
+<h2 id="特性">特性</h2>
+<ul>
+<li>行编辑：通过左右键在行内移动光标，退格键删除光标前的内容，重新输入内容</li>
+<li>命令历史：gore 会保存之前输入的<strong>命令</strong>历史，可以通过上下键找出之前执行的命令。</li>
+<li>多行输入：如果 gore 检测到输入还没有结束就换行了，它会等待输入结束再执行这条语句。例如 if 语句</li>
+<li>自动补全：使用 TAB 键可以自动补全命令，<strong>不能补全代码</strong></li>
+<li>代码补全：这个我没试过，文档介绍说需要 gocode 配合</li>
+<li>自动导入：使用选项<code>-autoimport</code>启动可以自动导入要使用的包</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore9.png#center" alt=""></p>
+<h2 id="缺点">缺点</h2>
+<p>体验下来，我觉得有几个缺点：</p>
+<ul>
+<li>
+<p>启动速度较慢。键入 gore 命令按下回车要等好几秒。其他命令的执行速度也不快</p>
+</li>
+<li>
+<p>doc 命令的限制有点奇怪。为什么包不能加路径？go doc 是可以加路径的。也有可能我使用的姿势不对，有知道的可以指点一二😀</p>
+</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore10.png#center" alt=""></p>
+<ul>
+<li>多行输入有点反直觉。如果我没有输入完整的代码，它会一直等着我输入。可是我已经不想输入了。有一次我键入 type 命令时忘记加<code>:</code>了，就变成这样了：</li>
+</ul>
+<p><img src="/img/in-post/godailylib/gore11.png#center" alt=""></p>
+<p>当然，可以通过<code>Ctrl + C</code>终止输入，这个让我摸索了好一会儿。我个人使用其他软件的经验是连续几个空行就可以终止了。这一点严格不算缺点，只是不符合我的习惯。</p>
+<h2 id="总结">总结</h2>
+<p>总体来说 gore 是一个比较好玩的工具，期待项目发展壮大！</p>
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>gore GitHub：<a href="https://github.com/x-motemen/gore">github.com/x-motemen/gore</a></li>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+</ol>
+<h2 id="我">我</h2>
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+<p><img src="/img/wxsearch.png#center" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2022-07-18
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
           
         </div>
-      <span class="more-meta"> 约 3149 字 </span>
-      <span class="more-meta"> 预计阅读 7 分钟 </span>
+
+      
+      <nav class="post-nav">
         
         
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 在上一篇文章中我们介绍了 Go 标准库net/rpc的用法。在默认情况下，rpc库内部使用gob格式传输数据。我们仿造gob的编解码器实现了一
-    </div>
-    <div class="read-more">
-      <a href="/2020/05/10/godailylib/jsonrpc/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
+          <a class="next" href="/2022/07/17/godailylib/roaring/">
+            <span class="next-text nav-default">Go 每日一库之 roaring</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
 
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/05/08/godailylib/rpc/">Go 每日一库之 rpc</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-05-08" class="post-time">
-        2020-05-08
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 3975 字 </span>
-      <span class="more-meta"> 预计阅读 8 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 RPC（Remote Procedure Call）是远程方法调用的缩写，它可以通过网络调用远程对象的方法。Go 标准库net/rpc提供了一个简单、强大且高
-    </div>
-    <div class="read-more">
-      <a href="/2020/05/08/godailylib/rpc/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/05/07/godailylib/xorm/">Go 每日一库之 xorm</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-05-07" class="post-time">
-        2020-05-07
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 4554 字 </span>
-      <span class="more-meta"> 预计阅读 10 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 Go 标准库提供的数据库接口database/sql比较底层，使用它来操作数据库非常繁琐，而且容易出错。因而社区开源了不少第三方库，如上一篇
-    </div>
-    <div class="read-more">
-      <a href="/2020/05/07/godailylib/xorm/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/04/28/godailylib/sqlc/">Go 每日一库之 sqlc</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-04-28" class="post-time">
-        2020-04-28
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 4972 字 </span>
-      <span class="more-meta"> 预计阅读 10 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 在 Go 语言中编写数据库操作代码真的非常痛苦！database/sql标准库提供的都是比较底层的接口。我们需要编写大量重复的代码。大量的模板
-    </div>
-    <div class="read-more">
-      <a href="/2020/04/28/godailylib/sqlc/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/04/25/godailylib/nutsdb/">Go 每日一库之 nutsdb</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-04-25" class="post-time">
-        2020-04-25
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 2875 字 </span>
-      <span class="more-meta"> 预计阅读 6 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 nutsdb是一个完全由 Go 编写的简单、快速、可嵌入的持久化存储。nutsdb与我们之前介绍过的buntdb有些类似，但是支持List、S
-    </div>
-    <div class="read-more">
-      <a href="/2020/04/25/godailylib/nutsdb/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/04/24/godailylib/zerolog/">Go 每日一库之 zerolog</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-04-24" class="post-time">
-        2020-04-24
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 2609 字 </span>
-      <span class="more-meta"> 预计阅读 6 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 每个编程语言都有很多日志库，因为记录日志在每个项目中都是必须的。前面我们介绍了标准日志库log、好用的logrus和上一篇文章中介绍的由
-    </div>
-    <div class="read-more">
-      <a href="/2020/04/24/godailylib/zerolog/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/04/23/godailylib/zap/">Go 每日一库之 zap</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-04-23" class="post-time">
-        2020-04-23
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 4389 字 </span>
-      <span class="more-meta"> 预计阅读 9 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 在很早之前的文章中，我们介绍过 Go 标准日志库log和结构化的日志库logrus。在热点函数中记录日志对日志库的执行性能有较高的要求，不能影
-    </div>
-    <div class="read-more">
-      <a href="/2020/04/23/godailylib/zap/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/04/22/godailylib/go-app/">Go 每日一库之 go-app</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-04-22" class="post-time">
-        2020-04-22
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 4038 字 </span>
-      <span class="more-meta"> 预计阅读 9 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 go-app是一个使用 Go + WebAssembly 技术编写渐进式 Web 应用的库。WebAssembly 是一种可以运行在现代浏览器中的新式代码。近两年来，WebAs
-    </div>
-    <div class="read-more">
-      <a href="/2020/04/22/godailylib/go-app/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/04/20/godailylib/gron/">Go 每日一库之 gron</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-04-19" class="post-time">
-        2020-04-19
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 3164 字 </span>
-      <span class="more-meta"> 预计阅读 7 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 gron是一个比较小巧、灵活的定时任务库，可以执行定时的、周期性的任务。gron提供简洁的、并发安全的接口。我们先介绍gron库的使用，
-    </div>
-    <div class="read-more">
-      <a href="/2020/04/20/godailylib/gron/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/2020/04/12/godailylib/plot/">Go 每日一库之 plot</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-04-12" class="post-time">
-        2020-04-12
-      </time>
-      <div class="post-category">
-          <a href="https://darjun.github.io/categories/go/"> Go </a>
-          
-        </div>
-      <span class="more-meta"> 约 4009 字 </span>
-      <span class="more-meta"> 预计阅读 9 分钟 </span>
-        
-        
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      简介 本文介绍 Go 语言的一个非常强大、好用的绘图库——plot。plot内置了很多常用的组件，基本满足日常需求。同时，它也提供了定制化的接口，可
-    </div>
-    <div class="read-more">
-      <a href="/2020/04/12/godailylib/plot/" class="read-more-link">阅读全文</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-</section>
-
-
-
-
-
-
-  
-  
-  
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
 
   
   
@@ -734,74 +560,31 @@ if (!doNotTrack) {
   
 
   
-  
 
   
   
-  <nav class="pagination">
-    <ul>
-      
-      <li >
-        <a href="/">1</a>
-      </li>
-      
-      <li >
-        <a href="/page/2/">2</a>
-      </li>
-      
-      <li >
-        <a href="/page/3/">3</a>
-      </li>
-      
-      <li >
-        <a href="/page/4/">4</a>
-      </li>
-      
-      <li >
-        <a href="/page/5/">5</a>
-      </li>
-      
-      <li  class="active" >
-        <a href="/page/6/">6</a>
-      </li>
-      
-      <li >
-        <a href="/page/7/">7</a>
-      </li>
-      
-      <li >
-        <a href="/page/8/">8</a>
-      </li>
-      
-      <li >
-        <a href="/page/9/">9</a>
-      </li>
-      
-      <li >
-        <a href="/page/10/">10</a>
-      </li>
-      
-      <li >
-        <a href="/page/11/">11</a>
-      </li>
-      
-      <li >
-        <a href="/page/12/">12</a>
-      </li>
-      
-      <li >
-        <a href="/page/13/">13</a>
-      </li>
-      
-    </ul>
-  </nav>
-
-  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
   
 
+  
 
+  
 
+  
 
+    
+
+  
+
+  
 
         </div>
       </div>
