@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>一起用Go来做一个游戏(上) - 大俊的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="darjun" />
+  <meta name="description" content="引子 最近偶然看到一个Go语言库，口号喊出“一个超级简单（dead simple）的2D游戏引擎”，好奇点开了它的官网。 官网上已经有很多可以在线" />
+
+  <meta name="keywords" content="大俊, 大俊的博客, go, golang, gopher" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.102.0-DEV" />
+
+
+<link rel="canonical" href="https://darjun.github.io/2022/11/15/godailylib/ebiten1/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa3d941d1d0e0ddc985804227feabffea55c89883eb0af34e0532a7ae9135151.css" integrity="sha256-&#43;j2UHR0ODdyYWAQif&#43;q//qVciYg&#43;sK804FMqeukTUVE=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+<meta property="og:title" content="一起用Go来做一个游戏(上)" />
+<meta property="og:description" content="引子 最近偶然看到一个Go语言库，口号喊出“一个超级简单（dead simple）的2D游戏引擎”，好奇点开了它的官网。 官网上已经有很多可以在线" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darjun.github.io/2022/11/15/godailylib/ebiten1/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-15T22:39:30+00:00" />
+<meta property="article:modified_time" content="2022-11-15T22:39:30+00:00" />
+
+<meta itemprop="name" content="一起用Go来做一个游戏(上)">
+<meta itemprop="description" content="引子 最近偶然看到一个Go语言库，口号喊出“一个超级简单（dead simple）的2D游戏引擎”，好奇点开了它的官网。 官网上已经有很多可以在线"><meta itemprop="datePublished" content="2022-11-15T22:39:30+00:00" />
+<meta itemprop="dateModified" content="2022-11-15T22:39:30+00:00" />
+<meta itemprop="wordCount" content="5064">
+<meta itemprop="keywords" content="Go 每日一库," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="一起用Go来做一个游戏(上)"/>
+<meta name="twitter:description" content="引子 最近偶然看到一个Go语言库，口号喊出“一个超级简单（dead simple）的2D游戏引擎”，好奇点开了它的官网。 官网上已经有很多可以在线"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-42862533-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">大俊</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      大俊
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://darjun.github.io/about/">关于我</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://github.com/darjun" rel="noopener" target="_blank">
+              Github
+              
+              <i class="iconfont">
+                <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M623.36 272.96 473.216 423.04C467.2 429.056 467.072 438.656 472.896 444.416c0 0-6.72-6.656 1.6 1.6C496.064 467.648 528.64 500.224 528.64 500.224 534.464 506.048 544 505.856 550.016 499.904l150.08-150.144 67.328 66.432c9.024 8.96 27.456 4.544 30.4-8.96 19.968-92.608 46.656-227.52 46.656-227.52 6.848-34.496-16.192-56.704-49.92-49.92 0 0-134.656 26.816-227.328 46.784C560.32 178.048 556.352 182.272 554.752 187.136c-3.2 6.208-3.008 14.208 3.776 20.992L623.36 272.96z"></path>
+  <path d="M841.152 457.152c-30.528 0-54.784 24.512-54.784 54.656l0 274.752L237.696 786.56 237.696 237.696l206.016 0c6.656 0 10.752 0 13.248 0C487.68 237.696 512 213.184 512 182.848 512 152.32 487.36 128 456.96 128L183.04 128C153.216 128 128 152.576 128 182.848c0 3.136 0.256 6.272 0.768 9.28C128.256 195.136 128 198.272 128 201.408l0 639.488c0 0.064 0 0.192 0 0.256 0 0.128 0 0.192 0 0.32 0 30.528 24.512 54.784 54.784 54.784l646.976 0c6.592 0 9.728 0 11.712 0 28.736 0 52.928-22.976 54.464-51.968C896 843.264 896 842.304 896 841.344l0-20.352L896 561.408 896 512.128C896 481.792 871.424 457.152 841.152 457.152z"></path>
+</svg>
+
+              </i>
+            </a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">一起用Go来做一个游戏(上)</h1>
+      
+      <div class="post-meta">
+        <time datetime="2022-11-15" class="post-time">
+          2022-11-15
+        </time>
+        <div class="post-category">
+            <a href="https://darjun.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 5064 字 </span>
+          <span class="more-meta"> 预计阅读 11 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#引子">引子</a></li>
+    <li><a href="#安装">安装</a></li>
+    <li><a href="#显示窗口">显示窗口</a></li>
+    <li><a href="#处理输入">处理输入</a></li>
+    <li><a href="#设置背景">设置背景</a></li>
+    <li><a href="#第一次重构">第一次重构</a></li>
+    <li><a href="#显示图片">显示图片</a></li>
+    <li><a href="#移动飞船">移动飞船</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#我">我</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="引子">引子</h2>
+<p>最近偶然看到一个Go语言库，口号喊出“一个超级简单（dead simple）的2D游戏引擎”，好奇点开了它的官网。</p>
+<p><img src="/img/in-post/godailylib/ebiten1.png#center" alt=""></p>
+<p>官网上已经有很多可以在线体验的小游戏了（利用WASM技术）。例如曾经风靡一时的2048：</p>
+<p><img src="/img/in-post/godailylib/ebiten2.png#center" alt=""></p>
+<p>当然只要安装了Go，我们也键入下面的命令本地运行这个游戏：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="o">-</span><span class="nx">tags</span><span class="p">=</span><span class="nx">example</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">hajimehoshi</span><span class="o">/</span><span class="nx">ebiten</span><span class="o">/</span><span class="nx">v2</span><span class="o">/</span><span class="nx">examples</span><span class="o">/</span><span class="mi">2048</span><span class="err">@</span><span class="nx">latest</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>还有童年《俄罗斯方块》：</p>
+<p><img src="/img/in-post/godailylib/ebiten3.png#center" alt=""></p>
+<p>有14年左右让无数人疯狂的《Flappy Bird》（或许称为Flappy Gopher更贴切一点😀）：</p>
+<p><img src="/img/in-post/godailylib/ebiten4.png#center" alt=""></p>
+<p>这些瞬间让我产生了极大的兴趣。简单浏览一下文档，整体感觉下来，虽然与成熟的游戏引擎（如Cocos2dx，DirectX，Unity3d等）相比，ebiten功能还不算丰富。但是麻雀虽小，五脏俱全。ebiten的API设计比较简单，使用也很方便，即使对于新手也可以在1-2个小时内掌握，并开发出一款简单的游戏。更妙的是，Go语言让ebitengine实现了跨平台！</p>
+<p>接下来的3篇文章，我会介绍ebitengine这个库。对于游戏引擎来说，只介绍它的API用法似乎有点纸上谈兵。恰好我想起之前看到一个《外星人入侵》的小游戏，刚好可以拿来练手。那请大家坐稳扶好，我们出发咯。</p>
+<h2 id="安装">安装</h2>
+<p>ebitengine 要求Go版本 &gt;= 1.15。使用go module下载这个包：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ go get -u github.com/hajimehoshi/ebiten/v2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="显示窗口">显示窗口</h2>
+<p>游戏开发第一步是将游戏窗口显示出来，并且能在窗口上显示一些文字。先看代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/hajimehoshi/ebiten/v2&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;github.com/hajimehoshi/ebiten/v2/ebitenutil&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Game</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Update</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span> <span class="o">*</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ebitenutil</span><span class="p">.</span><span class="nf">DebugPrint</span><span class="p">(</span><span class="nx">screen</span><span class="p">,</span> <span class="s">&#34;Hello, World&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Layout</span><span class="p">(</span><span class="nx">outsideWidth</span><span class="p">,</span> <span class="nx">outsideHeight</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="nx">screenWidth</span><span class="p">,</span> <span class="nx">screenHeight</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">240</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ebiten</span><span class="p">.</span><span class="nf">SetWindowSize</span><span class="p">(</span><span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ebiten</span><span class="p">.</span><span class="nf">SetWindowTitle</span><span class="p">(</span><span class="s">&#34;外星人入侵&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">RunGame</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Game</span><span class="p">{});</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用命令<code>go run</code>运行该程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们会看到一个窗口，标题为<strong>外星人入侵</strong>，并且左上角显示了文字<strong>Hello，World</strong>：</p>
+<p><img src="/img/in-post/godailylib/ebiten5.png#center" alt=""></p>
+<p>现在我们来分析使用ebiten开发的游戏程序的结构。</p>
+<p>首先，ebiten引擎运行时要求传入一个游戏对象，该对象的必须实现<code>ebiten.Game</code>这个接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Game defines necessary functions for a game.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Game</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">Update</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span> <span class="o">*</span><span class="nx">Image</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">Layout</span><span class="p">(</span><span class="nx">outsideWidth</span><span class="p">,</span> <span class="nx">outsideHeight</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="nx">screenWidth</span><span class="p">,</span> <span class="nx">screenHeight</span> <span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>ebiten.Game</code>接口定义了ebiten游戏需要的3个方法：<code>Update</code>,<code>Draw</code>和<code>Layout</code>。</p>
+<ul>
+<li>
+<p><code>Update</code>：每个tick都会被调用。tick是引擎更新的一个时间单位，默认为1/60s。tick的倒数我们一般称为帧，即游戏的更新频率。默认ebiten游戏是60帧，即每秒更新60次。该方法主要用来更新游戏的逻辑状态，例如子弹位置更新。上面的例子中，游戏对象没有任何状态，故<code>Update</code>方法为空。注意到<code>Update</code>方法的返回值为<code>error</code>类型，当<code>Update</code>方法返回一个非空的<code>error</code>值时，游戏停止。在上面的例子中，我们一直返回nil，故只有关闭窗口时游戏才停止。</p>
+</li>
+<li>
+<p><code>Draw</code>：每帧（frame）调用。帧是渲染使用的一个时间单位，依赖显示器的刷新率。如果显示器的刷新率为60Hz，<code>Draw</code>将会每秒被调用60次。<code>Draw</code>接受一个类型为<code>*ebiten.Image</code>的screen对象。ebiten引擎每帧会渲染这个screen。在上面的例子中，我们调用<code>ebitenutil.DebugPrint</code>函数在screen上渲染一条调试信息。由于调用<code>Draw</code>方法前，screen会被重置，故<code>DebugPrint</code>每次都需要调用。</p>
+</li>
+<li>
+<p><code>Layout</code>：该方法接收游戏窗口的尺寸作为参数，返回游戏的逻辑屏幕大小。我们实际上计算坐标是对应这个逻辑屏幕的，<code>Draw</code>将逻辑屏幕渲染到实际窗口上。这个时候可能会出现伸缩。在上面的例子中游戏窗口大小为(640, 480)，<code>Layout</code>返回的逻辑大小为(320, 240)，所以显示会放大1倍。</p>
+</li>
+</ul>
+<p>在main函数中，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">ebiten</span><span class="p">.</span><span class="nf">SetWindowSize</span><span class="p">(</span><span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>设置游戏窗口的大小。</p>
+<p>而</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">ebiten</span><span class="p">.</span><span class="nf">SetWindowTitle</span><span class="p">(</span><span class="s">&#34;外星人入侵&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>设置窗口标题，标题显示在窗口的左上角。</p>
+<p>一切准备就绪，创建一个Game对象，调用<code>ebiten.RunGame()</code>运行。是不是很简单？</p>
+<h2 id="处理输入">处理输入</h2>
+<p>没有交互的游戏不是真的游戏！下面我们来监听键盘的输入，当前只处理3个键：左方向←，右方向→和空格。</p>
+<p>ebiten提供函数<code>IsKeyPressed</code>来判断某个键是否按下，同时内置了100多个键的常量定义，见源码keys.go文件。<code>ebiten.KeyLeft</code>表示左方向键，<code>ebiten.KeyRight</code>表示右方向键，<code>ebiten.KeySpace</code>表示空格。</p>
+<p>为了代码清晰，我们定义一个<code>Input</code>结构来处理输入：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Input</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">msg</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">i</span> <span class="o">*</span><span class="nx">Input</span><span class="p">)</span> <span class="nf">Update</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">KeyLeft</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;←←←←←←←←←←←←←←←←←←←←←←←&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">i</span><span class="p">.</span><span class="nx">msg</span> <span class="p">=</span> <span class="s">&#34;left pressed&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">KeyRight</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;→→→→→→→→→→→→→→→→→→→→→→→&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">i</span><span class="p">.</span><span class="nx">msg</span> <span class="p">=</span> <span class="s">&#34;right pressed&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">KeySpace</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;-----------------------&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">i</span><span class="p">.</span><span class="nx">msg</span> <span class="p">=</span> <span class="s">&#34;space pressed&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Game结构中添加一个<code>Input</code>类型的字段，并且为了方便新增<code>NewGame</code>方法用于创建Game对象：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Game</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">input</span> <span class="o">*</span><span class="nx">Input</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewGame</span><span class="p">()</span> <span class="o">*</span><span class="nx">Game</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Game</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">input</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">Input</span><span class="p">{</span><span class="nx">msg</span><span class="p">:</span> <span class="s">&#34;Hello, World!&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Game结构的<code>Update</code>方法中，我们需要调用<code>Input</code>的<code>Update</code>方法触发按键的判断：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Update</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">g</span><span class="p">.</span><span class="nx">input</span><span class="p">.</span><span class="nf">Update</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Game的<code>Draw</code>方法中将显示<code>Input</code>的<code>msg</code>字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span> <span class="o">*</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ebitenutil</span><span class="p">.</span><span class="nf">DebugPrint</span><span class="p">(</span><span class="nx">screen</span><span class="p">,</span> <span class="nx">g</span><span class="p">.</span><span class="nx">input</span><span class="p">.</span><span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>将main函数中创建Game对象的方式修改如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">game</span> <span class="o">:=</span> <span class="nf">NewGame</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">RunGame</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用<code>go run</code>命令运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">$ go run main.go
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>窗口与前一个例子相同，然而我们可以在窗口上按←→和空格，观察控制台输出：</p>
+<p><img src="/img/in-post/godailylib/ebiten6.png#center" alt=""></p>
+<h2 id="设置背景">设置背景</h2>
+<p>黑色背景看起来有些无趣，我们现在就来换一个背景。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span> <span class="o">*</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">screen</span><span class="p">.</span><span class="nf">Fill</span><span class="p">(</span><span class="nx">color</span><span class="p">.</span><span class="nx">RGBA</span><span class="p">{</span><span class="nx">R</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="nx">G</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="nx">B</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="nx">A</span><span class="p">:</span> <span class="mi">255</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ebitenutil</span><span class="p">.</span><span class="nf">DebugPrint</span><span class="p">(</span><span class="nx">screen</span><span class="p">,</span> <span class="nx">g</span><span class="p">.</span><span class="nx">input</span><span class="p">.</span><span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>ebiten.Image</code>定义了一个名为<code>Fill</code>的方法，可以传入一个颜色对象<code>color.RGBA</code>，将背景填充为特定颜色。<code>Draw</code>函数的参数为<code>*ebiten.Image</code>类型，它表示的是屏幕对象，ebitengine引擎最终会将screen显示出来，故填充它的背景即可修改窗口的背景。代码中我们将背景颜色修改为灰色(R:200,G:200,B:200)。</p>
+<p>注意：由于每帧都会调用<code>Draw</code>方法刷新屏幕内容，所以每次调用都需要填充背景。</p>
+<p>运行结果如下：
+<img src="/img/in-post/godailylib/ebiten7.png#center" alt=""></p>
+<h2 id="第一次重构">第一次重构</h2>
+<p>目前为止，我们的实现了显示窗口和处理输入的功能。我们先分析一下目前的程序有哪些问题：</p>
+<ul>
+<li>所有逻辑都堆在一个文件中，修改不便</li>
+<li>逻辑中直接出现字面值，例如640/480，字符串&quot;外星人入侵&quot;等，每次修改都需要重新编译程序</li>
+</ul>
+<p>在继续之前，我们先对代码组织结构做一次重构，这能让我们走得更远。</p>
+<p>为了清晰，方便管理，我们逻辑拆分到4个文件中：</p>
+<ul>
+<li>game.go：编写Game对象，并实现相关方法，同时负责协调其他各个模块</li>
+<li>input.go：输入相关的逻辑</li>
+<li>config.go：专门负责配置相关的逻辑</li>
+<li>main.go：main函数，负责创建Game对象，运行游戏</li>
+</ul>
+<p>为了程序的灵活修改，我们将程序中的可变项都作为配置存放在文件中，程序启动时自动读取这个配置文件。我选择json作为配置文件的格式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;screenWidth&#34;</span><span class="p">:</span> <span class="mi">640</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;screenHeight&#34;</span><span class="p">:</span> <span class="mi">480</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="s2">&#34;外星人入侵&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;bgColor&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;r&#34;</span><span class="p">:</span> <span class="mi">230</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;g&#34;</span><span class="p">:</span> <span class="mi">230</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;b&#34;</span><span class="p">:</span> <span class="mi">230</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;a&#34;</span><span class="p">:</span> <span class="mi">255</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后定义配置的结构和加载配置的函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ScreenWidth</span>  <span class="kt">int</span>        <span class="s">`json:&#34;screenWidth&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ScreenHeight</span> <span class="kt">int</span>        <span class="s">`json:&#34;screenHeight&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Title</span>        <span class="kt">string</span>     <span class="s">`json:&#34;title&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">BgColor</span>      <span class="nx">color</span><span class="p">.</span><span class="nx">RGBA</span> <span class="s">`json:&#34;bgColor&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">loadConfig</span><span class="p">()</span> <span class="o">*</span><span class="nx">Config</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;./config.json&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;os.Open failed: %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">cfg</span> <span class="nx">Config</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="p">=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewDecoder</span><span class="p">(</span><span class="nx">f</span><span class="p">).</span><span class="nf">Decode</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">cfg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;json.Decode failed: %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">cfg</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>将游戏核心逻辑移到game.go文件中，定义游戏对象结构和创建游戏对象的方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Game</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">input</span> <span class="o">*</span><span class="nx">Input</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">cfg</span>   <span class="o">*</span><span class="nx">Config</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewGame</span><span class="p">()</span> <span class="o">*</span><span class="nx">Game</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">cfg</span> <span class="o">:=</span> <span class="nf">loadConfig</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ebiten</span><span class="p">.</span><span class="nf">SetWindowSize</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenWidth</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenHeight</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ebiten</span><span class="p">.</span><span class="nf">SetWindowTitle</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">Title</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Game</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">input</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">Input</span><span class="p">{},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">cfg</span><span class="p">:</span>   <span class="nx">cfg</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>先从配置文件中加载配置，然后根据配置设置游戏窗口大小和标题。拆分之后，<code>Draw</code>和<code>Layout</code>方法实现如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span> <span class="o">*</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ebitenutil</span><span class="p">.</span><span class="nf">DebugPrint</span><span class="p">(</span><span class="nx">screen</span><span class="p">,</span> <span class="s">&#34;Hello, World!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">screen</span><span class="p">.</span><span class="nf">Fill</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">BgColor</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Layout</span><span class="p">(</span><span class="nx">outsideWidth</span><span class="p">,</span> <span class="nx">outsideHeight</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="nx">screenWidth</span><span class="p">,</span> <span class="nx">screenHeight</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenWidth</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenHeight</span> <span class="o">/</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第一次重构到此完成，现在来看一下文件结构，是否更清晰了呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">├── config.go
+</span></span><span class="line"><span class="cl">├── config.json
+</span></span><span class="line"><span class="cl">├── game.go
+</span></span><span class="line"><span class="cl">├── input.go
+</span></span><span class="line"><span class="cl">└── main.go
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意，因为拆分成了多个文件，所以运行程序不能再使用<code>go run main.go</code>命令了，需要改为<code>go run .</code>。</p>
+<h2 id="显示图片">显示图片</h2>
+<p>接下来我们尝试在屏幕底部中心位置显示一张飞船的图片：</p>
+<p><img src="/img/in-post/godailylib/ship.png#center" alt=""></p>
+<p>ebitengine引擎提供了<code>ebitenutil.NewImageFromFile</code>函数，传入图片路径即可加载该图片，so easy。为了很好的管理游戏中的各个实体，我们给每个实体都定义一个结构。先定义飞船结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">_</span> <span class="s">&#34;golang.org/x/image/bmp&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Ship</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">image</span>  <span class="o">*</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">Image</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">width</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">height</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewShip</span><span class="p">()</span> <span class="o">*</span><span class="nx">Ship</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">img</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ebitenutil</span><span class="p">.</span><span class="nf">NewImageFromFile</span><span class="p">(</span><span class="s">&#34;../images/ship.bmp&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span> <span class="o">:=</span> <span class="nx">img</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ship</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Ship</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">image</span><span class="p">:</span>  <span class="nx">img</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">width</span><span class="p">:</span>  <span class="nx">width</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">height</span><span class="p">:</span> <span class="nx">height</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">ship</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我提供了两种图片格式，一种是png，一种是bmp，用哪种都可以。注意，需要将对应的图片解码包导入。Go标准库提供了三种格式的解码包，<code>image/png</code>，<code>image/jpeg</code>，<code>image/gif</code>。也就是说标准库中没有bmp格式的解码包，所幸golang.org/x仓库没有让我们失望，golang.org/x/image/bmp提供了解析bmp格式图片的功能。我们这里不需要显式的使用对应的图片库，故使用<code>import _</code>这种方式，让<code>init</code>函数产生副作用。</p>
+<p>然后在游戏对象中添加飞船类型的字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewGame</span><span class="p">()</span> <span class="o">*</span><span class="nx">Game</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 相同的代码省略...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Game</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">input</span><span class="p">:</span>   <span class="o">&amp;</span><span class="nx">Input</span><span class="p">{},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ship</span><span class="p">:</span>  <span class="nf">NewShip</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">cfg</span><span class="p">:</span>  <span class="nx">cfg</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>为了将飞船显示在屏幕底部中央位置，我们需要计算坐标。ebitengine采用如下所示的二维坐标系：</p>
+<p><img src="/img/in-post/godailylib/ebiten8.png#center" alt=""></p>
+<p>x轴向右，y轴向下，左上角为原点。我们需要计算飞船左上角的位置。由上图很容易计算出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">x=(W1-W2)/2
+</span></span><span class="line"><span class="cl">y=H1-H2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>为了在屏幕上显示飞船图片，我们需要调用<code>*ebiten.Image</code>的<code>DrawImage</code>方法，该方法的第二个参数可以用于指定坐标相对于原点的偏移：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span> <span class="o">*</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">screen</span><span class="p">.</span><span class="nf">Fill</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">BgColor</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">op</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">DrawImageOptions</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">op</span><span class="p">.</span><span class="nx">GeoM</span><span class="p">.</span><span class="nf">Translate</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenWidth</span><span class="o">-</span><span class="nx">g</span><span class="p">.</span><span class="nx">ship</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenHeight</span><span class="o">-</span><span class="nx">g</span><span class="p">.</span><span class="nx">ship</span><span class="p">.</span><span class="nx">height</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">screen</span><span class="p">.</span><span class="nf">DrawImage</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">ship</span><span class="p">.</span><span class="nx">image</span><span class="p">,</span> <span class="nx">op</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们给<code>Ship</code>类型增加一个绘制自身的方法，传入屏幕对象screen和配置，让代码更好维护：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">ship</span> <span class="o">*</span><span class="nx">Ship</span><span class="p">)</span> <span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span> <span class="o">*</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">Image</span><span class="p">,</span> <span class="nx">cfg</span> <span class="o">*</span><span class="nx">Config</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">op</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">DrawImageOptions</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">op</span><span class="p">.</span><span class="nx">GeoM</span><span class="p">.</span><span class="nf">Translate</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenWidth</span><span class="o">-</span><span class="nx">ship</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenHeight</span><span class="o">-</span><span class="nx">ship</span><span class="p">.</span><span class="nx">height</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">screen</span><span class="p">.</span><span class="nf">DrawImage</span><span class="p">(</span><span class="nx">ship</span><span class="p">.</span><span class="nx">image</span><span class="p">,</span> <span class="nx">op</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样游戏对象中的<code>Draw</code>方法就可以简化为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span> <span class="o">*</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">screen</span><span class="p">.</span><span class="nf">Fill</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">BgColor</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">g</span><span class="p">.</span><span class="nx">ship</span><span class="p">.</span><span class="nf">Draw</span><span class="p">(</span><span class="nx">screen</span><span class="p">,</span> <span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行：</p>
+<p><img src="/img/in-post/godailylib/ebiten9.png#center" alt=""></p>
+<h2 id="移动飞船">移动飞船</h2>
+<p>现在我们来实现使用左右方向键来控制飞船的移动。首先给飞船的类型增加x/y坐标字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Ship</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 与前面的代码一样
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">x</span> <span class="kt">float64</span> <span class="c1">// x坐标
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">y</span> <span class="kt">float64</span> <span class="c1">// y坐标
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们前面已经计算出飞船位于屏幕底部中心时的坐标，在创建飞船时将该坐标赋给xy：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewShip</span><span class="p">(</span><span class="nx">screenWidth</span><span class="p">,</span> <span class="nx">screenHeight</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Ship</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ship</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Ship</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">x</span><span class="p">:</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">screenWidth</span><span class="o">-</span><span class="nx">width</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span><span class="p">:</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">screenHeight</span> <span class="o">-</span> <span class="nx">height</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">ship</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于<code>NewShip</code>计算初始坐标需要屏幕尺寸，故增加屏幕宽、高两个参数，由<code>NewGame</code>方法传入：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewGame</span><span class="p">()</span> <span class="o">*</span><span class="nx">Game</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 与上面的代码一样
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Game</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">input</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">Input</span><span class="p">{},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ship</span><span class="p">:</span>  <span class="nf">NewShip</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenWidth</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">ScreenHeight</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">cfg</span><span class="p">:</span>   <span class="nx">cfg</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后我们在<code>Input</code>的<code>Update</code>方法中根据按下的是左方向键还是右方向键来更新飞船的坐标：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Input</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">i</span> <span class="o">*</span><span class="nx">Input</span><span class="p">)</span> <span class="nf">Update</span><span class="p">(</span><span class="nx">ship</span> <span class="o">*</span><span class="nx">Ship</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">KeyLeft</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ship</span><span class="p">.</span><span class="nx">x</span> <span class="o">-=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">KeyRight</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ship</span><span class="p">.</span><span class="nx">x</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于需要修改飞船坐标，<code>Game.Update</code>方法调用<code>Input.Update</code>时需要传入飞船对象：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Update</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">g</span><span class="p">.</span><span class="nx">input</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">ship</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>好了，现在可以运行程序了<code>go run .</code>，效果如下：</p>
+
+  <div class="video">
+    <video src="/img/in-post/godailylib/ebiten10.mp4" allowfullscreen autoplay loop></video>
+  </div>
+
+<p>注意到，目前有两个问题：</p>
+<ul>
+<li>移动太慢</li>
+<li>可以移出屏幕</li>
+</ul>
+<p>因为现在每次只对x坐标修改1个像素位置，故而显得太慢。我们可以在增加一个飞船速度的配置项来控制每次变化的像素数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;screenWidth&#34;</span><span class="p">:</span> <span class="mi">640</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;screenHeight&#34;</span><span class="p">:</span> <span class="mi">480</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="s2">&#34;外星人入侵&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;bgColor&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;r&#34;</span><span class="p">:</span> <span class="mi">230</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;g&#34;</span><span class="p">:</span> <span class="mi">230</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;b&#34;</span><span class="p">:</span> <span class="mi">230</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;a&#34;</span><span class="p">:</span> <span class="mi">255</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;shipSpeedFactor&#34;</span><span class="p">:</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>config.go需要相应的修改：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Config</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 一样的代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">ShipSpeedFactor</span> <span class="kt">float64</span>    <span class="s">`json:&#34;shipSpeedFactor&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>修改<code>Input.Update</code>方法，每次更新<code>ShipSpeedFactor</code>个像素：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">i</span> <span class="o">*</span><span class="nx">Input</span><span class="p">)</span> <span class="nf">Update</span><span class="p">(</span><span class="nx">ship</span> <span class="o">*</span><span class="nx">Ship</span><span class="p">,</span> <span class="nx">cfg</span> <span class="o">*</span><span class="nx">Config</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">KeyLeft</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ship</span><span class="p">.</span><span class="nx">x</span> <span class="o">-=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">ShipSpeedFactor</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">ebiten</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(</span><span class="nx">ebiten</span><span class="p">.</span><span class="nx">KeyRight</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ship</span><span class="p">.</span><span class="nx">x</span> <span class="o">+=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">ShipSpeedFactor</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>因为在<code>Input.Update</code>方法中需要访问配置，因此增加<code>Config</code>类型的参数，由<code>Game.Update</code>方法传入：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Game</span><span class="p">)</span> <span class="nf">Update</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">g</span><span class="p">.</span><span class="nx">input</span><span class="p">.</span><span class="nf">Update</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">ship</span><span class="p">,</span> <span class="nx">g</span><span class="p">.</span><span class="nx">cfg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行，是不是快了很多呢？</p>
+
+  <div class="video">
+    <video src="/img/in-post/godailylib/ebiten11.mp4" allowfullscreen autoplay loop></video>
+  </div>
+
+<h2 id="总结">总结</h2>
+<p>本文介绍了2D游戏开发库ebiten的基本使用，并开始开发一个外星人入侵的游戏（1/3），目前只能在屏幕上移动飞船，下篇文章继续完成剩下的内容。</p>
+<p>大家如果发现好玩、好用的 Go 语言库，欢迎到 Go 每日一库 GitHub 上提交 issue😄</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>Go 每日一库 GitHub：<a href="https://github.com/darjun/go-daily-lib">https://github.com/darjun/go-daily-lib</a></li>
+<li>ebitengine 官网：<a href="https://ebitengine.org/">https://ebitengine.org/</a></li>
+<li>Python 编程（从入门到实践）：<a href="https://book.douban.com/subject/35196328/">https://book.douban.com/subject/35196328/</a></li>
+</ol>
+<h2 id="我">我</h2>
+<p>我的博客：<a href="https://darjun.github.io">https://darjun.github.io</a></p>
+<p>欢迎关注我的微信公众号【GoUpUp】，共同学习，一起进步~</p>
+<p><img src="/img/wxsearch.png#center" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">darjun</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2022-11-15
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/2022/11/18/godailylib/ebiten2/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">一起用Go来做一个游戏(中)</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        
+          <a class="next" href="/2022/11/01/godailylib/osexec/">
+            <span class="next-text nav-default">Go中调用外部命令的几种姿势</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "darjun/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:leedarjun@gmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/darjun" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://darjun.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+  
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2022
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        大俊
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.dee43230127a73d039a734510fa896c89c3c7ce0cf0be0c7a7433f8fd69b76dc.js" integrity="sha256-3uQyMBJ6c9A5pzRRD6iWyJw8fODPC&#43;DHp0M/j9abdtw=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
